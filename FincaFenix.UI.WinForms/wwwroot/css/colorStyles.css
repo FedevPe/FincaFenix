@@ -1,0 +1,11 @@
+﻿.bg-blue-50 { background-color: #EFF6FF;}
+.bg-white { background-color: white;}
+.bg-blue-800 { background-color: #1D4ED8;}
+.hover-blue-700:hover { background-color: #1E40AF;}
+.text-blue-800 { color: #2563EB;}
+.bg-blue-600 { background-color: #2563EB;}
+.bg-blue-100 { background-color: #DBEAFE;}
+
+main{
+    height: 100vh;
+}

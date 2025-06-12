@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+    <ItemGroup>
+    	<FrameworkReference Include="Microsoft.AspNetCore.app" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Implementations\" />
+    </ItemGroup>
+
+</Project>

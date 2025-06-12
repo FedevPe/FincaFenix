@@ -1,0 +1,50 @@
+﻿@page "/ordenesRecientes"
+@inject TextAppBarState TextApp
+
+<MudText Typo="Typo.h2">Ordenes recientes</MudText>
+ <MudGrid Spacing="3" Justify="Justify.FlexStart">
+     <MudItem>
+         <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
+     </MudItem>
+     <MudItem>
+         <OrdenCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
+     </MudItem>
+     <MudItem>
+         <OrdenCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
+     </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
+    </MudItem>
+    <MudItem>
+        <OrdenCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
+    </MudItem>
+ </MudGrid>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        TextApp.PageTitle = "Ordenes de Trabajo";
+    }
+}

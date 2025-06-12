@@ -1,0 +1,16 @@
+﻿<NavLink class="nav-item navLink">
+    <a class="nav-link text-white button-colors d-flex align-items-center p-2 rounded" href="@PageRef">
+        <i class="@ClassIcon me-2 fs-5"></i>
+        <span class="fs-5">@Text</span>
+    </a>
+</NavLink>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public string ClassIcon { get; set; }
+    [Parameter]
+    public string PageRef { get; set; }
+}
+
