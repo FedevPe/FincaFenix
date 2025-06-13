@@ -15,6 +15,8 @@
             Edge="Edge.Start" 
             OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h6" Class="ml-2">@TextApp.PageTitle</MudText>
+        <MudSpacer/>
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Info" Size="Size.Small" >Crear órden</MudButton>
     </MudAppBar>
     <MudDrawer Class="mud-height-full" MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3" Height="100vh"
                ClipMode="_clipMode" Variant="@DrawerVariant.Mini" Breakpoint="@_breakpoint">
@@ -29,7 +31,7 @@
 @((RenderFragment)(builder => base.BuildRenderTree(builder)))
 
 @code {
-    private Breakpoint _breakpoint = Breakpoint.Md;
+    private Breakpoint _breakpoint = Breakpoint.Xs;
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
     bool _drawerOpen = true;
 
