@@ -1,20 +1,21 @@
 ﻿@page "/ordenesRecientes"
 @inject TextAppBarState TextApp
 
-<div class="container-fluid shadow p-3 border rounded">
+<SearchBar />
+<div class="container-fluid shadow p-3 border rounded mt-3 mb-3">
     <MudText Typo="Typo.h5"><b>Ordenes recientes</b></MudText>
     <MudDivider Class="my-2" Style="border-color: black;" />
     <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-1">
-        <MudItem xs="3">
+        <MudItem xs="12" lg="3">
             <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
         </MudItem>
-        <MudItem xs="3">
+        <MudItem xs="12" lg="3">
             <OrdenCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
         </MudItem>
-        <MudItem xs="3">
+        <MudItem xs="12" lg="3">
             <OrdenCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
         </MudItem>
-        <MudItem xs="3">
+        <MudItem xs="12" lg="3">
             <OrdenCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
         </MudItem>
     </MudGrid>
