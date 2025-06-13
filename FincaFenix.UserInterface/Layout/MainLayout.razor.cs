@@ -1,3 +1,4 @@
+using FincaFenix.UserInterface.Forms;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 
@@ -5,7 +6,6 @@ namespace FincaFenix.UserInterface.Layout
 {
     public partial class MainLayout
     {
-        private Breakpoint _breakpoint = Breakpoint.Xs;
         private DrawerClipMode _clipMode = DrawerClipMode.Never;
         bool _drawerOpen = true;
         private bool _showAddOrderButton = false;
@@ -29,6 +29,12 @@ namespace FincaFenix.UserInterface.Layout
         }
         void DrawerToggle(){
             _drawerOpen = !_drawerOpen;
+        }
+         private Task OpenDialogAsync()
+        {
+            var options = new DialogOptions { BackgroundClass = "blurry-dialog" };
+
+            return DialogService.ShowAsync<CreateOrderForm>("Nueva órden de trabajo", options);
         }
         MudTheme CustomTheme = new MudTheme(){
             PaletteLight = new PaletteLight()

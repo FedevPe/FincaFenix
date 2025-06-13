@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject TextAppBarState TextAppBar
 @inject NavigationManager NavManager
+@inject IDialogService DialogService
 
 <MudThemeProvider Theme="CustomTheme" />
 <MudPopoverProvider />
@@ -21,11 +22,12 @@
              <MudButton Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Add"
                        Color="Color.Info"
-                       Size="Size.Small">crear orden</MudButton>
+                       Size="Size.Small"
+                       @onclick="OpenDialogAsync">crear orden</MudButton>
         }
     </MudAppBar>
     <MudDrawer Class="mud-height-full" MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3" Height="100vh"
-               ClipMode="_clipMode" Variant="@DrawerVariant.Mini" Breakpoint="@_breakpoint">
+               ClipMode="_clipMode" Variant="@DrawerVariant.Mini">
                <NavMainMenu/>
     </MudDrawer>
     <MudMainContent>
