@@ -1,6 +1,14 @@
 ﻿@page "/ordenesRecientes"
 @inject TextAppBarState TextApp
 
+
+<div class="mt-3 mb-3">
+    <MudGrid Justify="Justify.FlexEnd" Class="mb-2 g-3">
+        <MudItem>
+            <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add">Nueva Orden</MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
 <SearchBar />
 <div class="container-fluid shadow p-3 border rounded mt-3 mb-3">
     <MudText Typo="Typo.h5"><b>Ordenes recientes</b></MudText>
@@ -26,8 +34,14 @@
 
  
 @code {
+    [Inject] private DialogFactoryService DialogFactory { get; set; } = default!;
+
     protected override void OnInitialized()
     {
         TextApp.PageTitle = "Ordenes de Trabajo";
+    }
+    private async Task OpenDialog()
+    {
+        await DialogFactory.ShowFormDialogAsync<CreateOrderForm>("Nueva orden de trabajo");
     }
 }
