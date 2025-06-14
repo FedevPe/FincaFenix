@@ -1,17 +1,15 @@
 ﻿<MudDialog>
     <DialogContent>
-
+        <SearchBar />
     </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="Submit">OK</MudButton>
-    </DialogActions>
 </MudDialog>
-
+<style>
+    .custom-dialog {
+        backdrop-filter: blur(10px);
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+</style>
 @code {
-    [CascadingParameter]
-    private IMudDialogInstance MudDialog { get; set; }
-
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    private void Cancel() => MudDialog.Cancel();
+    private IMudDialogInstance MudDialog { get; set; } = default!;
 }
