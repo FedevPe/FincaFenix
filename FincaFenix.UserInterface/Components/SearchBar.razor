@@ -7,7 +7,14 @@
     </div>
     <MudDivider Class="my-1" Style="border-color: black;" />
     <div>
-        <MudTextField @bind-Value="Search" Label="Buscar por n° de orden..." Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Dark" />
+        <MudGrid Justify="Justify.FlexStart" Class="mb-2">
+            <MudItem xs="6" lg="6">
+                <MudTextField @bind-Value="Search" Label="Buscar por n° de orden..." Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem lg="2" Class="mt-2">
+                <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Search" Color="Color.Primary" Size="Size.Medium" />
+            </MudItem>
+        </MudGrid>
         <MudCollapse Expanded="_expanded">
             <MudGrid Spacing="4" Justify="Justify.FlexStart" Class="mt-4 g-2">
                 <MudItem xs="12" lg="2">
@@ -60,9 +67,6 @@
             </MudGrid>
         </MudCollapse>
     </div>
-    <MudGrid Justify="Justify.FlexEnd" Class="mt-2 g-3">
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Search" Color="Color.Primary" Size="Size.Small">Buscar</MudButton>
-    </MudGrid>
 </div>
 
 @code{
