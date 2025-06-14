@@ -1,4 +1,6 @@
 using FincaFenix.UserInterface.Forms;
+using FincaFenix.UserInterface.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 
@@ -8,33 +10,17 @@ namespace FincaFenix.UserInterface.Layout
     {
         private DrawerClipMode _clipMode = DrawerClipMode.Never;
         bool _drawerOpen = true;
-        private bool _showAddOrderButton = false;
+        [Inject] public TextAppBarState TextAppBar { get; set; }
 
         protected override void OnInitialized(){
-            NavManager.LocationChanged += OnLocationChanged;
             TextAppBar.OnChange += StateHasChanged;
-            UpdateButtonVisibility(NavManager.Uri);
-        }
-        private void OnLocationChanged(object? sender, LocationChangedEventArgs e){
-            UpdateButtonVisibility(e.Location);
-            StateHasChanged();
-        }
-        private void UpdateButtonVisibility(string uri){
-            var relativeUri = NavManager.ToBaseRelativePath(uri).ToLower();
-            _showAddOrderButton = relativeUri.StartsWith("ordenes");
         }
         public void Dispose(){
-            NavManager.LocationChanged -= OnLocationChanged;
+            
             TextAppBar.OnChange -= StateHasChanged;
         }
         void DrawerToggle(){
             _drawerOpen = !_drawerOpen;
-        }
-         private Task OpenDialogAsync()
-        {
-            var options = new DialogOptions { BackgroundClass = "blurry-dialog" };
-
-            return DialogService.ShowAsync<CreateOrderForm>("Nueva órden de trabajo", options);
         }
         MudTheme CustomTheme = new MudTheme(){
             PaletteLight = new PaletteLight()
