@@ -1,0 +1,160 @@
+﻿<div class="container-fluid shadow rounded p-4">
+    <MudGrid>
+        <MudItem lg="12">
+            <MudText Typo="Typo.h4">Nueva Orden de Trabajo</MudText>
+            <MudText Typo="Typo.subtitle1">Complete la información necesaria para crear la orden</MudText>
+        </MudItem>
+    </MudGrid>
+
+    <MudDivider Class="custom-drawer" Style="border-color: black;" />
+
+    <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-3">
+        <MudItem xs="12" lg="6">
+            <MudText Typo="Typo.h6">Finca</MudText>
+            <MudSelect T="int?" Margin="Margin.Dense" FullWidth="true"
+                       FitContent="true" Label="Seleccione la finca" Variant="Variant.Outlined" Clearable
+                       ValueChanged="OnFincaChanged">
+                @foreach (var finca in Fincas)
+                {
+                    <MudSelectItem T="int?" Value="@finca.Id">@finca.Nombre</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="12" lg="6">
+            <MudText Typo="Typo.h6">Tarea</MudText>
+            <MudSelect @bind-Value="_selectedFinca" Margin="Margin.Dense" FullWidth="true" FitContent="true" Label="Seleccione la tarea" Variant="Variant.Outlined" Clearable>
+                <!-- Opciones de tareas -->
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudText Typo="Typo.h6">Sector de trabajo</MudText>
+        </MudItem>
+
+        <MudFlexBreak />
+
+        <MudItem xs="12" lg="6">
+            <MudGrid Justify="Justify.SpaceEvenly">
+                <MudItem xs="12" sm="6" lg="5">
+                    @foreach (var sector in SectoresColumna1)
+                    {
+                        <MudCheckBox T="bool"
+                                     Label="@sector.Nombre"
+                                     Checked="@sector.Seleccionado"
+                                     CheckedChanged="@(async (bool value) => { sector.Seleccionado = value; OnSelectionChanged(); })"
+                                     Color="Color.Primary" />
+                    }
+                </MudItem>
+
+                <MudItem xs="12" sm="6" lg="5">
+                    @foreach (var sector in SectoresColumna2)
+                    {
+
+                        <MudCheckBox T="bool"
+                                     Label="@sector.Nombre"
+                                     Checked="@sector.Seleccionado"
+                                     CheckedChanged="@(async (bool value) => { sector.Seleccionado = value; OnSelectionChanged(); })"
+                                     Color="Color.Primary" />
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+    @* <MudText Typo="Typo.subtitle2">Sectores seleccionados:</MudText>
+    <MudList T="SectorDTO">
+        @foreach (var sector in SectoresSeleccionados)
+        {
+            <MudListItem>@sector.Nombre</MudListItem>
+        }
+    </MudList>
+    <MudText Typo="Typo.caption">Cantidad seleccionada: @SectoresSeleccionados.Count</MudText> *@
+</div>
+@code{
+    [Parameter] public List<SectorDTO> Sectores { get; set; } = new();
+    [Parameter] public EventCallback<int?> FincaSeleccionada { get; set; }
+    private int? _selectedFinca;
+    private List<SectorDTO> SectoresColumna1 => Sectores.Where((s, i) => i % 2 == 0).ToList();
+    private List<SectorDTO> SectoresColumna2 => Sectores.Where((s, i) => i % 2 != 0).ToList();
+    [Parameter] public EventCallback<List<SectorDTO>> CambioSectorSeleccionado { get; set; }
+    private async Task OnFincaChanged(int? fincaId)
+    {
+        _selectedFinca = fincaId;
+        await FincaSeleccionada.InvokeAsync(fincaId);
+    }
+    private async Task OnSelectionChanged()
+    {
+        var seleccionados = Sectores.Where(s => s.Seleccionado).ToList();
+        await CambioSectorSeleccionado.InvokeAsync(seleccionados);
+    }
+    public List<SectorDTO> SectoresSeleccionados { get; set; } = new();
+
+    private List<FincaDTO> Fincas = new()
+    {
+        new() { Id = 1, Nombre = "Finca San Carlos" },
+        new() { Id = 2, Nombre = "Finca Goudge" },
+        new() { Id = 3, Nombre = "Finca Doña Blanca" },
+        new() { Id = 4, Nombre = "Finca Las Aguaditas" }
+    };
+
+    private List<SectorDTO> SectoresFincaActual = new(); // Sectores cargados según la finca
+    private List<SectorDTO> SectoresColumna1 = new();
+    private List<SectorDTO> SectoresColumna2 = new();
+
+    private async Task OnFincaChanged(int? fincaId)
+    {
+        _selectedFinca = fincaId;
+        SectoresSeleccionados.Clear();
+        SectoresColumna1.Clear();
+        SectoresColumna2.Clear();
+
+        // Simulación de sectores según finca seleccionada
+        await Task.Run(() =>
+        {
+            SectoresFincaActual = fincaId switch
+            {
+                1 => new()
+                {
+                                new() { Id = 1, Nombre = "Cuadro A" },
+                                new() { Id = 2, Nombre = "Cuadro B" },
+                                new() { Id = 3, Nombre = "Cuadro C" },
+                                new() { Id = 4, Nombre = "Cuadro D" }
+                },
+                2 => new()
+                {
+                                new() { Id = 5, Nombre = "Cuadro E" },
+                                new() { Id = 6, Nombre = "Cuadro F" },
+                                new() { Id = 7, Nombre = "Cuadro G" }
+                },
+                3 => new()
+                {
+                                new() { Id = 8, Nombre = "Cuadro H" },
+                                new() { Id = 9, Nombre = "Cuadro I" }
+                },
+                4 => new()
+                {
+                                new() { Id = 8, Nombre = "Cuadro J" },
+                                new() { Id = 9, Nombre = "Cuadro K" },
+                                new() { Id = 10, Nombre = "Cuadro L" }
+                },
+                _ => new()
+            };
+            SectoresColumna1 = new();
+            SectoresColumna2 = new();
+
+            foreach (var sector in SectoresFincaActual)
+            {
+                if (sector.Id % 2 == 0)
+                    SectoresColumna1.Add(sector);
+                else
+                    SectoresColumna2.Add(sector);
+            }
+        });
+        StateHasChanged();
+    }
+    public void OnSelectionChanged()
+    {
+        SectoresSeleccionados = SectoresFincaActual.Where(s => s.Seleccionado).ToList();
+        StateHasChanged();
+    }
+}

@@ -1,7 +1,5 @@
-using FincaFenix.UserInterface.Forms;
 using FincaFenix.UserInterface.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor;
 
 namespace FincaFenix.UserInterface.Layout
@@ -12,24 +10,29 @@ namespace FincaFenix.UserInterface.Layout
         bool _drawerOpen = true;
         [Inject] public TextAppBarState TextAppBar { get; set; }
 
-        protected override void OnInitialized(){
+        protected override void OnInitialized()
+        {
             TextAppBar.OnChange += StateHasChanged;
         }
-        public void Dispose(){
-            
+        public void Dispose()
+        {
+
             TextAppBar.OnChange -= StateHasChanged;
         }
-        void DrawerToggle(){
+        void DrawerToggle()
+        {
             _drawerOpen = !_drawerOpen;
         }
-        MudTheme CustomTheme = new MudTheme(){
+        MudTheme CustomTheme = new MudTheme()
+        {
             PaletteLight = new PaletteLight()
             {
                 Primary = Colors.Teal.Darken4,
                 AppbarBackground = Colors.Teal.Darken4,
                 Secondary = Colors.Teal.Darken3,
                 Tertiary = Colors.Gray.Lighten5,
-                Info = Colors.BlueGray.Default
+                Info = Colors.BlueGray.Default,
+                Error= Colors.Red.Lighten1
             }
         };
     }

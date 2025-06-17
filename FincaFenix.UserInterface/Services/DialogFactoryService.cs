@@ -11,19 +11,17 @@ namespace FincaFenix.UserInterface.Services
             _dialogService = dialogService;
             
         }
-
         public async Task<IDialogReference> ShowFormDialogAsync<T>(string title) where T : ComponentBase
         {
             var options = new DialogOptions
             {
-                FullScreen = false,
+                FullScreen = true,
                 CloseButton = true,
                 CloseOnEscapeKey = true,
                 MaxWidth = MaxWidth.ExtraLarge,
                 BackdropClick = false,
                 BackgroundClass = "custom-dialog",
-            };           
-
+            };   
             return await _dialogService.ShowAsync<T>(title, options);
         }
     }

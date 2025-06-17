@@ -1,0 +1,30 @@
+﻿<MudGrid>
+    <MudItem xs="12" sm="6">
+        @foreach (var sector in SectoresColumna1)
+        {
+            <MudCheckBox T="bool" Label="@sector.Nombre" @bind-Checked="sector.Seleccionado"
+                         Color="Color.Primary" />
+        }
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        @foreach (var sector in SectoresColumna2)
+        {
+            <MudCheckBox T="bool" Label="@sector.Nombre" @bind-Checked="sector.Seleccionado"
+                         Color="Color.Primary" />
+        }
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter] public List<SectorDTO> Sectores { get; set; } = new();
+    [Parameter] public EventCallback<List<SectorDTO>> CambioSectorSeleccionado { get; set; }
+
+    private List<SectorDTO> SectoresColumna1 => Sectores.Where((s, i) => i % 2 == 0).ToList();
+    private List<SectorDTO> SectoresColumna2 => Sectores.Where((s, i) => i % 2 != 0).ToList();
+
+    private async Task OnSelectionChanged()
+    {
+        var seleccionados = Sectores.Where(s => s.Seleccionado).ToList();
+        await CambioSectorSeleccionado.InvokeAsync(seleccionados);
+    }
+}

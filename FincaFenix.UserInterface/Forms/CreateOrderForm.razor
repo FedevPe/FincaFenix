@@ -1,15 +1,24 @@
-﻿<MudDialog>
-    <DialogContent>
-        <SearchBar />
-    </DialogContent>
-</MudDialog>
-<style>
-    .custom-dialog {
-        backdrop-filter: blur(10px);
-        max-height: 100vh;
-        overflow-y: auto;
-    }
-</style>
+﻿@page "/createOrder"
+
+<div class="container-fluid shadow mt-3 rounded  p-2">
+    <MudGrid Justify="Justify.FlexEnd">
+        <MudItem>
+            <MudButton Href="/ordenesRecientes"
+                       Variant="Variant.Filled"
+                       Color="Color.Error"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton Href="/ordenesRecientes"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
+
 @code {
-    private IMudDialogInstance MudDialog { get; set; } = default!;
+    
 }

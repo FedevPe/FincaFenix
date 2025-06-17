@@ -14,7 +14,7 @@
     color: white !important; 
 }
 .custom-drawer {
-    min-width: 280px !important; /* o lo que necesites */
+    min-width: 280px !important;
 }
 #blazor-error-ui {
     background: lightyellow;

@@ -13,4 +13,8 @@
     <PackageReference Include="MudBlazor" Version="8.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
