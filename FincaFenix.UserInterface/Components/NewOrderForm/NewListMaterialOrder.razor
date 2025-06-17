@@ -1,0 +1,55 @@
+﻿<div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
+    <div class="d-flex mb-2">
+        <MudText Typo="Typo.h4">Lista de materiales</MudText>
+        <MudSpacer />            
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Size="Size.Small"
+                   StartIcon="@Icons.Material.Filled.Add">Agregar Insumo</MudButton>
+    </div>
+    <div>
+        <MudDivider style=" border-color: black;" />
+        <MudGrid Spacing="4" Justify="Justify.FlexStart" Class="mt-2">
+            <MudItem xs="12" lg="3">
+                <MudTextField @bind-Value="_materialName" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" lg="3">
+                <MudTextField @bind-Value="_materialQuantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" Type="number" />
+            </MudItem>
+            <MudItem xs="12" lg="3">
+                <MudSelect T="char?" @bind-Value="_materialUnit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    <MudSelectItem T="char?">Kilogramos</MudSelectItem>
+                    <MudSelectItem T="char?">Litros</MudSelectItem>
+                    <MudSelectItem T="char?">Metros cúbicos</MudSelectItem>
+                    <MudSelectItem T="char?">Gramos</MudSelectItem>
+                    <MudSelectItem T="char?">Mililitros</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+    </div>
+</div>
+
+@code {
+    private string _materialName = string.Empty;
+    private int _materialQuantity = 0;
+    private char? _materialUnit = null; // Default unit
+
+    private List<MaterialOrderDTO> _materialOrders = new List<MaterialOrderDTO>();
+    
+    private void AddMaterial()
+    {
+        if (!string.IsNullOrWhiteSpace(_materialName) && _materialQuantity > 0)
+        {
+            var newMaterial = new MaterialOrderDTO
+            {
+                Name = _materialName,
+                Quantity = _materialQuantity,
+                Unit = _materialUnit
+            };
+            _materialOrders.Add(newMaterial);
+            _materialName = string.Empty;
+            _materialQuantity = 0;
+            _materialUnit = null; // Reset to default unit
+        }
+    }
+}
