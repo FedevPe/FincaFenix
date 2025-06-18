@@ -1,55 +1,66 @@
 ﻿<div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
     <div class="d-flex mb-2">
         <MudText Typo="Typo.h4">Lista de materiales</MudText>
-        <MudSpacer />            
+        <MudSpacer />
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    Size="Size.Small"
-                   StartIcon="@Icons.Material.Filled.Add">Agregar Insumo</MudButton>
+                   StartIcon="@Icons.Material.Filled.Add"
+                   @onclick="AddMaterial">Agregar Insumo</MudButton>
     </div>
     <div>
-        <MudDivider style=" border-color: black;" />
-        <MudGrid Spacing="4" Justify="Justify.FlexStart" Class="mt-2">
-            <MudItem xs="12" lg="3">
-                <MudTextField @bind-Value="_materialName" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
-            </MudItem>
-            <MudItem xs="12" lg="3">
-                <MudTextField @bind-Value="_materialQuantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" Type="number" />
-            </MudItem>
-            <MudItem xs="12" lg="3">
-                <MudSelect T="char?" @bind-Value="_materialUnit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined">
-                    <MudSelectItem T="char?">Kilogramos</MudSelectItem>
-                    <MudSelectItem T="char?">Litros</MudSelectItem>
-                    <MudSelectItem T="char?">Metros cúbicos</MudSelectItem>
-                    <MudSelectItem T="char?">Gramos</MudSelectItem>
-                    <MudSelectItem T="char?">Mililitros</MudSelectItem>
-                </MudSelect>
-            </MudItem>
+        <MudDivider style="border-color: black;" />
+        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
+            @foreach (var material in MaterialList){
+                <MudItem xs="12" lg="4">
+                    <MudTextField @bind-Value="material.Name" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" lg="4">
+                    <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" Type="number" />
+                </MudItem>
+                <MudItem xs="12" lg="3">
+                    <MudSelect T="string" @bind-Value="material.Unit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
+                        <MudSelectItem T="string" Value="@("Kg")">Kilogramos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Gr")">Gramos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Lts")">Litros</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("m3")">Metros cúbicos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("ml")">Mililitros</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" lg="1" Class="btnDelete">
+                    <MudIconButton Variant="Variant.Filled"
+                               Color="Color.Error"
+                               Size="Size.Small"
+                               Icon="@Icons.Material.Filled.Delete"
+                               @onclick="@(() => RemoveMaterial(material))" />
+                </MudItem>
+            }
         </MudGrid>
     </div>
 </div>
-
+<style>
+.btnDelete{
+    margin-top: 12px;
+}
+</style>
 @code {
     private string _materialName = string.Empty;
     private int _materialQuantity = 0;
-    private char? _materialUnit = null; // Default unit
+    private string _materialUnit = string.Empty; 
 
-    private List<MaterialOrderDTO> _materialOrders = new List<MaterialOrderDTO>();
+    private List<MaterialOrderDTO> MaterialList = new List<MaterialOrderDTO>();
     
     private void AddMaterial()
     {
-        if (!string.IsNullOrWhiteSpace(_materialName) && _materialQuantity > 0)
+        MaterialList.Add(new MaterialOrderDTO());
+        StateHasChanged();
+    }
+    private void RemoveMaterial(MaterialOrderDTO material)
+    {
+        if(MaterialList.Count != 0)
         {
-            var newMaterial = new MaterialOrderDTO
-            {
-                Name = _materialName,
-                Quantity = _materialQuantity,
-                Unit = _materialUnit
-            };
-            _materialOrders.Add(newMaterial);
-            _materialName = string.Empty;
-            _materialQuantity = 0;
-            _materialUnit = null; // Reset to default unit
+            MaterialList.Remove(material);
+            StateHasChanged();
         }
     }
 }

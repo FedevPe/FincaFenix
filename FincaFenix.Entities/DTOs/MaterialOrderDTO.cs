@@ -10,6 +10,6 @@ namespace FincaFenix.Entities.DTOs
     {
         public string Name { get; set; }
         public int Quantity { get; set; }
-        public char? Unit { get; set; }
+        public string Unit { get; set; }
     }
 }

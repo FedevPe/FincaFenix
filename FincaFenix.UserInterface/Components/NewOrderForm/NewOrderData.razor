@@ -6,7 +6,7 @@
         </MudItem>
     </MudGrid>
 
-    <MudDivider Class="custom-drawer" Style="border-color: black;" />
+    <MudDivider Style="border-color: black;" />
 
     <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-3">
         <MudItem xs="12" lg="6">
@@ -28,9 +28,12 @@
             </MudSelect>
         </MudItem>
 
-        <MudItem xs="12">
-            <MudText Typo="Typo.h6">Sector de trabajo</MudText>
-        </MudItem>
+        @if(_selectedFinca != null && _selectedFinca != 0)
+        {
+            <MudItem xs="12" class="@_hidden">
+                <MudText Typo="Typo.h6">Sectores de la finca</MudText>
+            </MudItem>
+        }
 
         <MudFlexBreak />
 
@@ -61,18 +64,12 @@
             </MudGrid>
         </MudItem>
     </MudGrid>
-    @* <MudText Typo="Typo.subtitle2">Sectores seleccionados:</MudText>
-    <MudList T="SectorDTO">
-        @foreach (var sector in SectoresSeleccionados)
-        {
-            <MudListItem>@sector.Nombre</MudListItem>
-        }
-    </MudList>
-    <MudText Typo="Typo.caption">Cantidad seleccionada: @SectoresSeleccionados.Count</MudText> *@
 </div>
 @code{
     [Parameter]
     public EventCallback<List<SectorDTO>> OnSectoresSeleccionChanged { get; set; }
+
+    private string _hidden = "hidden";
 
     private int? _selectedFinca;
     private List<SectorDTO> SectoresSeleccionados { get; set; } = new();
@@ -103,7 +100,7 @@
                 new() { Id = 1, Nombre = "Cuadro A" },
                 new() { Id = 2, Nombre = "Cuadro B" },
                 new() { Id = 3, Nombre = "Cuadro C" },
-                new() { Id = 4, Nombre = "Cuadro D" }
+                new() { Id = 4, Nombre = "Cuadro D" },
             },
             2 => new()
             {
@@ -146,88 +143,4 @@
         if (OnSectoresSeleccionChanged.HasDelegate)
             await OnSectoresSeleccionChanged.InvokeAsync(SectoresSeleccionados);
     }
-//     [Parameter] public List<SectorDTO> Sectores { get; set; } = new();
-//     [Parameter] public EventCallback<int?> FincaSeleccionada { get; set; }
-//     [Parameter] public EventCallback<List<SectorDTO>> CambioSectorSeleccionado { get; set; }
-//     private List<SectorDTO> SectoresFincaActual = new(); // Sectores cargados según la finca
-//     private List<SectorDTO> SectoresColumna1 = new();
-//     private List<SectorDTO> SectoresColumna2 = new();
-//     public List<SectorDTO> SectoresSeleccionados { get; set; } = new();
-//     private int? _selectedFinca;
-//     private async Task OnFincaChanged(int? fincaId)
-//     {
-//         _selectedFinca = fincaId;
-//         await FincaSeleccionada.InvokeAsync(fincaId);
-//     }
-//     private async Task OnSelectionChanged()
-//     {
-//         var seleccionados = Sectores.Where(s => s.Seleccionado).ToList();
-//         await CambioSectorSeleccionado.InvokeAsync(seleccionados);
-//     }
-
-//     private List<FincaDTO> Fincas = new()
-//     {
-//         new() { Id = 1, Nombre = "Finca San Carlos" },
-//         new() { Id = 2, Nombre = "Finca Goudge" },
-//         new() { Id = 3, Nombre = "Finca Doña Blanca" },
-//         new() { Id = 4, Nombre = "Finca Las Aguaditas" }
-//     };
-
-
-    // private async Task OnFincaChanged(int? fincaId)
-    // {
-    //     _selectedFinca = fincaId;
-    //     SectoresSeleccionados.Clear();
-    //     SectoresColumna1.Clear();
-    //     SectoresColumna2.Clear();
-
-    //     // Simulación de sectores según finca seleccionada
-    //     await Task.Run(() =>
-    //     {
-    //         SectoresFincaActual = fincaId switch
-    //         {
-    //             1 => new()
-    //             {
-    //                             new() { Id = 1, Nombre = "Cuadro A" },
-    //                             new() { Id = 2, Nombre = "Cuadro B" },
-    //                             new() { Id = 3, Nombre = "Cuadro C" },
-    //                             new() { Id = 4, Nombre = "Cuadro D" }
-    //             },
-    //             2 => new()
-    //             {
-    //                             new() { Id = 5, Nombre = "Cuadro E" },
-    //                             new() { Id = 6, Nombre = "Cuadro F" },
-    //                             new() { Id = 7, Nombre = "Cuadro G" }
-    //             },
-    //             3 => new()
-    //             {
-    //                             new() { Id = 8, Nombre = "Cuadro H" },
-    //                             new() { Id = 9, Nombre = "Cuadro I" }
-    //             },
-    //             4 => new()
-    //             {
-    //                             new() { Id = 8, Nombre = "Cuadro J" },
-    //                             new() { Id = 9, Nombre = "Cuadro K" },
-    //                             new() { Id = 10, Nombre = "Cuadro L" }
-    //             },
-    //             _ => new()
-    //         };
-    //         SectoresColumna1 = new();
-    //         SectoresColumna2 = new();
-
-    //         foreach (var sector in SectoresFincaActual)
-    //         {
-    //             if (sector.Id % 2 == 0)
-    //                 SectoresColumna1.Add(sector);
-    //             else
-    //                 SectoresColumna2.Add(sector);
-    //         }
-    //     });
-    //     StateHasChanged();
-    // }
-    // public void OnSelectionChanged()
-    // {
-    //     SectoresSeleccionados = SectoresFincaActual.Where(s => s.Seleccionado).ToList();
-    //     StateHasChanged();
-    // }
 }
