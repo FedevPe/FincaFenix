@@ -15,13 +15,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\" />
-    <Folder Include="BusinessObject\Controllers\" />
-    <Folder Include="BusinessObject\Interfaces\" />
-    <Folder Include="BusinessObject\Repository\" />
+    <Folder Include="Controllers\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Repository\" />
     <Folder Include="Interactors\" />
-    <Folder Include="POCOEntities\" />
     <Folder Include="ValueObjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
   </ItemGroup>
 
 </Project>
