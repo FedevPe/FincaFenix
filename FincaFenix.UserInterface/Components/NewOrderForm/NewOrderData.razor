@@ -14,17 +14,19 @@
             <MudSelect T="int?" Margin="Margin.Dense" FullWidth="true"
                        FitContent="true" Label="Seleccione la finca" Variant="Variant.Outlined" Clearable
                        ValueChanged="OnFincaChanged">
-                @foreach (var finca in Fincas)
+                @foreach (var farm in FarmList)
                 {
-                    <MudSelectItem T="int?" Value="@finca.Id">@finca.Nombre</MudSelectItem>
+                    <MudSelectItem T="int?" Value="@farm.Id">@farm.Name</MudSelectItem>
                 }
             </MudSelect>
         </MudItem>
 
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
-            <MudSelect @bind-Value="_selectedFinca" Margin="Margin.Dense" FullWidth="true" FitContent="true" Label="Seleccione la tarea" Variant="Variant.Outlined" Clearable>
-                <!-- Opciones de tareas -->
+            <MudSelect @bind-Value="_selectedTask" Margin="Margin.Dense" FullWidth="true" FitContent="true" Label="Seleccione la tarea" Variant="Variant.Outlined" Clearable>
+                <MudSelectItem T="int?" Value="1">Aplicación de fertilizantes</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">Aplicación de herbicidas</MudSelectItem>
+                <MudSelectItem T="int?" Value="3">Tratameinto fitosanitario</MudSelectItem>
             </MudSelect>
         </MudItem>
 
@@ -40,24 +42,24 @@
         <MudItem xs="12" lg="6">
             <MudGrid Justify="Justify.SpaceEvenly">
                 <MudItem xs="12" sm="6" lg="5">
-                    @foreach (var sector in SectoresColumna1)
+                    @foreach (var sector in ColumnSector1)
                     {
                         <MudCheckBox T="bool"
-                                     Label="@sector.Nombre"
-                                     Checked="@sector.Seleccionado"
-                                     CheckedChanged="@(async (bool value) => { sector.Seleccionado = value; await OnSelectionChanged(); })"
+                                     Label="@sector.Name"
+                                     Checked="@sector.Selected"
+                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
                     }
                 </MudItem>
 
                 <MudItem xs="12" sm="6" lg="5">
-                    @foreach (var sector in SectoresColumna2)
+                    @foreach (var sector in ColumSector2)
                     {
 
                         <MudCheckBox T="bool"
-                                     Label="@sector.Nombre"
-                                     Checked="@sector.Seleccionado"
-                                     CheckedChanged="@(async (bool value) => { sector.Seleccionado = value; await OnSelectionChanged(); })"
+                                     Label="@sector.Name"
+                                     Checked="@sector.Selected"
+                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
                     }
                 </MudItem>
@@ -72,60 +74,62 @@
     private string _hidden = "hidden";
 
     private int? _selectedFinca;
-    private List<SectorDTO> SectoresSeleccionados { get; set; } = new();
+    private int? _selectedTask;
 
-    private List<FincaDTO> Fincas = new()
+    private List<SectorDTO> SelectedSectorList { get; set; } = new();
+
+    private List<FarmDTO> FarmList = new()
     {
-        new() { Id = 1, Nombre = "Finca San Carlos" },
-        new() { Id = 2, Nombre = "Finca Goudge" },
-        new() { Id = 3, Nombre = "Finca Doña Blanca" },
-        new() { Id = 4, Nombre = "Finca Las Aguaditas" }
+        new() { Id = 1, Name = "Finca San Carlos" },
+        new() { Id = 2, Name = "Finca Goudge" },
+        new() { Id = 3, Name = "Finca Doña Blanca" },
+        new() { Id = 4, Name = "Finca Las Aguaditas" }
     };
 
-    private List<SectorDTO> SectoresFincaActual = new();
-    private List<SectorDTO> SectoresColumna1 = new();
-    private List<SectorDTO> SectoresColumna2 = new();
+    private List<SectorDTO> CurrentFarmSector = new();
+    private List<SectorDTO> ColumnSector1 = new();
+    private List<SectorDTO> ColumSector2 = new();
 
-    private async Task OnFincaChanged(int? fincaId)
+    private async Task OnFincaChanged(int? farmId)
     {
-        _selectedFinca = fincaId;
-        SectoresSeleccionados.Clear();
-        SectoresColumna1.Clear();
-        SectoresColumna2.Clear();
+        _selectedFinca = farmId;
+        SelectedSectorList.Clear();
+        ColumnSector1.Clear();
+        ColumSector2.Clear();
 
-        SectoresFincaActual = fincaId switch
+        CurrentFarmSector = farmId switch
         {
             1 => new()
             {
-                new() { Id = 1, Nombre = "Cuadro A" },
-                new() { Id = 2, Nombre = "Cuadro B" },
-                new() { Id = 3, Nombre = "Cuadro C" },
-                new() { Id = 4, Nombre = "Cuadro D" },
+                new() { Id = 1, Name = "Cuadro A" },
+                new() { Id = 2, Name = "Cuadro B" },
+                new() { Id = 3, Name = "Cuadro C" },
+                new() { Id = 4, Name = "Cuadro D" },
             },
             2 => new()
             {
-                new() { Id = 5, Nombre = "Cuadro E" },
-                new() { Id = 6, Nombre = "Cuadro F" },
-                new() { Id = 7, Nombre = "Cuadro G" }
+                new() { Id = 5, Name = "Cuadro E" },
+                new() { Id = 6, Name = "Cuadro F" },
+                new() { Id = 7, Name = "Cuadro G" }
             },
             3 => new()
             {
-                new() { Id = 8, Nombre = "Cuadro H" },
-                new() { Id = 9, Nombre = "Cuadro I" }
+                new() { Id = 8, Name = "Cuadro H" },
+                new() { Id = 9, Name = "Cuadro I" }
             },
             4 => new()
             {
-                new() { Id = 8, Nombre = "Cuadro J" },
-                new() { Id = 9, Nombre = "Cuadro K" },
-                new() { Id = 10, Nombre = "Cuadro L" }
+                new() { Id = 8, Name = "Cuadro J" },
+                new() { Id = 9, Name = "Cuadro K" },
+                new() { Id = 10, Name = "Cuadro L" }
             },
             _ => new()
         };
 
-        for (int i = 0; i < SectoresFincaActual.Count; i++)
+        for (int i = 0; i < CurrentFarmSector.Count; i++)
         {
-            if (i % 2 == 0) SectoresColumna1.Add(SectoresFincaActual[i]);
-            else SectoresColumna2.Add(SectoresFincaActual[i]);
+            if (i % 2 == 0) ColumnSector1.Add(CurrentFarmSector[i]);
+            else ColumSector2.Add(CurrentFarmSector[i]);
         }
 
         await NotificarCambio();
@@ -134,13 +138,13 @@
 
     private async Task OnSelectionChanged()
     {
-        SectoresSeleccionados = SectoresFincaActual.Where(s => s.Seleccionado).ToList();
+        SelectedSectorList = CurrentFarmSector.Where(s => s.Selected).ToList();
         await NotificarCambio();
     }
 
     private async Task NotificarCambio()
     {
         if (OnSectoresSeleccionChanged.HasDelegate)
-            await OnSectoresSeleccionChanged.InvokeAsync(SectoresSeleccionados);
+            await OnSectoresSeleccionChanged.InvokeAsync(SelectedSectorList);
     }
 }

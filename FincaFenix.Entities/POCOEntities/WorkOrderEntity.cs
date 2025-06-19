@@ -3,10 +3,7 @@
     public class WorkOrderEntity
     {
         public int Id { get; set; }
-<<<<<<< Updated upstream
-        public int OrderNum{ get; set; }
-=======
->>>>>>> Stashed changes
+        public int OrderNum { get; set; }
         public int UserId { get; set; }
         public int TaskId { get; set; }
         public int MaterialListId { get; set; }

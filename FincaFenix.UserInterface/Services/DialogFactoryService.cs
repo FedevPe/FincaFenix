@@ -9,7 +9,7 @@ namespace FincaFenix.UserInterface.Services
         public DialogFactoryService(IDialogService dialogService)
         {
             _dialogService = dialogService;
-            
+
         }
         public async Task<IDialogReference> ShowFormDialogAsync<T>(string title) where T : ComponentBase
         {
@@ -21,7 +21,7 @@ namespace FincaFenix.UserInterface.Services
                 MaxWidth = MaxWidth.ExtraLarge,
                 BackdropClick = false,
                 BackgroundClass = "custom-dialog",
-            };   
+            };
             return await _dialogService.ShowAsync<T>(title, options);
         }
     }

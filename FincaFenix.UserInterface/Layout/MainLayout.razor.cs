@@ -32,7 +32,7 @@ namespace FincaFenix.UserInterface.Layout
                 Secondary = Colors.Teal.Darken3,
                 Tertiary = Colors.Gray.Lighten5,
                 Info = Colors.BlueGray.Default,
-                Error= Colors.Red.Lighten1
+                Error = Colors.Red.Lighten1
             }
         };
     }

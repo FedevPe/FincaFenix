@@ -22,11 +22,11 @@
 </div>
 
 @code {
-    private List<SectorDTO> SectoresSeleccionados { get; set; } = new();
+    private List<SectorDTO> SelectedSectorList { get; set; } = new();
 
     private void ActualizarSectoresSeleccionados(List<SectorDTO> sectores)
     {
-        SectoresSeleccionados = sectores;
+        SelectedSectorList = sectores;
         StateHasChanged();
     }
 }

@@ -9,13 +9,15 @@
                    @onclick="AddMaterial">Agregar Insumo</MudButton>
     </div>
     <div>
-        <MudDivider style="border-color: black;" />
-        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
+        @if (MaterialList.Count() != 0){
+            <MudDivider style="border-color: black;" />
+        }
+        <MudGrid Spacing="2" Justify="Justify.Center" Class="mt-2">
             @foreach (var material in MaterialList){
                 <MudItem xs="12" lg="4">
                     <MudTextField @bind-Value="material.Name" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
-                <MudItem xs="12" lg="4">
+                <MudItem xs="12" lg="1">
                     <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" Type="number" />
                 </MudItem>
                 <MudItem xs="12" lg="3">

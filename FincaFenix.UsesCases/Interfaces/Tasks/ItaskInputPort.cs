@@ -2,8 +2,10 @@
 
 namespace FincaFenix.UsesCases.Interfaces.Tasks
 {
-    public interface ItaskInputPort
+    public interface ITaskInputPort
     {
-        Task Handle(TaskOrderDTO  task);
+        Task Handle(TaskDTO task);
+        Task GetListTask();
+        Task GetTaskById(int id);
     }
 }

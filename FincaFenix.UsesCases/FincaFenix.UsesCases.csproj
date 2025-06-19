@@ -15,11 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Interactors\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Repository\" />
-    <Folder Include="ValueObjects\" />
     <Folder Include="Aggregates\" />
   </ItemGroup>
 
