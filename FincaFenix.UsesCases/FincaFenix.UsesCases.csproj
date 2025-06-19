@@ -16,21 +16,11 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     <Folder Include="Interactors\" />
-    <Folder Include="Repository\" />
-=======
     <Folder Include="Interfaces\" />
     <Folder Include="Repository\" />
-    <Folder Include="Interactors\" />
->>>>>>> Stashed changes
-=======
-    <Folder Include="Interfaces\" />
-    <Folder Include="Repository\" />
-    <Folder Include="Interactors\" />
->>>>>>> Stashed changes
     <Folder Include="ValueObjects\" />
+    <Folder Include="Aggregates\" />
   </ItemGroup>
 
   <ItemGroup>
