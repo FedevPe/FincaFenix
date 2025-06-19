@@ -1,6 +1,6 @@
 ﻿namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
 {
-    public class MaterialOrderDTO
+    public class MaterialDTO
     {
         public string Name { get; set; }
         public int Quantity { get; set; }

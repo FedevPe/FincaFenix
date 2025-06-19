@@ -2,8 +2,7 @@
 
 namespace FincaFenix.UsesCases.Aggregates
 {
-    public class WorkOrderAggregate() : WorkOrderEntity
+    public class WorkOrderAggregate : WorkOrderEntity
     {
-        
     }
 }
