@@ -4,7 +4,7 @@ namespace FincaFenix.UsesCases.Repository
 {
     public interface ITaskRepository
     {
-        Task<TaskEntity> GetTaskById();
+        Task<TaskEntity> GetTaskById(int id);
         Task<IEnumerable<TaskEntity>> GetAllTasks();
     }
 }

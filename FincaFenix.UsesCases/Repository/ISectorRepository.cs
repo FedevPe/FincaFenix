@@ -4,7 +4,7 @@ namespace FincaFenix.UsesCases.Repository
 {
     public interface ISectorRepository
     {
-        Task<SectorEntity> GetSectorById(int id);
-        Task<IEnumerable<SectorEntity>> GetAllSectors();
+        Task<IEnumerable<SectorEntity>> GetAllSectorsByFarmId(int farmId);
+        Task<IEnumerable<SectorEntity>> GetAllSectorsByOrderId(int orderId);
     }
 }
