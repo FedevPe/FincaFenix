@@ -1,10 +1,12 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
 
 namespace FincaFenix.UsesCases.Interfaces.Sectors
 {
     public interface ISectorOutputPort
     {
-        Task HandleList(List<SectorDTO> materialList);
-        Task Handle(SectorDTO material);
+        public List<SectorDTO> SectorList { get; }
+        Task HandleList(IEnumerable<SectorEntity> sectorList);
+        Task Handle(SectorEntity sector);
     }
 }

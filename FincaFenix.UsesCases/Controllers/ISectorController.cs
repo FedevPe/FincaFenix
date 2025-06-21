@@ -1,4 +1,5 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
 
 namespace FincaFenix.UsesCases.Controllers
 {
