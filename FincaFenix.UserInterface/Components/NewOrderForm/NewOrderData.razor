@@ -45,7 +45,7 @@
                     @foreach (var sector in ColumnSector1)
                     {
                         <MudCheckBox T="bool"
-                                     Label="@sector.Name"
+                                     Label="@sector.Description"
                                      Checked="@sector.Selected"
                                      CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
@@ -57,7 +57,7 @@
                     {
 
                         <MudCheckBox T="bool"
-                                     Label="@sector.Name"
+                                     Label="@sector.Description"
                                      Checked="@sector.Selected"
                                      CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
@@ -101,27 +101,27 @@
         {
             1 => new()
             {
-                new() { Id = 1, Name = "Cuadro A" },
-                new() { Id = 2, Name = "Cuadro B" },
-                new() { Id = 3, Name = "Cuadro C" },
-                new() { Id = 4, Name = "Cuadro D" },
+                new() { Id = 1, Description = "Cuadro A" },
+                new() { Id = 2, Description = "Cuadro B" },
+                new() { Id = 3, Description = "Cuadro C" },
+                new() { Id = 4, Description = "Cuadro D" },
             },
             2 => new()
             {
-                new() { Id = 5, Name = "Cuadro E" },
-                new() { Id = 6, Name = "Cuadro F" },
-                new() { Id = 7, Name = "Cuadro G" }
+                new() { Id = 5, Description = "Cuadro E" },
+                new() { Id = 6, Description = "Cuadro F" },
+                new() { Id = 7, Description = "Cuadro G" }
             },
             3 => new()
             {
-                new() { Id = 8, Name = "Cuadro H" },
-                new() { Id = 9, Name = "Cuadro I" }
+                new() { Id = 8, Description = "Cuadro H" },
+                new() { Id = 9, Description = "Cuadro I" }
             },
             4 => new()
             {
-                new() { Id = 8, Name = "Cuadro J" },
-                new() { Id = 9, Name = "Cuadro K" },
-                new() { Id = 10, Name = "Cuadro L" }
+                new() { Id = 8, Description = "Cuadro J" },
+                new() { Id = 9, Description = "Cuadro K" },
+                new() { Id = 10, Description = "Cuadro L" }
             },
             _ => new()
         };

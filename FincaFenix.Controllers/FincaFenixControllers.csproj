@@ -9,7 +9,7 @@
     	<FrameworkReference Include="Microsoft.AspNetCore.app" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Implementations\" />
+      <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
     </ItemGroup>
 
 </Project>

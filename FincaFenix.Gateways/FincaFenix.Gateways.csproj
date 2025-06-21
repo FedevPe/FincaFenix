@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Implementations\" />
-    <Folder Include="Interfaces\" />
+    <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+    <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
   </ItemGroup>
 
 </Project>

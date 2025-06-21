@@ -1,6 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.Entities.POCOEntities;
-using FincaFenix.UsesCases.Interfaces.Farms;
+﻿using FincaFenix.UsesCases.Interfaces.Farms;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.UsesCases.Interactors
@@ -8,9 +6,9 @@ namespace FincaFenix.UsesCases.Interactors
     public class FarmInteractor(IFarmOutputPort presenter,
         IFarmRepository repository) : IFarmInputPort
     {
-        public async Task GetFarmById(int id)
+        public async Task GetFarmById(int idFarm)
         {
-            await presenter.Handle(await repository.GetFarmById(id));
+            await presenter.Handle(await repository.GetFarmById(idFarm));
         }
         public async Task GetListFarm()
         {

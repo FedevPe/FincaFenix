@@ -17,4 +17,8 @@
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
   </ItemGroup>
 
+<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	<MudAllowedAttributePattern>Type, Checked</MudAllowedAttributePattern>
+</PropertyGroup>
+	
 </Project>
