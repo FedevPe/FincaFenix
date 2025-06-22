@@ -7,7 +7,7 @@
         public UserDTO User { get; set; }
         public TaskDTO Task { get; set; }
         public List<MaterialDTO> MaterialsList { get; set; }
-        public List<SectorDTO> SectorList { get; set; }
+        public List<DetailSectorFarmDTO> SectorList { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public bool State { get; set; }

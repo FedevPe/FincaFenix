@@ -6,17 +6,20 @@ namespace FincaFenix.Presenters.Implementations
 {
     public class SectorPresenter : ISectorOutputPort
     {
-        public List<SectorDTO>? SectorList { get; private set; }
-        public Task Handle(SectorEntity sector)
+        public List<DetailSectorFarmDTO>? SectorList { get; private set; }
+        public Task Handle(DetailSectorFarmEntity sector)
         {
             throw new NotImplementedException();
         }
-        public Task HandleList(IEnumerable<SectorEntity> sectorList)
+        public Task HandleList(IEnumerable<DetailSectorFarmEntity> sectorList)
         {
-            SectorList = sectorList.Select(sector => new SectorDTO
+            SectorList = sectorList.Select(sector => new DetailSectorFarmDTO
             {
                 Id = sector.Id,
-                Description = sector.Description
+                FarmId = sector.FarmId,
+                SectorName = sector.SectorName,
+                VarietyId = sector.VarietyId,
+                NumberPlants = sector.NumberPlants
             }).ToList();
 
             return Task.CompletedTask;

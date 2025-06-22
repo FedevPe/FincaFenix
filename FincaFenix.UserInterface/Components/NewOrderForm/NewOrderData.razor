@@ -45,8 +45,8 @@
                     @foreach (var sector in ColumnSector1)
                     {
                         <MudCheckBox T="bool"
-                                     Label="@sector.Description"
-                                     Checked="@sector.Selected"
+                                     @bind-Value="@sector.Selected"
+                                     Label="@sector.SectorName"
                                      CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
                     }
@@ -57,8 +57,8 @@
                     {
 
                         <MudCheckBox T="bool"
-                                     Label="@sector.Description"
-                                     Checked="@sector.Selected"
+                                     @bind-Value="@sector.Selected"
+                                     Label="@sector.SectorName"
                                      CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
                                      Color="Color.Primary" />
                     }
@@ -69,14 +69,14 @@
 </div>
 @code{
     [Parameter]
-    public EventCallback<List<SectorDTO>> OnSectoresSeleccionChanged { get; set; }
+    public EventCallback<List<DetailSectorFarmDTO>> OnSectoresSeleccionChanged { get; set; }
 
     private string _hidden = "hidden";
 
     private int? _selectedFinca;
     private int? _selectedTask;
 
-    private List<SectorDTO> SelectedSectorList { get; set; } = new();
+    private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
     private List<FarmDTO> FarmList = new()
     {
@@ -86,9 +86,9 @@
         new() { Id = 4, Name = "Finca Las Aguaditas" }
     };
 
-    private List<SectorDTO> CurrentFarmSector = new();
-    private List<SectorDTO> ColumnSector1 = new();
-    private List<SectorDTO> ColumSector2 = new();
+    private List<DetailSectorFarmDTO> CurrentFarmSector = new();
+    private List<DetailSectorFarmDTO> ColumnSector1 = new();
+    private List<DetailSectorFarmDTO> ColumSector2 = new();
 
     private async Task OnFincaChanged(int? farmId)
     {
@@ -101,27 +101,27 @@
         {
             1 => new()
             {
-                new() { Id = 1, Description = "Cuadro A" },
-                new() { Id = 2, Description = "Cuadro B" },
-                new() { Id = 3, Description = "Cuadro C" },
-                new() { Id = 4, Description = "Cuadro D" },
+                new() { Id = 1, SectorName = "Cuadro A" },
+                new() { Id = 2, SectorName = "Cuadro B" },
+                new() { Id = 3, SectorName = "Cuadro C" },
+                new() { Id = 4, SectorName = "Cuadro D" },
             },
             2 => new()
             {
-                new() { Id = 5, Description = "Cuadro E" },
-                new() { Id = 6, Description = "Cuadro F" },
-                new() { Id = 7, Description = "Cuadro G" }
+                new() { Id = 5, SectorName = "Cuadro E" },
+                new() { Id = 6, SectorName = "Cuadro F" },
+                new() { Id = 7, SectorName = "Cuadro G" }
             },
             3 => new()
             {
-                new() { Id = 8, Description = "Cuadro H" },
-                new() { Id = 9, Description = "Cuadro I" }
+                new() { Id = 8, SectorName = "Cuadro H" },
+                new() { Id = 9, SectorName = "Cuadro I" }
             },
             4 => new()
             {
-                new() { Id = 8, Description = "Cuadro J" },
-                new() { Id = 9, Description = "Cuadro K" },
-                new() { Id = 10, Description = "Cuadro L" }
+                new() { Id = 8, SectorName = "Cuadro J" },
+                new() { Id = 9, SectorName = "Cuadro K" },
+                new() { Id = 10, SectorName = "Cuadro L" }
             },
             _ => new()
         };

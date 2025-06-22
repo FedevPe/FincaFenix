@@ -22,9 +22,9 @@
 </div>
 
 @code {
-    private List<SectorDTO> SelectedSectorList { get; set; } = new();
+    private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
-    private void ActualizarSectoresSeleccionados(List<SectorDTO> sectores)
+    private void ActualizarSectoresSeleccionados(List<DetailSectorFarmDTO> sectores)
     {
         SelectedSectorList = sectores;
         StateHasChanged();

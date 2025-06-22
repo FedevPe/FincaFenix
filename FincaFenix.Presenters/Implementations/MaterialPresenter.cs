@@ -18,7 +18,7 @@ namespace FincaFenix.Presenters.Implementations
             MaterialList = materialList.Select(material => new MaterialDTO
             {
                 Id = material.Id,
-                Name = material.Name
+                Name = material.CommercialName
             }).ToList();
 
             return Task.CompletedTask;

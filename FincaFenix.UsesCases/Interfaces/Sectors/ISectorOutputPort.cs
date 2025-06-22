@@ -5,8 +5,8 @@ namespace FincaFenix.UsesCases.Interfaces.Sectors
 {
     public interface ISectorOutputPort
     {
-        public List<SectorDTO> SectorList { get; }
-        Task HandleList(IEnumerable<SectorEntity> sectorList);
-        Task Handle(SectorEntity sector);
+        public List<DetailSectorFarmDTO> SectorList { get; }
+        Task HandleList(IEnumerable<DetailSectorFarmEntity> sectorList);
+        Task Handle(DetailSectorFarmEntity sector);
     }
 }

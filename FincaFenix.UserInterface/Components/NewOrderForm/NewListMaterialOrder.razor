@@ -18,7 +18,7 @@
                     <MudTextField @bind-Value="material.Name" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
                 </MudItem>
                 <MudItem xs="12" lg="1">
-                    <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" Type="number" />
+                    <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="InputType.Number" />
                 </MudItem>
                 <MudItem xs="12" lg="3">
                     <MudSelect T="string" @bind-Value="material.Unit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>

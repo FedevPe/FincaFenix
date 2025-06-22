@@ -6,12 +6,12 @@ namespace FincaFenix.Gateways.Implementations
 {
     public class SectorRepository(ISectorQueryService queryService) : ISectorRepository
     {
-        public async Task<IEnumerable<SectorEntity>> GetAllSectorsByFarmId(int farmId)
+        public async Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByFarmId(int farmId)
         {
             return await queryService.GetSectorListByFarmId(farmId);
         }
 
-        public async Task<IEnumerable<SectorEntity>> GetAllSectorsByOrderId(int orderId)
+        public async Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByOrderId(int orderId)
         {
             return await queryService.GetSectorListByFarmId(orderId);
         }

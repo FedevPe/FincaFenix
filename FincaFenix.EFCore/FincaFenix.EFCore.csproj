@@ -19,11 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configurations\" />
-    <Folder Include="Context\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Options\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+    <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
   </ItemGroup>
 
 </Project>
