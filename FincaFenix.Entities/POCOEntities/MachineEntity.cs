@@ -1,11 +1,11 @@
 ﻿namespace FincaFenix.Entities.POCOEntities
 {
-    public class FarmEntity
+    public class MachineEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public decimal Capacity { get; set; }
+        public string CapacityUnit { get; set; }
         public bool IsDeleted { get; set; }
-
-        public ICollection<Employee_FarmEntity> FarmList { get; set; } = new List<Employee_FarmEntity>();
     }
 }
