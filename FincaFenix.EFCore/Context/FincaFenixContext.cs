@@ -1,10 +1,12 @@
-﻿using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.EFCore.Options;
+using FincaFenix.Entities.POCOEntities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace FincaFenix.EFCore.Context
 {
-    public class FincaFenixContext : DbContext
+    public class FincaFenixContext (IOptions<DBOption> dbOptions) : DbContext
     {
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }
@@ -30,8 +32,7 @@ namespace FincaFenix.EFCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;database=FincaFenixTestDB;Integrated Security=True;Connect Timeout=30;" +
-                    "Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+                optionsBuilder.UseSqlServer(dbOptions.Value.ConnectionString);
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

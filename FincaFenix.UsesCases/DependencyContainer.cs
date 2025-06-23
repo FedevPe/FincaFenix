@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyContainer
 {
-    public static IServiceCollection AddUseCases(this IServiceCollection services)
+    public static IServiceCollection AddUseCasesServices(this IServiceCollection services)
     {
         //Interactors
         services.AddTransient<IFarmInputPort, FarmInteractor>();

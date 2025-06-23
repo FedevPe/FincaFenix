@@ -1,4 +1,4 @@
-namespace UniversitarySistem.WebApi
+namespace FincaFenix.WebAPI
 {
     public class Program
     {
@@ -6,7 +6,7 @@ namespace UniversitarySistem.WebApi
         {
             WebApplication.CreateBuilder(args)
                 .CreateWebApplication()
-                .ConfigureWebApplication()
+                .ConfigureApplication()
                 .Run();
         }
     }

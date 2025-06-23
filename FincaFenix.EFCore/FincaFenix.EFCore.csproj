@@ -20,11 +20,13 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Services\" />
+    <Folder Include="Services\Farm\" />
+    <Folder Include="Services\DetailSector\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+    <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
     <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
   </ItemGroup>
 

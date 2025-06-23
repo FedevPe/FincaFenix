@@ -11,12 +11,12 @@
     <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-3">
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Finca</MudText>
-            <MudSelect T="int?" Margin="Margin.Dense" FullWidth="true"
+            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
                        FitContent="true" Label="Seleccione la finca" Variant="Variant.Outlined" Clearable
-                       ValueChanged="OnFincaChanged">
-                @foreach (var farm in FarmList)
+                       ValueChanged="OnFarmChanged">
+                @foreach (var farm in InfoViewModel.Farms)
                 {
-                    <MudSelectItem T="int?" Value="@farm.Id">@farm.Name</MudSelectItem>
+                    <MudSelectItem T="int" Value="@farm.Id">@farm.Name</MudSelectItem>
                 }
             </MudSelect>
         </MudItem>
@@ -24,15 +24,16 @@
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
             <MudSelect @bind-Value="_selectedTask" Margin="Margin.Dense" FullWidth="true" FitContent="true" Label="Seleccione la tarea" Variant="Variant.Outlined" Clearable>
-                <MudSelectItem T="int?" Value="1">Aplicación de fertilizantes</MudSelectItem>
-                <MudSelectItem T="int?" Value="2">Aplicación de herbicidas</MudSelectItem>
-                <MudSelectItem T="int?" Value="3">Tratameinto fitosanitario</MudSelectItem>
+                @foreach (var task in InfoViewModel.Tasks)
+                {
+                    <MudSelectItem T="int" Value="@task.Id">@task.Description</MudSelectItem>
+                }
             </MudSelect>
         </MudItem>
 
-        @if(_selectedFinca != null && _selectedFinca != 0)
+        @if(_selectedFarm != 0)
         {
-            <MudItem xs="12" class="@_hidden">
+            <MudItem xs="12">
                 <MudText Typo="Typo.h6">Sectores de la finca</MudText>
             </MudItem>
         }
@@ -47,19 +48,19 @@
                         <MudCheckBox T="bool"
                                      @bind-Value="@sector.Selected"
                                      Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
+                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
                                      Color="Color.Primary" />
                     }
                 </MudItem>
 
                 <MudItem xs="12" sm="6" lg="5">
-                    @foreach (var sector in ColumSector2)
+                    @foreach (var sector in ColumnSector2)
                     {
 
                         <MudCheckBox T="bool"
                                      @bind-Value="@sector.Selected"
                                      Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSelectionChanged(); })"
+                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
                                      Color="Color.Primary" />
                     }
                 </MudItem>
@@ -69,82 +70,61 @@
 </div>
 @code{
     [Parameter]
-    public EventCallback<List<DetailSectorFarmDTO>> OnSectoresSeleccionChanged { get; set; }
+    public EventCallback<List<DetailSectorFarmDTO>> SectorsSelectionChanged { get; set; }
+    [Parameter]
+    public InfoCreateOrderViewModel InfoViewModel { get; set; } = default!;
 
-    private string _hidden = "hidden";
+    private int _selectedFarm;
+    private int _selectedTask;
 
-    private int? _selectedFinca;
-    private int? _selectedTask;
-
+    private List<DetailSectorFarmDTO> Sectors { get; set; } = new();
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
-    private List<FarmDTO> FarmList = new()
-    {
-        new() { Id = 1, Name = "Finca San Carlos" },
-        new() { Id = 2, Name = "Finca Goudge" },
-        new() { Id = 3, Name = "Finca Doña Blanca" },
-        new() { Id = 4, Name = "Finca Las Aguaditas" }
-    };
-
-    private List<DetailSectorFarmDTO> CurrentFarmSector = new();
     private List<DetailSectorFarmDTO> ColumnSector1 = new();
-    private List<DetailSectorFarmDTO> ColumSector2 = new();
+    private List<DetailSectorFarmDTO> ColumnSector2 = new();
 
-    private async Task OnFincaChanged(int? farmId)
+    private async Task OnFarmChanged(int farmId)
     {
-        _selectedFinca = farmId;
-        SelectedSectorList.Clear();
+        _selectedFarm = farmId;
+
         ColumnSector1.Clear();
-        ColumSector2.Clear();
+        ColumnSector2.Clear();
+        SelectedSectorList.Clear();
 
-        CurrentFarmSector = farmId switch
+        if (_selectedFarm != 0)
         {
-            1 => new()
+            await InfoViewModel.LoadSectorsForFarmIdAsync(_selectedFarm);
+            Sectors = InfoViewModel.Sectors.ToList();
+            for (int i = 0; i < Sectors.Count; i++)
             {
-                new() { Id = 1, SectorName = "Cuadro A" },
-                new() { Id = 2, SectorName = "Cuadro B" },
-                new() { Id = 3, SectorName = "Cuadro C" },
-                new() { Id = 4, SectorName = "Cuadro D" },
-            },
-            2 => new()
-            {
-                new() { Id = 5, SectorName = "Cuadro E" },
-                new() { Id = 6, SectorName = "Cuadro F" },
-                new() { Id = 7, SectorName = "Cuadro G" }
-            },
-            3 => new()
-            {
-                new() { Id = 8, SectorName = "Cuadro H" },
-                new() { Id = 9, SectorName = "Cuadro I" }
-            },
-            4 => new()
-            {
-                new() { Id = 8, SectorName = "Cuadro J" },
-                new() { Id = 9, SectorName = "Cuadro K" },
-                new() { Id = 10, SectorName = "Cuadro L" }
-            },
-            _ => new()
-        };
+                if (i % 2 == 0)
+                    ColumnSector1.Add(Sectors[i]);
+                else
+                    ColumnSector2.Add(Sectors[i]);
+            }
+        }
+        else
+        {
+            Sectors.Clear();
+        }
+        await SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
+    }
+    private Task OnSectorSelectionChanged(DetailSectorFarmDTO sector, bool isChecked)
+    {
+        sector.Selected = isChecked;
 
-        for (int i = 0; i < CurrentFarmSector.Count; i++)
+        if (isChecked)
         {
-            if (i % 2 == 0) ColumnSector1.Add(CurrentFarmSector[i]);
-            else ColumSector2.Add(CurrentFarmSector[i]);
+            if (!SelectedSectorList.Contains(sector))
+                SelectedSectorList.Add(sector);
+        }
+        else
+        {
+            SelectedSectorList.Remove(sector);
         }
 
-        await NotificarCambio();
-        StateHasChanged();
-    }
+        SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
 
-    private async Task OnSelectionChanged()
-    {
-        SelectedSectorList = CurrentFarmSector.Where(s => s.Selected).ToList();
-        await NotificarCambio();
-    }
-
-    private async Task NotificarCambio()
-    {
-        if (OnSectoresSeleccionChanged.HasDelegate)
-            await OnSectoresSeleccionChanged.InvokeAsync(SelectedSectorList);
+        return SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
     }
 }

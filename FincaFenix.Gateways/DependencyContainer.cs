@@ -5,7 +5,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyContainer
     {
-        public static IServiceCollection AddGateways(this IServiceCollection services)
+        public static IServiceCollection AddGatewaysServices(this IServiceCollection services)
         {
             services.AddTransient<IFarmRepository, FarmRepository>()
                     .AddTransient<IMaterialRepository, MaterialRepository>()

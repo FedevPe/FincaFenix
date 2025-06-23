@@ -22,6 +22,8 @@
 </div>
 
 @code {
+    [Inject] InfoCreateOrderViewModel InfoViewModel { get; set; } = default!;
+
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
     private void ActualizarSectoresSeleccionados(List<DetailSectorFarmDTO> sectores)

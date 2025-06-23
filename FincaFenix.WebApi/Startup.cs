@@ -1,28 +1,33 @@
-﻿namespace UniversitarySistem.WebApi
+﻿using FincaFenix.EFCore.Options;
+using FincaFenix.InversionOfControl;
+
+namespace FincaFenix.WebAPI
 {
-    internal static class Startup
+    public static class Startup
     {
-        public static WebApplication CreateWebApplication (
-            this WebApplicationBuilder builder)
+        public static WebApplication CreateWebApplication
+            (this WebApplicationBuilder builder)
         {
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            //builder.Services.AddUniversitarySistemServices(dbOptions => 
-            //    builder.Configuration.GetSection(DBOption.SectionKey).Bind(dbOptions));
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddDefaultPolicy(config =>
-            //    {
-            //        config.AllowAnyMethod();
-            //        config.AllowAnyHeader();
-            //        config.AllowAnyOrigin();
-            //    });
-            //});
+            builder.Services.AddDBContextServices(dbOptions =>
+                builder.Configuration.GetSection(
+                    DBOption.SectionKey).Bind(dbOptions));
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(config =>
+                {
+                    config.AllowAnyMethod();
+                    config.AllowAnyHeader();
+                    config.AllowAnyOrigin();
+                });
+            });
 
             return builder.Build();
         }
-        public static WebApplication ConfigureWebApplication
+        public static WebApplication ConfigureApplication
             (this WebApplication app)
         {
             if (app.Environment.IsDevelopment())
