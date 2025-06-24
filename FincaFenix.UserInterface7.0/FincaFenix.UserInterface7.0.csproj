@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FincaFenix.UserInterface7._0</RootNamespace>
+	  <LangVersion>12.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MudBlazor" Version="7.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="D:\Repositorios\FincaFenix\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+    <ProjectReference Include="D:\Repositorios\FincaFenix\FincaFenix.ViewModels\FincaFenix.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>

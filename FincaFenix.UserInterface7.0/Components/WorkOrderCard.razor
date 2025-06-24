@@ -1,0 +1,152 @@
+﻿<MudCard Class="info-card h-100" Elevation="3">
+    <MudCardContent Class="card-header pa-4 rounded-t-lg">
+        <div class="d-flex align-center justify-space-between ">
+            <div>
+                <MudText Typo="Typo.h5" Class="card-title mb-1">
+                    Orden N°@NumOrden
+                </MudText>
+                <MudText Typo="Typo.body2" Class="card-subtitle">
+                    Finca @Finca
+                </MudText>
+            </div>
+            <MudIcon Icon="fa-solid fa-seedling"
+                     Class="header-icon"
+                     Size="Size.Medium" />
+        </div>
+    </MudCardContent>
+
+    <!-- Divider sutil -->
+    <MudDivider Class="custom-divider" />
+
+    <!-- Contenido principal -->
+    <MudCardContent Class="card-body pa-4">
+        <div class="d-flex flex-column align-start">
+            <div class="d-flex">
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard"
+                         Size="Size.Small"
+                         Color="Color.Info"
+                         Class="content-icon me-2" />
+                <MudText Typo="Typo.body1" Class="content-text">
+                    @Tarea
+                </MudText>
+            </div>
+            <div class="d-flex mt-1">
+                <MudIcon Icon="fa-solid fa-calendar"
+                         Size="Size.Small"
+                         Color="Color.Primary"
+                         Class="content-icon me-2" />
+                <MudText Typo="Typo.body1" Class="content-text">
+                    @Fecha
+                </MudText>
+            </div>
+        </div>
+    </MudCardContent>
+
+    <!-- Footer con acciones (opcional) -->
+    <div class="d-flex flex-column justify-content-center align-items-end">
+        <MudCardActions Class="card-actions pa-3 d-flex justify-end">
+            <MudButton Variant="Variant.Text"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Visibility"
+                       Class="action-button"
+                       Color="Color.Info"
+                       IconColor="Color.Info">
+                Ver Detalles
+            </MudButton>
+            <MudSpacer />
+        </MudCardActions>
+    </div>
+</MudCard>
+
+<style>
+    .info-card {
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+    .card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #2c3e50;
+        letter-spacing: -0.5px;
+    }
+
+    .card-subtitle {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .header-icon {
+        color: #28a745;
+        opacity: 0.8;
+    }
+
+    .custom-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+
+    .content-icon {
+        color: #17a2b8;
+    }
+
+    .content-text {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .card-actions {
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .action-button {
+        color: #004D40;
+        font-weight: 500;
+        text-transform: none;
+    }
+
+        .action-button:hover {
+            background-color: rgba(0, 123, 255, 0.04);
+        }
+    /* Accesibilidad */
+    .info-card:focus-within {
+        outline: 2px solid #004D40;
+        outline-offset: 2px;
+    }
+    /* Animaciones suaves */
+    .status-chip {
+        transition: transform 0.2s ease;
+    }
+
+        .status-chip:hover {
+            transform: scale(1.05);
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string NumOrden { get; set; }
+    [Parameter]
+    public string Finca { get; set; }
+    [Parameter]
+    public string Tarea { get; set; }
+    [Parameter]
+    public DateOnly Fecha { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+}

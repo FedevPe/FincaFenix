@@ -1,0 +1,86 @@
+﻿<div class="container-fluid shadow p-3 border rounded mb-1 bg-color-white">
+    <div class="d-flex justify-content-center align-item-center bg-color-white">
+        <MudIcon Icon="@Icons.Material.Filled.FilterAlt" Size="Size.Large" />
+        <MudText Typo="Typo.h5"><b>Filtros de busqueda</b></MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.ArrowDropDown" Size="Size.Medium" OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudIconButton>
+    </div>
+    <MudDivider Class="my-1" Style="border-color: black;" />
+    <div>
+        <MudGrid Justify="Justify.FlexStart" Class="mb-2">
+            <MudItem xs="6" lg="6">
+                <MudTextField @bind-Value="Search" Label="Buscar por n° de orden..." Variant="Variant.Outlined" Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem lg="2" Class="mt-2">
+                <MudIconButton Variant="Variant.Filled" Icon="@Icons.Material.Filled.Search" Color="Color.Primary" Size="Size.Medium" />
+            </MudItem>
+        </MudGrid>
+        <MudCollapse Expanded="_expanded">
+            <MudGrid Spacing="4" Justify="Justify.FlexStart" Class="mt-4 g-2">
+                <MudItem xs="12" lg="2">
+                    <MudSelect @bind-Value="_selectedFinca"
+                               Label="Finca"
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               Clearable
+                               Adornment="Adornment.End"
+                               AdornmentIcon="@Icons.Material.Filled.LocationOn"
+                               AdornmentColor="Color.Error"
+                               ShrinkLabel>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" lg="2">
+                    <MudSelect @bind-Value="_selectedTarea"
+                               Label="Tarea"
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               Clearable
+                               Adornment="Adornment.End"
+                               AdornmentIcon="@Icons.Material.Filled.Dashboard"
+                               AdornmentColor="Color.Info"
+                               ShrinkLabel>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" lg="2">
+                    <MudSelect @bind-Value="_selectedEstado"
+                               Label="Estado"
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               Clearable
+                               Adornment="Adornment.End"
+                               AdornmentIcon="@Icons.Material.Filled.PendingActions"
+                               AdornmentColor="Color.Warning"
+                               ShrinkLabel>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" lg="6">
+                    <MudDateRangePicker @ref="_picker" Label="Fecha" @bind-DateRange="_dateRange"
+                                        AutoClose="true" PickerVariant="PickerVariant.Dialog"
+                                        Variant="Variant.Outlined" Margin="Margin.Dense" AdornmentColor="Color.Dark">
+                        <PickerActions>
+                            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Eliminar</MudButton>
+                            <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancelar</MudButton>
+                            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
+                        </PickerActions>
+                    </MudDateRangePicker>
+                </MudItem>
+            </MudGrid>
+        </MudCollapse>
+    </div>
+</div>
+
+@code {
+    private bool _expanded = false;
+    private string _selectedFinca;
+    private string _selectedTarea;
+    private string _selectedEstado;
+    private MudDateRangePicker _picker;
+    private DateRange _dateRange = new DateRange();
+
+    public string Search { get; set; }
+
+    void OnExpandCollapseClick()
+    {
+        _expanded = !_expanded;
+    }
+}
