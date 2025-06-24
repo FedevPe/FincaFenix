@@ -1,0 +1,367 @@
+﻿@page "/orden-trabajo/{Id:int}"
+@using MudBlazor
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 ">
+    <!-- Header con botón de regreso -->
+    <MudPaper Class="pa-4 mb-4 shadow-lg border border-light" Elevation="1">
+        <MudGrid AlignItems="Center">
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h4" Class="mb-4" Color="Color.Primary">
+                    Orden de Trabajo #@workOrder.Numero
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" Class="d-flex justify-end">
+                <MudChip T="string" Color="GetStatusColor()" 
+                        Size="Size.Medium" 
+                        Class="px-4">
+                        @workOrder.Estado
+                </MudChip>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Información Principal -->
+    <MudGrid>
+        <!-- Columna Izquierda -->
+        <MudItem xs="12" md="8">
+            <!-- Detalles Principales -->
+            <MudPaper Class="pa-6 mb-4 shadow-lg border border-light" Elevation="2">
+                <MudGrid>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Finca</MudText>
+                        <MudText Typo="Typo.body1" Class="mb-3">@workOrder.Cliente</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Fecha de Creación</MudText>
+                        <MudText Typo="Typo.body1" Class="mb-3">@workOrder.FechaCreacion.ToString("dd/MM/yyyy")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Tarea</MudText>
+                        <MudText Typo="Typo.body1" Class="mb-3">@workOrder.FechaProgramada.ToString("dd/MM/yyyy")</MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="6">
+                        <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Creada por:</MudText>
+                        <MudText Typo="Typo.body1" Class="mb-3">@workOrder.TecnicoAsignado</MudText>
+                    </MudItem>
+                </MudGrid>
+
+                <MudDivider Class="my-4" />
+
+                @if (!string.IsNullOrEmpty(workOrder.Descripcion))
+                {
+                    <MudText Typo="Typo.subtitle2" Class="mb-2 text-muted">Descripción del Trabajo</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-4">@workOrder.Descripcion</MudText>
+                }
+            </MudPaper>
+
+            <!-- Materiales y Equipos -->
+            <MudPaper Class="pa-6 mb-4 shadow-lg border border-light" Elevation="2">
+                <MudText Typo="Typo.h6" Class="mb-4">Materiales y Equipos</MudText> 
+                @if(workOrder.Materiales.Any())                
+                {                   
+                    <MudTable Items="workOrder.Materiales" Hover="true" Dense="true" Class="mb-4">                        
+                        <HeaderContent>                            
+                            <MudTh>Material</MudTh>                            
+                            <MudTh Style="text-align:right">Cantidad</MudTh>                           
+                            <MudTh>Unidad</MudTh>                            
+                            <MudTh Style="text-align:right">Precio Unit.</MudTh>            
+                            <MudTh Style="text-align:right">Total</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Material">@context.Nombre</MudTd>            
+                            <MudTd DataLabel="Cantidad"Style="text-align:right">@context.Cantidad</MudTd>
+                            <MudTd DataLabel="Unidad">@context.Unidad</MudTd>
+                            <MudTd DataLabel="Precio"Style="text-align:right">$@context.PrecioUnitario.ToString("N2")</MudTd>            
+                            <MudTd DataLabel="Total"Style="text-align:right">$@((context.Cantidad * context.PrecioUnitario).ToString("N2"))</MudTd>
+                        </RowTemplate>   
+                    </MudTable>
+                 }         
+                else         
+                {             
+                    <MudAlert Severity="Severity.Info" Class="mb-4">No se han asignado materiales a esta orden de trabajo.</MudAlert>                
+                }
+            </MudPaper>
+
+            <!-- Historial de Actividades -->
+            <MudPaper Class="pa-6 shadow-lg border border-light" Elevation="2">
+                <MudText Typo="Typo.h6" Class="mb-4">Historial de Actividades</MudText>
+                <MudTimeline TimelineOrientation="TimelineOrientation.Vertical">
+                    @foreach
+                    (var actividad in workOrder.Actividades.OrderByDescending(a => a.Fecha))
+                    {                    
+                            <MudTimelineItem Color="GetActivityColor(actividad.Tipo)" Size="Size.Small">                            
+                                <ItemContent>                                
+                                    <MudText Typo="Typo.body2" Class="mb-1">                                    
+                                        <strong>@actividad.Titulo</strong>                                
+                                     </MudText>                                
+                                     <MudText Typo="Typo.caption" Class="text-muted mb-2">@actividad.Fecha.ToString("dd/MM/yyyy HH:mm") - @actividad.Usuario</MudText>                                
+                                     @if (!string.IsNullOrEmpty(actividad.Descripcion))
+                                     {                                    
+                                        <MudText Typo="Typo.body2">@actividad.Descripcion</MudText>                                
+                                     }                              
+                                </ItemContent>                       
+                            </MudTimelineItem>                    
+                    }                
+                </MudTimeline>            
+             </MudPaper>        
+         </MudItem>
+        <!-- Columna Derecha -->
+        <MudItem xs="12" md="4">
+            <!-- Resumen Financiero -->
+            <MudPaper Class="pa-6 mb-4 shadow-lg border border-light" Elevation="2">
+                <MudText Typo="Typo.h6" Class="mb-4">Resumen Financiero</MudText>
+                
+                <MudGrid>
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.body2">Materiales:</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="text-right">
+                        <MudText Typo="Typo.body2">$@CalcularTotalMateriales().ToString("N2")</MudText>
+                    </MudItem>
+                    
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.body2">Mano de Obra:</MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="text-right">
+                        <MudText Typo="Typo.body2">$@workOrder.CostoManoObra.ToString("N2")</MudText>
+                    </MudItem>
+                    
+                    <MudItem xs="12">
+                        <MudDivider Class="my-2" />
+                    </MudItem>
+                    
+                    <MudItem xs="8">
+                        <MudText Typo="Typo.subtitle1"><strong>Total:</strong></MudText>
+                    </MudItem>
+                    <MudItem xs="4" Class="text-right">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Primary">
+                            <strong>$@(CalcularTotalMateriales() + workOrder.CostoManoObra).ToString("N2")</strong>
+                        </MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+
+            <!-- Información de Contacto -->
+            <MudPaper Class="pa-6 mb-4 shadow-lg border border-light" Elevation="2">
+                <MudText Typo="Typo.h6" Class="mb-4">Información de Contacto</MudText>
+                
+                <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Teléfono</MudText>
+                <MudText Typo="Typo.body2" Class="mb-3">@workOrder.TelefonoContacto</MudText>
+                
+                <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Email</MudText>
+                <MudText Typo="Typo.body2" Class="mb-3">@workOrder.EmailContacto</MudText>
+                
+                <MudText Typo="Typo.subtitle2" Class="mb-1 text-muted">Dirección</MudText>
+                <MudText Typo="Typo.body2">@workOrder.Direccion</MudText>
+            </MudPaper>
+
+            <!-- Acciones -->
+            <MudPaper Class="pa-6 shadow-lg border border-light" Elevation="2">
+                <MudText Typo="Typo.h6" Class="mb-4">Acciones</MudText>
+                
+                <MudStack Spacing="2">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              StartIcon="Icons.Material.Filled.Edit"
+                              FullWidth="true"
+                              OnClick="EditarOrden">
+                        Editar Orden
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" 
+                              Color="Color.Secondary" 
+                              StartIcon="Icons.Material.Filled.Print"
+                              FullWidth="true"
+                              OnClick="ImprimirOrden">
+                        Imprimir
+                    </MudButton>                  
+                    @if(workOrder.Estado == "Pendiente")
+                    {
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="Icons.Material.Filled.PlayArrow"
+                                   FullWidth="true"
+                                   OnClick="IniciarOrden">Iniciar Trabajo</MudButton>                    
+                    }                    
+                    @if(workOrder.Estado == "En Proceso")
+                    {                        
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Success"
+                                   StartIcon="Icons.Material.Filled.Check"
+                                   FullWidth="true"
+                                   OnClick="CompletarOrden">Completar </MudButton>                    
+                    }
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    
+    private WorkOrder workOrder = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simular carga de datos - aquí conectarías con tu servicio/API
+        await CargarOrdenTrabajo();
+    }
+
+    private async Task CargarOrdenTrabajo()
+    {
+        // Datos de ejemplo - reemplazar con llamada a tu servicio
+        workOrder = new WorkOrder
+        {
+            Id = Id,
+            Numero = $"OT-{Id:D6}",
+            Cliente = "Empresa ABC S.A.",
+            Estado = "En Proceso",
+            FechaCreacion = DateTime.Now.AddDays(-5),
+            FechaProgramada = DateTime.Now.AddDays(2),
+            TecnicoAsignado = "Juan Pérez",
+            Descripcion = "Mantenimiento preventivo de equipos de aire acondicionado en oficinas principales. Incluye limpieza de filtros, revisión de conexiones eléctricas y verificación de niveles de refrigerante.",
+            Observaciones = "Cliente solicita realizar el trabajo en horario no laboral (después de las 18:00).",
+            TelefonoContacto = "+54 261 123-4567",
+            EmailContacto = "contacto@empresaabc.com",
+            Direccion = "Av. San Martín 1234, Mendoza Capital",
+            CostoManoObra = 15000,
+            Materiales = new List<Material>
+            {
+                new Material { Nombre = "Filtro de aire", Cantidad = 4, Unidad = "unid", PrecioUnitario = 850 },
+                new Material { Nombre = "Gas refrigerante R410A", Cantidad = 2, Unidad = "kg", PrecioUnitario = 3200 },
+                new Material { Nombre = "Limpiador de serpentines", Cantidad = 1, Unidad = "lt", PrecioUnitario = 1200 }
+            },
+            Actividades = new List<Actividad>
+            {
+                new Actividad 
+                { 
+                    Fecha = DateTime.Now.AddDays(-5), 
+                    Titulo = "Orden creada", 
+                    Descripcion = "Orden de trabajo creada por el sistema",
+                    Usuario = "Sistema",
+                    Tipo = "Creacion"
+                },
+                new Actividad 
+                { 
+                    Fecha = DateTime.Now.AddDays(-4), 
+                    Titulo = "Técnico asignado", 
+                    Descripcion = "Se asignó a Juan Pérez como técnico responsable",
+                    Usuario = "Admin",
+                    Tipo = "Asignacion"
+                },
+                new Actividad 
+                { 
+                    Fecha = DateTime.Now.AddDays(-2), 
+                    Titulo = "Materiales solicitados", 
+                    Descripcion = "Se agregaron los materiales necesarios para el mantenimiento",
+                    Usuario = "Juan Pérez",
+                    Tipo = "Materiales"
+                },
+                new Actividad 
+                { 
+                    Fecha = DateTime.Now.AddDays(-1), 
+                    Titulo = "Trabajo iniciado", 
+                    Descripcion = "Se inició el trabajo de mantenimiento",
+                    Usuario = "Juan Pérez",
+                    Tipo = "Inicio"
+                }
+            }
+        };
+    }
+
+    private Color GetStatusColor()
+    {
+        return workOrder.Estado switch
+        {
+            "Pendiente" => Color.Warning,
+            "En Proceso" => Color.Info,
+            "Completada" => Color.Success,
+            "Cancelada" => Color.Error,
+            _ => Color.Default
+        };
+    }
+
+    private Color GetActivityColor(string tipo)
+    {
+        return tipo switch
+        {
+            "Creacion" => Color.Primary,
+            "Asignacion" => Color.Info,
+            "Materiales" => Color.Secondary,
+            "Inicio" => Color.Success,
+            "Completado" => Color.Success,
+            _ => Color.Default
+        };
+    }
+
+    private decimal CalcularTotalMateriales()
+    {
+        return workOrder.Materiales.Sum(m => m.Cantidad * m.PrecioUnitario);
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/ordenes-trabajo");
+    }
+
+    private void EditarOrden()
+    {
+        Navigation.NavigateTo($"/orden-trabajo/editar/{Id}");
+    }
+
+    private void ImprimirOrden()
+    {
+        // Implementar lógica de impresión
+    }
+
+    private async Task IniciarOrden()
+    {
+        workOrder.Estado = "En Proceso";
+        // Aquí harías la llamada al servicio para actualizar el estado
+    }
+
+    private async Task CompletarOrden()
+    {
+        workOrder.Estado = "Completada";
+        // Aquí harías la llamada al servicio para actualizar el estado
+    }
+
+    // Clases de modelo
+    public class WorkOrder
+    {
+        public int Id { get; set; }
+        public string Numero { get; set; } = "";
+        public string Cliente { get; set; } = "";
+        public string Estado { get; set; } = "";
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaProgramada { get; set; }
+        public string TecnicoAsignado { get; set; } = "";
+        public string Descripcion { get; set; } = "";
+        public string Observaciones { get; set; } = "";
+        public string TelefonoContacto { get; set; } = "";
+        public string EmailContacto { get; set; } = "";
+        public string Direccion { get; set; } = "";
+        public decimal CostoManoObra { get; set; }
+        public List<Material> Materiales { get; set; } = new();
+        public List<Actividad> Actividades { get; set; } = new();
+    }
+
+    public class Material
+    {
+        public string Nombre { get; set; } = "";
+        public int Cantidad { get; set; }
+        public string Unidad { get; set; } = "";
+        public decimal PrecioUnitario { get; set; }
+    }
+
+    public class Actividad
+    {
+        public DateTime Fecha { get; set; }
+        public string Titulo { get; set; } = "";
+        public string Descripcion { get; set; } = "";
+        public string Usuario { get; set; } = "";
+        public string Tipo { get; set; } = "";
+    }
+}

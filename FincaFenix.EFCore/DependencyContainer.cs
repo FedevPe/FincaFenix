@@ -1,6 +1,5 @@
 ﻿using FincaFenix.EFCore.Options;
 using FincaFenix.EFCore.Services.Task;
-using FincaFenix.Gateways.Interfaces.Farm;
 using FincaFenix.Gateways.Interfaces.Task;
 
 namespace Microsoft.Extensions.DependencyInjection
