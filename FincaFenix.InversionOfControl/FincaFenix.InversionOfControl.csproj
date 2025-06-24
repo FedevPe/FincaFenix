@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <LangVersion>12.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,6 @@
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
     <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
     <ProjectReference Include="..\FincaFenix.Presenters\FincaFenix.Presenters.csproj" />
-    <ProjectReference Include="..\FincaFenix.UserInterface\FincaFenix.UserInterface.csproj" />
     <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
   </ItemGroup>
 

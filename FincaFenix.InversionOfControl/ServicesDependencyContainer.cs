@@ -13,7 +13,6 @@ namespace FincaFenix.InversionOfControl
                     .AddGatewaysServices()
                     .AddControllersServices()
                     .AddPresenterServices()
-                    .AddUserInterfaceServices()
                     .AddEFCoreServices(configureDBOptions);
 
             return services;
