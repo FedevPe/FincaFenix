@@ -12,11 +12,11 @@ public static class DependencyContainer
     public static IServiceCollection AddUseCasesServices(this IServiceCollection services)
     {
         //Interactors
-        services.AddSingleton<IFarmInputPort, FarmInteractor>();
-        services.AddSingleton<ISectorsInputPort, SectorInteractor>();
-        services.AddSingleton<ITaskInputPort, TaskInteractor>();
-        services.AddSingleton<IWorkOrderInputPort, WorkOrderInteractor>();
-        services.AddSingleton<IMaterialInputPort, MaterialInteractor>();
+        services.AddScoped<IFarmInputPort, FarmInteractor>();
+        services.AddScoped<ISectorsInputPort, SectorInteractor>();
+        services.AddScoped<ITaskInputPort, TaskInteractor>();
+        services.AddScoped<IWorkOrderInputPort, WorkOrderInteractor>();
+        services.AddScoped<IMaterialInputPort, MaterialInteractor>();
 
         return services;
     }

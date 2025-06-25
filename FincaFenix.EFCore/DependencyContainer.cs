@@ -14,17 +14,15 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class DependencyContainer
     {
-        public static IServiceCollection AddEFCoreServices(this IServiceCollection services, Action<DBOption> configureDBOptions)
+        public static IServiceCollection AddEFCoreServices(this IServiceCollection services)
         {
-            services.Configure(configureDBOptions);
+            services.AddScoped<ITaskQueryService, TaskQueryService>()
+                          .AddScoped<IFarmQueryService, FarmQueryService>()
+                          .AddScoped<IDetailSectorQueryService, DetailSectorQueryService>()
+                          .AddScoped<IMaterialQueryService, MaterialQueryService>()
+                          .AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 
-            services.AddSingleton<ITaskQueryService, TaskQueryService>()
-                    .AddSingleton<IFarmQueryService, FarmQueryService>()
-                    .AddSingleton<IDetailSectorQueryService, DetailSectorQueryService>()
-                    .AddSingleton<IMaterialQueryService, MaterialQueryService>()
-                    .AddSingleton<IWorkOrderQueryService, WorkOrderQueryService>();
-
-            services.AddSingleton<IWorkOrderCommandService, WorkOrderCommandService>();
+            services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 
             return services;
         }

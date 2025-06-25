@@ -7,11 +7,11 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddGatewaysServices(this IServiceCollection services)
         {
-            services.AddSingleton<IFarmRepository, FarmRepository>()
-                    .AddSingleton<IMaterialRepository, MaterialRepository>()
-                    .AddSingleton<IDetailSectorRepository, DetailSectorRepository>()
-                    .AddSingleton<ITaskRepository, TaskRepository>()
-                    .AddSingleton<IWorkOrderRepository, WorkOrderRepository>();
+            services.AddScoped<IFarmRepository, FarmRepository>()
+                         .AddScoped<IMaterialRepository, MaterialRepository>()
+                         .AddScoped<IDetailSectorRepository, DetailSectorRepository>()
+                         .AddScoped<ITaskRepository, TaskRepository>()
+                         .AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 
             return services;
         }

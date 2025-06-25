@@ -8,11 +8,11 @@ public static class DependencyContainer
     public static IServiceCollection AddControllersServices(this IServiceCollection services)
     {
         // Controllers
-        services.AddSingleton<IFarmController, FarmController>()
-                .AddSingleton<ISectorController, DetailSectorController>()
-                .AddSingleton<IMaterialController, MaterialController>()
-                .AddSingleton<ITaskController, TaskController>()
-                .AddSingleton<IWorkOrderController, WorkOrderController>();
+        services.AddTransient<IFarmController, FarmController>()
+                      .AddTransient<ISectorController, DetailSectorController>()
+                      .AddTransient<IMaterialController, MaterialController>()
+                      .AddTransient<ITaskController, TaskController>()
+                      .AddTransient<IWorkOrderController, WorkOrderController>();
 
         return services;
     }
