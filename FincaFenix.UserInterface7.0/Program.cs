@@ -16,12 +16,8 @@ namespace FincaFenix.UserInterface7._0
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
             builder.Services.AddScoped<TextAppBarState>();
-
-            builder.Services.AddServicesContainer(options =>
-            {
-                options.ConnectionString = builder.Configuration["DBOption:ConnectionStrings"];
-                Console.WriteLine("Cadena de conexión usada: " + options.ConnectionString);
-            });
+            builder.Services.AddControllers();
+            builder.Services.AddServicesContainer();
 
             var app = builder.Build();
 
