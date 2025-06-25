@@ -11,7 +11,7 @@ namespace FincaFenixControllers.Implementations
         ISectorsInputPort interactor,
         ISectorOutputPort presenter) : ISectorController
     {
-        [HttpGet("GetListSectorByFarmId")]        
+        [HttpGet("{farmId}/sectors")]
         public async Task<IEnumerable<DetailSectorFarmDTO>> DisplayListSectorByFarmId(int farmId)
         {
             await interactor.GetListSectorsByIdFarm(farmId);
@@ -20,7 +20,7 @@ namespace FincaFenixControllers.Implementations
 
         public async Task<IEnumerable<DetailSectorFarmDTO>> DisplayListSectorByOrderId(int orderId)
         {
-            await interactor.GetListSectorsByIdFarm(orderId);
+            await interactor.GetSectorsByOrderId(orderId);
             return presenter.SectorList;
         }
     }
