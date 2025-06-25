@@ -1,6 +1,7 @@
 ﻿@using FincaFenix.Entities.DTOs.WorkOrderDTOs
 @using FincaFenix.ViewModels
 @using FincaFenix.ViewModels.ViewModels
+
 <div class="container-fluid shadow rounded p-4 bg-color-white">
     <MudGrid>
         <MudItem lg="12">
@@ -75,7 +76,7 @@
     [Parameter]
     public EventCallback<List<DetailSectorFarmDTO>> SectorsSelectionChanged { get; set; }
     [Parameter]
-    public InfoCreateOrderViewModel InfoViewModel { get; set; } = default!;
+    public InfoCreateOrderViewModel InfoViewModel { get; set; }
 
     private int _selectedFarm;
     private int _selectedTask;

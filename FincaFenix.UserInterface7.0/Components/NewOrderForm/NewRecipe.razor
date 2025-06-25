@@ -1,131 +1,69 @@
-﻿@using FincaFenix.ViewModels.ViewModels
-<div class="container-fluid shadow rounded p-4 bg-color-white">
-    <MudGrid>
-        <MudItem lg="12">
-            <MudText Typo="Typo.h4">Nueva Orden de Trabajo</MudText>
-            <MudText Typo="Typo.subtitle1">Complete la información necesaria para crear la orden</MudText>
-        </MudItem>
-    </MudGrid>
-
-    <MudDivider Style="border-color: black;" />
-
-    <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-3">
-        <MudItem xs="12" lg="6">
-            <MudText Typo="Typo.h6">Finca</MudText>
-            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                       FitContent="true" Label="Seleccione la finca" Variant="Variant.Outlined" Clearable
-                       ValueChanged="OnFarmChanged">
-                @foreach (var farm in InfoViewModel.Farms)
-                {
-                    <MudSelectItem T="int" Value="@farm.Id">@farm.Name</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-
-        <MudItem xs="12" lg="6">
-            <MudText Typo="Typo.h6">Tarea</MudText>
-            <MudSelect @bind-Value="_selectedTask" Margin="Margin.Dense" FullWidth="true" FitContent="true" Label="Seleccione la tarea" Variant="Variant.Outlined" Clearable>
-                @foreach (var task in InfoViewModel.Tasks)
-                {
-                    <MudSelectItem T="int" Value="@task.Id">@task.Description</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-
-        @if (_selectedFarm != 0)
+﻿<div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
+    <div class="d-flex mb-2">
+        <MudText Typo="Typo.h4">Lista de materiales</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Size="Size.Small"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   @onclick="AddMaterial">Agregar Insumo</MudButton>
+    </div>
+    <div>
+        @if (MaterialList.Count() != 0)
         {
-            <MudItem xs="12">
-                <MudText Typo="Typo.h6">Sectores de la finca</MudText>
-            </MudItem>
+            <MudDivider style="border-color: black;" />
         }
-
-        <MudFlexBreak />
-
-        <MudItem xs="12" lg="6">
-            <MudGrid Justify="Justify.SpaceEvenly">
-                <MudItem xs="12" sm="6" lg="5">
-                    @foreach (var sector in ColumnSector1)
-                    {
-                        <MudCheckBox T="bool"
-                                     @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
-                                     Color="Color.Primary" />
-                    }
-                </MudItem>
-
-                <MudItem xs="12" sm="6" lg="5">
-                    @foreach (var sector in ColumnSector2)
-                    {
-
-                        <MudCheckBox T="bool"
-                                     @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
-                                     Color="Color.Primary" />
-                    }
-                </MudItem>
-            </MudGrid>
-        </MudItem>
-    </MudGrid>
-</div>
-@code {
-    [Parameter]
-    public EventCallback<List<DetailSectorFarmDTO>> SectorsSelectionChanged { get; set; }
-    [Parameter]
-    public InfoCreateOrderViewModel InfoViewModel { get; set; } = default!;
-
-    private int _selectedFarm;
-    private int _selectedTask;
-
-    private List<DetailSectorFarmDTO> Sectors { get; set; } = new();
-    private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
-
-    private List<DetailSectorFarmDTO> ColumnSector1 = new();
-    private List<DetailSectorFarmDTO> ColumnSector2 = new();
-
-    private async Task OnFarmChanged(int farmId)
-    {
-        _selectedFarm = farmId;
-
-        ColumnSector1.Clear();
-        ColumnSector2.Clear();
-        SelectedSectorList.Clear();
-
-        if (_selectedFarm != 0)
-        {
-            await InfoViewModel.LoadSectorsForFarmIdAsync(_selectedFarm);
-            Sectors = InfoViewModel.Sectors.ToList();
-            for (int i = 0; i < Sectors.Count; i++)
+        <MudGrid Spacing="2" Justify="Justify.Center" Class="mt-2">
+            @foreach (var material in MaterialList)
             {
-                if (i % 2 == 0)
-                    ColumnSector1.Add(Sectors[i]);
-                else
-                    ColumnSector2.Add(Sectors[i]);
+                <MudItem xs="12" lg="4">
+                    <MudTextField @bind-Value="material.Name" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" lg="1">
+                    <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="InputType.Number" />
+                </MudItem>
+                <MudItem xs="12" lg="3">
+                    <MudSelect T="string" @bind-Value="material.Unit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
+                        <MudSelectItem T="string" Value="@("Kg")">Kilogramos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Gr")">Gramos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("Lts")">Litros</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("m3")">Metros cúbicos</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("ml")">Mililitros</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" lg="1" Class="btnDelete">
+                    <MudIconButton Variant="Variant.Filled"
+                                   Color="Color.Error"
+                                   Size="Size.Small"
+                                   Icon="@Icons.Material.Filled.Delete"
+                                   @onclick="@(() => RemoveMaterial(material))" />
+                </MudItem>
             }
-        }
-        else
-        {
-            Sectors.Clear();
-        }
-        await SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
+        </MudGrid>
+    </div>
+</div>
+<style>
+    .btnDelete {
+        margin-top: 12px;
     }
-    private Task OnSectorSelectionChanged(DetailSectorFarmDTO sector, bool isChecked)
+</style>
+@code {
+    private string _materialName = string.Empty;
+    private string _materialUnit = string.Empty;
+
+    private List<MaterialOrderDTO> MaterialList = new List<MaterialOrderDTO>();
+
+    private void AddMaterial()
     {
-        sector.Selected = isChecked;
-
-        if (isChecked)
+        MaterialList.Add(new MaterialOrderDTO());
+        StateHasChanged();
+    }
+    private void RemoveMaterial(MaterialOrderDTO material)
+    {
+        if (MaterialList.Count != 0)
         {
-            if (!SelectedSectorList.Contains(sector))
-                SelectedSectorList.Add(sector);
+            MaterialList.Remove(material);
+            StateHasChanged();
         }
-        else
-        {
-            SelectedSectorList.Remove(sector);
-        }
-
-        SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
-
-        return SectorsSelectionChanged.InvokeAsync(SelectedSectorList);
     }
 }

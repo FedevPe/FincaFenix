@@ -1,5 +1,6 @@
 using FincaFenix.InversionOfControl;
 using FincaFenix.UserInterface7._0.Services;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 namespace FincaFenix.UserInterface7._0
@@ -14,7 +15,7 @@ namespace FincaFenix.UserInterface7._0
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
-            builder.Services.AddSingleton<TextAppBarState>();
+            builder.Services.AddScoped<TextAppBarState>();
 
             builder.Services.AddServicesContainer(options =>
             {
@@ -37,6 +38,8 @@ namespace FincaFenix.UserInterface7._0
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.MapControllers();
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");

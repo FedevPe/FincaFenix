@@ -36,6 +36,7 @@
 
     protected override void OnInitialized()
     {
+        TextAppBar.ConfigureDispatcher(InvokeAsync);
         TextAppBar.OnChange += StateHasChanged;
     }
     public void Dispose()

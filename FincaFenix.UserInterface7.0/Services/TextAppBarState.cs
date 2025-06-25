@@ -1,13 +1,14 @@
-﻿namespace FincaFenix.UserInterface7._0.Services
+﻿using Microsoft.AspNetCore.Components;
+
+namespace FincaFenix.UserInterface7._0.Services
 {
     public class TextAppBarState
     {
-        private readonly SynchronizationContext _syncContext;
+        private Func<Func<Task>, Task> _invokeAsync;
 
-        public TextAppBarState()
+        public void ConfigureDispatcher(Func<Func<Task>, Task> dispatcherInvoker)
         {
-            // Capturamos el contexto de sincronización del hilo de UI al momento de construcción
-            _syncContext = SynchronizationContext.Current!;
+            _invokeAsync = dispatcherInvoker;
         }
 
         public event Action OnChange;
@@ -28,8 +29,13 @@
 
         private void NotifyStateChanged()
         {
-            // Ejecutamos el evento dentro del hilo correcto del render
-            _syncContext.Post(_ => OnChange?.Invoke(), null);
+            if (_invokeAsync is not null)
+                _ = _invokeAsync(() => {
+                    OnChange?.Invoke();
+                    return Task.CompletedTask;
+                });
+            else
+                OnChange?.Invoke();
         }
     }
 }
