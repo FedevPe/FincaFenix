@@ -27,6 +27,11 @@
 
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await InfoViewModel.LoadInitializeAsync();
+    }
+
     private void ActualizarSectoresSeleccionados(List<DetailSectorFarmDTO> sectores)
     {
         SelectedSectorList = sectores;
