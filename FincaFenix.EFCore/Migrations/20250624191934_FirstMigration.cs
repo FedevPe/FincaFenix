@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FincaFenix.EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -143,7 +143,7 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdCategoria,
                         principalTable: "Categoria",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -189,7 +189,7 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdFruta,
                         principalTable: "Frutal",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,7 +214,7 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdMaquina,
                         principalTable: "Maquinaria",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,7 +236,8 @@ namespace FincaFenix.EFCore.Migrations
                         name: "FK_Usuario_Rol_RolId",
                         column: x => x.RolId,
                         principalTable: "Rol",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -284,13 +285,13 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdFinca,
                         principalTable: "Finca",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DetalleSectorFinca_VariedadFrutal_IdVariedad",
                         column: x => x.IdVariedad,
                         principalTable: "VariedadFrutal",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -315,7 +316,7 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdMaterial,
                         principalTable: "Material",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DetalleReceta_Receta_NumReceta",
                         column: x => x.NumReceta,
@@ -334,6 +335,7 @@ namespace FincaFenix.EFCore.Migrations
                     IdUsuario = table.Column<int>(type: "int", nullable: false),
                     IdReceta = table.Column<int>(type: "int", nullable: false),
                     IdTarea = table.Column<int>(type: "int", nullable: false),
+                    IdFinca = table.Column<int>(type: "int", nullable: false),
                     FechaInicio = table.Column<DateTime>(type: "datetime2(2)", nullable: false),
                     FechaFin = table.Column<DateTime>(type: "datetime2(2)", nullable: false),
                     Estado = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -345,23 +347,29 @@ namespace FincaFenix.EFCore.Migrations
                 {
                     table.PrimaryKey("PK_OrdenTrabajo", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_OrdenTrabajo_Finca_IdFinca",
+                        column: x => x.IdFinca,
+                        principalTable: "Finca",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_OrdenTrabajo_Receta_IdReceta",
                         column: x => x.IdReceta,
                         principalTable: "Receta",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrdenTrabajo_Tarea_IdTarea",
                         column: x => x.IdTarea,
                         principalTable: "Tarea",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrdenTrabajo_Usuario_IdUsuario",
                         column: x => x.IdUsuario,
                         principalTable: "Usuario",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -381,13 +389,13 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdSector,
                         principalTable: "DetalleSectorFinca",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_OrdenTrabajo_SectorTrabajado_OrdenTrabajo_IdOrdenTrabajo",
                         column: x => x.IdOrdenTrabajo,
                         principalTable: "OrdenTrabajo",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -398,7 +406,7 @@ namespace FincaFenix.EFCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdOrdenTrabajo = table.Column<int>(type: "int", nullable: false),
                     IdEmpleado = table.Column<int>(type: "int", nullable: false),
-                    SectorWorkedId = table.Column<int>(type: "int", nullable: true),
+                    IdSectorTrabajado = table.Column<int>(type: "int", nullable: false),
                     Rendimiento = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     HorasTrabajadas = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -412,7 +420,7 @@ namespace FincaFenix.EFCore.Migrations
                         column: x => x.IdEmpleado,
                         principalTable: "Empleado",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DetalleOrdenTrabajo_OrdenTrabajo_IdOrdenTrabajo",
                         column: x => x.IdOrdenTrabajo,
@@ -420,10 +428,11 @@ namespace FincaFenix.EFCore.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DetalleOrdenTrabajo_OrdenTrabajo_SectorTrabajado_SectorWorkedId",
-                        column: x => x.SectorWorkedId,
+                        name: "FK_DetalleOrdenTrabajo_OrdenTrabajo_SectorTrabajado_IdSectorTrabajado",
+                        column: x => x.IdSectorTrabajado,
                         principalTable: "OrdenTrabajo_SectorTrabajado",
-                        principalColumn: "IdOrdenTrabajoSectorTrabajado");
+                        principalColumn: "IdOrdenTrabajoSectorTrabajado",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -437,9 +446,9 @@ namespace FincaFenix.EFCore.Migrations
                 column: "IdOrdenTrabajo");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DetalleOrdenTrabajo_SectorWorkedId",
+                name: "IX_DetalleOrdenTrabajo_IdSectorTrabajado",
                 table: "DetalleOrdenTrabajo",
-                column: "SectorWorkedId");
+                column: "IdSectorTrabajado");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DetalleReceta_IdMaterial",
@@ -485,6 +494,11 @@ namespace FincaFenix.EFCore.Migrations
                 name: "IX_Material_IdCategoria",
                 table: "Material",
                 column: "IdCategoria");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrdenTrabajo_IdFinca",
+                table: "OrdenTrabajo",
+                column: "IdFinca");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrdenTrabajo_IdReceta",
@@ -564,10 +578,10 @@ namespace FincaFenix.EFCore.Migrations
                 name: "Categoria");
 
             migrationBuilder.DropTable(
-                name: "Finca");
+                name: "VariedadFrutal");
 
             migrationBuilder.DropTable(
-                name: "VariedadFrutal");
+                name: "Finca");
 
             migrationBuilder.DropTable(
                 name: "Receta");

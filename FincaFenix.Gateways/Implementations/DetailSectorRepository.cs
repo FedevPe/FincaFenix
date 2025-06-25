@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.Gateways.Implementations
 {
-    public class SectorRepository(ISectorQueryService queryService) : ISectorRepository
+    public class DetailSectorRepository(IDetailSectorQueryService queryService) : IDetailSectorRepository
     {
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByFarmId(int farmId)
         {

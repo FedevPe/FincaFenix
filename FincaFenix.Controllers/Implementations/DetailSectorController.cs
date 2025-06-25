@@ -7,7 +7,7 @@ namespace FincaFenixControllers.Implementations
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SectorController(
+    public class DetailSectorController(
         ISectorsInputPort interactor,
         ISectorOutputPort presenter) : ISectorController
     {

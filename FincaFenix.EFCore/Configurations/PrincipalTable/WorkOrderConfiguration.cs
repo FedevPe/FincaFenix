@@ -15,6 +15,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(wo => wo.UserId).HasColumnName("IdUsuario").IsRequired();
             builder.Property(wo => wo.RecipeId).HasColumnName("IdReceta");
             builder.Property(wo => wo.TaskId).HasColumnName("IdTarea").IsRequired();
+            builder.Property(wo => wo.FarmId).HasColumnName("IdFinca").IsRequired();
             builder.Property(wo => wo.StartDate).HasColumnName("FechaInicio").IsRequired().HasColumnType("datetime2(2)");
             builder.Property(wo => wo.EndDate).HasColumnName("FechaFin").HasColumnType("datetime2(2)");
             builder.Property(wo => wo.State).HasColumnName("Estado").IsRequired().HasMaxLength(50);

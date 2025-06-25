@@ -11,7 +11,7 @@ namespace FincaFenix.WebAPI
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDBContextServices(dbOptions =>
+            builder.Services.AddServicesContainer(dbOptions =>
                 builder.Configuration.GetSection(
                     DBOption.SectionKey).Bind(dbOptions));
 

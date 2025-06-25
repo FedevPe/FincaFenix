@@ -4,7 +4,6 @@ using FincaFenix.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,15 +11,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FincaFenix.EFCore.Migrations
 {
     [DbContext(typeof(FincaFenixContext))]
-    [Migration("20250622200248_InitialCreate")]
-    partial class InitialCreate
+    partial class FincaFenixContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -92,7 +89,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("IdFinca");
 
-                    b.Property<int>("NumberPlants")
+                    b.Property<int?>("NumberPlants")
                         .HasColumnType("int")
                         .HasColumnName("CantPlantas");
 
@@ -101,7 +98,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("NombreCuadro");
 
-                    b.Property<int>("VarietyId")
+                    b.Property<int?>("VarietyId")
                         .HasColumnType("int")
                         .HasColumnName("IdVariedad");
 
@@ -145,8 +142,9 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("rowversion")
                         .HasColumnName("RowVersion");
 
-                    b.Property<int?>("SectorWorkedId")
-                        .HasColumnType("int");
+                    b.Property<int>("SectorWorkedId")
+                        .HasColumnType("int")
+                        .HasColumnName("IdSectorTrabajado");
 
                     b.Property<int>("WorkOrderId")
                         .HasColumnType("int")
@@ -570,7 +568,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("Contrasena");
 
-                    b.Property<int?>("RolId")
+                    b.Property<int>("RolId")
                         .HasColumnType("int");
 
                     b.Property<int>("RoleId")
@@ -607,6 +605,10 @@ namespace FincaFenix.EFCore.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2(2)")
                         .HasColumnName("FechaFin");
+
+                    b.Property<int>("FarmId")
+                        .HasColumnType("int")
+                        .HasColumnName("IdFinca");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -651,6 +653,8 @@ namespace FincaFenix.EFCore.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FarmId");
+
                     b.HasIndex("RecipeId");
 
                     b.HasIndex("TaskId");
@@ -691,7 +695,7 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.MaterialEntity", "Material")
                         .WithMany()
                         .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.RecipeEntity", "Recipe")
@@ -710,14 +714,13 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.FarmEntity", "Farm")
                         .WithMany()
                         .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.FruitVarietyEntity", "Variety")
                         .WithMany()
                         .HasForeignKey("VarietyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Farm");
 
@@ -729,12 +732,14 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.EmployeeEntity", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderWorkedSectorEntity", "SectorWorked")
                         .WithMany()
-                        .HasForeignKey("SectorWorkedId");
+                        .HasForeignKey("SectorWorkedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderEntity", "WorkOrder")
                         .WithMany("DetailWorkOrderList")
@@ -792,7 +797,7 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.FruitEntity", "Fruit")
                         .WithMany()
                         .HasForeignKey("FruitId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Fruit");
@@ -803,7 +808,7 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.MaterialCategoryEntity", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -814,7 +819,7 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.MachineEntity", "Machine")
                         .WithMany()
                         .HasForeignKey("MachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Machine");
@@ -824,30 +829,40 @@ namespace FincaFenix.EFCore.Migrations
                 {
                     b.HasOne("FincaFenix.Entities.POCOEntities.RolEntity", "Rol")
                         .WithMany()
-                        .HasForeignKey("RolId");
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Rol");
                 });
 
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.WorkOrderEntity", b =>
                 {
+                    b.HasOne("FincaFenix.Entities.POCOEntities.FarmEntity", "Farm")
+                        .WithMany()
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FincaFenix.Entities.POCOEntities.RecipeEntity", "Recipe")
                         .WithMany()
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.TaskEntity", "Task")
                         .WithMany()
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Farm");
 
                     b.Navigation("Recipe");
 
@@ -861,13 +876,13 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.DetailSectorFarmEntity", "SectorFarm")
                         .WithMany()
                         .HasForeignKey("SectorFarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderEntity", "WorkOrder")
                         .WithMany()
                         .HasForeignKey("WorkOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("SectorFarm");

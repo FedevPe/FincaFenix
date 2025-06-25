@@ -17,6 +17,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
                 .HasForeignKey(d => d.WorkOrderId)
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Property(d => d.EmployeeId).HasColumnName("IdEmpleado").IsRequired();
+            builder.Property(d => d.SectorWorkedId).HasColumnName("IdSectorTrabajado");
             builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(5, 2);
             builder.Property(d => d.Performance).HasColumnName("Rendimiento").IsRequired().HasPrecision(5, 2);
             builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired().HasMaxLength(500);

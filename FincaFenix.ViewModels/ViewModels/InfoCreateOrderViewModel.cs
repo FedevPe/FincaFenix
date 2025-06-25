@@ -1,7 +1,7 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
 
-namespace FincaFenix.ViewModels
+namespace FincaFenix.ViewModels.ViewModels
 {
     public class InfoCreateOrderViewModel (
         IFarmController farm, 

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace FincaFenix.EFCore.Context
 {
-    public class FincaFenixContext (IOptions<DBOption> dbOptions) : DbContext
+    public class FincaFenixContext : DbContext
     {
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }
@@ -32,11 +32,18 @@ namespace FincaFenix.EFCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(dbOptions.Value.ConnectionString);
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Finca_FenixDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var foreignKey in modelBuilder.Model
+                    .GetEntityTypes()
+                    .SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
+
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

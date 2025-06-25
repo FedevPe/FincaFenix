@@ -1,3 +1,4 @@
+using FincaFenix.InversionOfControl;
 using FincaFenix.UserInterface7._0.Services;
 using MudBlazor.Services;
 
@@ -14,6 +15,12 @@ namespace FincaFenix.UserInterface7._0
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
             builder.Services.AddSingleton<TextAppBarState>();
+
+            builder.Services.AddServicesContainer(options =>
+            {
+                options.ConnectionString = builder.Configuration["DBOption:ConnectionStrings"];
+                Console.WriteLine("Cadena de conexión usada: " + options.ConnectionString);
+            });
 
             var app = builder.Build();
 

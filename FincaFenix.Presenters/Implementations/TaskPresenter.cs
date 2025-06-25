@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Interfaces.Tasks;
 
 namespace FincaFenix.Presenters.Implementations
 {
-    public class TaskPresenter : ITaskOuputPort
+    public class TaskPresenter : ITaskOutputPort
     {
         public List<TaskDTO>? TaskList { get; private set; }
 

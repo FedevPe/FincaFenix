@@ -5,7 +5,7 @@ using FincaFenix.UsesCases.Repository;
 namespace FincaFenix.UsesCases.Interactors
 {
     public class TaskInteractor(
-        ITaskOuputPort presenter,
+        ITaskOutputPort presenter,
         ITaskRepository repository) : ITaskInputPort
     {
         public async Task GetListTask()

@@ -6,7 +6,7 @@ namespace FincaFenix.UsesCases.Interactors
 {
     public class SectorInteractor(
         ISectorOutputPort presenter,
-        ISectorRepository repository) : ISectorsInputPort
+        IDetailSectorRepository repository) : ISectorsInputPort
     {
         public async Task GetListSectorsByIdFarm(int farmId)
         {

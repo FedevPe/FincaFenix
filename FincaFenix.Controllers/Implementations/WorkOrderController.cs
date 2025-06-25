@@ -9,7 +9,7 @@ namespace FincaFenixControllers.Implementations
     [Route("api/[controller]")]
     public class WorkOrderController(
         IWorkOrderInputPort interactor,
-        IWorkOrderOuputPort presenter) : IWorkOrderController
+        IWorkOrderOutputPort presenter) : IWorkOrderController
     {
         [HttpPost("CreateWorkOrder")]
         public async Task<bool> CreateWorkOrder(WorkOrderDTO workOrder)

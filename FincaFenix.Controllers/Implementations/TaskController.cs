@@ -9,7 +9,7 @@ namespace FincaFenixControllers.Implementations
     [Route("api/[controller]")]
     public class TaskController(
         ITaskInputPort interactor,
-        ITaskOuputPort presenter) : ITaskController
+        ITaskOutputPort presenter) : ITaskController
     {
 
         public Task<TaskDTO> DisplayTaskById(int id)

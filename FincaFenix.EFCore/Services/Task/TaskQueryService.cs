@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace FincaFenix.EFCore.Services.Task
 {
-    public class TaskQueryService(IOptions<DBOption> options) : FincaFenixContext(options), ITaskQueryService
+    public class TaskQueryService : FincaFenixContext, ITaskQueryService
     {
         public async Task<IEnumerable<TaskEntity>> GetTaks()
         {

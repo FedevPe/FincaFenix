@@ -3,7 +3,7 @@ using FincaFenix.UsesCases.Interfaces.WorkOrder;
 
 namespace FincaFenix.Presenters.Implementations
 {
-    public class WorkOrderPresenter : IWorkOrderOuputPort
+    public class WorkOrderPresenter : IWorkOrderOutputPort
     {
         public bool IsSaved { get; private set; } = false;
 

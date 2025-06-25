@@ -13,8 +13,8 @@ namespace FincaFenix.EFCore.Configurations.SecondaryTable
             builder.Property(dsf => dsf.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(dsf => dsf.FarmId).HasColumnName("IdFinca").IsRequired();
             builder.Property(dsf => dsf.SectorName).HasColumnName("NombreCuadro").IsRequired();
-            builder.Property(dsf => dsf.VarietyId).HasColumnName("IdVariedad").IsRequired();
-            builder.Property(dsf => dsf.NumberPlants).HasColumnName("CantPlantas").IsRequired();
+            builder.Property(dsf => dsf.VarietyId).HasColumnName("IdVariedad");
+            builder.Property(dsf => dsf.NumberPlants).HasColumnName("CantPlantas");
         }
     }
 }

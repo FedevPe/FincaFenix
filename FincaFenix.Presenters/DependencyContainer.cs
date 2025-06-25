@@ -11,11 +11,11 @@ public static class DependencyContainer
 {
     public static IServiceCollection AddPresenterServices(this IServiceCollection services)
     {
-        services.AddScoped<IFarmOutputPort, FarmPresenter>()
-                .AddScoped<IMaterialOutputPort, MaterialPresenter>()
-                .AddScoped<ISectorOutputPort, SectorPresenter>()
-                .AddScoped<ITaskOuputPort, TaskPresenter>()
-                .AddScoped<IWorkOrderOuputPort, WorkOrderPresenter>();
+        services.AddSingleton<IFarmOutputPort, FarmPresenter>()
+                .AddSingleton<IMaterialOutputPort, MaterialPresenter>()
+                .AddSingleton<ISectorOutputPort, SectorPresenter>()
+                .AddSingleton<ITaskOutputPort, TaskPresenter>()
+                .AddSingleton<IWorkOrderOutputPort, WorkOrderPresenter>();
 
         return services;
     }

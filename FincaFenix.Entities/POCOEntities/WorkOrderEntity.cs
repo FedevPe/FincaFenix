@@ -12,6 +12,8 @@ namespace FincaFenix.Entities.POCOEntities
         public RecipeEntity Recipe { get; set; }
         public int TaskId { get; set; }
         public TaskEntity Task { get; set; }
+        public int FarmId { get; set; }
+        public FarmEntity Farm { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string State { get; set; }

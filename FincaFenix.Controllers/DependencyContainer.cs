@@ -8,11 +8,11 @@ public static class DependencyContainer
     public static IServiceCollection AddControllersServices(this IServiceCollection services)
     {
         // Controllers
-        services.AddScoped<IFarmController, FarmController>()
-                .AddScoped<ISectorController, SectorController>()
-                .AddScoped<IMaterialController, MaterialController>()
-                .AddScoped<ITaskController, TaskController>()
-                .AddScoped<IWorkOrderController, WorkOrderController>();
+        services.AddSingleton<IFarmController, FarmController>()
+                .AddSingleton<ISectorController, DetailSectorController>()
+                .AddSingleton<IMaterialController, MaterialController>()
+                .AddSingleton<ITaskController, TaskController>()
+                .AddSingleton<IWorkOrderController, WorkOrderController>();
 
         return services;
     }

@@ -2,7 +2,7 @@
 
 namespace FincaFenix.UsesCases.Interfaces.WorkOrder
 {
-    public interface IWorkOrderOuputPort
+    public interface IWorkOrderOutputPort
     {
         public bool IsSaved { get; }
         Task Handle(WorkOrderDTO workOrder);

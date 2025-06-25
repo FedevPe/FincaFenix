@@ -6,7 +6,7 @@ using FincaFenix.UsesCases.Repository;
 namespace FincaFenix.UsesCases.Interactors
 {
     public class WorkOrderInteractor(
-        IWorkOrderOuputPort presenter,
+        IWorkOrderOutputPort presenter,
 #pragma warning disable CS9113 // El parámetro no está leído.
         IWorkOrderRepository repository) : IWorkOrderInputPort
 #pragma warning restore CS9113 // El parámetro no está leído.

@@ -7,6 +7,7 @@
         public WorkOrderEntity WorkOrder { get; set; }
         public int EmployeeId { get; set; }
         public EmployeeEntity Employee { get; set; }
+        public int SectorWorkedId { get; set; }
         public WorkOrderWorkedSectorEntity SectorWorked { get; set; }
         public decimal Performance { get; set; }
         public decimal WorkedHours { get; set; }

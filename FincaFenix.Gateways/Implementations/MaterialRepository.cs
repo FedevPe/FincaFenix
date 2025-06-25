@@ -11,7 +11,7 @@ namespace FincaFenix.Gateways.Implementations
             return await queryService.GetMaterialList();
         }
 
-        public Task<MaterialEntity> GetMaterialByIdAsync(int id)
+        public Task<IEnumerable<MaterialEntity>> GetMaterialByOrderIdAsync(int id)
         {
             throw new NotImplementedException();
         }

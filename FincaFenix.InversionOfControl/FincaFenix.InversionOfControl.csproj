@@ -18,6 +18,7 @@
     <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
     <ProjectReference Include="..\FincaFenix.Presenters\FincaFenix.Presenters.csproj" />
     <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
+    <ProjectReference Include="..\FincaFenix.ViewModels\FincaFenix.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>
