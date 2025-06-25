@@ -1,15 +1,11 @@
-﻿using FincaFenix.EFCore.Options;
-using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.Entities.POCOEntities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace FincaFenix.EFCore.Context
 {
-    public class FincaFenixContext : DbContext
+    public class FincaFenixContextOPCSERVER : DbContext
     {
-        private readonly string opcServer = "Data Source=SERVIDOR-OPC\\SQLEXPRESS;User ID=userfinca;Password=Axoft;Initial Catalog=FINCA_FENIX;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        private readonly string localServer = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Finca_FenixDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }
         public DbSet<DetailWorkOrderEntity> DetailWorkOrders { get; set; }
@@ -34,7 +30,7 @@ namespace FincaFenix.EFCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(opcServer);
+                optionsBuilder.UseSqlServer("Data Source=SERVIDOR-OPC\\SQLEXPRESS;User ID=userfinca;Password=Axoft;Initial Catalog=FINCA_FENIX;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,3 +46,6 @@ namespace FincaFenix.EFCore.Context
         }
     }
 }
+
+
+
