@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
+namespace FincaFenix.EFCore.Migrations
 {
-    [DbContext(typeof(FincaFenixContextOPCSERVER))]
-    [Migration("20250625120308_NewContext")]
-    partial class NewContext
+    [DbContext(typeof(FincaFenixContext))]
+    [Migration("20250626154652_newTablesAndModifications")]
+    partial class newTablesAndModifications
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,29 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("FincaFenix.Entities.POCOEntities.CorrelativeNumberEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("LastNumber")
+                        .HasColumnType("int")
+                        .HasColumnName("Numero");
+
+                    b.Property<string>("TypeDoc")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("TipoDoc");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Correlativo", (string)null);
+                });
 
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.DetailRecipeEntity", b =>
                 {
@@ -416,6 +439,11 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NombreArticulo");
 
+                    b.Property<string>("Brand")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Marca");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int")
                         .HasColumnName("IdCategoria");
@@ -431,11 +459,6 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("Eliminado");
-
-                    b.Property<string>("Marca")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
-                        .HasColumnName("Marca");
 
                     b.Property<string>("PackingUnit")
                         .HasMaxLength(50)
@@ -605,7 +628,7 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("Descripcion");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2(2)")
                         .HasColumnName("FechaFin");
 
@@ -625,7 +648,7 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("NumOrden");
 
-                    b.Property<int>("RecipeId")
+                    b.Property<int?>("RecipeId")
                         .HasColumnType("int")
                         .HasColumnName("IdReceta");
 
@@ -658,7 +681,9 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
 
                     b.HasIndex("FarmId");
 
-                    b.HasIndex("RecipeId");
+                    b.HasIndex("RecipeId")
+                        .IsUnique()
+                        .HasFilter("[IdReceta] IS NOT NULL");
 
                     b.HasIndex("TaskId");
 
@@ -848,10 +873,9 @@ namespace FincaFenix.EFCore.Migrations.FincaFenixContextOPCSERVERMigrations
                         .IsRequired();
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.RecipeEntity", "Recipe")
-                        .WithMany()
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .WithOne()
+                        .HasForeignKey("FincaFenix.Entities.POCOEntities.WorkOrderEntity", "RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("FincaFenix.Entities.POCOEntities.TaskEntity", "Task")
                         .WithMany()

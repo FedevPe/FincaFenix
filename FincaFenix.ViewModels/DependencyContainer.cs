@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddViewModelServices(this IServiceCollection services)
         {
             // ViewModels
-            services.AddTransient<InfoCreateOrderViewModel>();
+            services.AddTransient<InfoNewWorkOrderViewModel>();
             services.AddTransient<SearchBarViewModel>();
             services.AddTransient<NewRecipeViewModel>();
 

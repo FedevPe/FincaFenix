@@ -7,7 +7,7 @@
                    Color="Color.Info"
                    Size="Size.Small"
                    StartIcon="@Icons.Material.Filled.Add"
-                   @onclick="AddMachine">Agregar Maquinaria</MudButton>
+                   @onclick="AddMachine" Disabled="_disableButtonMachine">Agregar Maquinaria</MudButton>
         <MudButton Variant="Variant.Filled" style="height: 35px;"
                    Color="Color.Primary"
                    Size="Size.Small"
@@ -30,8 +30,7 @@
                                    Margin="Margin.Dense"
                                    Variant="Variant.Outlined"
                                    AnchorOrigin="Origin.BottomCenter"
-                                   TransformOrigin="Origin.TopCenter"
-                                   Clearable>
+                                   TransformOrigin="Origin.TopCenter">
                             <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un elemento</MudSelectItem>                        
                             @foreach (var machine in ViewModel.MachineList)
                             {
@@ -43,20 +42,28 @@
                     {
                         <MudItem xs="1" lg="2">
                             <MudText Typo="Typo.caption">Dosis:</MudText>
-                            <MudTextField T="decimal" @bind-Value="dosis" Margin="Margin.Dense" Style="margin-top: 10px"></MudTextField>
+                            <MudTextField T="decimal" @bind-Value="ViewModel.Dose" Margin="Margin.Dense" Style="margin-top: 10px"></MudTextField>
                         </MudItem>
                         <MudItem xs="1" lg="2">
                             <MudText Typo="Typo.caption">Unidad</MudText>
-                            <MudSelect T="string" @bind-Value="unitDosis" Margin="Margin.Dense"
+                            <MudSelect T="string" @bind-Value="ViewModel.DoseUnit" Margin="Margin.Dense"
                                 AnchorOrigin="Origin.BottomCenter"
                                 TransformOrigin="Origin.TopCenter" Style="margin-top: 14px">
                                 <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
                                 <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
-                                <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                                <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                                 <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                             </MudSelect>
                         </MudItem>
                     }
+                    <MudSpacer/>
+                    <MudItem xs="12" lg="1" Class="btnDelete">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                       Color="Color.Error"
+                                       Variant="Variant.Filled"
+                                       Size="Size.Medium"
+                                       @onclick="@(() => RemoveMachine())"/>
+                    </MudItem>
                 </MudGrid>
             }
         </div>
@@ -89,7 +96,7 @@
 
                 <MudItem xs="12" lg="3">
                     <MudSelect T="int"
-                               @bind-Value="detalle.IdMaterial"                               
+                               @bind-Value="detalle.MaterialId"                               
                                Margin="Margin.Dense"
                                Variant="Variant.Outlined"
                                AnchorOrigin="Origin.BottomCenter"
@@ -120,7 +127,7 @@
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
                         <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
-                        <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
@@ -132,10 +139,11 @@
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
                         <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
-                        <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
+                <MudSpacer/>
                 <MudItem xs="12" lg="1" Class="btnDelete">
                     <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                    Color="Color.Error"
@@ -160,15 +168,19 @@
 @code {
     private int _selectedPlagueDisease;
     private int _selectedMachineId;
-    private decimal dosis;
-    private string unitDosis;
+    private bool _disableButtonMachine = false;
 
     [Parameter] public NewRecipeViewModel ViewModel { get; set; }
 
     private void OnMachineSelected(int id)
     {
         _selectedMachineId = id;
-        ViewModel.Machine = ViewModel.MachineList.FirstOrDefault(m => m.Id == id);
+        var machine = ViewModel.MachineList?.FirstOrDefault(m => m.Id == id);
+        if (machine is not null)
+        {
+            ViewModel.Machine = machine;
+            ViewModel.MachineId = machine.Id; // opcional, si usás IdMaquina en el DTO
+        }
     }
 
     private void AddMaterial()
@@ -180,9 +192,15 @@
     {
         ViewModel.Details.Remove(material);
     }
-
+    private void RemoveMachine()
+    {
+        ViewModel.Machine = null;
+        _selectedMachineId = 0;
+        _disableButtonMachine = false;
+    }
     private void AddMachine()
     {
         ViewModel.Machine = new MachineRecipeDTO();
+        _disableButtonMachine = true;
     }
 }

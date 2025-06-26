@@ -1,5 +1,4 @@
 ﻿@page "/createOrder"
-@using FincaFenix.ViewModels.ViewModels
 
 <NewOrderData ViewModel=OrderDataViewModel/>
 <NewRecipe ViewModel=NewRecipeViewModel/>
@@ -23,8 +22,9 @@
 </div>
 
 @code {
-    [Inject] InfoCreateOrderViewModel OrderDataViewModel { get; set; } = default!;
+    [Inject] InfoNewWorkOrderViewModel OrderDataViewModel { get; set; } = default!;
     [Inject] NewRecipeViewModel NewRecipeViewModel { get; set; } = default!;
+    [Inject] CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
 
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
@@ -39,4 +39,33 @@
         SelectedSectorList = sectores;
         StateHasChanged();
     }
+    private async Task SaveWorkOrder()
+    {
+        var nuevaOrden = new WorkOrderDTO
+        {
+            FarmId = OrderDataViewModel.SelectedFarmId,
+            TaskId = OrderDataViewModel.SelectedTaskId,
+            StartDate = DateTime.Now,
+            Description = OrderDataViewModel.Description,
+            SectorList = OrderDataViewModel.SelectedSectors.Select(s => s.Id).ToList(),
+            Recipe = new RecipeWorkOrderDTO
+            {
+                MachineId = NewRecipeViewModel.MachineId,
+                Dose = NewRecipeViewModel.Dose,
+                DoseUnit = NewRecipeViewModel.DoseUnit,
+                Details = NewRecipeViewModel.Details.Select(m => new DetailRecipeDTO
+                {
+                    CategoryId = m.CategoryId,
+                    MaterialId = m.MaterialId,
+                    CantRequerida = m.CantRequerida,
+                    CantEstimada = m.CantEstimada,
+                    UnidadCantRequerida = m.UnidadCantRequerida,
+                    UnidadCantEstimada = m.UnidadCantEstimada
+                }).ToList()
+            },
+        };
+
+        await CreateWorkOrderViewModel.SaveWorkOrder(nuevaOrden); // Este método debería llamar al controlador que interactúa con el interactor
+    }
+
 }

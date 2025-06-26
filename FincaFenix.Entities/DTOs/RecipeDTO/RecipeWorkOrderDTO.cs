@@ -1,6 +1,6 @@
 ﻿namespace FincaFenix.Entities.DTOs.RecipeDTO
 {
-    public class RecipeDTO
+    public class RecipeWorkOrderDTO
     {
         public int Id { get; set; }
         public string NumRecipe { get; set; }

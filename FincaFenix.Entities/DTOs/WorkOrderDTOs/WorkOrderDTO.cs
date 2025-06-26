@@ -1,17 +1,24 @@
-﻿namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
+﻿
+using FincaFenix.Entities.DTOs.RecipeDTO;
+
+namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
 {
     public class WorkOrderDTO
     {
         public int Id { get; set; }
         public int OrderNum { get; set; }
-        public UserDTO User { get; set; }
-        public TaskDTO Task { get; set; }
+        public int UserId { get; set; }
+        public int TaskId { get; set; }
+        public int FarmId { get; set; }
+        public string Description { get; set; }
         public List<MaterialOrderDTO> MaterialsList { get; set; }
-        public List<DetailSectorFarmDTO> SectorList { get; set; }
+        public List<int> SectorList { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public bool State { get; set; }
+        public string State { get; set; } = "Activo";
         public bool IsDeleted { get; set; }
+
+        public RecipeWorkOrderDTO Recipe { get; set; }
 
     }
 }

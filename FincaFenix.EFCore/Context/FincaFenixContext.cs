@@ -1,7 +1,5 @@
-﻿using FincaFenix.EFCore.Options;
-using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.Entities.POCOEntities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace FincaFenix.EFCore.Context
@@ -29,12 +27,13 @@ namespace FincaFenix.EFCore.Context
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<WorkOrderEntity> WorkOrders { get; set; }
         public DbSet<WorkOrderWorkedSectorEntity> WorkOrderWorkedSectors { get; set; }
+        public DbSet<CorrelativeNumberEntity> CorrelativeNumber { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(localServer);
+                optionsBuilder.UseSqlServer(opcServer);
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

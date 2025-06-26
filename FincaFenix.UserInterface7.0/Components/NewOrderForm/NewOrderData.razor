@@ -28,10 +28,12 @@
 
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
-            <MudSelect @bind-Value="_selectedTask" Margin="Margin.Dense" FullWidth="true"
+            <MudSelect  Margin="Margin.Dense" FullWidth="true"
                        Variant="Variant.Outlined" Clearable
                        AnchorOrigin="Origin.BottomLeft"
-                       TransformOrigin="Origin.BottomLeft">
+                       TransformOrigin="Origin.BottomLeft"
+                       @bind-Value="_selectedTask"
+                       @bind-Value:event="onchange">
                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una tarea</MudSelectItem>
                 @foreach (var task in ViewModel.Tasks)
                 {
@@ -96,81 +98,5 @@
         </MudItem>
     </MudGrid>
 </div>
-<MudText>Seleccionados: @SelectedSectorList.Count()</MudText>
-@code{  
-    [Parameter]  
-    public EventCallback<List<DetailSectorFarmDTO>> SectorsSelectionChanged { get; set; }  
-    [Parameter]  
-    public InfoCreateOrderViewModel ViewModel { get; set; }  
+<MudText>Seleccionados: @ViewModel.SelectedSectors.Count()</MudText>
 
-    private int _selectedFarm = 0;  
-    private int _selectedTask = 0;  
-
-    private List<DetailSectorFarmDTO> Sectors { get; set; } = new();  
-    private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();  
-
-    private List<DetailSectorFarmDTO> ColumnSector1 = new();  
-    private List<DetailSectorFarmDTO> ColumnSector2 = new();  
-    private List<DetailSectorFarmDTO> ColumnSector3 = new();  
-    private List<DetailSectorFarmDTO> ColumnSector4 = new();  
-
-    private async Task OnFarmChanged(int farmId)  
-    {  
-        _selectedFarm = farmId;  
-
-        ColumnSector1.Clear();  
-        ColumnSector2.Clear();  
-        ColumnSector3.Clear();  
-        ColumnSector4.Clear();  
-        SelectedSectorList.Clear();  
-
-        if (_selectedFarm != 0)  
-        {  
-            await ViewModel.LoadSectorsForFarmIdAsync(_selectedFarm);  
-            Sectors = ViewModel.Sectors.ToList();  
-            for (int i = 0; i < Sectors.Count; i++)  
-            {  
-                int columnIndex = i % 4;  
-                switch (columnIndex)  
-                {  
-                    case 0:  
-                        ColumnSector1.Add(Sectors[i]);  
-                        break;  
-                    case 1:  
-                        ColumnSector2.Add(Sectors[i]);  
-                        break;  
-                    case 2:  
-                        ColumnSector3.Add(Sectors[i]);  
-                        break;  
-                    case 3:  
-                        ColumnSector4.Add(Sectors[i]);  
-                        break;  
-                }  
-            }  
-        }  
-        else  
-        {  
-            Sectors.Clear();  
-        }  
-        await SectorsSelectionChanged.InvokeAsync(SelectedSectorList);  
-    }  
-
-    private Task OnSectorSelectionChanged(DetailSectorFarmDTO sector, bool isChecked)  
-    {  
-        sector.Selected = isChecked;  
-
-        if (isChecked)  
-        {  
-            if (!SelectedSectorList.Contains(sector))  
-                SelectedSectorList.Add(sector);  
-        }  
-        else  
-        {  
-            SelectedSectorList.Remove(sector);  
-        }  
-
-        SectorsSelectionChanged.InvokeAsync(SelectedSectorList);  
-
-        return SectorsSelectionChanged.InvokeAsync(SelectedSectorList);  
-    }  
-}

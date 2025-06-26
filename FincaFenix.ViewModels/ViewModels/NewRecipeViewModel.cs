@@ -7,8 +7,10 @@ namespace FincaFenix.ViewModels.ViewModels
     public class NewRecipeViewModel (
         IMaterialController material,
         IMaterialCategoryController categories,
-        IMachineController machine) : RecipeDTO
+        IMachineController machine) : RecipeWorkOrderDTO
     {
+        public decimal Dose { get; set; }
+        public string DoseUnit { get; set; }
        
         public IEnumerable<MachineRecipeDTO>? MachineList { get; set; }
         public MachineRecipeDTO? Machine { get; set; }
@@ -35,7 +37,6 @@ namespace FincaFenix.ViewModels.ViewModels
         public async Task LoadCategoryList()
         {
             Categories = await categories.GetAllCategories();
-        }
-        
+        }        
     }
 }

@@ -3,11 +3,17 @@ using FincaFenix.UsesCases.Controllers;
 
 namespace FincaFenix.ViewModels.ViewModels
 {
-    public class InfoCreateOrderViewModel (
+    public class InfoNewWorkOrderViewModel (
         IFarmController farm, 
         ISectorController sector,
         ITaskController task)
     {
+        public int SelectedFarmId { get; set; }
+        public int SelectedTaskId { get; set; }
+        public string Description { get; set; }
+        public string State { get; set; } = "Activo";
+        public List<DetailSectorFarmDTO> SelectedSectors { get; set; } = new List<DetailSectorFarmDTO>();
+
         public IEnumerable<FarmDTO> Farms { get; set; } = new List<FarmDTO>();
         public IEnumerable<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
         public IEnumerable<DetailSectorFarmDTO> Sectors { get; set; } = new List<DetailSectorFarmDTO>();
