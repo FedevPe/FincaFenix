@@ -22,6 +22,7 @@
 
                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
                     <MudItem xs="6" lg="3" >
+                        <MudText Typo="Typo.caption">Máquinaria:</MudText>
                         <MudSelect T="int"
                                    @bind-Value="_selectedMachineId"
                                    @bind-Value:event="onchange"
@@ -37,11 +38,23 @@
                                 <MudSelectItem T="int" Value="@machine.Id">@machine.Name</MudSelectItem>
                             }                        
                         </MudSelect>
-                    </MudItem>
+                    </MudItem>                    
                     @if (ViewModel.Machine.Id != 0)
                     {
-                        <MudItem xs="1" lg="2" Style="margin: 10px">
-                            <MudText Typo="Typo.h5">Dosis: @ViewModel.Machine.Capacity @ViewModel.Machine.CapacityUnit</MudText>
+                        <MudItem xs="1" lg="2">
+                            <MudText Typo="Typo.caption">Dosis:</MudText>
+                            <MudTextField T="decimal" @bind-Value="dosis" Margin="Margin.Dense" Style="margin-top: 10px"></MudTextField>
+                        </MudItem>
+                        <MudItem xs="1" lg="2">
+                            <MudText Typo="Typo.caption">Unidad</MudText>
+                            <MudSelect T="string" @bind-Value="unitDosis" Margin="Margin.Dense"
+                                AnchorOrigin="Origin.BottomCenter"
+                                TransformOrigin="Origin.TopCenter" Style="margin-top: 14px">
+                                <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
+                                <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                                <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                                <MudSelectItem Value="@("cc")">cc</MudSelectItem>
+                            </MudSelect>
                         </MudItem>
                     }
                 </MudGrid>
@@ -52,7 +65,7 @@
         {
             <MudDivider style="border-color: black;" Class="mt-3"/>
         }
-        <MudGrid Spacing="2" Justify="Justify.Center" Class="mt-2">
+        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
             @foreach (var detalle in ViewModel.Details)
             {
                 <MudItem xs="12" lg="3">
@@ -87,6 +100,16 @@
                         {
                             <MudSelectItem T="int" Value="@m.Id">@m.ArticleName - @m.CommercialName</MudSelectItem>
                         }
+                    </MudSelect>
+                    <MudText Typo="Typo.caption">Plaga/Enfermedad</MudText>
+                    <MudSelect T="int"
+                               @bind-Value="_selectedPlagueDisease"                               
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter"                               
+                               Clearable Disabled="true">
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un elemento</MudSelectItem>
                     </MudSelect>
                 </MudItem>
 
@@ -135,8 +158,12 @@
     }
 </style>
 @code {
-    [Parameter] public NewRecipeViewModel ViewModel { get; set; }
+    private int _selectedPlagueDisease;
     private int _selectedMachineId;
+    private decimal dosis;
+    private string unitDosis;
+
+    [Parameter] public NewRecipeViewModel ViewModel { get; set; }
 
     private void OnMachineSelected(int id)
     {
