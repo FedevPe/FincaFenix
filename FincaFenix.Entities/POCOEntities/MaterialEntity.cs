@@ -8,7 +8,7 @@
         public int CategoryId { get; set; }
         public MaterialCategoryEntity Category { get; set; }
         public string PackingUnit { get; set; }
-        public string Marca { get; set; }
+        public string Brand { get; set; }
         public bool IsDeleted { get; set; }
 
 

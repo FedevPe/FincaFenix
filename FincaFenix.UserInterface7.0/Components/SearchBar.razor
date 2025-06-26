@@ -3,7 +3,7 @@
         <MudIcon Icon="@Icons.Material.Filled.FilterAlt" Size="Size.Large" />
         <MudText Typo="Typo.h5"><b>Filtros de busqueda</b></MudText>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.ArrowDropDown" Size="Size.Medium" OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudIconButton>
+        <MudIconButton Icon="@mudIcon" Size="Size.Medium" OnClick="OnExpandCollapseClick" Style="color: black; font-size: 5px">@(_expanded ? "Collapse" : "Expand")</MudIconButton>
     </div>
     <MudDivider Class="my-1" Style="border-color: black;" />
     <div>
@@ -17,7 +17,7 @@
         </MudGrid>
         <MudCollapse Expanded="_expanded">
             <MudGrid Spacing="4" Justify="Justify.FlexStart" Class="mt-4 g-2">
-                <MudItem xs="12" lg="2">
+                <MudItem xs="12" lg="4">
                     <MudSelect @bind-Value="_selectedFinca"
                                Label="Finca"
                                Margin="Margin.Dense"
@@ -26,11 +26,18 @@
                                Adornment="Adornment.End"
                                AdornmentIcon="@Icons.Material.Filled.LocationOn"
                                AdornmentColor="Color.Error"
-                               ShrinkLabel>
+                               ShrinkLabel
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter" Style="z-index: auto;">
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una finca</MudSelectItem>
+                        @foreach (var item in ViewModel.Farms)
+                        {
+                            <MudSelectItem T="int" Value="@item.Id">@item.Name</MudSelectItem>
+                        }
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12" lg="2">
-                    <MudSelect @bind-Value="_selectedTarea"
+                <MudItem xs="12" lg="4">
+                    <MudSelect @bind-Value="_selectedTask"
                                Label="Tarea"
                                Margin="Margin.Dense"
                                Variant="Variant.Outlined"
@@ -38,11 +45,18 @@
                                Adornment="Adornment.End"
                                AdornmentIcon="@Icons.Material.Filled.Dashboard"
                                AdornmentColor="Color.Info"
-                               ShrinkLabel>
+                               ShrinkLabel
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter" Style="z-index: auto;">
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una tarea</MudSelectItem>
+                        @foreach (var item in ViewModel.Tasks)
+                        {
+                            <MudSelectItem T="int" Value="@item.Id">@item.Description</MudSelectItem>
+                        }
                     </MudSelect>
                 </MudItem>
-                <MudItem xs="12" lg="2">
-                    <MudSelect @bind-Value="_selectedEstado"
+                <MudItem xs="12" lg="4">
+                    <MudSelect @bind-Value="_selectedState"
                                Label="Estado"
                                Margin="Margin.Dense"
                                Variant="Variant.Outlined"
@@ -50,8 +64,14 @@
                                Adornment="Adornment.End"
                                AdornmentIcon="@Icons.Material.Filled.PendingActions"
                                AdornmentColor="Color.Warning"
-                               ShrinkLabel>
+                               ShrinkLabel
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter" Style="z-index: auto;">
+                        <MudSelectItem T="string" Value=@("Activo")>Activo</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Pendiente")>Pendiente</MudSelectItem>
+                        <MudSelectItem T="string" Value=@("Cerrado")>Cerrado</MudSelectItem>
                     </MudSelect>
+
                 </MudItem>
                 <MudItem xs="12" lg="6">
                     <MudDateRangePicker @ref="_picker" Label="Fecha" @bind-DateRange="_dateRange"
@@ -70,17 +90,34 @@
 </div>
 
 @code {
+    private string mudIcon = "fa-regular fa-square-caret-down";
     private bool _expanded = false;
-    private string _selectedFinca;
-    private string _selectedTarea;
-    private string _selectedEstado;
+    private int _selectedFinca = 0;
+    private int _selectedTask = 0;
+    private string _selectedState = string.Empty;
     private MudDateRangePicker _picker;
     private DateRange _dateRange = new DateRange();
 
+    [Inject] SearchBarViewModel ViewModel { get; set; }
+
     public string Search { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.LoadInitializeAsync();
+    }
 
     void OnExpandCollapseClick()
     {
         _expanded = !_expanded;
+
+        if (_expanded)
+        {
+            mudIcon = "fa-regular fa-square-caret-up";
+        }
+        else
+        {
+            mudIcon = "fa-regular fa-square-caret-down";
+        }
     }
 }

@@ -1,69 +1,161 @@
 ﻿<div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
     <div class="d-flex mb-2">
+        
         <MudText Typo="Typo.h4">Lista de materiales</MudText>
         <MudSpacer />
-        <MudButton Variant="Variant.Filled"
+        <MudButton Variant="Variant.Filled" class="me-2" style="height: 35px;"
+                   Color="Color.Info"
+                   Size="Size.Small"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   @onclick="AddMachine">Agregar Maquinaria</MudButton>
+        <MudButton Variant="Variant.Filled" style="height: 35px;"
                    Color="Color.Primary"
                    Size="Size.Small"
                    StartIcon="@Icons.Material.Filled.Add"
                    @onclick="AddMaterial">Agregar Insumo</MudButton>
     </div>
     <div>
-        @if (MaterialList.Count() != 0)
+        <div class="align-items-center justify-content-center">
+            @if (ViewModel.Machine != null )
+            {
+                <MudDivider style="border-color: black;" />
+
+                <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
+                    <MudItem xs="6" lg="3" >
+                        <MudSelect T="int"
+                                   @bind-Value="_selectedMachineId"
+                                   @bind-Value:event="onchange"
+                                   ValueChanged="OnMachineSelected"                  
+                                   Margin="Margin.Dense"
+                                   Variant="Variant.Outlined"
+                                   AnchorOrigin="Origin.BottomCenter"
+                                   TransformOrigin="Origin.TopCenter"
+                                   Clearable>
+                            <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un elemento</MudSelectItem>                        
+                            @foreach (var machine in ViewModel.MachineList)
+                            {
+                                <MudSelectItem T="int" Value="@machine.Id">@machine.Name</MudSelectItem>
+                            }                        
+                        </MudSelect>
+                    </MudItem>
+                    @if (ViewModel.Machine.Id != 0)
+                    {
+                        <MudItem xs="1" lg="2" Style="margin: 10px">
+                            <MudText Typo="Typo.h5">Dosis: @ViewModel.Machine.Capacity @ViewModel.Machine.CapacityUnit</MudText>
+                        </MudItem>
+                    }
+                </MudGrid>
+            }
+        </div>
+        
+        @if (ViewModel.Details.Count != 0)
         {
-            <MudDivider style="border-color: black;" />
+            <MudDivider style="border-color: black;" Class="mt-3"/>
         }
         <MudGrid Spacing="2" Justify="Justify.Center" Class="mt-2">
-            @foreach (var material in MaterialList)
+            @foreach (var detalle in ViewModel.Details)
             {
-                <MudItem xs="12" lg="4">
-                    <MudTextField @bind-Value="material.Name" Label="Nombre del material" Variant="Variant.Outlined" Margin="Margin.Dense" />
-                </MudItem>
-                <MudItem xs="12" lg="1">
-                    <MudTextField @bind-Value="material.Quantity" Label="Cantidad" Variant="Variant.Outlined" Margin="Margin.Dense" InputType="InputType.Number" />
-                </MudItem>
                 <MudItem xs="12" lg="3">
-                    <MudSelect T="string" @bind-Value="material.Unit" Label="Unidad de medida" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
-                        <MudSelectItem T="string" Value="@("Kg")">Kilogramos</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("Gr")">Gramos</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("Lts")">Litros</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("m3")">Metros cúbicos</MudSelectItem>
-                        <MudSelectItem T="string" Value="@("ml")">Mililitros</MudSelectItem>
+                    <MudSelect T="int"
+                               @bind-Value="detalle.CategoryId"                               
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter"
+                               Clearable>
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una categoría</MudSelectItem>
+                        @if (ViewModel.Categories != null)
+                        {
+                            @foreach (var category in ViewModel.Categories)
+                            {
+                                <MudSelectItem T="int" Value="@category.Id">@category.Description</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" lg="3">
+                    <MudSelect T="int"
+                               @bind-Value="detalle.IdMaterial"                               
+                               Margin="Margin.Dense"
+                               Variant="Variant.Outlined"
+                               AnchorOrigin="Origin.BottomCenter"
+                               TransformOrigin="Origin.TopCenter"                               
+                               Clearable>
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una producto</MudSelectItem>
+                        @foreach (var m in ViewModel.Materials.Where(m => m.CategoryId == detalle.CategoryId))
+                        {
+                            <MudSelectItem T="int" Value="@m.Id">@m.ArticleName - @m.CommercialName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" lg="2">
+                    <MudTextField T="decimal" @bind-Value="detalle.CantRequerida" Label="Cantidad Requerida" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detalle.UnidadCantRequerida" Label="Unidad" Margin="Margin.Dense"
+                        AnchorOrigin="Origin.BottomCenter"
+                        TransformOrigin="Origin.TopCenter">
+                        <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
+                        <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                        <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("cc")">cc</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" lg="2">
+                    <MudTextField T="decimal" @bind-Value="detalle.CantEstimada" Label="Cantidad total estimada" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detalle.UnidadCantEstimada" Label="Unidad" Margin="Margin.Dense"
+                        AnchorOrigin="Origin.BottomCenter"
+                        TransformOrigin="Origin.TopCenter">
+                        <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
+                        <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                        <MudSelectItem Value="@("Lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" lg="1" Class="btnDelete">
-                    <MudIconButton Variant="Variant.Filled"
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                    Color="Color.Error"
-                                   Size="Size.Small"
-                                   Icon="@Icons.Material.Filled.Delete"
-                                   @onclick="@(() => RemoveMaterial(material))" />
+                                   Variant="Variant.Filled"
+                                   Size="Size.Medium"
+                                   @onclick="@(() => RemoveMaterial(detalle))"
+                                   Tooltip="Eliminar material" />
                 </MudItem>
+                <MudDivider style="border-color: black;" Class="mt-3 mb-3" />
             }
         </MudGrid>
     </div>
 </div>
 <style>
     .btnDelete {
-        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
     }
 </style>
 @code {
-    private string _materialName = string.Empty;
-    private string _materialUnit = string.Empty;
+    [Parameter] public NewRecipeViewModel ViewModel { get; set; }
+    private int _selectedMachineId;
 
-    private List<MaterialOrderDTO> MaterialList = new List<MaterialOrderDTO>();
+    private void OnMachineSelected(int id)
+    {
+        _selectedMachineId = id;
+        ViewModel.Machine = ViewModel.MachineList.FirstOrDefault(m => m.Id == id);
+    }
 
     private void AddMaterial()
     {
-        MaterialList.Add(new MaterialOrderDTO());
-        StateHasChanged();
+        ViewModel.Details.Add(new DetailRecipeDTO());
     }
-    private void RemoveMaterial(MaterialOrderDTO material)
+
+    private void RemoveMaterial(DetailRecipeDTO material)
     {
-        if (MaterialList.Count != 0)
-        {
-            MaterialList.Remove(material);
-            StateHasChanged();
-        }
+        ViewModel.Details.Remove(material);
+    }
+
+    private void AddMachine()
+    {
+        ViewModel.Machine = new MachineRecipeDTO();
     }
 }

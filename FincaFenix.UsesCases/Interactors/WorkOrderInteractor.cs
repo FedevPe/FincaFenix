@@ -1,5 +1,6 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Aggregates;
+using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
 using FincaFenix.UsesCases.Repository;
 

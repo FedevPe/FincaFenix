@@ -1,12 +1,14 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.UsesCases.Interfaces.Tasks;
+using System.Globalization;
 
 namespace FincaFenix.Presenters.Implementations
 {
     public class TaskPresenter : ITaskOutputPort
     {
         public List<TaskDTO>? TaskList { get; private set; }
+
 
         public Task Handle(TaskEntity task)
         {

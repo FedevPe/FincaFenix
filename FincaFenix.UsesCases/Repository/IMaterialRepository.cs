@@ -4,7 +4,10 @@ namespace FincaFenix.UsesCases.Repository
 {
     public interface IMaterialRepository
     {
-        Task<IEnumerable<MaterialEntity>> GetAllMaterial();
+        Task<IEnumerable<MaterialEntity>> GetAllMaterialByCategoryId(int categoryId);
         Task<IEnumerable<MaterialEntity>> GetMaterialByOrderIdAsync(int id);
+        Task<IEnumerable<MaterialEntity>> GetMaterialList();
+
+
     }
 }

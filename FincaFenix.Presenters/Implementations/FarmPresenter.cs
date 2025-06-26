@@ -1,6 +1,6 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
-using FincaFenix.UsesCases.Interfaces.Farms;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 
 namespace FincaFenix.Presenters.Implementations
 {

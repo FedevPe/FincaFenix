@@ -1,12 +1,13 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
-using FincaFenix.UsesCases.Interfaces.Material;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 
 namespace FincaFenix.Presenters.Implementations
 {
     public class MaterialPresenter : IMaterialOutputPort
     {
-        public List<MaterialDTO>? MaterialList { get; private set; }
+
+        public List<MaterialOrderDTO>? MaterialList { get; private set; }
 
         public Task Handle(MaterialEntity material)
         {
@@ -15,10 +16,15 @@ namespace FincaFenix.Presenters.Implementations
 
         public Task HandleList(IEnumerable<MaterialEntity> materialList)
         {
-            MaterialList = materialList.Select(material => new MaterialDTO
+            MaterialList = materialList.Select(material => new MaterialOrderDTO
             {
                 Id = material.Id,
-                Name = material.CommercialName
+                ArticleName = material.ArticleName,
+                CommercialName = material.CommercialName,
+                CategoryId = material.CategoryId,
+                UnitPacking = material.PackingUnit,
+                Brand = material.Brand
+
             }).ToList();
 
             return Task.CompletedTask;

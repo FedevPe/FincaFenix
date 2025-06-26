@@ -1,14 +1,7 @@
-﻿using FincaFenix.EFCore.Options;
-using FincaFenix.EFCore.Services.DetailSector;
-using FincaFenix.EFCore.Services.Farm;
-using FincaFenix.EFCore.Services.Material;
-using FincaFenix.EFCore.Services.Task;
-using FincaFenix.EFCore.Services.WorkOrder;
-using FincaFenix.Gateways.Interfaces.Farm;
-using FincaFenix.Gateways.Interfaces.Material;
-using FincaFenix.Gateways.Interfaces.Sector;
-using FincaFenix.Gateways.Interfaces.Task;
-using FincaFenix.Gateways.Interfaces.WorkOrder;
+﻿using FincaFenix.EFCore.Services.CommandServices;
+using FincaFenix.EFCore.Services.QueryServices;
+using FincaFenix.Gateways.Interfaces.CommandServices;
+using FincaFenix.Gateways.Interfaces.QueryServices;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,10 +10,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddEFCoreServices(this IServiceCollection services)
         {
             services.AddScoped<ITaskQueryService, TaskQueryService>()
-                          .AddScoped<IFarmQueryService, FarmQueryService>()
-                          .AddScoped<IDetailSectorQueryService, DetailSectorQueryService>()
-                          .AddScoped<IMaterialQueryService, MaterialQueryService>()
-                          .AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
+                    .AddScoped<IFarmQueryService, FarmQueryService>()
+                    .AddScoped<IDetailSectorQueryService, DetailSectorQueryService>()
+                    .AddScoped<IMaterialQueryService, MaterialQueryService>()
+                    .AddScoped<IWorkOrderQueryService, WorkOrderQueryService>()
+                    .AddScoped<IMaterialCategoryQueryService, MaterialCategoryQueryService>()
+                    .AddScoped<IMachineQueryService, MachineQueryServices>();
 
             services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 

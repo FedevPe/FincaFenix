@@ -9,8 +9,8 @@ namespace FincaFenix.ViewModels.ViewModels
         ITaskController task)
     {
         public IEnumerable<FarmDTO> Farms { get; set; } = new List<FarmDTO>();
-        public IEnumerable<DetailSectorFarmDTO> Sectors { get; set; } = new List<DetailSectorFarmDTO>();
         public IEnumerable<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
+        public IEnumerable<DetailSectorFarmDTO> Sectors { get; set; } = new List<DetailSectorFarmDTO>();
 
         public async Task LoadInitializeAsync()
         {

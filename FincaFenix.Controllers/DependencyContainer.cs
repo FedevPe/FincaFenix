@@ -12,7 +12,9 @@ public static class DependencyContainer
                       .AddTransient<ISectorController, DetailSectorController>()
                       .AddTransient<IMaterialController, MaterialController>()
                       .AddTransient<ITaskController, TaskController>()
-                      .AddTransient<IWorkOrderController, WorkOrderController>();
+                      .AddTransient<IWorkOrderController, WorkOrderController>()
+                      .AddTransient<IMaterialCategoryController, MaterialCategoryController>()
+                      .AddTransient<IMachineController, MachineController>();
 
         return services;
     }

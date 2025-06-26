@@ -1,6 +1,6 @@
 ﻿using FincaFenix.Presenters.Implementations;
-using FincaFenix.UsesCases.Interfaces.Farms;
-using FincaFenix.UsesCases.Interfaces.Material;
+using FincaFenix.UsesCases.Interfaces.Machine;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 using FincaFenix.UsesCases.Interfaces.Sectors;
 using FincaFenix.UsesCases.Interfaces.Tasks;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
@@ -12,10 +12,12 @@ public static class DependencyContainer
     public static IServiceCollection AddPresenterServices(this IServiceCollection services)
     {
         services.AddScoped<IFarmOutputPort, FarmPresenter>()
-                      .AddScoped<IMaterialOutputPort, MaterialPresenter>()
-                      .AddScoped<ISectorOutputPort, SectorPresenter>()
-                      .AddScoped<ITaskOutputPort, TaskPresenter>()
-                      .AddScoped<IWorkOrderOutputPort, WorkOrderPresenter>();
+                .AddScoped<IMaterialOutputPort, MaterialPresenter>()
+                .AddScoped<ISectorOutputPort, SectorPresenter>()
+                .AddScoped<ITaskOutputPort, TaskPresenter>()
+                .AddScoped<IWorkOrderOutputPort, WorkOrderPresenter>()
+                .AddScoped<IMaterialCategoryOutputPort, MaterialCategoryPresenter>()
+                .AddScoped<IMachineOutputPort, MachinePresenter>();
 
         return services;
     }

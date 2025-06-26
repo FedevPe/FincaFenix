@@ -34,7 +34,7 @@ namespace FincaFenix.EFCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(opcServer);
+                optionsBuilder.UseSqlServer(localServer);
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

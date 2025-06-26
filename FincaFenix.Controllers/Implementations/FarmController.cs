@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FincaFenix.UsesCases.Controllers;
-using FincaFenix.UsesCases.Interfaces.Farms;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.UsesCases.Interfaces.InputPort;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 
 namespace FincaFenixControllers.Implementations
 {

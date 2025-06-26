@@ -1,5 +1,5 @@
 ﻿using FincaFenix.Entities.POCOEntities;
-using FincaFenix.Gateways.Interfaces.Task;
+using FincaFenix.Gateways.Interfaces.QueryServices;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.Gateways.Implementations

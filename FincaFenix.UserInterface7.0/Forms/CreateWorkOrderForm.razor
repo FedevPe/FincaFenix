@@ -1,9 +1,9 @@
 ﻿@page "/createOrder"
 @using FincaFenix.ViewModels.ViewModels
 
-<NewOrderData InfoViewModel=InfoViewModel/>
-<NewRecipe/>
-<div class="container-fluid shadow mt-3 rounded bg-color-white p-2">
+<NewOrderData ViewModel=OrderDataViewModel/>
+<NewRecipe ViewModel=NewRecipeViewModel/>
+<div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
     <MudGrid Spacing="1" Justify="Justify.FlexEnd">
         <MudItem>
             <MudButton Href="/ordenesRecientes"
@@ -23,13 +23,15 @@
 </div>
 
 @code {
-    [Inject] InfoCreateOrderViewModel InfoViewModel { get; set; } = default!;
+    [Inject] InfoCreateOrderViewModel OrderDataViewModel { get; set; } = default!;
+    [Inject] NewRecipeViewModel NewRecipeViewModel { get; set; } = default!;
 
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await InfoViewModel.LoadInitializeAsync();
+        await OrderDataViewModel.LoadInitializeAsync();
+        await NewRecipeViewModel.LoadInitializeAsync();
     }
 
     private void ActualizarSectoresSeleccionados(List<DetailSectorFarmDTO> sectores)

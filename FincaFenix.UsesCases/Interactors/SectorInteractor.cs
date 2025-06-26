@@ -1,5 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Interfaces.Sectors;
+﻿using FincaFenix.UsesCases.Interfaces.Sectors;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.UsesCases.Interactors

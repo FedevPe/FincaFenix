@@ -2,8 +2,11 @@
 {
     public class MaterialOrderDTO
     {
-        public string Name { get; set; }
-        public int Quantity { get; set; }
-        public string Unit { get; set; }
+        public int Id { get; set; }
+        public string ArticleName { get; set; }
+        public string CommercialName { get; set; }
+        public int CategoryId { get; set; }
+        public string UnitPacking { get; set; }
+        public string Brand { get; set; }
     }
 }

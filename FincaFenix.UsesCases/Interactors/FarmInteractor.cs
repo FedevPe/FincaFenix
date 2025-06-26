@@ -1,4 +1,5 @@
-﻿using FincaFenix.UsesCases.Interfaces.Farms;
+﻿using FincaFenix.UsesCases.Interfaces.InputPort;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.UsesCases.Interactors

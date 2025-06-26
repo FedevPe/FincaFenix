@@ -26,12 +26,13 @@
             <WorkOrderCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
         </MudItem>
     </MudGrid>
-    <div class="w-100 d-flex flex-column align-items-center mt-4">
+    @* <div class="w-100 d-flex flex-column align-items-center mt-4">
         <MudPagination Variant="Variant.Filled" Count="3" />
-    </div>
+    </div> *@
 </div>
  
 @code {
+
     protected override void OnInitialized()
     {
         TextApp.PageTitle = "Ordenes de Trabajo";

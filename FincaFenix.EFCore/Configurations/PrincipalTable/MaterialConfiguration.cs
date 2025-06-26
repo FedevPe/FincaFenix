@@ -15,7 +15,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(m => m.CommercialName).HasColumnName("NombreComercial").IsRequired().HasMaxLength(100);
             builder.Property(m => m.CategoryId).HasColumnName("IdCategoria").IsRequired();
             builder.Property(m => m.PackingUnit).HasColumnName("UnidadEmpaque").IsRequired(false).HasMaxLength(50);
-            builder.Property(m => m.Marca).HasColumnName("Marca").IsRequired(false).HasMaxLength(50);
+            builder.Property(m => m.Brand).HasColumnName("Marca").IsRequired(false).HasMaxLength(50);
             builder.Property(m => m.IsDeleted).HasColumnName("Eliminado").IsRequired().HasDefaultValue(false); 
         }
     }

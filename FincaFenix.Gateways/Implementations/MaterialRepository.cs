@@ -1,19 +1,24 @@
 ﻿using FincaFenix.Entities.POCOEntities;
-using FincaFenix.Gateways.Interfaces.Material;
+using FincaFenix.Gateways.Interfaces.QueryServices;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.Gateways.Implementations
 {
     public class MaterialRepository(IMaterialQueryService queryService) : IMaterialRepository
     {
-        public async Task<IEnumerable<MaterialEntity>> GetAllMaterial()
+        public async Task<IEnumerable<MaterialEntity>> GetAllMaterialByCategoryId(int categoryId)
         {
-            return await queryService.GetMaterialList();
+            return await queryService.GetMaterialListByCategoryId(categoryId);
         }
 
         public Task<IEnumerable<MaterialEntity>> GetMaterialByOrderIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<MaterialEntity>> GetMaterialList()
+        {
+            return await queryService.GetMaterialList();
         }
     }
 }
