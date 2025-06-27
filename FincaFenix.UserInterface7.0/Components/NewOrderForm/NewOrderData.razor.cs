@@ -20,7 +20,12 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         private List<DetailSectorFarmDTO> ColumnSector2 = new();
         private List<DetailSectorFarmDTO> ColumnSector3 = new();
         private List<DetailSectorFarmDTO> ColumnSector4 = new();
-
+        private Task OnTaskChanged(int taskId)
+        {
+            _selectedTask = taskId;
+            ViewModel.SelectedTaskId = taskId;
+            return Task.CompletedTask;
+        }
         private async Task OnFarmChanged(int farmId)
         {
             _selectedFarm = farmId;

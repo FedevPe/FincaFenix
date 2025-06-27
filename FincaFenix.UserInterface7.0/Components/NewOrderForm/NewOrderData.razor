@@ -17,7 +17,7 @@
                        TransformOrigin="Origin.BottomLeft"
                        @bind-Value="_selectedFarm"
                        @bind-Value:event="onchange"
-                       ValueChanged="OnFarmChanged">                
+                       ValueChanged="@OnFarmChanged">                
                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una finca</MudSelectItem>
                 @foreach (var farm in ViewModel.Farms)
                 {

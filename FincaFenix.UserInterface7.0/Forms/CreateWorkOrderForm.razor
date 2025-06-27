@@ -2,6 +2,18 @@
 
 <NewOrderData ViewModel=OrderDataViewModel/>
 <NewRecipe ViewModel=NewRecipeViewModel/>
+
+<div class="container-fluid shadow mt-3 rounded bg-color-white p-4 mb-4">
+    <MudGrid Justify="Justify.Center">
+        <MudItem lg="12">
+            <MudText Typo="Typo.h6">Descripcion</MudText>
+            <MudTextField T="string" @bind-Value="Description"
+                          Placeholder="Ingrese una descripción de la orden"
+                          Variant="Variant.Outlined" Margin="Margin.Dense"
+                          FullWidth="true" Lines="3" />
+        </MudItem>
+    </MudGrid>
+</div>
 <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
     <MudGrid Spacing="1" Justify="Justify.FlexEnd">
         <MudItem>
@@ -27,6 +39,7 @@
     [Inject] CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
     [Inject] NavigationManager NavigationManager { get; set; } = default!;
 
+    private string Description { get; set; } = string.Empty;
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
@@ -45,7 +58,7 @@
         CreateWorkOrderViewModel.FarmId = OrderDataViewModel.SelectedFarmId;
         CreateWorkOrderViewModel.TaskId = OrderDataViewModel.SelectedTaskId;
         CreateWorkOrderViewModel.StartDate = DateTime.Now;
-        CreateWorkOrderViewModel.Description = OrderDataViewModel.Description;
+        CreateWorkOrderViewModel.Description = Description;
         CreateWorkOrderViewModel.SectorList = OrderDataViewModel.SelectedSectors;
 
         // Verificamos si hay receta
