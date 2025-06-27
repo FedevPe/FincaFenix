@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
   </ItemGroup>
 

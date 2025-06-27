@@ -1,7 +1,6 @@
 ﻿using FincaFenix.Entities.POCOEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace FincaFenix.EFCore.Configurations.PrincipalTable
 {
@@ -13,13 +12,13 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.HasKey(wo => wo.Id);
             builder.Property(wo => wo.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(wo => wo.OrderNum).HasColumnName("NumOrden").IsRequired().HasMaxLength(20);
-            builder.Property(wo => wo.UserId).HasColumnName("IdUsuario").IsRequired();
+            builder.Property(wo => wo.UserId).HasColumnName("IdUsuario").IsRequired(false);
             builder.Property(wo => wo.RecipeId).HasColumnName("IdReceta");
             builder.HasOne(w => w.Recipe)
                         .WithOne()
                         .HasForeignKey<WorkOrderEntity>(w => w.RecipeId)
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired(false); 
+                        .IsRequired(false);
             builder.Property(wo => wo.TaskId).HasColumnName("IdTarea").IsRequired();
             builder.Property(wo => wo.FarmId).HasColumnName("IdFinca").IsRequired();
             builder.Property(wo => wo.StartDate).HasColumnName("FechaInicio").IsRequired().HasColumnType("datetime2(2)");

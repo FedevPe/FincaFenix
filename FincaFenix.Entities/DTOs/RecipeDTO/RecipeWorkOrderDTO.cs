@@ -7,7 +7,7 @@
         public int MachineId { get; set; }
         public decimal Dose { get; set; }
         public string DoseUnit { get; set; }
-        public string State { get; set; }
+        public string State { get; set; } = "Activo";
         public bool IsDelete { get; set; } = false;
 
         public List<DetailRecipeDTO> Details { get; set; } = new();

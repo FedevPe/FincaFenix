@@ -33,18 +33,11 @@ namespace FincaFenix.EFCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(opcServer);
+                optionsBuilder.UseSqlServer(localServer);
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach (var foreignKey in modelBuilder.Model
-                    .GetEntityTypes()
-                    .SelectMany(e => e.GetForeignKeys()))
-            {
-                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
-            }
-
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

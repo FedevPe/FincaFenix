@@ -7,5 +7,7 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
         Task<IEnumerable<WorkOrderEntity>> GetWorkOrderListByFarmId(int farmId);
         Task<IEnumerable<WorkOrderEntity>> GetWorkOrderListByTaskId(int taskId);
         Task<WorkOrderEntity> GetWorkOrderByOrderNum(int orderNum);
+        Task<string> GetLastNumberTypeDoc(string typeDoc);
+
     }
 }

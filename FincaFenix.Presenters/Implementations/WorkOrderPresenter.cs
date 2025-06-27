@@ -1,5 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Interfaces.WorkOrder;
+﻿using FincaFenix.UsesCases.Interfaces.WorkOrder;
 
 namespace FincaFenix.Presenters.Implementations
 {
@@ -7,9 +6,9 @@ namespace FincaFenix.Presenters.Implementations
     {
         public bool IsSaved { get; private set; } = false;
 
-        public Task Handle(WorkOrderDTO workOrder)
+        public Task Handle(int workOrderId)
         {
-            if (workOrder.Id != 0)
+            if (workOrderId != 0)
                 IsSaved = true;
 
             return Task.CompletedTask;

@@ -1,6 +1,7 @@
 ﻿using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices;
 using FincaFenix.Gateways.Interfaces.QueryServices;
+using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.Gateways.Implementations
@@ -9,9 +10,14 @@ namespace FincaFenix.Gateways.Implementations
         IWorkOrderCommandService commandService,
         IWorkOrderQueryService queryService) : IWorkOrderRepository
     {
-        public async Task<bool> AddWorkOrder(WorkOrderEntity workOrder)
+        public async Task<int> AddWorkOrder(WorkOrderEntity workOrder, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors)
         {
-            return await commandService.SaveWorkOrder(workOrder);
+            return await commandService.SaveWorkOrder(workOrder, recipe, workedSectors);
+        }
+
+        public async Task<string> GetLastNumberDoc(string typeDoc)
+        {
+            return await queryService.GetLastNumberTypeDoc(typeDoc);
         }
 
         public async Task<IEnumerable<WorkOrderEntity>> GetListWorkOrderByFarmId(int farmId)
@@ -28,5 +34,6 @@ namespace FincaFenix.Gateways.Implementations
         {
             return queryService.GetWorkOrderByOrderNum(orderId);
         }
+
     }
 }

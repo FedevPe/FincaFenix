@@ -12,7 +12,7 @@ namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
         public int FarmId { get; set; }
         public string Description { get; set; }
         public List<MaterialOrderDTO> MaterialsList { get; set; }
-        public List<int> SectorList { get; set; }
+        public List<DetailSectorFarmDTO> SectorList { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string State { get; set; } = "Activo";

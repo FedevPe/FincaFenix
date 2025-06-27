@@ -121,8 +121,8 @@
                 </MudItem>
 
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detalle.CantRequerida" Label="Cantidad Requerida" Margin="Margin.Dense" />
-                    <MudSelect T="string" @bind-Value="detalle.UnidadCantRequerida" Label="Unidad" Margin="Margin.Dense"
+                    <MudTextField T="decimal" @bind-Value="detalle.AmountRequired" Label="Cantidad Requerida" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detalle.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
@@ -133,8 +133,8 @@
                 </MudItem>
 
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detalle.CantEstimada" Label="Cantidad total estimada" Margin="Margin.Dense" />
-                    <MudSelect T="string" @bind-Value="detalle.UnidadCantEstimada" Label="Unidad" Margin="Margin.Dense"
+                    <MudTextField T="decimal" @bind-Value="detalle.EstimatedAmount" Label="Cantidad total estimada" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detalle.EstimatedAmountUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>

@@ -5,9 +5,9 @@ namespace FincaFenix.ViewModels.ViewModels
 {
     public class CreateWorkOrderViewModel(IWorkOrderController wo) : WorkOrderDTO
     {
-        public async Task SaveWorkOrder(WorkOrderDTO newWorkOrder)
+        public async Task SaveWorkOrder()
         {
-            await wo.CreateWorkOrder(newWorkOrder);
+            await wo.CreateWorkOrder(this);
         }
     }
 }

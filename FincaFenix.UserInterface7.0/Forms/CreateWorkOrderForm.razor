@@ -12,7 +12,7 @@
                        StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
         </MudItem>
         <MudItem>
-            <MudButton Href="/ordenesRecientes"
+            <MudButton OnClick="SaveWorkOrder"
                        Variant="Variant.Filled"
                        Color="Color.Primary"
                        Size="Size.Small"
@@ -25,6 +25,7 @@
     [Inject] InfoNewWorkOrderViewModel OrderDataViewModel { get; set; } = default!;
     [Inject] NewRecipeViewModel NewRecipeViewModel { get; set; } = default!;
     [Inject] CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
 
     private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
 
@@ -41,31 +42,39 @@
     }
     private async Task SaveWorkOrder()
     {
-        var nuevaOrden = new WorkOrderDTO
+        CreateWorkOrderViewModel.FarmId = OrderDataViewModel.SelectedFarmId;
+        CreateWorkOrderViewModel.TaskId = OrderDataViewModel.SelectedTaskId;
+        CreateWorkOrderViewModel.StartDate = DateTime.Now;
+        CreateWorkOrderViewModel.Description = OrderDataViewModel.Description;
+        CreateWorkOrderViewModel.SectorList = OrderDataViewModel.SelectedSectors;
+
+        // Verificamos si hay receta
+        if (NewRecipeViewModel.Machine != null || NewRecipeViewModel.Details.Count > 0)
         {
-            FarmId = OrderDataViewModel.SelectedFarmId,
-            TaskId = OrderDataViewModel.SelectedTaskId,
-            StartDate = DateTime.Now,
-            Description = OrderDataViewModel.Description,
-            SectorList = OrderDataViewModel.SelectedSectors.Select(s => s.Id).ToList(),
-            Recipe = new RecipeWorkOrderDTO
+            CreateWorkOrderViewModel.Recipe = new RecipeWorkOrderDTO
             {
-                MachineId = NewRecipeViewModel.MachineId,
+                MachineId = NewRecipeViewModel.Machine?.Id ?? 0,
                 Dose = NewRecipeViewModel.Dose,
                 DoseUnit = NewRecipeViewModel.DoseUnit,
                 Details = NewRecipeViewModel.Details.Select(m => new DetailRecipeDTO
                 {
-                    CategoryId = m.CategoryId,
                     MaterialId = m.MaterialId,
-                    CantRequerida = m.CantRequerida,
-                    CantEstimada = m.CantEstimada,
-                    UnidadCantRequerida = m.UnidadCantRequerida,
-                    UnidadCantEstimada = m.UnidadCantEstimada
+                    AmountRequired = m.AmountRequired,
+                    AmountRequiredUnit = m.AmountRequiredUnit,
+                    EstimatedAmount = m.EstimatedAmount,
+                    EstimatedAmountUnit = m.EstimatedAmountUnit
                 }).ToList()
-            },
-        };
+            };
+        }
+        else
+        {
+            CreateWorkOrderViewModel.Recipe = null;
+        }
 
-        await CreateWorkOrderViewModel.SaveWorkOrder(nuevaOrden); // Este método debería llamar al controlador que interactúa con el interactor
+        await CreateWorkOrderViewModel.SaveWorkOrder();
+
+        // Redireccionar tras guardar
+        NavigationManager.NavigateTo("/ordenesRecientes");
     }
 
 }
