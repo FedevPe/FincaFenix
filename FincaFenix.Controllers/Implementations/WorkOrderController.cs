@@ -19,12 +19,13 @@ namespace FincaFenixControllers.Implementations
             return presenter.IsSaved;
         }
 
-        public Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrder(int quantity, int page, string state)
+        public async Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrder(int farmId, string state = "Activo")
         {
-            throw new NotImplementedException();
+            await interactor.GetWorkOrderList(farmId, state);
+            return presenter.WorkOrderList;
         }
 
-        public Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrderByFarmId(int farmId, int quantity, int page, string state)
+        public Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrderByFarmId(int farmId, string state)
         {
             throw new NotImplementedException();
         }

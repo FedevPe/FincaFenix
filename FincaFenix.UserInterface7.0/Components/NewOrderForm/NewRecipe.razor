@@ -50,7 +50,7 @@
                                 AnchorOrigin="Origin.BottomCenter"
                                 TransformOrigin="Origin.TopCenter" Style="margin-top: 14px">
                                 <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                                <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                                <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
                                 <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                                 <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                             </MudSelect>
@@ -121,12 +121,12 @@
                 </MudItem>
 
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detalle.AmountRequired" Label="Cantidad Requerida" Margin="Margin.Dense" />
+                    <MudTextField T="decimal" @bind-Value="detalle.AmountRequired" Label="Cantidad Requerida/Dosis" Margin="Margin.Dense" />
                     <MudSelect T="string" @bind-Value="detalle.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                        <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                        <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
                         <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
@@ -138,7 +138,7 @@
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                        <MudSelectItem Value="@("Gr")">Gr</MudSelectItem>
+                        <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
                         <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>

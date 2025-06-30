@@ -13,7 +13,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<ITaskRepository, TaskRepository>()
                     .AddScoped<IWorkOrderRepository, WorkOrderRepository>()
                     .AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>()
-                    .AddScoped<IMachineRepository, MachineRepository>();
+                    .AddScoped<IMachineRepository, MachineRepository>()
+                    .AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             return services;
         }

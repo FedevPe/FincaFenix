@@ -1,0 +1,118 @@
+﻿@page "/registroActividad"
+
+<MudPaper Elevation="2" class="container-fluid border-light p-4 mt-6">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem xs="12" lg="12">
+            <MudText Typo="Typo.h4"><i class="fa-regular fa-clipboard"/> Orden de trabajo N° 10</MudText>
+        </MudItem>
+    </MudGrid>
+    <MudDivider Style="border-color:black"/>
+    <MudGrid Justify="Justify.FlexStart" Spacing="3" Class="mt-2">
+        <MudItem xs="12" lg="3">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.LocationOn" /> Finca</MudText>
+            <MudText Typo="Typo.subtitle1">San Carlos</MudText>
+        </MudItem>
+        <MudItem xs="12" lg="3">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Outlined.Task" /> Tarea</MudText>
+            <MudText Typo="Typo.subtitle1">Aplicación de herbicida</MudText>
+        </MudItem>
+        <MudItem xs="12" lg="3">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Outlined.Dashboard" /> Cuadros</MudText>
+            <MudText Typo="Typo.subtitle1">18-19-20</MudText>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+<MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem lg="12" >
+            <MudText Typo="Typo.h5" class="mb-2"><MudIcon Icon="@Icons.Material.Outlined.AppRegistration"/> Registro de actividad</MudText>
+            <MudDivider Style="border-color: black;" />
+        </MudItem>
+        <MudItem xs="12" lg="12">
+            <MudGrid Justify="Justify.FlexStart">
+                <MudItem xs="12" lg="6"> 
+                    <MudText Typo="Typo.h6">Operario</MudText>
+                    <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                               Variant="Variant.Outlined" Clearable
+                               AnchorOrigin="Origin.BottomRight"
+                               TransformOrigin="Origin.TopRight">
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
+                    </MudSelect>
+                </MudItem>  
+                <MudItem xs="12" lg="3">
+                    <MudText Typo="Typo.h6">Fecha</MudText>
+                    <MudDatePicker @bind-value="_date" ShowToolbar="false" Style="margin-top:10px"
+                                   AnchorOrigin="Origin.BottomRight"
+                                   TransformOrigin="Origin.TopRight" />
+                </MudItem>
+                <MudFlexBreak/>
+                <MudItem xs="12" lg="12">
+                    <div class="d-flex mb-2">
+                        <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard"/> Cuadros trabajados</MudText>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Filled" style="height: 35px;"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.DashboardCustomize">Agregar cuadro</MudButton>
+                    </div>
+                    <MudDivider Style="border-color: black;" />
+                </MudItem>
+            </MudGrid>
+            <MudGrid Spacing="3" Justify="Justify.SpaceBetween" Class="mt-2">
+                <MudItem xs="12" lg="3">
+                    <MudText Typo="Typo.caption">Cuadro</MudText>
+                    <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                               Variant="Variant.Outlined" Clearable
+                               AnchorOrigin="Origin.BottomRight"
+                               TransformOrigin="Origin.TopRight">
+                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="4" lg="2">
+                    <MudText Typo="Typo.caption">Horas trabajadas</MudText>
+                    <MudTextField T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
+                </MudItem>
+                <MudItem xs="4" lg="2">
+                    <MudText Typo="Typo.caption">Rendimiento diario</MudText>
+                    <MudTextField T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
+                </MudItem>
+                <MudSpacer/>
+                <MudItem xs="1" lg="1" Class="btnDelete">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   Variant="Variant.Filled"
+                                   Size="Size.Medium" Style="margin-top: 35px"/>
+                </MudItem>
+                <MudItem lg="12" xs="12">
+                    <MudText Typo="Typo.caption">Observaciones</MudText>
+                    <MudTextField T="string"
+                                  Placeholder="Observaciones de la actividad"
+                                  Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  FullWidth="true" Lines="2" />
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudDivider/>
+    </MudGrid>
+</MudPaper>
+<div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
+    <MudGrid Spacing="1" Justify="Justify.FlexEnd">
+        <MudItem>
+            <MudButton Href="/ordenesRecientes"
+                       Variant="Variant.Filled"
+                       Color="Color.Error"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
+@code{
+    private DateTime _date = DateTime.Now;
+}

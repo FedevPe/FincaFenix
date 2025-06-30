@@ -17,7 +17,8 @@ public static class DependencyContainer
                 .AddScoped<IWorkOrderInputPort, WorkOrderInteractor>()
                 .AddScoped<IMaterialInputPort, MaterialInteractor>()
                 .AddScoped<IMaterialCategoryInputPort, MaterialCategoryInteractor>()
-                .AddScoped<IMachineInputPort, MachineInteractor>();
+                .AddScoped<IMachineInputPort, MachineInteractor>()
+                .AddScoped<IEmployeeInputPort, EmployeeInteractor>();
 
 
         return services;

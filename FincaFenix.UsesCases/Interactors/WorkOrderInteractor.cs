@@ -11,23 +11,28 @@ namespace FincaFenix.UsesCases.Interactors
         IWorkOrderOutputPort presenter,
         IWorkOrderRepository repository) : IWorkOrderInputPort
     {
-        public string WorkOrderNumber { get; private set; }
-        public string RecipeNumber { get; private set; }
+        public Task GetWorkOrderList(int farmId, string state = "Activo")
+        {
+            throw new NotImplementedException();
+        }
+
+        //public string WorkOrderNumber { get; private set; }
+        //public string RecipeNumber { get; private set; }
 
         public async Task Handle(WorkOrderDTO workOrder)
         {
             RecipeEntity recipeEntity = null;
             if (workOrder.Recipe != null)
             {
-                RecipeNumber = await repository.GetLastNumberDoc("Receta");
-                recipeEntity = WorkOrderMapper.MapRecipe(workOrder.Recipe, RecipeNumber);
+                //RecipeNumber = await repository.GetLastNumberDoc("Receta");
+                recipeEntity = WorkOrderMapper.MapRecipe(workOrder.Recipe);
             }
 
             // Paso 2: Obtener número de orden de trabajo
-            WorkOrderNumber = await repository.GetLastNumberDoc("OrdenesTrabajo");
+            //WorkOrderNumber = await repository.GetLastNumberDoc("OrdenesTrabajo");
 
             // Paso 3: Mapear la orden de trabajo
-            var workOrderEntity = WorkOrderMapper.ToEntity(workOrder, WorkOrderNumber);
+            var workOrderEntity = WorkOrderMapper.ToEntity(workOrder);
             workOrderEntity.Recipe = recipeEntity;
 
             // Paso 4: Mapear sectores trabajados (si vienen)

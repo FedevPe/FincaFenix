@@ -6,11 +6,10 @@ namespace FincaFenix.UsesCases.Aggregates
 {
     public class WorkOrderMapper
     {
-        public static WorkOrderEntity ToEntity(WorkOrderDTO workOrderDTO, string orderNumber)
+        public static WorkOrderEntity ToEntity(WorkOrderDTO workOrderDTO)
         {
             var newWorkOrder = new WorkOrderEntity
             {
-                OrderNum = orderNumber,
                 TaskId = workOrderDTO.TaskId,
                 FarmId = workOrderDTO.FarmId,
                 StartDate = workOrderDTO.StartDate,
@@ -21,11 +20,10 @@ namespace FincaFenix.UsesCases.Aggregates
 
             return newWorkOrder;
         }
-        public static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDto, string recipeNumber)
+        public static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDto)
         {
             return new RecipeEntity
             {
-                NumRecipe = recipeNumber,
                 Dosage = recipeDto.Dose,
                 DosageUnit = recipeDto.DoseUnit,
                 MachineId = recipeDto.MachineId,

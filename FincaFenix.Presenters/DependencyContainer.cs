@@ -17,7 +17,8 @@ public static class DependencyContainer
                 .AddScoped<ITaskOutputPort, TaskPresenter>()
                 .AddScoped<IWorkOrderOutputPort, WorkOrderPresenter>()
                 .AddScoped<IMaterialCategoryOutputPort, MaterialCategoryPresenter>()
-                .AddScoped<IMachineOutputPort, MachinePresenter>();
+                .AddScoped<IMachineOutputPort, MachinePresenter>()
+                .AddScoped<IEmployeeOutputPort, EmployeePresenter>();
 
         return services;
     }
