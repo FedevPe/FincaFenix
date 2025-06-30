@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Controllers;
 namespace FincaFenix.ViewModels.ViewModels
 {
     public class InfoNewWorkOrderViewModel (
-        IFarmController farm, 
+        IFarmController farm,
         ISectorController sector,
         ITaskController task)
     {

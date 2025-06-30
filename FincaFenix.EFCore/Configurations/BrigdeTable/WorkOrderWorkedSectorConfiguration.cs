@@ -10,7 +10,7 @@ namespace FincaFenix.EFCore.Configurations.BrigdeTable
         {
             builder.ToTable("OrdenTrabajo_SectorTrabajado");
             builder.HasKey(otws => otws.Id);
-            builder.Property(otws => otws.Id).HasColumnName("IdOrdenTrabajoSectorTrabajado").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(otws => otws.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(otws => otws.WorkOrderId).HasColumnName("IdOrdenTrabajo").IsRequired();
             builder.Property(otws => otws.SectorFarmId).HasColumnName("IdSector").IsRequired();
 

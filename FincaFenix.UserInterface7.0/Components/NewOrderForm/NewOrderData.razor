@@ -15,7 +15,7 @@
                        Variant="Variant.Outlined" Clearable
                        AnchorOrigin="Origin.BottomLeft"
                        TransformOrigin="Origin.BottomLeft"
-                       @bind-Value="_selectedFarm"
+                       @bind-Value="ViewModel.SelectedFarmId"
                        @bind-Value:event="onchange"
                        ValueChanged="@OnFarmChanged">                
                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una finca</MudSelectItem>
@@ -28,12 +28,11 @@
 
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
-            <MudSelect  Margin="Margin.Dense" FullWidth="true"
+            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
                        Variant="Variant.Outlined" Clearable
                        AnchorOrigin="Origin.BottomLeft"
                        TransformOrigin="Origin.BottomLeft"
-                       @bind-Value="_selectedTask"
-                       @bind-Value:event="onchange">
+                       @bind-Value="ViewModel.SelectedTaskId">
                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una tarea</MudSelectItem>
                 @foreach (var task in ViewModel.Tasks)
                 {
@@ -42,7 +41,7 @@
             </MudSelect>
         </MudItem>
 
-        @if(_selectedFarm != 0)
+        @if (ViewModel.SelectedFarmId != 0)
         {
             <MudItem xs="12" lg="12">
                 <MudText Typo="Typo.h6">Sectores de la finca</MudText>
@@ -52,48 +51,16 @@
         @* <MudFlexBreak /> *@
 
         <MudItem xs="12" lg="12">
-            <MudGrid Justify="Justify.SpaceEvenly">
-                <MudItem xs="12" sm="6" lg="3">
-                    @foreach (var sector in ColumnSector1)
-                    {
+            <MudGrid Justify="Justify.FlexStart">                
+                @foreach (var sector in ViewModel.Sectors)
+                {
+                    <MudItem>
                         <MudCheckBox T="bool"
                                      @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
+                                     Label="@sector.SectorName"                                     
                                      Color="Color.Primary" />
-                    }
-                </MudItem>
-
-                <MudItem xs="12" sm="6" lg="3">
-                    @foreach (var sector in ColumnSector2)
-                    {
-                        <MudCheckBox T="bool"
-                                     @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
-                                     Color="Color.Primary" />
-                    }
-                </MudItem>
-                <MudItem xs="12" sm="6" lg="3">
-                    @foreach (var sector in ColumnSector3)
-                    {
-                        <MudCheckBox T="bool"
-                                     @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
-                                     Color="Color.Primary" />
-                    }
-                </MudItem>
-                <MudItem xs="12" sm="6" lg="3">
-                    @foreach (var sector in ColumnSector4)
-                    {
-                        <MudCheckBox T="bool"
-                                     @bind-Value="@sector.Selected"
-                                     Label="@sector.SectorName"
-                                     CheckedChanged="@(async (bool value) => { sector.Selected = value; await OnSectorSelectionChanged(sector, value); })"
-                                     Color="Color.Primary" />
-                    }
-                </MudItem>
+                    </MudItem>
+                }
             </MudGrid>
         </MudItem>
     </MudGrid>

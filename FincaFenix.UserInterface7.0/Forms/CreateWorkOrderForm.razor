@@ -59,7 +59,7 @@
         CreateWorkOrderViewModel.TaskId = OrderDataViewModel.SelectedTaskId;
         CreateWorkOrderViewModel.StartDate = DateTime.Now;
         CreateWorkOrderViewModel.Description = Description;
-        CreateWorkOrderViewModel.SectorList = OrderDataViewModel.SelectedSectors;
+        CreateWorkOrderViewModel.SectorList = OrderDataViewModel.Sectors.Where(sector => sector.Selected).ToList();
 
         // Verificamos si hay receta
         if (NewRecipeViewModel.Machine != null || NewRecipeViewModel.Details.Count > 0)

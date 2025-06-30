@@ -12,7 +12,7 @@ namespace FincaFenix.EFCore.Services.CommandServices
 
             try
             {
-                // Guardar receta si existe
+                
                 if (recipe != null)
                 {
                     Recipes.Add(recipe);
@@ -25,15 +25,15 @@ namespace FincaFenix.EFCore.Services.CommandServices
                 WorkOrders.Add(workOrder);
                 await SaveChangesAsync();
 
-                // Guardar sectores trabajados (si los hay)
-                if (workOrder.WorkedSectors != null && workOrder.WorkedSectors.Any())
+               
+                if (workedSectors != null && workedSectors.Any())
                 {
-                    foreach (var sector in workOrder.WorkedSectors)
+                    foreach (var sector in workedSectors)
                     {
                         sector.WorkOrderId = workOrder.Id;
                     }
 
-                    WorkOrderWorkedSectors.AddRange(workOrder.WorkedSectors);
+                    WorkOrderWorkedSectors.AddRange(workedSectors);
                     await SaveChangesAsync();
                 }
 

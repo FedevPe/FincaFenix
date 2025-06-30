@@ -11,34 +11,25 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         [Parameter]
         public InfoNewWorkOrderViewModel ViewModel { get; set; }
 
-        private int _selectedFarm = 0;
-        private int _selectedTask = 0;
-
         private List<DetailSectorFarmDTO> Sectors { get; set; } = new();
 
         private List<DetailSectorFarmDTO> ColumnSector1 = new();
         private List<DetailSectorFarmDTO> ColumnSector2 = new();
         private List<DetailSectorFarmDTO> ColumnSector3 = new();
         private List<DetailSectorFarmDTO> ColumnSector4 = new();
-        private Task OnTaskChanged(int taskId)
-        {
-            _selectedTask = taskId;
-            ViewModel.SelectedTaskId = taskId;
-            return Task.CompletedTask;
-        }
+        
         private async Task OnFarmChanged(int farmId)
         {
-            _selectedFarm = farmId;
-
+            ViewModel.SelectedFarmId = farmId;
             ColumnSector1.Clear();
             ColumnSector2.Clear();
             ColumnSector3.Clear();
             ColumnSector4.Clear();
             ViewModel.SelectedSectors.Clear();
 
-            if (_selectedFarm != 0)
+            if (ViewModel.SelectedFarmId != 0)
             {
-                await ViewModel.LoadSectorsForFarmIdAsync(_selectedFarm);
+                await ViewModel.LoadSectorsForFarmIdAsync(ViewModel.SelectedFarmId);
                 Sectors = ViewModel.Sectors.ToList();
                 ViewModel.SelectedFarmId = farmId;
                 for (int i = 0; i < Sectors.Count; i++)
@@ -66,23 +57,6 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
                 Sectors.Clear();
             }
             await SectorsSelectionChanged.InvokeAsync(ViewModel.SelectedSectors);
-        }
-
-        private Task OnSectorSelectionChanged(DetailSectorFarmDTO sector, bool isChecked)
-        {
-            sector.Selected = isChecked;
-
-            if (isChecked)
-            {
-                if (!ViewModel.SelectedSectors.Contains(sector))
-                    ViewModel.SelectedSectors.Add(sector);
-            }
-            else
-            {
-                ViewModel.SelectedSectors.Remove(sector);
-            }
-
-            return SectorsSelectionChanged.InvokeAsync(ViewModel.SelectedSectors);
         }
     }
 }
