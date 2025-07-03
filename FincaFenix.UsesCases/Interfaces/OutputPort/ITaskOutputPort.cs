@@ -5,6 +5,7 @@ namespace FincaFenix.UsesCases.Interfaces.Tasks
 {
     public interface ITaskOutputPort
     {
+        public TaskDTO TaskDTO { get; }
         public List<TaskDTO> TaskList { get; }
         Task Handle(TaskEntity task);
         Task HandleList(IEnumerable<TaskEntity> taskList);
