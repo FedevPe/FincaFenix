@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FincaFenix.EFCore.Configurations.PrincipalTable
 {
-    public class WorkOrderDetailConfiguration : IEntityTypeConfiguration<DetailWorkOrderEntity>
+    public class DetailWorkOrderConfiguration : IEntityTypeConfiguration<DetailWorkOrderEntity>
     {
         public void Configure(EntityTypeBuilder<DetailWorkOrderEntity> builder)
         {
@@ -21,6 +21,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(5, 2);
             builder.Property(d => d.Performance).HasColumnName("Rendimiento").IsRequired().HasPrecision(5, 2);
             builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired().HasMaxLength(500);
+            builder.Property(d => d.ActivityDate).HasColumnName("FechaActividad").IsRequired().HasColumnType("datetime2");
             builder.Property(d => d.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();
 
         }
