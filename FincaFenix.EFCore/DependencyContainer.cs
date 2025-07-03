@@ -18,7 +18,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IMachineQueryService, MachineQueryServices>()
                     .AddScoped<IEmployeeQueryService, EmployeeQueryService>();
 
-            services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
+            services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>()
+                    .AddScoped<IDetailWOCommandService, DetailWOCommandService>();
 
             return services;
         }
