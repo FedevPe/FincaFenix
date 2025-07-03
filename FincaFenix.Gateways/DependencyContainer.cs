@@ -14,7 +14,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IWorkOrderRepository, WorkOrderRepository>()
                     .AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>()
                     .AddScoped<IMachineRepository, MachineRepository>()
-                    .AddScoped<IEmployeeRepository, EmployeeRepository>();
+                    .AddScoped<IEmployeeRepository, EmployeeRepository>()
+                    .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>();
 
             return services;
         }

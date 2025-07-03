@@ -1,7 +1,8 @@
-﻿using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices;
 using FincaFenix.Gateways.Interfaces.QueryServices;
-using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.Gateways.Implementations
@@ -15,25 +16,14 @@ namespace FincaFenix.Gateways.Implementations
             return await commandService.SaveWorkOrder(workOrder, recipe, workedSectors);
         }
 
-        public async Task<string> GetLastNumberDoc(string typeDoc)
+        public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderById(int id)
         {
-            return await queryService.GetLastNumberTypeDoc(typeDoc);
+            return await queryService.GetWorkOrderInfoById(id);
         }
 
-        public async Task<IEnumerable<WorkOrderEntity>> GetListWorkOrderByFarmId(int farmId)
+        public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize)
         {
-            return await queryService.GetWorkOrderListByFarmId(farmId);
+            return await queryService.GetWorkOrderListPaged(pageNumber, pageSize);
         }
-
-        public async Task<IEnumerable<WorkOrderEntity>> GetListWorkOrderByTaskId(int taskId)
-        {
-            return await queryService.GetWorkOrderListByTaskId(taskId);
-        }
-
-        public Task<WorkOrderEntity> GetWorkOrderByOrderNum(int orderId)
-        {
-            return queryService.GetWorkOrderByOrderNum(orderId);
-        }
-
     }
 }
