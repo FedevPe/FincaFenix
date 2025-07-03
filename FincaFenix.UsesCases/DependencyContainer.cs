@@ -11,14 +11,15 @@ public static class DependencyContainer
     public static IServiceCollection AddUseCasesServices(this IServiceCollection services)
     {
         //Interactors
-        services.AddScoped<IFarmInputPort, FarmInteractor>()
-                .AddScoped<ISectorsInputPort, SectorInteractor>()
-                .AddScoped<ITaskInputPort, TaskInteractor>()
-                .AddScoped<IWorkOrderInputPort, WorkOrderInteractor>()
-                .AddScoped<IMaterialInputPort, MaterialInteractor>()
-                .AddScoped<IMaterialCategoryInputPort, MaterialCategoryInteractor>()
-                .AddScoped<IMachineInputPort, MachineInteractor>()
-                .AddScoped<IEmployeeInputPort, EmployeeInteractor>();
+        services.AddTransient<IFarmInputPort, FarmInteractor>()
+                .AddTransient<IDetailSectorInputPort, DetailSectorInteractor>()
+                .AddTransient<ITaskInputPort, TaskInteractor>()
+                .AddTransient<IWorkOrderInputPort, WorkOrderInteractor>()
+                .AddTransient<IMaterialInputPort, MaterialInteractor>()
+                .AddTransient<IMaterialCategoryInputPort, MaterialCategoryInteractor>()
+                .AddTransient<IMachineInputPort, MachineInteractor>()
+                .AddTransient<IEmployeeInputPort, EmployeeInteractor>()
+                .AddTransient<IDetailWorkOrderInputPort, DetailWorkOrderInteractor>();
 
 
         return services;
