@@ -7,10 +7,16 @@ namespace FincaFenix.Presenters.Implementations
     public class FarmPresenter : IFarmOutputPort
     {
         public List<FarmDTO>? FarmList { get; private set; }
+        public FarmDTO? Farm { get; private set; }
 
         public Task Handle(FarmEntity task)
         {
-            throw new NotImplementedException();
+            Farm = new FarmDTO
+            {
+                Id = task.Id,
+                Name = task.Name
+            };
+            return Task.CompletedTask;
         }
 
         public Task HandleList(IEnumerable<FarmEntity> materialList)

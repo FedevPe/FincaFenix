@@ -1,7 +1,6 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.UsesCases.Interfaces.Tasks;
-using System.Globalization;
 
 namespace FincaFenix.Presenters.Implementations
 {
@@ -9,10 +8,16 @@ namespace FincaFenix.Presenters.Implementations
     {
         public List<TaskDTO>? TaskList { get; private set; }
 
+        public TaskDTO? TaskDTO { get; private set; }
 
         public Task Handle(TaskEntity task)
         {
-            throw new NotImplementedException();
+            TaskDTO = new TaskDTO
+            {
+                Id = task.Id,
+                Description = task.Description
+            };
+            return Task.CompletedTask;
         }
 
         public Task HandleList(IEnumerable<TaskEntity> taskList)

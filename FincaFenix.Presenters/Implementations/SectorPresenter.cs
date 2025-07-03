@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Interfaces.Sectors;
 
 namespace FincaFenix.Presenters.Implementations
 {
-    public class SectorPresenter : ISectorOutputPort
+    public class SectorPresenter : IDetailSectorOutputPort
     {
         public List<DetailSectorFarmDTO>? SectorList { get; private set; }
         public Task Handle(DetailSectorFarmEntity sector)

@@ -13,12 +13,13 @@ public static class DependencyContainer
     {
         services.AddScoped<IFarmOutputPort, FarmPresenter>()
                 .AddScoped<IMaterialOutputPort, MaterialPresenter>()
-                .AddScoped<ISectorOutputPort, SectorPresenter>()
+                .AddScoped<IDetailSectorOutputPort, SectorPresenter>()
                 .AddScoped<ITaskOutputPort, TaskPresenter>()
                 .AddScoped<IWorkOrderOutputPort, WorkOrderPresenter>()
                 .AddScoped<IMaterialCategoryOutputPort, MaterialCategoryPresenter>()
                 .AddScoped<IMachineOutputPort, MachinePresenter>()
-                .AddScoped<IEmployeeOutputPort, EmployeePresenter>();
+                .AddScoped<IEmployeeOutputPort, EmployeePresenter>()
+                .AddScoped<IDetailWorkOrderOutputPort, DetailWorkOrderPresenter>();
 
         return services;
     }
