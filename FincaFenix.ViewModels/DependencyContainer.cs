@@ -10,7 +10,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<InfoNewWorkOrderViewModel>()
                     .AddTransient<SearchBarViewModel>()
                     .AddTransient<NewRecipeViewModel>()
-                    .AddTransient<CreateWorkOrderViewModel>();
+                    .AddTransient<CreateWorkOrderViewModel>()
+                    .AddTransient<WorkOrderDataViewModel>()
+                    .AddTransient<CreateDetailWorkOrderViewModel>()
+                    .AddTransient<LoadWorkOrdersViewModel>();
 
             return services;
         }
