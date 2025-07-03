@@ -1,7 +1,10 @@
 ﻿<div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
-    <div class="d-flex mb-2">
-        
-        <MudText Typo="Typo.h4">Lista de materiales</MudText>
+    <div class="d-flex mb-2">        
+        <MudText Typo="Typo.h4">
+            <MudIcon Icon="@Icons.Material.Filled.FormatListBulleted"
+                Color="Color.Primary"
+                Size="Size.Large"/> 
+            Lista de materiales</MudText>
         <MudSpacer />
         <MudButton Variant="Variant.Filled" class="me-2" style="height: 35px;"
                    Color="Color.Info"
@@ -22,7 +25,7 @@
 
                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
                     <MudItem xs="6" lg="3" >
-                        <MudText Typo="Typo.caption">Máquinaria:</MudText>
+                        <MudText Typo="Typo.caption">Maquinaria:</MudText>
                         <MudSelect T="int"
                                    @bind-Value="_selectedMachineId"
                                    @bind-Value:event="onchange"
@@ -73,11 +76,11 @@
             <MudDivider style="border-color: black;" Class="mt-3"/>
         }
         <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
-            @foreach (var detalle in ViewModel.Details)
+            @foreach (var detail in ViewModel.Details)
             {
                 <MudItem xs="12" lg="3">
                     <MudSelect T="int"
-                               @bind-Value="detalle.CategoryId"                               
+                               @bind-Value="detail.CategoryId"                               
                                Margin="Margin.Dense"
                                Variant="Variant.Outlined"
                                AnchorOrigin="Origin.BottomCenter"
@@ -96,14 +99,14 @@
 
                 <MudItem xs="12" lg="3">
                     <MudSelect T="int"
-                               @bind-Value="detalle.MaterialId"                               
+                               @bind-Value="detail.MaterialId"                               
                                Margin="Margin.Dense"
                                Variant="Variant.Outlined"
                                AnchorOrigin="Origin.BottomCenter"
                                TransformOrigin="Origin.TopCenter"                               
                                Clearable>
                         <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una producto</MudSelectItem>
-                        @foreach (var m in ViewModel.Materials.Where(m => m.CategoryId == detalle.CategoryId))
+                        @foreach (var m in ViewModel.Materials.Where(m => m.CategoryId == detail.CategoryId))
                         {
                             <MudSelectItem T="int" Value="@m.Id">@m.ArticleName - @m.CommercialName</MudSelectItem>
                         }
@@ -121,8 +124,8 @@
                 </MudItem>
 
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detalle.AmountRequired" Label="Cantidad Requerida/Dosis" Margin="Margin.Dense" />
-                    <MudSelect T="string" @bind-Value="detalle.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
+                    <MudTextField T="decimal" @bind-Value="detail.AmountRequired" Label="Cantidad Requerida/Dosis" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detail.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
@@ -133,8 +136,8 @@
                 </MudItem>
 
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detalle.EstimatedAmount" Label="Cantidad total estimada" Margin="Margin.Dense" />
-                    <MudSelect T="string" @bind-Value="detalle.EstimatedAmountUnit" Label="Unidad" Margin="Margin.Dense"
+                    <MudTextField T="decimal" @bind-Value="detail.EstimatedAmount" Label="Cantidad total estimada" Margin="Margin.Dense" />
+                    <MudSelect T="string" @bind-Value="detail.EstimatedAmountUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
@@ -149,7 +152,7 @@
                                    Color="Color.Error"
                                    Variant="Variant.Filled"
                                    Size="Size.Medium"
-                                   @onclick="@(() => RemoveMaterial(detalle))"
+                                   @onclick="@(() => RemoveMaterial(detail))"
                                    Tooltip="Eliminar material" />
                 </MudItem>
                 <MudDivider style="border-color: black;" Class="mt-3 mb-3" />

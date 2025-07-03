@@ -10,32 +10,76 @@
 </div>
 <SearchBar />
 <div class="container-fluid shadow p-3 border rounded mt-3 mb-3 bg-color-white">
-    <MudText Typo="Typo.h5"><b>Ordenes recientes</b></MudText>
+    <MudText Typo="Typo.h5"><b>Órdenes recientes</b></MudText>
     <MudDivider Class="my-2" Style="border-color: black;" />
-    <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-1">
-        <MudItem xs="12" lg="3">
-            <WorkOrderCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
-        </MudItem>
-        <MudItem xs="12" lg="3">
-            <WorkOrderCard NumOrden="604" Finca="Goudge" Tarea="Tratamiento Fitosanitario" />
-        </MudItem>
-        <MudItem xs="12" lg="3">
-            <WorkOrderCard NumOrden="605" Finca="Las Aguaditas" Tarea="Aplicación de herbicida" />
-        </MudItem>
-        <MudItem xs="12" lg="3">
-            <WorkOrderCard NumOrden="603" Finca="San Carlos" Tarea="Aplicación de fertilizantes" />
-        </MudItem>
-    </MudGrid>
-    @* <div class="w-100 d-flex flex-column align-items-center mt-4">
-        <MudPagination Variant="Variant.Filled" Count="3" />
-    </div> *@
-</div>
- 
-@code {
 
-    protected override void OnInitialized()
+    @* Muestra un indicador de carga mientras se obtienen los datos *@
+    @if (ViewModel.InfoWorkOrderCard.Any() && ViewModel.TotalItems == 0)
+    {
+        <div class="d-flex justify-center align-center py-5">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+            <MudText Class="ms-3">Cargando órdenes...</MudText>
+        </div>
+    }
+    else if (!ViewModel.InfoWorkOrderCard.Any() && ViewModel.TotalItems > 0)
+    {
+        <MudItem xs="12">
+            <MudText Typo="Typo.body1" Align="Align.Center">No se encontraron órdenes en la página actual.</MudText>
+        </MudItem>
+    }
+    else if (_isLoading)
+    {
+        <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-1">
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <WorkOrderCargSkeleton />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <WorkOrderCargSkeleton />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <WorkOrderCargSkeleton />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <WorkOrderCargSkeleton />
+            </MudItem>
+        </MudGrid>        
+    }
+    else
+    {
+        <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-1">
+            @foreach (var workOrder in ViewModel.InfoWorkOrderCard)
+            {
+                <MudItem xs="12" sm="12" md="6" lg="3">
+                    <WorkOrderCard
+                        NumWorkOrder="@workOrder.OrderNum"
+                        FarmWorkOrder="@workOrder.FarmOrder.Name" 
+                        TaskWorkOrder="@workOrder.TaskOrder.Description"
+                        DateWorkOrder="@DateOnly.FromDateTime(workOrder.StartDate)" 
+                        IdWorkOrder="@workOrder.Id.ToString()"/>
+                </MudItem>
+            }
+        </MudGrid>
+        <div class="w-100 d-flex flex-column align-items-center mt-4">
+            <MudPagination Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Count="@((int)Math.Ceiling((double)ViewModel.TotalItems / ViewModel.PageSize))"
+                           Selected="@ViewModel.CurrentPage"
+                           SelectedChanged="ViewModel.OnPageChanged" />
+        </div>
+    }
+</div>
+@code {
+    [Inject] public LoadWorkOrdersViewModel ViewModel { get; set; }
+
+    private bool _isLoading = true;
+
+    protected override async void OnInitialized()
     {
         TextApp.PageTitle = "Ordenes de Trabajo";
+        await Task.Delay(3000); // Simula un pequeño retraso para la carga inicial
+        await ViewModel.LoadWorkOrderList();
+        _isLoading = false;
+        StateHasChanged();
     }
 }
 
