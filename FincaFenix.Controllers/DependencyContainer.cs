@@ -9,13 +9,14 @@ public static class DependencyContainer
     {
         // Controllers
         services.AddTransient<IFarmController, FarmController>()
-                      .AddTransient<ISectorController, DetailSectorController>()
+                      .AddTransient<IDetailSectorController, DetailSectorController>()
                       .AddTransient<IMaterialController, MaterialController>()
                       .AddTransient<ITaskController, TaskController>()
                       .AddTransient<IWorkOrderController, WorkOrderController>()
                       .AddTransient<IMaterialCategoryController, MaterialCategoryController>()
                       .AddTransient<IMachineController, MachineController>()
-                      .AddTransient<IEmployeeController, EmployeeController>();
+                      .AddTransient<IEmployeeController, EmployeeController>()
+                      .AddTransient<IDetailWorkOrderController, DetailWorkOrderController>();
 
         return services;
     }

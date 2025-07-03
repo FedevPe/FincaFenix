@@ -5,6 +5,6 @@ namespace FincaFenix.UsesCases.Controllers
     public interface ITaskController
     {
         Task<IEnumerable<TaskDTO>> DisplayTaskList();
-        Task<TaskDTO> DisplayTaskById(int id);
+        Task<TaskDTO> GetTaskById(int id);
     }
 }

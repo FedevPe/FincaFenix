@@ -12,11 +12,17 @@ namespace FincaFenixControllers.Implementations
         IFarmInputPort interactor,
         IFarmOutputPort presenter) : IFarmController
     {
-        [HttpGet("GetListFarm")]
-        public async Task<IEnumerable<FarmDTO>> DisplayListFarm()
+        [HttpGet("getListFarm")]
+        public async Task<IEnumerable<FarmDTO>> GetListFarm()
         {
             await interactor.GetListFarm();
             return presenter.FarmList;
+        }
+        [HttpGet("getFarmById/{id}")]
+        public async Task<FarmDTO> GetFarmById(int id)
+        {
+            await interactor.GetFarmById(id);
+            return presenter.Farm;
         }
     }
 }

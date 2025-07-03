@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
@@ -12,27 +13,23 @@ namespace FincaFenixControllers.Implementations
         IWorkOrderInputPort interactor,
         IWorkOrderOutputPort presenter) : IWorkOrderController
     {
-        [HttpPost("CreateWorkOrder")]
+        [HttpPost("createworkorder")]
         public async Task<bool> CreateWorkOrder(WorkOrderDTO workOrder)
         {
             await interactor.Handle(workOrder);
             return presenter.IsSaved;
         }
-
-        public async Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrder(int farmId, string state = "Activo")
+        [HttpGet("order/{id}/getinfo")]
+        public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id)
         {
-            await interactor.GetWorkOrderList(farmId, state);
-            return presenter.WorkOrderList;
+            await interactor.GetWorkOrderById(id);
+            return presenter.WorkOrder;
         }
-
-        public Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrderByFarmId(int farmId, string state)
+        [HttpGet("{pagenumber}/{pagesize}/getworkorderlistpaginated")]
+        public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<WorkOrderDTO>> DisplayListWorkOrderByTaskId(int taskId, int quantity, int page, string state)
-        {
-            throw new NotImplementedException();
+            await interactor.GetWorkOrderListPaginated(pageNumber, pageSize);
+            return (presenter.InfoWorkOrderCard, presenter.TotalCount);
         }
     }
 }

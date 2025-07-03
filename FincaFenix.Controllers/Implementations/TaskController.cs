@@ -12,10 +12,11 @@ namespace FincaFenixControllers.Implementations
         ITaskInputPort interactor,
         ITaskOutputPort presenter) : ITaskController
     {
-
-        public Task<TaskDTO> DisplayTaskById(int id)
+        [HttpGet("getTaskById/{id}")]
+        public async Task<TaskDTO> GetTaskById(int id)
         {
-            throw new NotImplementedException();
+            await interactor.GetTaskById(id);
+            return presenter.TaskDTO;
         }
 
         [HttpGet("GetTaskList")]
