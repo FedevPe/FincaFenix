@@ -7,7 +7,12 @@ namespace FincaFenix.EFCore.Services.QueryServices
 {
     public class TaskQueryService : FincaFenixContext, ITaskQueryService
     {
-        public async Task<IEnumerable<TaskEntity>> GetTaks()
+        public async Task<TaskEntity> GetTaskById(int taskId)
+        {
+            return await Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new KeyNotFoundException($"Task with ID {taskId} not found.");
+        }
+
+        public async Task<IEnumerable<TaskEntity>> GetTaskList()
         {
             return await Tasks.OrderBy(t => t.Description).ToListAsync();
         }

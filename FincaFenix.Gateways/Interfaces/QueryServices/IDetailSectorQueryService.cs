@@ -5,6 +5,7 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     public interface IDetailSectorQueryService
     {
         Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByFarmId(int farmId);
+        Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByOrderId(int orderId);
 
     }
 }

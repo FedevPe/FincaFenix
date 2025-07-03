@@ -5,5 +5,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     public interface IFarmQueryService
     {
         Task<IEnumerable<FarmEntity>> GetFarmList();
+        Task<FarmEntity> GetFarmById(int farmId);
     }
 }

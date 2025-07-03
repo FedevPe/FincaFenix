@@ -1,13 +1,11 @@
-﻿using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 
 namespace FincaFenix.Gateways.Interfaces.QueryServices
 {
     public interface IWorkOrderQueryService
     {
-        Task<IEnumerable<WorkOrderEntity>> GetWorkOrderListByFarmId(int farmId);
-        Task<IEnumerable<WorkOrderEntity>> GetWorkOrderListByTaskId(int taskId);
-        Task<WorkOrderEntity> GetWorkOrderByOrderNum(int orderNum);
-        Task<string> GetLastNumberTypeDoc(string typeDoc);
-
+        Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id);
+        Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize);
     }
 }

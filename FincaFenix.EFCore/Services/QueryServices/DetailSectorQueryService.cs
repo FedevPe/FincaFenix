@@ -9,7 +9,17 @@ namespace FincaFenix.EFCore.Services.QueryServices
     {
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByFarmId(int farmId)
         {
-            return await DetailSectors.Where(x => x.FarmId == farmId).OrderBy(x => x.SectorName).ToListAsync();
+            return await DetailSectors.Where(x => x.FarmId == farmId)
+                .OrderBy(x => x.SectorName)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByOrderId(int orderId)
+        {
+            return await WorkOrderWorkedSectors.Where(x => x.WorkOrderId == orderId)
+                .Select(x => x.SectorFarm)
+                .OrderBy(x => x.SectorName)
+                .ToListAsync();
         }
     }
 }
