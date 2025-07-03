@@ -1,6 +1,4 @@
-﻿using FincaFenix.Entities.POCOEntities;
-
-namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
+﻿namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
 {
     public class DetailSectorFarmDTO
     {
