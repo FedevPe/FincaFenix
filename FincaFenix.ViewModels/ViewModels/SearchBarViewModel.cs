@@ -17,7 +17,7 @@ namespace FincaFenix.ViewModels.ViewModels
 
         public async Task LoadFarmsAsync()
         {
-            Farms = await farm.DisplayListFarm();
+            Farms = await farm.GetListFarm();
         }
         public async Task LoadTasksAsync()
         {

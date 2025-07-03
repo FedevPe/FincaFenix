@@ -5,7 +5,7 @@ namespace FincaFenix.ViewModels.ViewModels
 {
     public class InfoNewWorkOrderViewModel (
         IFarmController farm,
-        ISectorController sector,
+        IDetailSectorController sector,
         ITaskController task)
     {
         public int SelectedFarmId { get; set; }
@@ -25,7 +25,7 @@ namespace FincaFenix.ViewModels.ViewModels
 
         public async Task LoadFarmsAsync()
         {
-            Farms = await farm.DisplayListFarm();
+            Farms = await farm.GetListFarm();
         }
         public async Task LoadTasksAsync() 
         {
@@ -33,7 +33,7 @@ namespace FincaFenix.ViewModels.ViewModels
         }
         public async Task LoadSectorsForFarmIdAsync(int farmId)
         {
-            Sectors = await sector.DisplayListSectorByFarmId(farmId);
+            Sectors = await sector.GetListSectorByFarmId(farmId);
         }
     }
 }
