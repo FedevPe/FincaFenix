@@ -8,12 +8,12 @@ namespace FincaFenix.Gateways.Implementations
     {
         public async Task<IEnumerable<TaskEntity>> GetAllTasks()
         {
-            return await queryService.GetTaks();
+            return await queryService.GetTaskList();
         }
         
         public Task<TaskEntity> GetTaskById(int id)
         {
-            throw new NotImplementedException();
+            return queryService.GetTaskById(id);
         }
     }
 }

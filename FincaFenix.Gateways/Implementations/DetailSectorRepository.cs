@@ -13,7 +13,7 @@ namespace FincaFenix.Gateways.Implementations
 
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByOrderId(int orderId)
         {
-            return await queryService.GetSectorListByFarmId(orderId);
+            return await queryService.GetSectorListByOrderId(orderId);
         }
     }
 }

@@ -6,9 +6,9 @@ namespace FincaFenix.Gateways.Implementations
 {
     public class FarmRepository(IFarmQueryService queryService) : IFarmRepository
     {
-        public Task<FarmEntity> GetFarmById(int farmId)
+        public async Task<FarmEntity> GetFarmById(int farmId)
         {
-            throw new NotImplementedException();
+            return await queryService.GetFarmById(farmId);
         }
 
         public async Task<IEnumerable<FarmEntity>> GetListFarm()
