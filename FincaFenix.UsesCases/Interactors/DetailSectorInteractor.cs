@@ -3,9 +3,9 @@ using FincaFenix.UsesCases.Repository;
 
 namespace FincaFenix.UsesCases.Interactors
 {
-    public class SectorInteractor(
-        ISectorOutputPort presenter,
-        IDetailSectorRepository repository) : ISectorsInputPort
+    public class DetailSectorInteractor(
+        IDetailSectorOutputPort presenter,
+        IDetailSectorRepository repository) : IDetailSectorInputPort
     {
         public async Task GetListSectorsByIdFarm(int farmId)
         {

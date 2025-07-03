@@ -11,44 +11,36 @@ namespace FincaFenix.UsesCases.Interactors
         IWorkOrderOutputPort presenter,
         IWorkOrderRepository repository) : IWorkOrderInputPort
     {
-        public Task GetWorkOrderList(int farmId, string state = "Activo")
+        public async Task GetWorkOrderById(int id)
         {
-            throw new NotImplementedException();
+            await presenter.Handle(await repository.GetWorkOrderById(id));
         }
-
-        //public string WorkOrderNumber { get; private set; }
-        //public string RecipeNumber { get; private set; }
-
+        public async Task GetWorkOrderListPaginated(int pageNumber, int pageSize)
+        {
+            var (workOrders, totalCount) = await repository.GetWorkOrderList(pageNumber, pageSize);
+            await presenter.HandleList(workOrders, totalCount);
+        }
         public async Task Handle(WorkOrderDTO workOrder)
         {
             RecipeEntity recipeEntity = null;
             if (workOrder.Recipe != null)
             {
-                //RecipeNumber = await repository.GetLastNumberDoc("Receta");
                 recipeEntity = WorkOrderMapper.MapRecipe(workOrder.Recipe);
             }
 
-            // Paso 2: Obtener número de orden de trabajo
-            //WorkOrderNumber = await repository.GetLastNumberDoc("OrdenesTrabajo");
-
-            // Paso 3: Mapear la orden de trabajo
             var workOrderEntity = WorkOrderMapper.ToEntity(workOrder);
             workOrderEntity.Recipe = recipeEntity;
 
-            // Paso 4: Mapear sectores trabajados (si vienen)
             List<WorkOrderWorkedSectorEntity> workedSectors = [];
 
             if (workOrder.SectorList != null && workOrder.SectorList.Any())
             {
-                workedSectors = WorkOrderMapper.MapWorkedSectors(workOrder.SectorList); // El ID se ajusta en repositorio
+                workedSectors = WorkOrderMapper.MapWorkedSectors(workOrder.SectorList);
             }
 
-            // Paso 5: Guardar en repositorio
             var idWorkOrder = await repository.AddWorkOrder(workOrderEntity, workOrderEntity.Recipe, workedSectors);
 
-            // Paso 6: Presentar resultado
             await presenter.Handle(idWorkOrder);
         }
     }
 }
-    
