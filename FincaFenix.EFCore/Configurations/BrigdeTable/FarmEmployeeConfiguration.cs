@@ -15,12 +15,12 @@ namespace FincaFenix.EFCore.Configurations.BrigdeTable
             builder.HasOne(ef => ef.Employee)
                 .WithMany(e => e.EmployeeList)
                 .HasForeignKey(ef => ef.EmployeeId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             builder.Property(ef => ef.FarmId).HasColumnName("IdFinca").IsRequired();
             builder.HasOne(ef => ef.Farm)
                 .WithMany(f => f.FarmList)
                 .HasForeignKey(ef => ef.FarmId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

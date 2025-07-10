@@ -16,13 +16,13 @@ namespace FincaFenix.EFCore.Configurations.BrigdeTable
                    .WithMany(m => m.DiseasePlagueMaterialList)
                    .HasForeignKey(epm => epm.MaterialId)
                    .HasPrincipalKey(m => m.Id)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
             builder.Property(epm => epm.DiseasePlagueId).HasColumnName("IdEnfermedadPlaga").IsRequired();
             builder.HasOne(epm => epm.DiseasePlague)
                    .WithMany(dp => dp.MaterialDiseasePlagueList)
                    .HasForeignKey(epm => epm.DiseasePlagueId)
                    .HasPrincipalKey(dp => dp.Id)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

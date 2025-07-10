@@ -11,17 +11,17 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.ToTable("DetalleOrdenTrabajo");
             builder.HasKey(d => d.Id);
             builder.Property(d => d.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(d => d.ActivityDate).HasColumnName("FechaActividad").IsRequired().HasColumnType("datetime2");
             builder.Property(d => d.WorkOrderId).HasColumnName("IdOrdenTrabajo").IsRequired();
             builder.HasOne(d => d.WorkOrder)
                 .WithMany(w => w.DetailWorkOrderList)
                 .HasForeignKey(d => d.WorkOrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
             builder.Property(d => d.EmployeeId).HasColumnName("IdEmpleado").IsRequired();
-            builder.Property(d => d.SectorWorkedId).HasColumnName("IdSectorTrabajado");
+            builder.Property(d => d.SectorWorkedId).HasColumnName("IdSectorTrabajado").IsRequired();
             builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(5, 2);
             builder.Property(d => d.Performance).HasColumnName("Rendimiento").IsRequired().HasPrecision(5, 2);
-            builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired().HasMaxLength(500);
-            builder.Property(d => d.ActivityDate).HasColumnName("FechaActividad").IsRequired().HasColumnType("datetime2");
+            builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired(false).HasMaxLength(500);
             builder.Property(d => d.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();
 
         }

@@ -11,7 +11,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.ToTable("DetalleReceta");
             builder.HasKey(dr => dr.Id);
             builder.Property(dr => dr.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
-            builder.Property(dr => dr.RecipeId).HasColumnName("NumReceta").IsRequired().HasMaxLength(20);
+            builder.Property(dr => dr.RecipeId).HasColumnName("IdReceta").IsRequired().HasMaxLength(20);
             builder.HasOne(dr => dr.Recipe)
                    .WithMany(r => r.DetailRecipeList)
                    .HasForeignKey(dr => dr.RecipeId)
