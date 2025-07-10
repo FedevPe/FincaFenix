@@ -7,7 +7,7 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<PageTitle>Finca Fenix</PageTitle>
+<PageTitle>Ordenes de trabajo</PageTitle>
 
 <MudLayout>
     <MudAppBar Elevation="1" Dense="true">
@@ -19,19 +19,19 @@
         <MudSpacer/>
     </MudAppBar>
     <MudDrawer Class="mud-height-full" MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3" Height="100vh"
-               ClipMode="_clipMode" Variant="@DrawerVariant.Mini">
+               ClipMode="_clipMode" Variant="@DrawerVariant.Responsive">
                <NavMenu/>
     </MudDrawer>
     <MudMainContent>
-        <MudContainer Class="mt-4">
+        <div class="p-3">
             @Body
-        </MudContainer>
+        </div>
     </MudMainContent>
 </MudLayout>
 @((RenderFragment)(builder => base.BuildRenderTree(builder)))
 @code{
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
-    bool _drawerOpen = true;
+    bool _drawerOpen = false;
     [Inject] public TextAppBarState TextAppBar { get; set; }
 
     protected override void OnInitialized()
@@ -41,7 +41,6 @@
     }
     public void Dispose()
     {
-
         TextAppBar.OnChange -= StateHasChanged;
     }
     void DrawerToggle()

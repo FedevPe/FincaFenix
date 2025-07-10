@@ -1,0 +1,55 @@
+﻿<MudDialog Class="custom-dialog">  
+    <DialogContent>  
+        <div class="d-flex flex-column align-content-center justify-content-center py-1 w-50">
+            <MudButton Variant="Variant.Filled"
+                       OnClick="OnCloseClick"
+                       Disabled="IsCloseDisabled()"
+                       Color="Color.Error"
+                       FullWidth="true"
+                       Class="my-1">Cerrado</MudButton>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="OnPendingClick"
+                       Disabled="IsPendingDisabled()"
+                       Color="Color.Warning"
+                       FullWidth="true"
+                       Class="my-1">Pendiente</MudButton>
+            <MudButton Variant="Variant.Filled"
+                       OnClick="OnActiveClick"
+                       Disabled="IsActiveDisabled()"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Class="my-1">Activo</MudButton>
+        </div> 
+    </DialogContent>  
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Default">Cancelar</MudButton>
+    </DialogActions>
+</MudDialog>  
+<style>
+    .custom-dialog {
+        backdrop-filter: blur(10px);
+    }
+</style>
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }  
+    [Parameter]
+    public string CurrentState { get; set; }
+
+    // Métodos wrapper para cada botón
+    private void OnCloseClick() => SubmitState("Cerrado");
+    private void OnPendingClick() => SubmitState("Pendiente");
+    private void OnActiveClick() => SubmitState("Activo");
+
+    // Este método se llama cuando el usuario selecciona un estado.
+    // Cierra el diálogo y pasa el estado seleccionado como resultado 'Ok'.
+    private void SubmitState(string state) => MudDialog.Close(DialogResult.Ok(state));
+
+    // Este método se llama si el usuario hace clic en "Cancelar" o cierra el diálogo.
+    // Cierra el diálogo sin un resultado, indicando que fue cancelado.
+    private void Cancel() => MudDialog.Cancel();
+
+    private bool IsCloseDisabled() => CurrentState == "Cerrado" || CurrentState == "Finalizado";
+    private bool IsPendingDisabled() => CurrentState == "Cerrado" || CurrentState == "Pendiente";
+    private bool IsActiveDisabled() => CurrentState == "Cerrado" || CurrentState == "Activo";
+}

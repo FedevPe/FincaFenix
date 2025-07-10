@@ -1,0 +1,63 @@
+﻿<MudPaper Elevation="2" class="container-fluid border-light p-4">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem xs="12" lg="12" md="6">
+            <MudText Typo="Typo.h4"><MudIcon Icon="fa-solid fa-clipboard" Color="Color.Dark" Size="Size.Large" />Orden de trabajo N° @OrderNumber</MudText>
+        </MudItem>
+    </MudGrid>
+    <MudDivider Style="border-color:black" />
+    <MudGrid Justify="Justify.FlexStart" Spacing="3" Class="mt-2">
+        <MudItem xs="12" lg="2" md="6">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.LocationOn" Style="color: #FF3F39" /> Finca</MudText>
+            <MudText Typo="Typo.subtitle1">@FarmWorkOrder</MudText>
+        </MudItem>
+        <MudItem xs="12" lg="2" md="6">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Task" Color="Color.Primary" /> Tarea</MudText>
+            <MudText Typo="Typo.subtitle1">@TaskWorkOrder</MudText>
+        </MudItem>
+        <MudItem xs="12" lg="2" md="6">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Dashboard" Style="color: #FF8D5F" /> Cuadros</MudText>
+            @if (SectorList != null && SectorList.Any())
+            {
+                <MudText Typo="Typo.subtitle1">
+                    @string.Join(" - ", SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
+                </MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.subtitle1">No hay cuadros relacionados.</MudText>
+            }
+        </MudItem>
+        <MudItem xs="12" lg="2" md="6">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" /> Fecha</MudText>
+            <MudText Typo="Typo.subtitle1">@DateWorkOrder.Value.ToShortDateString()</MudText>
+        </MudItem>
+        <MudItem xs="12" lg="2" md="6">
+            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Pending" Color="IconColor" /> Estado</MudText>
+            <MudText Typo="Typo.subtitle1">@StateWorkOrder</MudText>
+        </MudItem>
+        @if (WorkOrderDescription != string.Empty)
+        {
+            <MudItem xs="12" lg="12" md="12">
+                <MudText Typo="Typo.h6">Descripción</MudText>
+                <MudText Typo="Typo.subtitle1">@WorkOrderDescription</MudText>
+            </MudItem>            
+        }
+    </MudGrid>
+</MudPaper>
+@code {
+    [Parameter] public string OrderNumber { get; set; }
+    [Parameter] public string FarmWorkOrder { get; set; }
+    [Parameter] public string TaskWorkOrder { get; set; }
+    [Parameter] public string StateWorkOrder { get; set; } 
+    [Parameter] public DateTime? DateWorkOrder { get; set; }
+    [Parameter] public string WorkOrderDescription { get; set; } = string.Empty;
+    [Parameter] public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
+
+    private MudBlazor.Color IconColor => StateWorkOrder switch
+    {
+        "Cerrado" => MudBlazor.Color.Error,
+        "Pendiente" => MudBlazor.Color.Warning,
+        "Activo" => MudBlazor.Color.Secondary,
+        _ => MudBlazor.Color.Default
+    };
+}

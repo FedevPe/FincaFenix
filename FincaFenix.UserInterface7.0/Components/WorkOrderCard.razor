@@ -36,7 +36,7 @@
                          Color="Color.Primary"
                          Class="content-icon me-2" />
                 <MudText Typo="Typo.body1" Class="content-text">
-                    @DateWorkOrder
+                    @DateWorkOrder.Value.ToShortDateString()
                 </MudText>
             </div>
         </div>
@@ -51,7 +51,7 @@
                        Class="action-button"
                        Color="Color.Info"
                        IconColor="Color.Info"
-                       Href="/orden-trabajo/3">Ver Detalles</MudButton>
+                       OnClick="OpenWorkOrderDetails">Ver Detalles</MudButton>
             <MudSpacer />
             <MudButton Variant="Variant.Text"
                        Size="Size.Small"
@@ -72,15 +72,19 @@
     [Parameter]
     public string TaskWorkOrder { get; set; }
     [Parameter]
-    public DateOnly DateWorkOrder { get; set; }
+    public DateTime? DateWorkOrder { get; set; }
     [Parameter]
-    public string IdWorkOrder { get; set; }
+    public int IdWorkOrder { get; set; }
 
     [Inject] private NavigationManager NavigationManager { get; set; }
 
     public void OpenActivityForm()
     {
         NavigationManager.NavigateTo($"/actividad/registrar/{IdWorkOrder}");
+    }
+    public void OpenWorkOrderDetails()
+    {
+        NavigationManager.NavigateTo($"/ordentrabajo/{IdWorkOrder}/detalle/");
     }
 }
 

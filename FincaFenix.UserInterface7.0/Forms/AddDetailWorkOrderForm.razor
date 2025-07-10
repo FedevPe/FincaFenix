@@ -1,46 +1,25 @@
 ﻿@page "/actividad/registrar/{WorkOrderId:int}"
 
- @if (InfoVM.IsLoading || InfoVM.FormData == null)
+<PageTitle>Registro de actividades</PageTitle>
+
+<MudContainer>
+
+ @if (InfoVM.IsLoading || InfoVM.WOInfo == null)
  {
      <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
      <MudText Typo="Typo.h6">Cargando información de la orden de trabajo...</MudText>
  }
  else
  {
-     <MudPaper Elevation="2" class="container-fluid border-light p-4 mt-6">
-         <MudGrid Justify="Justify.FlexStart">
-             <MudItem xs="12" lg="12">
-                 <MudText Typo="Typo.h4"><MudIcon Icon="fa-solid fa-clipboard" Color="Color.Dark" Size="Size.Large"/>Orden de trabajo N° @InfoVM.FormData.WorkOrder.OrderNum</MudText>
-             </MudItem>
-         </MudGrid>
-         <MudDivider Style="border-color:black" />
-         <MudGrid Justify="Justify.FlexStart" Spacing="3" Class="mt-2">
-             <MudItem xs="12" lg="3">
-                <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.LocationOn" Style="color: #FF3F39" /> Finca</MudText>
-                 <MudText Typo="Typo.subtitle1">@InfoVM.FormData.Farm.Name</MudText>
-             </MudItem>
-             <MudItem xs="12" lg="3">
-                 <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Outlined.Task" Color="Color.Primary"/> Tarea</MudText>
-                 <MudText Typo="Typo.subtitle1">@InfoVM.FormData.Task.Description</MudText>
-             </MudItem>
-             <MudItem xs="12" lg="3">
-                <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Outlined.Dashboard" Style="color: #FF8D5F" /> Cuadros</MudText>
-                 @if (InfoVM.FormData.SectorList != null && InfoVM.FormData.SectorList.Any())
-                 {
-                     <MudText Typo="Typo.subtitle1">
-                         @string.Join(" - " , InfoVM.FormData.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
-                     </MudText>
-                 }
-                 else
-                 {
-                     <MudText Typo="Typo.subtitle1">No hay cuadros relacionados.</MudText>
-                 }
-             </MudItem>
-         </MudGrid>
-     </MudPaper>
+     <GeneralInformationWorkOrder 
+         OrderNumber="@InfoVM.WOInfo.WorkOrder.OrderNum"
+         FarmWorkOrder="@InfoVM.WOInfo.Farm.Name"
+         TaskWorkOrder="@InfoVM.WOInfo.Task.Description"
+         SectorList="@InfoVM.WOInfo.SectorList"
+         DateWorkOrder="@InfoVM.WOInfo.WorkOrder.StartDate"
+         StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"/>
 
-     @*FORMULARIO REGISTRO DE ACTIVIDADES*@
-     <MudForm @ref="form">
+    <MudForm @ref="form">
          <MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
              <MudGrid Justify="Justify.FlexStart">
                  <MudItem lg="12" >
@@ -57,7 +36,7 @@
                                         AnchorOrigin="Origin.BottomRight"
                                         TransformOrigin="Origin.TopRight">
                                  <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                @foreach (var worker in InfoVM.FormData.EmployeeList.OrderBy(w => w.Name))
+                                @foreach (var worker in InfoVM.WOInfo.EmployeeList.OrderBy(x => x.Name))
                                 {
                                         <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
                                 }
@@ -74,7 +53,8 @@
                          <MudFlexBreak/>
                          <MudItem xs="12" lg="12">
                              <div class="d-flex mb-2">
-                                <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard" Style="color: #FF8D5F"/>Cuadros trabajados</MudText>
+                                <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard" 
+                                    Style="color: #FF8D5F"/>Cuadros trabajados</MudText>
                                  <MudSpacer />
                                  <MudButton Variant="Variant.Filled" style="height: 35px;"
                                             Color="Color.Primary"
@@ -96,7 +76,7 @@
                                            TransformOrigin="Origin.TopRight"
                                            @bind-Value="detail.Info.SectorWorkedId">
                                     <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                    @foreach (var sector in InfoVM.FormData.SectorList.OrderBy(s => s.SectorName))
+                                    @foreach (var sector in InfoVM.WOInfo.SectorList)
                                     {
                                         <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
                                     }
@@ -152,10 +132,11 @@
          </MudGrid>
      </div>
  }
-
+</MudContainer>
+ 
 @code{
 
-    [Inject] public WorkOrderDataViewModel InfoVM { get; set; }
+    [Inject] public GeneralInfoWorkOrderViewModel InfoVM { get; set; }
     [Inject] public CreateDetailWorkOrderViewModel NewDetailVM { get; set; }
     [Inject] private ISnackbar Snackbar { get; set; }
     [Inject] private NavigationManager NavigationManager { get; set; }

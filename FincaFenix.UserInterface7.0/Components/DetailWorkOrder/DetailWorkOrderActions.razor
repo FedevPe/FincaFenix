@@ -1,0 +1,64 @@
+﻿<MudGrid Justify="Justify.Center" Spacing="2">
+    <MudItem lg="12" xs="12">
+        <MudText Typo="Typo.h6">
+            Acciones
+        </MudText>
+        <MudDivider Style="border-color:black; margin-top: 5px" />            
+    </MudItem>
+    <MudItem lg="12" xs="12">
+        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="NavigateToAddActivity">
+            Agregar Actividad
+        </MudButton>
+    </MudItem>
+    <MudItem xs="12" lg="12">
+        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Edit" OnClick="OpenDialogChangeState">
+            Cambiar estado
+        </MudButton>
+    </MudItem>
+    <MudItem xs="12" lg="12">
+        <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Print">
+            Imprimir
+        </MudButton>
+    </MudItem>
+</MudGrid>
+@code {
+    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private ISnackbar SnackbarService { get; set; }
+
+    [Parameter] public int IdWorkOrder { get; set; }
+    [Parameter] public string WorkOrderState { get; set; }
+
+    private void NavigateToAddActivity()
+    {
+        NavigationManager.NavigateTo($"/actividad/registrar/{IdWorkOrder}");
+    }
+    private async Task OpenDialogChangeState()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("CurrentState", WorkOrderState);
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey= false };
+        // Abrimos el diálogo, especificando el componente que lo va a renderizar.
+        // Asume que este componente se llamará 'DialogoCambioEstado.razor'.
+        var dialog = DialogService.Show<DialogWorkOrderState>("Cambiar estado de la orden", options);
+
+        // Esperamos el resultado del diálogo.
+        var result = await dialog.Result;
+
+        // Verificamos si el diálogo no fue cancelado y si se recibió un estado.
+        if (!result.Canceled && result.Data is string newState)
+        {
+            // Aquí es donde llamas a tu lógica para actualizar el estado de la orden.
+            await ChangeWorkOrderStatus(newState);
+            SnackbarService.Add($"Estado de la orden actualizado a '{newState}'", Severity.Success);
+        }        
+    }
+    private async Task ChangeWorkOrderStatus(string newState)
+    {
+        // ** Aquí va tu lógica para llamar a un servicio o API que actualice el estado
+        // de la orden de trabajo en tu base de datos o sistema backend. **
+
+        StateHasChanged();
+    }
+}

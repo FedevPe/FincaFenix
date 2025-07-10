@@ -14,12 +14,23 @@
     <MudDivider Style="border-color: black;" />
 
     <MudGrid Spacing="3" Justify="Justify.FlexStart" Class="mt-3">
-        <MudItem xs="12" lg="6">
+        <MudItem xs="12" lg="3">
+            <MudText Typo="Typo.h6">Fecha de inicio</MudText>
+            <MudDatePicker Date="ViewModel.StartDate" DateChanged="@((DateTime? newDate) => ViewModel.StartDate = newDate)"
+                           ShowToolbar="false"
+                           AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense"
+                           AnchorOrigin="Origin.BottomRight"
+                           TransformOrigin="Origin.TopRight"
+                           Clearable />
+        </MudItem>
+        <MudItem xs="12" lg="3">
             <MudText Typo="Typo.h6">Finca</MudText>
             <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
                        Variant="Variant.Outlined" Clearable
-                       AnchorOrigin="Origin.BottomLeft"
-                       TransformOrigin="Origin.BottomLeft"
+                       AnchorOrigin="Origin.BottomRight"
+                       TransformOrigin="Origin.TopRight"
                        @bind-Value="ViewModel.SelectedFarmId"
                        @bind-Value:event="onchange"
                        ValueChanged="@OnFarmChanged">                
@@ -30,13 +41,12 @@
                 }
             </MudSelect>
         </MudItem>
-
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
             <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
                        Variant="Variant.Outlined" Clearable
-                       AnchorOrigin="Origin.BottomLeft"
-                       TransformOrigin="Origin.BottomLeft"
+                       AnchorOrigin="Origin.BottomRight"
+                       TransformOrigin="Origin.TopRight"
                        @bind-Value="ViewModel.SelectedTaskId">
                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una tarea</MudSelectItem>
                 @foreach (var task in ViewModel.Tasks)
@@ -44,8 +54,7 @@
                     <MudSelectItem T="int" Value="@task.Id">@task.Description</MudSelectItem>
                 }
             </MudSelect>
-        </MudItem>
-
+        </MudItem> 
         @if (ViewModel.SelectedFarmId != 0)
         {
             <MudItem xs="12" lg="12">
@@ -65,10 +74,6 @@
                 </MudGrid>
             </MudItem>
         }
-
-        @* <MudFlexBreak /> *@
-
     </MudGrid>
 </div>
-<MudText>Seleccionados: @ViewModel.SelectedSectors.Count()</MudText>
 

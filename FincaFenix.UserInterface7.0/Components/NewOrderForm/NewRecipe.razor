@@ -3,7 +3,7 @@
         <MudText Typo="Typo.h4">
             <MudIcon Icon="@Icons.Material.Filled.FormatListBulleted"
                 Color="Color.Primary"
-                Size="Size.Large"/> 
+                Size="Size.Large"/>
             Lista de materiales</MudText>
         <MudSpacer />
         <MudButton Variant="Variant.Filled" class="me-2" style="height: 35px;"
@@ -22,7 +22,6 @@
             @if (ViewModel.Machine != null )
             {
                 <MudDivider style="border-color: black;" />
-
                 <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
                     <MudItem xs="6" lg="3" >
                         <MudText Typo="Typo.caption">Maquinaria:</MudText>
@@ -52,9 +51,9 @@
                             <MudSelect T="string" @bind-Value="ViewModel.DoseUnit" Margin="Margin.Dense"
                                 AnchorOrigin="Origin.BottomCenter"
                                 TransformOrigin="Origin.TopCenter" Style="margin-top: 14px">
-                                <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                                <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
-                                <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
+                                <MudSelectItem Value="@("kg")">kg</MudSelectItem>
+                                <MudSelectItem Value="@("gr")">gr</MudSelectItem>
+                                <MudSelectItem Value="@("lts")">lts</MudSelectItem>
                                 <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                             </MudSelect>
                         </MudItem>
@@ -69,8 +68,7 @@
                     </MudItem>
                 </MudGrid>
             }
-        </div>
-        
+        </div>        
         @if (ViewModel.Details.Count != 0)
         {
             <MudDivider style="border-color: black;" Class="mt-3"/>
@@ -96,7 +94,6 @@
                         }
                     </MudSelect>
                 </MudItem>
-
                 <MudItem xs="12" lg="3">
                     <MudSelect T="int"
                                @bind-Value="detail.MaterialId"                               
@@ -122,27 +119,25 @@
                         <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un elemento</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-
                 <MudItem xs="12" lg="2">
                     <MudTextField T="decimal" @bind-Value="detail.AmountRequired" Label="Cantidad Requerida/Dosis" Margin="Margin.Dense" />
                     <MudSelect T="string" @bind-Value="detail.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
-                        <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                        <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
-                        <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("kg")">kg</MudSelectItem>
+                        <MudSelectItem Value="@("gr")">gr</MudSelectItem>
+                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
-
                 <MudItem xs="12" lg="2">
                     <MudTextField T="decimal" @bind-Value="detail.EstimatedAmount" Label="Cantidad total estimada" Margin="Margin.Dense" />
                     <MudSelect T="string" @bind-Value="detail.EstimatedAmountUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
-                        <MudSelectItem Value="@("Kg")">Kg</MudSelectItem>
-                        <MudSelectItem Value="@("gr")">Gr</MudSelectItem>
-                        <MudSelectItem Value="@("lts")">Lts</MudSelectItem>
+                        <MudSelectItem Value="@("kg")">kg</MudSelectItem>
+                        <MudSelectItem Value="@("gr")">gr</MudSelectItem>
+                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
@@ -185,12 +180,10 @@
             ViewModel.MachineId = machine.Id; // opcional, si usás IdMaquina en el DTO
         }
     }
-
     private void AddMaterial()
     {
         ViewModel.Details.Add(new DetailRecipeDTO());
     }
-
     private void RemoveMaterial(DetailRecipeDTO material)
     {
         ViewModel.Details.Remove(material);

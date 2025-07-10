@@ -1,11 +1,13 @@
 ﻿@page "/createOrder"
 
+<PageTitle>Nueva orden de trabajo</PageTitle>
+
 <NewOrderData ViewModel=OrderDataViewModel/>
 <NewRecipe ViewModel=NewRecipeViewModel/>
 
 <div class="container-fluid shadow mt-3 rounded bg-color-white p-4 mb-4">
     <MudGrid Justify="Justify.Center">
-        <MudItem lg="12">
+        <MudItem lg="12" xs="12">
             <MudText Typo="Typo.h6">Descripción</MudText>
             <MudTextField T="string" @bind-Value="Description"
                           Placeholder="Ingrese una descripción de la orden"
@@ -17,7 +19,7 @@
 <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
     <MudGrid Spacing="1" Justify="Justify.FlexEnd">
         <MudItem>
-            <MudButton Href="/ordenesRecientes"
+            <MudButton Href="/ordenestrabajo"
                        Variant="Variant.Filled"
                        Color="Color.Error"
                        Size="Size.Small"
@@ -57,7 +59,7 @@
     {
         CreateWorkOrderViewModel.FarmId = OrderDataViewModel.SelectedFarmId;
         CreateWorkOrderViewModel.TaskId = OrderDataViewModel.SelectedTaskId;
-        CreateWorkOrderViewModel.StartDate = DateTime.Now;
+        CreateWorkOrderViewModel.StartDate = OrderDataViewModel.StartDate;
         CreateWorkOrderViewModel.Description = Description;
         CreateWorkOrderViewModel.SectorList = OrderDataViewModel.Sectors.Where(sector => sector.Selected).ToList();
 
