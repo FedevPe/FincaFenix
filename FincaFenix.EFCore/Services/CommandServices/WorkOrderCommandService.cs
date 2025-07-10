@@ -9,7 +9,7 @@ namespace FincaFenix.EFCore.Services.CommandServices
         public async Task<int> SaveWorkOrder(WorkOrderEntity workOrder, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors)
         {
             using var transaction = await Database.BeginTransactionAsync();
-            var woNumber =  CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "OrdenesTrabajo");
+            var woNumber =  CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "OrdenTrabajo");
             var reNumber = CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "Receta");
 
             try

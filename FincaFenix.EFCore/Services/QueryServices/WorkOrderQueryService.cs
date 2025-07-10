@@ -10,11 +10,12 @@ namespace FincaFenix.EFCore.Services.QueryServices
     {
         public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders , int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize)
         {
-            var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.State == "Activo");
+            var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.State != "Cerrado");
             
             var totalCount = await query.CountAsync(); //Cuenta la cantidad de registros que cumplen la condición
 
             var workOrders = await WorkOrders
+                .Where(wo => !wo.IsDeleted && wo.State != "Cerrado")
                 // Ordena por OrderNum para mantener un orden consistente, para que la paginación funcione correctamente
                 // si no se ordena, la paginación puede devolver resultados repetidos o saltarse algunos registros en cada pagina
                 .OrderBy(wo => wo.Id)
@@ -54,7 +55,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
         public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id)
         {
             return await WorkOrders
-                .Where(wo => wo.Id == id && !wo.IsDeleted && wo.State == "Activo")
+                .Where(wo => wo.Id == id && !wo.IsDeleted && wo.State != "Cerrado")
                 .Select(wo => new ShowInfoAddActivityFormDTO
                 {
                     WorkOrder = new WorkOrderInfoDTO
@@ -62,6 +63,8 @@ namespace FincaFenix.EFCore.Services.QueryServices
                         Id = wo.Id,
                         OrderNum = wo.OrderNum,
                         State = wo.State,
+                        StartDate = wo.StartDate,
+                        Description = wo.Description,
                         IsDeleted = wo.IsDeleted
                     },
                     Farm = new FarmDTO
