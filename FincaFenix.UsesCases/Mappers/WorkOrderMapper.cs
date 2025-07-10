@@ -12,12 +12,12 @@ namespace FincaFenix.UsesCases.Aggregates
             {
                 TaskId = workOrderDTO.TaskId,
                 FarmId = workOrderDTO.FarmId,
+                CreatedDate = workOrderDTO.CreatedDate,
                 StartDate = workOrderDTO.StartDate,
-                State = workOrderDTO.State,
+                State = workOrderDTO.StartDate > workOrderDTO.CreatedDate ? "Pendiente" : "Activo",
                 Description = workOrderDTO.Description,
                 IsDeleted = false
             };
-
             return newWorkOrder;
         }
         public static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDto)
@@ -39,7 +39,6 @@ namespace FincaFenix.UsesCases.Aggregates
                 }).ToList() ?? []
             };
         }
-
         public static List<WorkOrderWorkedSectorEntity> MapWorkedSectors(IEnumerable<DetailSectorFarmDTO> sectors)
         {
             return sectors.Select(s => new WorkOrderWorkedSectorEntity
