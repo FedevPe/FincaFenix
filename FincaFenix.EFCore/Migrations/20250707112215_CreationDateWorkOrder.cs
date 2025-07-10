@@ -6,22 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FincaFenix.EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class addDateColumnDetailWorkOrder : Migration
+    public partial class CreationDateWorkOrder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<DateTime>(
-                name: "FechaActividad",
-                table: "DetalleOrdenTrabajo",
-                type: "datetime2",
+                name: "FechaCreacion",
+                table: "OrdenTrabajo",
+                type: "datetime2(2)",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
-        { 
+        {
+            migrationBuilder.DropColumn(
+                name: "FechaCreacion",
+                table: "OrdenTrabajo");
         }
     }
 }
