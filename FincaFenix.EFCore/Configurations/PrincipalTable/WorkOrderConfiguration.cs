@@ -24,7 +24,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(wo => wo.CreatedDate).HasColumnName("FechaCreacion").IsRequired().HasColumnType("datetime2(2)");
             builder.Property(wo => wo.StartDate).HasColumnName("FechaInicio").IsRequired().HasColumnType("datetime2(2)");
             builder.Property(wo => wo.EndDate).HasColumnName("FechaFin").HasColumnType("datetime2(2)").IsRequired(false);
-            builder.Property(wo => wo.State).HasColumnName("Estado").IsRequired().HasMaxLength(50);
+            builder.Property(wo => wo.Status).HasColumnName("Estado").IsRequired().HasMaxLength(50);
             builder.Property(wo => wo.Description).HasColumnName("Descripcion").IsRequired(false).HasMaxLength(500);
             builder.Property(wo => wo.IsDeleted).HasColumnName("Eliminado").IsRequired().HasDefaultValue(false);
             builder.Property(wo => wo.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();

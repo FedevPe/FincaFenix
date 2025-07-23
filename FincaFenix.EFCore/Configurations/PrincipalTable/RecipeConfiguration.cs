@@ -13,8 +13,9 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(r => r.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(r => r.NumRecipe).HasColumnName("NumReceta").IsRequired().HasMaxLength(20);
             builder.Property(r => r.MachineId).HasColumnName("IdMaquina").IsRequired();
-            builder.Property(r => r.Dosage).HasColumnName("Dosis").IsRequired().HasColumnType("decimal(18,2)");
-            builder.Property(r => r.DosageUnit).HasColumnName("UnidadDosis").IsRequired().HasMaxLength(10);
+            builder.Property(r => r.TRV).HasColumnName("TRV").IsRequired().HasColumnType("decimal(5,2)");
+            builder.Property(r => r.Dosage).HasColumnName("VolumenAplicacion").IsRequired().HasColumnType("decimal(18,2)");
+            builder.Property(r => r.DosageUnit).HasColumnName("UnidadVa").IsRequired().HasMaxLength(10);
             builder.Property(r => r.State).HasColumnName("Estado").IsRequired().HasMaxLength(50);
             builder.Property(r => r.IsDeleted).HasColumnName("Eliminado").IsRequired().HasDefaultValue(false);
             builder.Property(r => r.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();

@@ -14,10 +14,6 @@ namespace FincaFenix.EFCore.Configurations.BrigdeTable
             builder.Property(otws => otws.WorkOrderId).HasColumnName("IdOrdenTrabajo").IsRequired();
             builder.Property(otws => otws.SectorFarmId).HasColumnName("IdSector").IsRequired();
 
-            builder.HasOne(otws => otws.WorkOrder) 
-               .WithMany() 
-               .HasForeignKey(otws => otws.WorkOrderId) 
-               .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

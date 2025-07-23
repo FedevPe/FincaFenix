@@ -15,6 +15,7 @@ namespace FincaFenix.EFCore.Configurations.SecondaryTable
             builder.Property(dsf => dsf.SectorName).HasColumnName("NombreCuadro").IsRequired();
             builder.Property(dsf => dsf.VarietyId).HasColumnName("IdVariedad");
             builder.Property(dsf => dsf.NumberPlants).HasColumnName("CantPlantas");
+            builder.Property(dsf => dsf.Area).HasColumnName("Hectareas").HasColumnType("decimal(5,2)");
         }
     }
 }
