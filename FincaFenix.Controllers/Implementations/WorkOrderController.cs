@@ -26,9 +26,9 @@ namespace FincaFenixControllers.Implementations
             return presenter.WorkOrder;
         }
         [HttpGet("{pagenumber}/{pagesize}/getworkorderlistpaginated")]
-        public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize, string status)
         {
-            await interactor.GetWorkOrderListPaginated(pageNumber, pageSize);
+            await interactor.GetWorkOrderListPaginated(pageNumber, pageSize, status);
             return (presenter.InfoWorkOrderCard, presenter.TotalCount);
         }
     }

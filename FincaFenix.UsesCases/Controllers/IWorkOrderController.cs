@@ -7,6 +7,6 @@ namespace FincaFenix.UsesCases.Controllers
     {
         Task<bool> CreateWorkOrder(WorkOrderDTO workOrder);
         Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id);
-        Task<(IEnumerable<ShowWorkOrderCardDTO>WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize);
+        Task<(IEnumerable<InfoWorkOrderDTO>WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize, string status);
     }
 }

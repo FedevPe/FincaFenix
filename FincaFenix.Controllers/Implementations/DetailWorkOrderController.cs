@@ -18,5 +18,11 @@ namespace FincaFenixControllers.Implementations
             await interactor.Handle(dto);
             return presenter.IsSuccess;
         }
+        [HttpGet("order/{orderId}/getDetail")]
+        public async Task<IEnumerable<ActivityWorkOrderDTO>> GetActivitiesByOrderId(int orderId)
+        {
+            await interactor.GetActivitiesByOrderId(orderId);
+            return presenter.ActivityLog;
+        }
     }
 }
