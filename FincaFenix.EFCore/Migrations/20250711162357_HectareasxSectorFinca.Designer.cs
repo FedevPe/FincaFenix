@@ -4,6 +4,7 @@ using FincaFenix.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FincaFenix.EFCore.Migrations
 {
     [DbContext(typeof(FincaFenixContext))]
-    partial class FincaFenixContextModelSnapshot : ModelSnapshot
+    [Migration("20250711162357_HectareasxSectorFinca")]
+    partial class HectareasxSectorFinca
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,8 +67,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("UnidadCantRequerida");
 
-                    b.Property<decimal?>("EstimatedAmount")
-                        .IsRequired()
+                    b.Property<decimal>("EstimatedAmount")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("CantEstimada");
 
@@ -452,32 +454,22 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("IdCategoria");
 
-                    b.Property<string>("CodeSap")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("CodigoSAP");
-
                     b.Property<string>("CommercialName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NombreComercial");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Descripcion");
-
-                    b.Property<string>("DescriptionSap")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("DescripcionSAP");
-
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("Eliminado");
+
+                    b.Property<string>("PackingUnit")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("UnidadEmpaque");
 
                     b.HasKey("Id");
 
@@ -497,13 +489,13 @@ namespace FincaFenix.EFCore.Migrations
 
                     b.Property<decimal>("Dosage")
                         .HasColumnType("decimal(18,2)")
-                        .HasColumnName("VolumenAplicacion");
+                        .HasColumnName("Dosis");
 
                     b.Property<string>("DosageUnit")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)")
-                        .HasColumnName("UnidadVa");
+                        .HasColumnName("UnidadDosis");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -533,10 +525,6 @@ namespace FincaFenix.EFCore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
                         .HasColumnName("Estado");
-
-                    b.Property<decimal>("TRV")
-                        .HasColumnType("decimal(5,2)")
-                        .HasColumnName("TRV");
 
                     b.HasKey("Id");
 
@@ -687,7 +675,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("datetime2(2)")
                         .HasColumnName("FechaInicio");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)")
@@ -729,6 +717,9 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("IdSector");
 
+                    b.Property<int?>("WorkOrderEntityId")
+                        .HasColumnType("int");
+
                     b.Property<int>("WorkOrderId")
                         .HasColumnType("int")
                         .HasColumnName("IdOrdenTrabajo");
@@ -736,6 +727,8 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SectorFarmId");
+
+                    b.HasIndex("WorkOrderEntityId");
 
                     b.HasIndex("WorkOrderId");
 
@@ -927,10 +920,14 @@ namespace FincaFenix.EFCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderEntity", "WorkOrder")
+                    b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderEntity", null)
                         .WithMany("WorkedSectors")
+                        .HasForeignKey("WorkOrderEntityId");
+
+                    b.HasOne("FincaFenix.Entities.POCOEntities.WorkOrderEntity", "WorkOrder")
+                        .WithMany()
                         .HasForeignKey("WorkOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("SectorFarm");

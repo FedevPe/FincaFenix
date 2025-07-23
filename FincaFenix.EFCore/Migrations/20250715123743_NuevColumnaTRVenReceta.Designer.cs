@@ -4,6 +4,7 @@ using FincaFenix.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FincaFenix.EFCore.Migrations
 {
     [DbContext(typeof(FincaFenixContext))]
-    partial class FincaFenixContextModelSnapshot : ModelSnapshot
+    [Migration("20250715123743_NuevColumnaTRVenReceta")]
+    partial class NuevColumnaTRVenReceta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,8 +67,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("nvarchar(10)")
                         .HasColumnName("UnidadCantRequerida");
 
-                    b.Property<decimal?>("EstimatedAmount")
-                        .IsRequired()
+                    b.Property<decimal>("EstimatedAmount")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("CantEstimada");
 
@@ -452,32 +454,22 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("IdCategoria");
 
-                    b.Property<string>("CodeSap")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("CodigoSAP");
-
                     b.Property<string>("CommercialName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NombreComercial");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Descripcion");
-
-                    b.Property<string>("DescriptionSap")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("DescripcionSAP");
-
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false)
                         .HasColumnName("Eliminado");
+
+                    b.Property<string>("PackingUnit")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("UnidadEmpaque");
 
                     b.HasKey("Id");
 
