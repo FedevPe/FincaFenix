@@ -8,7 +8,7 @@ namespace FincaFenix.Presenters.Implementations
     {
         public ShowInfoAddActivityFormDTO? WorkOrder { get; private set; }
         public IEnumerable<WorkOrderDTO>? WorkOrderList { get; private set; }
-        public IEnumerable<ShowWorkOrderCardDTO>? InfoWorkOrderCard { get; private set; } 
+        public IEnumerable<InfoWorkOrderDTO>? InfoWorkOrderCard { get; private set; } 
         public int TotalCount { get; private set; }
         public bool IsSaved { get; private set; } = false;
 
@@ -27,7 +27,7 @@ namespace FincaFenix.Presenters.Implementations
 
             return Task.CompletedTask;
         }
-        public Task HandleList(IEnumerable<ShowWorkOrderCardDTO> listDTO, int totalAcount)
+        public Task HandleList(IEnumerable<InfoWorkOrderDTO> listDTO, int totalAcount)
         {
             InfoWorkOrderCard = listDTO;
             TotalCount = totalAcount;

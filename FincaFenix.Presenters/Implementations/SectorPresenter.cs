@@ -19,7 +19,10 @@ namespace FincaFenix.Presenters.Implementations
                 FarmId = sector.FarmId,
                 SectorName = sector.SectorName,
                 VarietyId = sector.VarietyId,
-                NumberPlants = sector.NumberPlants
+                NumberPlants = sector.NumberPlants,
+                VarietyName = sector.Variety?.Description ?? string.Empty,
+                FruitName = sector.Variety?.Fruit?.Description ?? string.Empty,
+                Area = sector.Area
             }).ToList();
 
             return Task.CompletedTask;

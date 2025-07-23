@@ -22,7 +22,6 @@ namespace FincaFenix.Presenters.Implementations
                 ArticleName = material.ArticleName,
                 CommercialName = material.CommercialName,
                 CategoryId = material.CategoryId,
-                UnitPacking = material.PackingUnit,
                 Brand = material.Brand
 
             }).ToList();

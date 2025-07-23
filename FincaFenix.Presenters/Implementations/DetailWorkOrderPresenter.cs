@@ -1,17 +1,45 @@
-﻿using FincaFenix.UsesCases.Interfaces.OutputPort;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
+using FincaFenix.UsesCases.Interfaces.OutputPort;
 
 namespace FincaFenix.Presenters.Implementations
 {
     public class DetailWorkOrderPresenter : IDetailWorkOrderOutputPort
     {
         public bool IsSuccess { get; private set; } = false;
-
+        public IEnumerable<ActivityWorkOrderDTO>? ActivityLog {  get; private set; }
         public async Task Handle(int detailWOId)
         {
             if (detailWOId > 0)
             {
                 IsSuccess = true;
             }
+            await Task.CompletedTask;
+        }
+
+        public async Task HandleList(IEnumerable<DetailWorkOrderEntity> entities)
+        {
+            ActivityLog = entities.Select(e => new ActivityWorkOrderDTO
+            {
+                Id = e.Id,
+                Performance = e.Performance,
+                WorkedHours = e.WorkedHours,
+                Description = e.Description,
+                ActivityDate = e.ActivityDate,
+                WorkOrder = null,
+                Employee = e.Employee != null ? new EmployeeDTO
+                {
+                    Id = e.Employee.Id,
+                    Name = e.Employee.Name,
+                    LastName = e.Employee.LastName
+                } : null,
+                Sector = e.SectorWorked != null ? new DetailSectorFarmDTO
+                {
+                    SectorName = e.SectorWorked.SectorName,
+                } : null
+
+            }).ToList();
             await Task.CompletedTask;
         }
     }
