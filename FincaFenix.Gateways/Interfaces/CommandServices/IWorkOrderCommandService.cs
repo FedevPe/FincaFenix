@@ -4,6 +4,6 @@ namespace FincaFenix.Gateways.Interfaces.CommandServices
 {
     public interface IWorkOrderCommandService
     {
-        Task<int> SaveWorkOrder(WorkOrderEntity workOrderEntity, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors);
+        Task<int> SaveWorkOrder(WorkOrderEntity workOrderEntity);
     }
 }

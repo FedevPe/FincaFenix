@@ -6,7 +6,7 @@ namespace FincaFenix.EFCore.Services.CommandServices
 {
     public class WorkOrderCommandService : FincaFenixContext, IWorkOrderCommandService
     {
-        public async Task<int> SaveWorkOrder(WorkOrderEntity workOrder, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors)
+        public async Task<int> SaveWorkOrder(WorkOrderEntity workOrder)
         {
             using var transaction = await Database.BeginTransactionAsync();
             var woNumber =  CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "OrdenTrabajo");
@@ -15,13 +15,13 @@ namespace FincaFenix.EFCore.Services.CommandServices
             try
             {
                 
-                if (recipe != null)
+                if (workOrder.Recipe != null)
                 {
-                    recipe.NumRecipe = reNumber.LastNumber.ToString();
-                    Recipes.Add(recipe);
+                    workOrder.Recipe.NumRecipe = reNumber.LastNumber.ToString();
+                    Recipes.Add(workOrder.Recipe);
                     await SaveChangesAsync();
 
-                    workOrder.RecipeId = recipe.Id;
+                    workOrder.RecipeId = workOrder.Recipe.Id;
                     reNumber.LastNumber++;
                     await SaveChangesAsync();
                 }
@@ -34,14 +34,14 @@ namespace FincaFenix.EFCore.Services.CommandServices
                 woNumber.LastNumber++;
                 await SaveChangesAsync();
 
-                if (workedSectors != null && workedSectors.Any())
+                if (workOrder.WorkedSectors != null && workOrder.WorkedSectors.Any())
                 {
-                    foreach (var sector in workedSectors)
+                    foreach (var sector in workOrder.WorkedSectors)
                     {
                         sector.WorkOrderId = workOrder.Id;
                     }
 
-                    WorkOrderWorkedSectors.AddRange(workedSectors);
+                    WorkOrderWorkedSectors.AddRange(workOrder.WorkedSectors);
                     await SaveChangesAsync();
                 }
 
