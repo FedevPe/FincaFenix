@@ -1,5 +1,7 @@
+using System.Globalization;
 using FincaFenix.InversionOfControl;
 using FincaFenix.UserInterface7._0.Services;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace FincaFenix.UserInterface7._0
@@ -8,15 +10,28 @@ namespace FincaFenix.UserInterface7._0
     {
         public static void Main(string[] args)
         {
+            var defaultCulture = "es-AR";
+            var culture = new CultureInfo(defaultCulture);
+
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddMudServices();
-            builder.Services.AddScoped<TextAppBarState>();
             builder.Services.AddControllers();
             builder.Services.AddServicesContainer();
+            builder.Services.AddUIServices();
+            builder.Services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Text;
+                config.SnackbarConfiguration.VisibleStateDuration = 3000;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+            });
 
             var app = builder.Build();
 
