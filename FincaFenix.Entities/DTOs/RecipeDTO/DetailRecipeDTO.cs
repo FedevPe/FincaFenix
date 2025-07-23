@@ -6,7 +6,7 @@
         public int MaterialId { get; set; }
         public decimal AmountRequired { get; set; }
         public string AmountRequiredUnit { get; set; }
-        public decimal EstimatedAmount { get; set; }
+        public decimal EstimatedAmount { get; set; } = 0;
         public string EstimatedAmountUnit { get; set; }
     }
 }
