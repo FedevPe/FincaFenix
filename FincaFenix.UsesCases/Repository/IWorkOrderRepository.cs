@@ -6,8 +6,8 @@ namespace FincaFenix.UsesCases.Repository
 {
     public interface IWorkOrderRepository
     {
-        Task<int> AddWorkOrder(WorkOrderEntity workOrder, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors);
+        Task<int> AddWorkOrder(WorkOrderEntity workOrder);
         Task<ShowInfoAddActivityFormDTO> GetWorkOrderById(int id);
-        Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize);
+        Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize, string status);
     }
 }
