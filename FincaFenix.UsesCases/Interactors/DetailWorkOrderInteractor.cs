@@ -10,6 +10,11 @@ namespace FincaFenix.UsesCases.Interactors
         IDetailWorkOrderOutputPort presenter,
         IDetailWorkOrderRepository repository) : IDetailWorkOrderInputPort
     {
+        public async Task GetActivitiesByOrderId(int orderId)
+        {
+            await presenter.HandleList(await repository.GetActivityLogByOrderId(orderId));
+        }
+
         public async Task Handle(AddDetailWorkOrderDTO dto)
         {
             try

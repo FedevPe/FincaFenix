@@ -4,6 +4,7 @@ using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
 using FincaFenix.UsesCases.Repository;
+using FincaFenix.Validations.Validators;
 
 namespace FincaFenix.UsesCases.Interactors
 {
@@ -15,31 +16,23 @@ namespace FincaFenix.UsesCases.Interactors
         {
             await presenter.Handle(await repository.GetWorkOrderById(id));
         }
-        public async Task GetWorkOrderListPaginated(int pageNumber, int pageSize)
+        public async Task GetWorkOrderListPaginated(int pageNumber, int pageSize, string status)
         {
-            var (workOrders, totalCount) = await repository.GetWorkOrderList(pageNumber, pageSize);
+            var (workOrders, totalCount) = await repository.GetWorkOrderList(pageNumber, pageSize, status);
             await presenter.HandleList(workOrders, totalCount);
         }
         public async Task Handle(WorkOrderDTO workOrder)
         {
-            RecipeEntity recipeEntity = null;
-            if (workOrder.Recipe != null)
-            {
-                recipeEntity = WorkOrderMapper.MapRecipe(workOrder.Recipe);
-            }
-
+            // 1. Mapear el DTO a la entidad completa (incluyendo Recipe y WorkedSectors)
             var workOrderEntity = WorkOrderMapper.ToEntity(workOrder);
-            workOrderEntity.Recipe = recipeEntity;
 
-            List<WorkOrderWorkedSectorEntity> workedSectors = [];
+            // 2. Validar la entidad mapeada
+            WorkOrderValidator.Validate(workOrderEntity);
 
-            if (workOrder.SectorList != null && workOrder.SectorList.Any())
-            {
-                workedSectors = WorkOrderMapper.MapWorkedSectors(workOrder.SectorList);
-            }
+            // 3. Persistir la orden de trabajo
+            var idWorkOrder = await repository.AddWorkOrder(workOrderEntity);
 
-            var idWorkOrder = await repository.AddWorkOrder(workOrderEntity, workOrderEntity.Recipe, workedSectors);
-
+            // 4. Presentar el resultado
             await presenter.Handle(idWorkOrder);
         }
     }
