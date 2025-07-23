@@ -11,9 +11,9 @@ namespace FincaFenix.Gateways.Implementations
         IWorkOrderCommandService commandService,
         IWorkOrderQueryService queryService) : IWorkOrderRepository
     {
-        public async Task<int> AddWorkOrder(WorkOrderEntity workOrder, RecipeEntity recipe, List<WorkOrderWorkedSectorEntity> workedSectors)
+        public async Task<int> AddWorkOrder(WorkOrderEntity workOrder)
         {
-            return await commandService.SaveWorkOrder(workOrder, recipe, workedSectors);
+            return await commandService.SaveWorkOrder(workOrder);
         }
 
         public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderById(int id)
@@ -21,9 +21,9 @@ namespace FincaFenix.Gateways.Implementations
             return await queryService.GetWorkOrderInfoById(id);
         }
 
-        public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize, string status)
         {
-            return await queryService.GetWorkOrderListPaged(pageNumber, pageSize);
+            return await queryService.GetWorkOrderListPaged(pageNumber, pageSize, status);
         }
     }
 }
