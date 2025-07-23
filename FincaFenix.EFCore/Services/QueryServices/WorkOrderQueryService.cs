@@ -8,14 +8,14 @@ namespace FincaFenix.EFCore.Services.QueryServices
 {
     public class WorkOrderQueryService : FincaFenixContext, IWorkOrderQueryService
     {
-        public async Task<(IEnumerable<ShowWorkOrderCardDTO> WorkOrders , int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize)
+        public async Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders , int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status)
         {
-            var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.State != "Cerrado");
+            var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
             
             var totalCount = await query.CountAsync(); //Cuenta la cantidad de registros que cumplen la condición
 
             var workOrders = await WorkOrders
-                .Where(wo => !wo.IsDeleted && wo.State != "Cerrado")
+                .Where(wo => !wo.IsDeleted && wo.Status != status)
                 // Ordena por OrderNum para mantener un orden consistente, para que la paginación funcione correctamente
                 // si no se ordena, la paginación puede devolver resultados repetidos o saltarse algunos registros en cada pagina
                 .OrderBy(wo => wo.Id)
@@ -23,7 +23,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .Skip((pageNumber - 1) * pageSize)
                 // Toma el número de registros que se especifica en pageSize, define la cantidad de registros a devolver por página
                 .Take(pageSize)
-                .Select(wo => new ShowWorkOrderCardDTO
+                .Select(wo => new InfoWorkOrderDTO
                 {
                     Id = wo.Id,
                     OrderNum = wo.OrderNum,
@@ -37,8 +37,9 @@ namespace FincaFenix.EFCore.Services.QueryServices
                         Id = wo.Farm.Id,
                         Name = wo.Farm.Name
                     }: null,
+                    CreatedDate = wo.CreatedDate,
                     StartDate = wo.StartDate,
-                    Status = wo.State,
+                    Status = wo.Status,
                     RelationatedSector = wo.WorkedSectors
                         .Select(wos => new DetailSectorFarmDTO
                         {
@@ -55,14 +56,14 @@ namespace FincaFenix.EFCore.Services.QueryServices
         public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id)
         {
             return await WorkOrders
-                .Where(wo => wo.Id == id && !wo.IsDeleted && wo.State != "Cerrado")
+                .Where(wo => wo.Id == id && !wo.IsDeleted)
                 .Select(wo => new ShowInfoAddActivityFormDTO
                 {
                     WorkOrder = new WorkOrderInfoDTO
                     {
                         Id = wo.Id,
                         OrderNum = wo.OrderNum,
-                        State = wo.State,
+                        State = wo.Status,
                         StartDate = wo.StartDate,
                         Description = wo.Description,
                         IsDeleted = wo.IsDeleted
