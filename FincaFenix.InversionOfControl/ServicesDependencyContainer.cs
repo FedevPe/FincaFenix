@@ -1,5 +1,4 @@
-﻿using FincaFenix.EFCore.Options;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace FincaFenix.InversionOfControl
 {

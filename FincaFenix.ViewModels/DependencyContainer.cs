@@ -13,7 +13,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<CreateWorkOrderViewModel>()
                     .AddTransient<GeneralInfoWorkOrderViewModel>()
                     .AddTransient<CreateDetailWorkOrderViewModel>()
-                    .AddTransient<LoadWorkOrdersViewModel>();
+                    .AddTransient<LoadWorkOrdersViewModel>()
+                    .AddTransient<LoadDetailsWorkOrderViewModel>();
 
             return services;
         }

@@ -16,7 +16,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IWorkOrderQueryService, WorkOrderQueryService>()
                     .AddScoped<IMaterialCategoryQueryService, MaterialCategoryQueryService>()
                     .AddScoped<IMachineQueryService, MachineQueryServices>()
-                    .AddScoped<IEmployeeQueryService, EmployeeQueryService>();
+                    .AddScoped<IEmployeeQueryService, EmployeeQueryService>()
+                    .AddScoped<IDetailWOQueryService, DetailWOQueryService>();
 
             services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>()
                     .AddScoped<IDetailWOCommandService, DetailWOCommandService>();
