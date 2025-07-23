@@ -10,8 +10,10 @@ namespace FincaFenix.ViewModels.ViewModels
     {
         public int SelectedFarmId { get; set; }
         public int SelectedTaskId { get; set; }
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDate { get; set; } = DateTime.Now;
         public List<DetailSectorFarmDTO> SelectedSectors { get; set; } = new List<DetailSectorFarmDTO>();
+
+        public decimal? TotalAreaSectors { get; set; } = 0;
 
         public IEnumerable<FarmDTO> Farms { get; set; } = new List<FarmDTO>();
         public IEnumerable<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();

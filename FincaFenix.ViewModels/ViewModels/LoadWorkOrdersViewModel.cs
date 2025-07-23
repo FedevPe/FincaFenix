@@ -9,11 +9,12 @@ namespace FincaFenix.ViewModels.ViewModels
         public int CurrentPage { get; set; } = 1;
         public int PageSize { get; set; } = 4;  
         public int TotalItems { get; set; } = 0;
-        public IEnumerable<ShowWorkOrderCardDTO> InfoWorkOrderCard { get; set; } = new List<ShowWorkOrderCardDTO>();
+        public string? StatusWorkOrderIsDistinct { get; set; } = "Cerrado";
+        public IEnumerable<InfoWorkOrderDTO> InfoWorkOrderCard { get; set; } = new List<InfoWorkOrderDTO>();
 
         public async Task LoadWorkOrderList()
         {
-            var (workOrders, totalCount) = await wo.GetWorkOrderListPaginated(CurrentPage, PageSize);
+            var (workOrders, totalCount) = await wo.GetWorkOrderListPaginated(CurrentPage, PageSize, StatusWorkOrderIsDistinct);
 
             InfoWorkOrderCard = workOrders.ToList();
             TotalItems = totalCount;
