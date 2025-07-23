@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
+    <ProjectReference Include="..\FincaFenix.Validations\FincaFenix.Validations.csproj" />
   </ItemGroup>
 
 </Project>

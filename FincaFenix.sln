@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FincaFenix.InversionOfContr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FincaFenix.UserInterface7.0", "FincaFenix.UserInterface7.0\FincaFenix.UserInterface7.0.csproj", "{23FBC645-B148-4311-1C75-3111F08E4214}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FincaFenix.Validations", "FincaFenix.Validations\FincaFenix.Validations.csproj", "{0FB162DF-28F7-4BFB-84C7-2B2D231DED12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{23FBC645-B148-4311-1C75-3111F08E4214}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23FBC645-B148-4311-1C75-3111F08E4214}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23FBC645-B148-4311-1C75-3111F08E4214}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FB162DF-28F7-4BFB-84C7-2B2D231DED12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FB162DF-28F7-4BFB-84C7-2B2D231DED12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FB162DF-28F7-4BFB-84C7-2B2D231DED12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FB162DF-28F7-4BFB-84C7-2B2D231DED12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +112,7 @@ Global
 		{615F9793-037F-4146-8E8D-619683AFB478} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{BB95D47A-9597-4ECD-897D-610AD052E094} = {D86D15A9-2683-4A6B-95E6-5DF1F88CC35D}
 		{23FBC645-B148-4311-1C75-3111F08E4214} = {09C52C6C-9551-49B4-BB02-BD8D3BE95AE7}
+		{0FB162DF-28F7-4BFB-84C7-2B2D231DED12} = {302396A2-24E8-4AA5-B276-509E480DBAE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B1451CC9-EADF-43E8-A1A7-791087007BD2}
