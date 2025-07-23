@@ -8,40 +8,58 @@ namespace FincaFenix.UsesCases.Aggregates
     {
         public static WorkOrderEntity ToEntity(WorkOrderDTO workOrderDTO)
         {
-            var newWorkOrder = new WorkOrderEntity
+            var newWorkOrder = new WorkOrderEntity()
             {
                 TaskId = workOrderDTO.TaskId,
                 FarmId = workOrderDTO.FarmId,
                 CreatedDate = workOrderDTO.CreatedDate,
                 StartDate = workOrderDTO.StartDate,
-                State = workOrderDTO.StartDate > workOrderDTO.CreatedDate ? "Pendiente" : "Activo",
+                Status = workOrderDTO.StartDate > workOrderDTO.CreatedDate ? "Pendiente" : "Activo",
                 Description = workOrderDTO.Description,
                 IsDeleted = false
             };
+
+            if (workOrderDTO.Recipe != null)
+            {
+                newWorkOrder.Recipe = MapRecipe(workOrderDTO.Recipe); 
+            }
+
+            if (workOrderDTO.SectorList != null && workOrderDTO.SectorList.Any())
+            {
+                newWorkOrder.WorkedSectors = MapWorkedSectors(workOrderDTO.SectorList); 
+            }
+
             return newWorkOrder;
         }
-        public static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDto)
+
+        private static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDTO)
         {
             return new RecipeEntity
             {
-                Dosage = recipeDto.Dose,
-                DosageUnit = recipeDto.DoseUnit,
-                MachineId = recipeDto.MachineId,
-                State = recipeDto.State,
+                Dosage = recipeDTO.Dose,
+                DosageUnit = recipeDTO.DoseUnit,
+                MachineId = recipeDTO.MachineId,
+                State = recipeDTO.State,
                 IsDeleted = false,
-                DetailRecipeList = recipeDto.Details?.Select(dr => new DetailRecipeEntity
-                {
-                    MaterialId = dr.MaterialId,
-                    AmountRequired = dr.AmountRequired,
-                    AmountRequiredUnit = dr.AmountRequiredUnit,
-                    EstimatedAmount = dr.EstimatedAmount,
-                    EstimatedAmountUnit = dr.EstimatedAmountUnit
-                }).ToList() ?? []
+                DetailRecipeList = recipeDTO.Details?.Select(dr => MapDetailRecipe(dr)).ToList() ?? []
             };
         }
-        public static List<WorkOrderWorkedSectorEntity> MapWorkedSectors(IEnumerable<DetailSectorFarmDTO> sectors)
+
+        private static DetailRecipeEntity MapDetailRecipe(DetailRecipeDTO drDTO)
         {
-            return sectors.Select(s => new WorkOrderWorkedSectorEntity
+            return new DetailRecipeEntity
+            {
+                MaterialId = drDTO.MaterialId,
+                AmountRequired = drDTO.AmountRequired,
+                AmountRequiredUnit = drDTO.AmountRequiredUnit,
+                EstimatedAmount = drDTO.EstimatedAmount,
+                EstimatedAmountUnit = drDTO.EstimatedAmountUnit
+            };
+        }
+
+        private static List<WorkOrderWorkedSectorEntity> MapWorkedSectors(List<DetailSectorFarmDTO> sectorListDTO)
+        {
+            return sectorListDTO.Select(s => new WorkOrderWorkedSectorEntity
             {
                 SectorFarmId = s.Id
             }).ToList();
