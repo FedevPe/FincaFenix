@@ -8,6 +8,7 @@ namespace FincaFenix.Entities.POCOEntities
         public string NumRecipe { get; set; }
         public int MachineId { get; set; }
         public MachineEntity Machine { get; set; }
+        public decimal TRV { get; set; }
         public decimal Dosage { get; set; }
         public string DosageUnit { get; set; }
         public string State { get; set; }
