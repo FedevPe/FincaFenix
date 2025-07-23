@@ -4,134 +4,136 @@
 
 <MudContainer>
 
- @if (InfoVM.IsLoading || InfoVM.WOInfo == null)
- {
-     <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-     <MudText Typo="Typo.h6">Cargando información de la orden de trabajo...</MudText>
- }
- else
- {
-     <GeneralInformationWorkOrder 
-         OrderNumber="@InfoVM.WOInfo.WorkOrder.OrderNum"
-         FarmWorkOrder="@InfoVM.WOInfo.Farm.Name"
-         TaskWorkOrder="@InfoVM.WOInfo.Task.Description"
-         SectorList="@InfoVM.WOInfo.SectorList"
-         DateWorkOrder="@InfoVM.WOInfo.WorkOrder.StartDate"
-         StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"/>
+    @if (InfoVM.IsLoading || InfoVM.WOInfo == null)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+        <MudText Typo="Typo.h6">Cargando información de la orden de trabajo...</MudText>
+    }
+    else
+    {
+        <GeneralInformationWorkOrder 
+            OrderNumber="@InfoVM.WOInfo.WorkOrder.OrderNum"
+            FarmWorkOrder="@InfoVM.WOInfo.Farm.Name"
+            TaskWorkOrder="@InfoVM.WOInfo.Task.Description"
+            SectorList="@InfoVM.WOInfo.SectorList"
+            DateWorkOrder="@InfoVM.WOInfo.WorkOrder.StartDate"
+            StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"/>
 
-    <MudForm @ref="form">
-         <MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
-             <MudGrid Justify="Justify.FlexStart">
-                 <MudItem lg="12" >
-                    <MudText Typo="Typo.h5" class="mb-2"><MudIcon Icon="@Icons.Material.Outlined.AppRegistration" Size="Size.Large" style="color: #3F8891" /> Registro de actividad</MudText>
-                     <MudDivider Style="border-color: black;" />
-                 </MudItem>
-                 <MudItem xs="12" lg="12">
-                     <MudGrid Justify="Justify.FlexStart">
-                         <MudItem xs="12" lg="6"> 
-                             <MudText Typo="Typo.h6">Operario</MudText>
-                             <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                                       @bind-Value="NewDetailVM.EmployeeId"
-                                        Variant="Variant.Outlined" Clearable
-                                        AnchorOrigin="Origin.BottomRight"
-                                        TransformOrigin="Origin.TopRight">
-                                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                @foreach (var worker in InfoVM.WOInfo.EmployeeList.OrderBy(x => x.Name))
-                                {
-                                        <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
-                                }
-                             </MudSelect>
-                         </MudItem>
-                        <MudItem xs="12" lg="3">
-                            <MudText Typo="Typo.h6">Fecha</MudText>
-                            <MudDatePicker @bind-value="NewDetailVM.ActivityDate" ShowToolbar="false" Style="margin-top:10px"
-                                           AnchorOrigin="Origin.BottomRight"
-                                           TransformOrigin="Origin.TopRight"
-                                           IsDateDisabledFunc="@((DateTime dt) => (dt > NewDetailVM.ActivityDate))"
-                                           AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" />
-                        </MudItem>
-                         <MudFlexBreak/>
-                         <MudItem xs="12" lg="12">
-                             <div class="d-flex mb-2">
-                                <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard" 
-                                    Style="color: #FF8D5F"/>Cuadros trabajados</MudText>
-                                 <MudSpacer />
-                                 <MudButton Variant="Variant.Filled" style="height: 35px;"
-                                            Color="Color.Primary"
-                                            Size="Size.Small"
-                                            StartIcon="@Icons.Material.Filled.DashboardCustomize"
-                                            OnClick="AddDetailWorkOrder">Agregar cuadro</MudButton>
-                             </div>
-                             <MudDivider Style="border-color: black;" />
-                         </MudItem>
-                     </MudGrid>
-                    @foreach (var detail in NewDetailVM.ActivityDetails)
-                    {
-                        <MudGrid Spacing="3" Justify="Justify.SpaceBetween" Class="mt-2">                        
-                            <MudItem xs="12" lg="3">
-                                <MudText Typo="Typo.caption">Cuadro</MudText>
+       <MudForm @ref="form">
+            <MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
+                <MudGrid Justify="Justify.FlexStart">
+                    <MudItem lg="12" >
+                       <MudText Typo="Typo.h5" class="mb-2"><MudIcon Icon="@Icons.Material.Outlined.AppRegistration" Size="Size.Large" style="color: #3F8891" /> Registro de actividad</MudText>
+                        <MudDivider Style="border-color: black;" />
+                    </MudItem>
+                    <MudItem xs="12" lg="12">
+                        <MudGrid Justify="Justify.FlexStart">
+                            <MudItem xs="12" lg="6"> 
+                                <MudText Typo="Typo.h6">Operario</MudText>
                                 <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                                          @bind-Value="NewDetailVM.EmployeeId"
                                            Variant="Variant.Outlined" Clearable
                                            AnchorOrigin="Origin.BottomRight"
-                                           TransformOrigin="Origin.TopRight"
-                                           @bind-Value="detail.Info.SectorWorkedId">
+                                           TransformOrigin="Origin.TopRight">
                                     <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                    @foreach (var sector in InfoVM.WOInfo.SectorList)
-                                    {
-                                        <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
-                                    }
+                                   @foreach (var worker in InfoVM.WOInfo.EmployeeList.OrderBy(x => x.Name))
+                                   {
+                                           <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
+                                   }
                                 </MudSelect>
                             </MudItem>
-                            <MudItem xs="4" lg="2">
-                                <MudText Typo="Typo.caption">Horas trabajadas</MudText>
-                                <MudTextField @bind-Value="detail.Info.WorkedHours" T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
+                           <MudItem xs="12" lg="3">
+                               <MudText Typo="Typo.h6">Fecha</MudText>
+                               <MudDatePicker @bind-value="NewDetailVM.ActivityDate" Placeholder="@NewDetailVM.ActivityDate.Value.ToShortDateString()"
+                                              DateChanged="@((DateTime? newDate) => NewDetailVM.ActivityDate = newDate)"
+                                              ShowToolbar="false" Style="margin-top:10px"
+                                              AnchorOrigin="Origin.BottomRight"
+                                              TransformOrigin="Origin.TopRight"
+                                              IsDateDisabledFunc="@((DateTime dt) => (dt > NewDetailVM.ActivityDate))"
+                                              AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" />
+                           </MudItem>
+                            <MudFlexBreak/>
+                            <MudItem xs="12" lg="12">
+                                <div class="d-flex mb-2">
+                                   <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard"
+                                       Style="color: #FF8D5F"/>Cuadros trabajados</MudText>
+                                    <MudSpacer />
+                                    <MudButton Variant="Variant.Filled" style="height: 35px;"
+                                               Color="Color.Primary"
+                                               Size="Size.Small"
+                                               StartIcon="@Icons.Material.Filled.DashboardCustomize"
+                                               OnClick="AddDetailWorkOrder">Agregar cuadro</MudButton>
+                                </div>
+                                <MudDivider Style="border-color: black;" />
                             </MudItem>
-                            <MudItem xs="4" lg="2">
-                                <MudText Typo="Typo.caption">Rendimiento diario</MudText>
-                                <MudTextField @bind-Value="detail.Info.Performance" T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
-                            </MudItem>
-                            <MudSpacer />
-                            <MudItem xs="1" lg="1" Class="btnDelete">
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                               Color="Color.Error"
-                                               Variant="Variant.Filled"
-                                               Size="Size.Medium" Style="margin-top: 35px"
-                                               OnClick="@(() => RemoveDetailWorkOrder(detail))" />
-                            </MudItem>
-                            <MudItem lg="12" xs="12">
-                                <MudText Typo="Typo.caption">Observaciones</MudText>
-                                <MudTextField T="string" @bind-Value="detail.Info.Description"
-                                              Placeholder="Observaciones de la actividad"
-                                              Variant="Variant.Outlined" Margin="Margin.Dense"
-                                              FullWidth="true" Lines="2" />
-                            </MudItem>
-                            <MudDivider Style="border-color: black" Class="mt-4 mb-2"/>  
                         </MudGrid>
-                    }                
-                 </MudItem>
-             </MudGrid>
-         </MudPaper>
-    </MudForm>
-     <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
-         <MudGrid Spacing="1" Justify="Justify.FlexEnd">
-             <MudItem>
-                 <MudButton Href="/ordenesRecientes"
-                            Variant="Variant.Filled"
-                            Color="Color.Error"
-                            Size="Size.Small"
-                            StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
-             </MudItem>
-             <MudItem>
-                 <MudButton
-                            Variant="Variant.Filled"
-                            Color="Color.Primary"
-                            Size="Size.Small"
-                            StartIcon="@Icons.Material.Filled.Save"
-                            OnClick="HandleSave">Guardar</MudButton>
-             </MudItem>
-         </MudGrid>
-     </div>
- }
+                       @foreach (var detail in NewDetailVM.ActivityDetails)
+                       {
+                           <MudGrid Spacing="3" Justify="Justify.SpaceBetween" Class="mt-2">                        
+                               <MudItem xs="12" lg="3">
+                                   <MudText Typo="Typo.caption">Cuadro</MudText>
+                                   <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                                              Variant="Variant.Outlined" Clearable
+                                              AnchorOrigin="Origin.BottomRight"
+                                              TransformOrigin="Origin.TopRight"
+                                              @bind-Value="detail.Info.SectorWorkedId">
+                                       <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
+                                       @foreach (var sector in InfoVM.WOInfo.SectorList)
+                                       {
+                                           <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
+                                       }
+                                   </MudSelect>
+                               </MudItem>
+                               <MudItem xs="4" lg="2">
+                                   <MudText Typo="Typo.caption">Horas trabajadas</MudText>
+                                   <MudTextField @bind-Value="detail.Info.WorkedHours" T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
+                               </MudItem>
+                               <MudItem xs="4" lg="2">
+                                   <MudText Typo="Typo.caption">Rendimiento diario</MudText>
+                                   <MudTextField @bind-Value="detail.Info.Performance" T="decimal" Margin="Margin.Dense" Style="margin-top: 15px"></MudTextField>
+                               </MudItem>
+                               <MudSpacer />
+                               <MudItem xs="1" lg="1" Class="btnDelete">
+                                   <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                  Color="Color.Error"
+                                                  Variant="Variant.Filled"
+                                                  Size="Size.Medium" Style="margin-top: 35px"
+                                                  OnClick="@(() => RemoveDetailWorkOrder(detail))" />
+                               </MudItem>
+                               <MudItem lg="12" xs="12">
+                                   <MudText Typo="Typo.caption">Observaciones</MudText>
+                                   <MudTextField T="string" @bind-Value="detail.Info.Description"
+                                                 Placeholder="Observaciones de la actividad"
+                                                 Variant="Variant.Outlined" Margin="Margin.Dense"
+                                                 FullWidth="true" Lines="2" />
+                               </MudItem>
+                               <MudDivider Style="border-color: black" Class="mt-4 mb-2"/>  
+                           </MudGrid>
+                       }                
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+       </MudForm>
+        <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
+            <MudGrid Spacing="1" Justify="Justify.FlexEnd">
+                <MudItem>
+                    <MudButton Href="/ordenestrabajo"
+                               Variant="Variant.Filled"
+                               Color="Color.Error"
+                               Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
+                </MudItem>
+                <MudItem>
+                    <MudButton
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               OnClick="HandleSave">Guardar</MudButton>
+                </MudItem>
+            </MudGrid>
+        </div>
+    }
 </MudContainer>
  
 @code{
@@ -168,38 +170,33 @@
     }
     private async Task HandleSave()
     {
-        if (await NewDetailVM.SaveDetailWorkOrderAsync(NewDetailVM))
+        // 1. Validar el formulario de la UI
+        await form.Validate();
+        if (!form.IsValid)
         {
-            NavigationManager.NavigateTo("/ordenesRecientes"); // Redirige después de guardar
+            Snackbar.Add("Por favor, corrige los errores del formulario.", Severity.Warning);
+            return;
         }
 
-        // // 1. Validar el formulario de la UI
-        // await form.Validate();
-        // if (!form.IsValid)
-        // {
-        //     Snackbar.Add("Por favor, corrige los errores del formulario.", Severity.Warning);
-        //     return;
-        // }
-
-        // // 2. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
-        // // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada
-        // try
-        // {
-        //     if ()
-        //     {
-        //         Snackbar.Add("Actividad registrada con éxito.", Severity.Success);
-        //         NavigationManager.NavigateTo($"/ordenesRecientes"); // Redirige después de guardar
-        //     }
-        //     else
-        //     {
-        //         Snackbar.Add("Error al registrar la actividad. Inténtelo de nuevo.", Severity.Error);
-        //     }
-        // }
-        // catch (Exception ex)
-        // {
-        //     // Capturar errores inesperados del caso de uso o la persistencia
-        //     Snackbar.Add($"Ocurrió un error inesperado: {ex.Message}", Severity.Error);
-        //     // Considera loggear el error completo (ex) aquí para depuración
-        // }
+        // 2. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
+        // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada
+        try
+        {
+            if (await NewDetailVM.SaveDetailWorkOrderAsync(NewDetailVM))
+            {
+                Snackbar.Add("Actividad registrada con éxito.", Severity.Success);
+                NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
+            }
+            else
+            {
+                Snackbar.Add("Error al registrar la actividad. Inténtelo de nuevo.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Capturar errores inesperados del caso de uso o la persistencia
+            Snackbar.Add($"Ocurrió un error inesperado: {ex.Message}", Severity.Error);
+            // Considera loggear el error completo (ex) aquí para depuración
+        }
     }
 }

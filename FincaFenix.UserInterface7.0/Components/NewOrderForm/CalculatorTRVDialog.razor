@@ -1,0 +1,56 @@
+﻿<MudDialog Class="custom-dialog">
+    <DialogContent>
+        <div class="d-flex align-items-center g-5">
+            <MudText Typo="Typo.h6" Class="mb-3 me-2">Altura de la planta:</MudText>
+            <MudNumericField @bind-Value="PlantHeight" Margin="Margin.Dense" Variant =" Variant.Text" Min="0.0" HelperText="@helperString" HelperTextOnFocus="true" />
+        </div>
+        <div class="d-flex align-items-center g-5">
+            <MudText Typo="Typo.h6" Class="mb-3 me-2">Ancho de la planta:</MudText>
+            <MudNumericField @bind-Value="PlantWidth" Margin="Margin.Dense" Variant =" Variant.Text" Min="0.0" HelperText="@helperString" HelperTextOnFocus="true" />
+        </div>
+        <div class="d-flex align-items-center g-5">
+            <MudText Typo="Typo.h6" Class="mb-3 me-2">Distancia entre hileras:</MudText>
+            <MudNumericField 
+                @bind-Value="PlantDistance" 
+                Margin="Margin.Dense" 
+                Variant="Variant.Text" 
+                Min="0.0" 
+                HelperText="@helperString" 
+                HelperTextOnFocus="true"/>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="HandleAccept" Color="Color.Primary">Calcular</MudButton>
+        <MudButton OnClick="() => MudDialog.Cancel()" Color="Color.Default">Cancelar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public double PlantHeight { get; set; }
+    public double PlantWidth { get; set; }
+    public double PlantDistance { get; set; } 
+    private string helperString = "Ingrese el valor en metros";
+    public decimal TRVResult { get; set; }
+
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
+    [Inject] private ISnackbar Snackbar { get; set; }
+
+    public void TRVCalculate()
+    {
+        if (PlantDistance > 0) // Evitar división por cero
+        {
+            TRVResult = (decimal)((PlantHeight * PlantWidth * 10000) / PlantDistance);
+        }
+        else
+        {
+            Snackbar.Add("Ocurrió un error al realizar el cálculo, revise los valores ingresados.", Severity.Error);
+        }
+    }
+
+    private void HandleAccept()
+    {
+        TRVCalculate(); // Asegúrate de que el cálculo esté actualizado antes de cerrar
+        MudDialog.Close(DialogResult.Ok(TRVResult)); // Pasa el TRVResult al cerrar el diálogo
+    }
+
+}

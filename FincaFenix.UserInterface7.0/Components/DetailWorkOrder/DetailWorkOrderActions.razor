@@ -1,4 +1,4 @@
-﻿<MudGrid Justify="Justify.Center" Spacing="2">
+﻿<MudGrid Justify="Justify.Center" Spacing="2" class="w-100">
     <MudItem lg="12" xs="12">
         <MudText Typo="Typo.h6">
             Acciones
@@ -57,8 +57,7 @@
     private async Task ChangeWorkOrderStatus(string newState)
     {
         // ** Aquí va tu lógica para llamar a un servicio o API que actualice el estado
-        // de la orden de trabajo en tu base de datos o sistema backend. **
-
+        // de la orden de trabajo en tu base de datos o sistema backend. **        
         StateHasChanged();
     }
 }

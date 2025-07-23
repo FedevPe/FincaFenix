@@ -2,94 +2,37 @@
 
 <PageTitle>Nueva orden de trabajo</PageTitle>
 
-<NewOrderData ViewModel=OrderDataViewModel/>
-<NewRecipe ViewModel=NewRecipeViewModel/>
 
-<div class="container-fluid shadow mt-3 rounded bg-color-white p-4 mb-4">
-    <MudGrid Justify="Justify.Center">
-        <MudItem lg="12" xs="12">
-            <MudText Typo="Typo.h6">Descripción</MudText>
-            <MudTextField T="string" @bind-Value="Description"
-                          Placeholder="Ingrese una descripción de la orden"
-                          Variant="Variant.Outlined" Margin="Margin.Dense"
-                          FullWidth="true" Lines="3" />
-        </MudItem>
-    </MudGrid>
-</div>
-<div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
-    <MudGrid Spacing="1" Justify="Justify.FlexEnd">
-        <MudItem>
-            <MudButton Href="/ordenestrabajo"
-                       Variant="Variant.Filled"
-                       Color="Color.Error"
-                       Size="Size.Small"
-                       StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
-        </MudItem>
-        <MudItem>
-            <MudButton OnClick="SaveWorkOrder"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       Size="Size.Small"
-                       StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
-        </MudItem>
-    </MudGrid>
-</div>
+    <NewOrderData ViewModel=OrderDataViewModel/>
+    <NewRecipe ViewModel=NewRecipeViewModel/>
 
-@code {
-    [Inject] InfoNewWorkOrderViewModel OrderDataViewModel { get; set; } = default!;
-    [Inject] NewRecipeViewModel NewRecipeViewModel { get; set; } = default!;
-    [Inject] CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
-    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+    <div class="container-fluid shadow mt-3 rounded bg-color-white p-4 mb-4">
+        <MudGrid Justify="Justify.Center">
+            <MudItem lg="12" xs="12">
+                <MudText Typo="Typo.h6">Descripción</MudText>
+                <MudTextField T="string" @bind-Value="Description"
+                              Placeholder="Ingrese una descripción de la orden"
+                              Variant="Variant.Outlined" Margin="Margin.Dense"
+                              FullWidth="true" Lines="3" />
+            </MudItem>
+        </MudGrid>
+    </div>
+    <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
+        <MudGrid Spacing="1" Justify="Justify.FlexEnd">
+            <MudItem>
+                <MudButton Href="/ordenestrabajo"
+                           Variant="Variant.Filled"
+                           Color="Color.Error"
+                           Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
+            </MudItem>
+            <MudItem>
+                <MudButton OnClick="SaveWorkOrder"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
+            </MudItem>
+        </MudGrid>
+    </div>
 
-    private string Description { get; set; } = string.Empty;
-    private List<DetailSectorFarmDTO> SelectedSectorList { get; set; } = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        await OrderDataViewModel.LoadInitializeAsync();
-        await NewRecipeViewModel.LoadInitializeAsync();
-    }
-
-    private void ActualizarSectoresSeleccionados(List<DetailSectorFarmDTO> sectores)
-    {
-        SelectedSectorList = sectores;
-        StateHasChanged();
-    }
-    private async Task SaveWorkOrder()
-    {
-        CreateWorkOrderViewModel.FarmId = OrderDataViewModel.SelectedFarmId;
-        CreateWorkOrderViewModel.TaskId = OrderDataViewModel.SelectedTaskId;
-        CreateWorkOrderViewModel.StartDate = OrderDataViewModel.StartDate;
-        CreateWorkOrderViewModel.Description = Description;
-        CreateWorkOrderViewModel.SectorList = OrderDataViewModel.Sectors.Where(sector => sector.Selected).ToList();
-
-        // Verificamos si hay receta
-        if (NewRecipeViewModel.Machine != null || NewRecipeViewModel.Details.Count > 0)
-        {
-            CreateWorkOrderViewModel.Recipe = new RecipeWorkOrderDTO
-            {
-                MachineId = NewRecipeViewModel.Machine?.Id ?? 0,
-                Dose = NewRecipeViewModel.Dose,
-                DoseUnit = NewRecipeViewModel.DoseUnit,
-                Details = NewRecipeViewModel.Details.Select(m => new DetailRecipeDTO
-                {
-                    MaterialId = m.MaterialId,
-                    AmountRequired = m.AmountRequired,
-                    AmountRequiredUnit = m.AmountRequiredUnit,
-                    EstimatedAmount = m.EstimatedAmount,
-                    EstimatedAmountUnit = m.EstimatedAmountUnit
-                }).ToList()
-            };
-        }
-        else
-        {
-            CreateWorkOrderViewModel.Recipe = null;
-        }
-
-        await CreateWorkOrderViewModel.SaveWorkOrder();
-
-        // Redireccionar tras guardar
-        NavigationManager.NavigateTo("/ordenesRecientes");
-    }
-
-}

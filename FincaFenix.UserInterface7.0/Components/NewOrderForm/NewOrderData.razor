@@ -17,18 +17,17 @@
         <MudItem xs="12" lg="3">
             <MudText Typo="Typo.h6">Fecha de inicio</MudText>
             <MudDatePicker Date="ViewModel.StartDate" DateChanged="@((DateTime? newDate) => ViewModel.StartDate = newDate)"
-                           ShowToolbar="false"
+                           ShowToolbar="false" Placeholder="@ViewModel.StartDate.Value.ToShortDateString()"
                            AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
                            Variant="Variant.Outlined"
                            Margin="Margin.Dense"
                            AnchorOrigin="Origin.BottomRight"
-                           TransformOrigin="Origin.TopRight"
-                           Clearable />
+                           TransformOrigin="Origin.TopRight"/>
         </MudItem>
         <MudItem xs="12" lg="3">
             <MudText Typo="Typo.h6">Finca</MudText>
             <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                       Variant="Variant.Outlined" Clearable
+                       Variant="Variant.Outlined"
                        AnchorOrigin="Origin.BottomRight"
                        TransformOrigin="Origin.TopRight"
                        @bind-Value="ViewModel.SelectedFarmId"
@@ -44,7 +43,7 @@
         <MudItem xs="12" lg="6">
             <MudText Typo="Typo.h6">Tarea</MudText>
             <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                       Variant="Variant.Outlined" Clearable
+                       Variant="Variant.Outlined"
                        AnchorOrigin="Origin.BottomRight"
                        TransformOrigin="Origin.TopRight"
                        @bind-Value="ViewModel.SelectedTaskId">
@@ -57,22 +56,62 @@
         </MudItem> 
         @if (ViewModel.SelectedFarmId != 0)
         {
-            <MudItem xs="12" lg="12">
-                <MudText Typo="Typo.h6">Sectores de la finca</MudText>
+            <MudItem xs="12" lg="12" Class="mt-2">
+                <div class="d-flex">
+                    <MudText Typo="Typo.h6">Cuadros de la Finca @ViewModel.Farms.FirstOrDefault(f => f.Id == ViewModel.SelectedFarmId).Name</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.DashboardCustomize"
+                               Class="ml-auto" onclick="AddSectorToSelection">Agregar Cuadro</MudButton>
+                </div>
             </MudItem>
             <MudItem xs="12" lg="12">
-                <MudGrid Justify="Justify.FlexStart">                
-                    @foreach (var sector in ViewModel.Sectors)
-                    {
-                        <MudItem>
-                            <MudCheckBox T="bool"
-                                         @bind-Value="@sector.Selected"
-                                         Label="@sector.SectorName"                                     
-                                         Color="Color.Primary" />
-                        </MudItem>
-                    }
-                </MudGrid>
+                <MudDivider Style="border-color: black;" />
             </MudItem>
+            @if (ViewModel.SelectedSectors.Any())
+            {
+                <MudItem xs="12" lg="12">
+                    <MudDataGrid T="DetailSectorFarmDTO" Items="@ViewModel.SelectedSectors"
+                                 Filterable=false SortMode="SortMode.None" Bordered="true" Dense="true" HeaderClass="my-custom-header">
+                        <Columns>
+                            <TemplateColumn Title="Cuadro">
+                                <CellTemplate>
+                                    <MudSelect T="int"
+                                               Margin="Margin.Dense" FullWidth="true"
+                                               Variant="Variant.Outlined"
+                                               AnchorOrigin="Origin.BottomRight"
+                                               TransformOrigin="Origin.TopRight"
+                                               Value="context.Item.Id"
+                                               ValueChanged="@((int selectedId) => OnSectorSelected(context.Item, selectedId))">
+
+                            <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un cuadro</MudSelectItem>
+                            @foreach (var sector in ViewModel.Sectors)
+                            {
+                                    <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
+                            }
+                        </MudSelect>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <PropertyColumn Property="x => x.FruitName" Title="Fruta" />
+                            <PropertyColumn Property="x => x.VarietyName" Title="Variedad" />
+                            <PropertyColumn Property="x => x.Area" Title="Superficie" />
+                            <TemplateColumn Title="Eliminar">
+                                <CellTemplate>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   Variant="Variant.Text"
+                                                   Size="Size.Medium"
+                                                   OnClick="(() => RemoveSectorFromSelection(context.Item))" />
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+                </MudItem>
+                <MudItem xs="12" lg="12">
+                    <MudDivider Style="border-color: black"/>
+                </MudItem>
+                <MudItem xs="12" lg="12">
+                    <MudText Typo="Typo.body1"><b>Superficie Total: </b>@TotalArea ha.</MudText>
+                </MudItem>                
+            }
         }
     </MudGrid>
 </div>

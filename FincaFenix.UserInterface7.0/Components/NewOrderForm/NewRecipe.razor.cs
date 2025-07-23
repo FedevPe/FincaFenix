@@ -1,0 +1,123 @@
+using FincaFenix.Entities.DTOs.RecipeDTO;
+using FincaFenix.UserInterface7._0.Services;
+using FincaFenix.ViewModels.ViewModels;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using System;
+
+namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
+{
+    public partial class NewRecipe
+    {
+        private int _selectedPlagueDisease;
+        private int _selectedMachineId;
+        private bool _recipeInitialized = false;
+
+        [Parameter] public NewRecipeViewModel ViewModel { get; set; }
+        [Inject] private IDialogService DialogService { get; set; }
+        [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
+        [Inject] private ISnackbar SnackbarService { get; set; }
+        protected override void OnInitialized()
+        {
+            // Suscribirse a los cambios del servicio
+            TotalAreaSectorService.OnChange += StateHasChanged;
+        }
+
+        public void Dispose()
+        {
+            // ¡IMPORTANTE! Desuscribirse para evitar fugas de memoria
+            TotalAreaSectorService.OnChange -= StateHasChanged;
+        }
+        private void OnMachineSelected(int id)
+        {
+            _selectedMachineId = id;
+            var machine = ViewModel.MachineList?.FirstOrDefault(m => m.Id == id);
+            if (machine is not null)
+            {
+                ViewModel.Machine = machine;
+            }
+        }
+        private async Task OpenTRVCalculatorDialog()
+        {
+            var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = false };
+            var dialog = DialogService.Show<CalculatorTRVDialog>("Calculadora TRV", options); // Asegúrate que TRVCalculatorDialog es el nombre de tu componente de diálogo
+
+            var result = await dialog.Result; // Esto espera a que el diálogo se cierre
+
+            if (!result.Canceled) // Si el usuario no canceló el diálogo
+            {
+                // Intentamos obtener el resultado como un decimal
+                if (result.Data is decimal trvValue)
+                {
+                    ViewModel.TRV = trvValue;
+                    StateHasChanged();
+                }
+            }
+        }
+        private void AddMaterial()
+        {
+            if (_recipeInitialized)
+            {
+                ViewModel.AddMaterial();
+            }
+        }
+        private void RemoveMaterial(DetailRecipeDTO material)
+        {
+            ViewModel.RemoveMaterial(material);
+            if (!ViewModel.Details.Any() && ViewModel.Machine == null) _recipeInitialized = false;
+        }
+        private void RemoveMachine()
+        {
+            ViewModel.RemoveMachine();
+            _selectedMachineId = 0;
+            if (!ViewModel.Details.Any())
+            {
+                _recipeInitialized = false; // Deshabilita la sección de receta
+            }
+        }
+        private void AddRecipe()
+        {
+            if (!_recipeInitialized) 
+            {
+                ViewModel.InitializeRecipe(TotalAreaSectorService.TotalAreaSectors);
+                _recipeInitialized = true; 
+            }
+            StateHasChanged();
+        }
+        private void CalculateEstimatedAmount(DetailRecipeDTO detail)
+        {
+            try
+            {
+                if (detail.AmountRequired <= 0)
+                {
+                    SnackbarService.Add("La 'Cantidad Requerida' no es válida para el cálculo.", Severity.Warning);
+                    return;
+                }
+
+                detail.EstimatedAmount = ViewModel.CalculateEstimateAmount(
+                    ViewModel.TRV,
+                    detail.AmountRequired,
+                    TotalAreaSectorService.TotalAreaSectors,
+                    detail.AmountRequiredUnit
+                );
+                if (detail.AmountRequiredUnit == "lts" || detail.AmountRequiredUnit == "cc")
+                {
+                    detail.EstimatedAmountUnit = "lts";
+                }
+                else
+                {
+                    detail.EstimatedAmountUnit = "kg";
+                }
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                // Loguear la excepción para depuración (opcional, pero recomendado en aplicaciones reales)
+                Console.WriteLine($"Error al calcular la cantidad estimada: {ex.Message}");
+                ViewModel.Message = "Ocurrió un error al calcular la cantidad estimada. Verifique los valores ingresados.";
+                SnackbarService.Add(ViewModel.Message, Severity.Error);
+                throw;
+            }            
+        }
+    }
+}

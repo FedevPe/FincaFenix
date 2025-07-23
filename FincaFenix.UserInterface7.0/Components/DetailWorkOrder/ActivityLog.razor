@@ -1,7 +1,4 @@
-﻿@using System.Collections.Generic
-@using System.Linq
-
-<MudDataGrid T="Actividad" Items="@Actividades" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter" Hideable="false">
+﻿<MudDataGrid T="ActivityWorkOrderDTO" Items="@ActivityList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter" Hideable="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Registro de Actividad</MudText>
         <MudSpacer />
@@ -9,53 +6,31 @@
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="x => x.Fecha" Title="Fecha" Format="dd/MM/yyyy" />
-        <PropertyColumn Property="x => x.NombreOperario" Title="Nombre del Operario" />
-        <PropertyColumn Property="x => x.CuadroTrabajado" Title="Cuadro Trabajado" />
-        <PropertyColumn Property="x => x.HorasTrabajadas" Title="Horas Trabajadas" />
-        <PropertyColumn Property="x => x.Rendimiento" Title="Rendimiento" />
+        <PropertyColumn Property="x => x.ActivityDate" Title="Fecha" Format="dd/MM/yyyy" />
+        <PropertyColumn Property="x => x.Employee.Name +' '+ x.Employee.LastName" Title="Nombre del Operario" />
+        <PropertyColumn Property="x => x.Sector.SectorName" Title="Cuadro Trabajado" />
+        <PropertyColumn Property="x => x.WorkedHours" Title="Horas Trabajadas" />
+        <PropertyColumn Property="x => x.Performance" Title="Rendimiento" />
+        <PropertyColumn Property="x => x.Description" Title="Observaciones" />
     </Columns>
-    <PagerContent>
-        
-    </PagerContent>
 </MudDataGrid>
 
 
 @code {
-    private IEnumerable<Actividad> Actividades = new List<Actividad>();
     private string _searchString;
 
-    // Clase de modelo para representar una actividad
-    public class Actividad
-    {
-        public DateTime Fecha { get; set; } = DateTime.Now;
-        public string NombreOperario { get; set; }
-        public string CuadroTrabajado { get; set; }
-        public double HorasTrabajadas { get; set; }
-        public double Rendimiento { get; set; }
-    }
+    [Parameter] public IEnumerable<ActivityWorkOrderDTO> ActivityList { get; set; }
 
     // Filtro rápido para buscar por nombre de operario
-    private Func<Actividad, bool> _quickFilter => actividad =>
+    private Func<ActivityWorkOrderDTO, bool> _quickFilter => activity =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
 
-        if (actividad.NombreOperario.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        if (activity.Employee.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;
     };
-
-    protected override void OnInitialized()
-    {
-        // Datos de ejemplo para el registro de actividades
-        Actividades = new List<Actividad>
-        {
-            new Actividad { Fecha = DateTime.Now.AddDays(-2), NombreOperario = "Teofilo Araya", CuadroTrabajado = "A2", HorasTrabajadas = 8, Rendimiento = 15 },
-            new Actividad { Fecha = DateTime.Now.AddDays(-1), NombreOperario = "Gustavo Mielniczuk", CuadroTrabajado = "B4", HorasTrabajadas = 7, Rendimiento = 9.5 },
-            new Actividad { Fecha = DateTime.Now, NombreOperario = "Alexander Lucero", CuadroTrabajado = "C3", HorasTrabajadas = 8.5, Rendimiento = 8 }
-        };
-    }
 }
 

@@ -10,11 +10,11 @@
                    Color="Color.Info"
                    Size="Size.Small"
                    StartIcon="@Icons.Material.Filled.Add"
-                   @onclick="AddMachine" Disabled="_disableButtonMachine">Agregar Maquinaria</MudButton>
+                   @onclick="AddRecipe" Disabled="_recipeInitialized">Crear Receta</MudButton>
         <MudButton Variant="Variant.Filled" style="height: 35px;"
                    Color="Color.Primary"
                    Size="Size.Small"
-                   StartIcon="@Icons.Material.Filled.Add"
+                   StartIcon="@Icons.Material.Filled.Add" Disabled="@(!_recipeInitialized)"
                    @onclick="AddMaterial">Agregar Insumo</MudButton>
     </div>
     <div>
@@ -39,42 +39,174 @@
                                 <MudSelectItem T="int" Value="@machine.Id">@machine.Name</MudSelectItem>
                             }                        
                         </MudSelect>
-                    </MudItem>                    
+                    </MudItem>
                     @if (ViewModel.Machine.Id != 0)
                     {
                         <MudItem xs="1" lg="2">
-                            <MudText Typo="Typo.caption">Dosis:</MudText>
-                            <MudTextField T="decimal" @bind-Value="ViewModel.Dose" Margin="Margin.Dense" Style="margin-top: 10px"></MudTextField>
+                            <MudText Typo="Typo.caption">Volumen:</MudText>
+                            <MudNumericField T="decimal" @bind-Value="ViewModel.Dosage" Min="00.00m" Format="N2" Margin="Margin.Dense" Style="margin-top: 10px"/>                                                            
                         </MudItem>
-                        <MudItem xs="1" lg="2">
-                            <MudText Typo="Typo.caption">Unidad</MudText>
-                            <MudSelect T="string" @bind-Value="ViewModel.DoseUnit" Margin="Margin.Dense"
-                                AnchorOrigin="Origin.BottomCenter"
-                                TransformOrigin="Origin.TopCenter" Style="margin-top: 14px">
+                        <MudItem xs="1" lg="1">
+                            <MudText Typo="Typo.caption">Unidad:</MudText>
+                            <MudSelect T="string" @bind-Value="ViewModel.DosageUnit" Margin="Margin.Dense"
+                                       AnchorOrigin="Origin.BottomCenter"
+                                       TransformOrigin="Origin.TopCenter" 
+                                       Style="margin-top: 14px"
+                                       Variant="Variant.Text">
                                 <MudSelectItem Value="@("kg")">kg</MudSelectItem>
                                 <MudSelectItem Value="@("gr")">gr</MudSelectItem>
                                 <MudSelectItem Value="@("lts")">lts</MudSelectItem>
                                 <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                             </MudSelect>
                         </MudItem>
-                    }
-                    <MudSpacer/>
-                    <MudItem xs="12" lg="1" Class="btnDelete">
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                       Color="Color.Error"
-                                       Variant="Variant.Filled"
+                        <MudItem xs="1" lg="2">
+                            <MudText Typo="Typo.caption">TRV:</MudText>
+                            <MudNumericField T="decimal"
+                                             Min="00.00m"
+                                             Format="N2"
+                                             Margin="Margin.Dense"
+                                             Style="margin-top: 10px"
+                                             HelperText="m3/ha" 
+                                             @bind-Value="ViewModel.TRV"/>
+                        </MudItem>
+                        <MudItem xs="1" lg="2" Class="d-flex justify-center align-center g-3">
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Info"
                                        Size="Size.Medium"
-                                       @onclick="@(() => RemoveMachine())"/>
-                    </MudItem>
+                                       StartIcon="@Icons.Material.Filled.Calculate"
+                                       OnClick="OpenTRVCalculatorDialog">Calcular TRV
+                            </MudButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                           Color="Color.Error"
+                                           Variant="Variant.Filled"
+                                           Size="Size.Medium"
+                                           Class="ms-2"
+                                           @onclick="@(() => RemoveMachine())"/>
+                        </MudItem>
+                    }
                 </MudGrid>
             }
         </div>        
         @if (ViewModel.Details.Count != 0)
         {
             <MudDivider style="border-color: black;" Class="mt-3"/>
+            <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
+                <MudItem lg="12" xs="12">
+                    <MudDataGrid T="DetailRecipeDTO" Items="@ViewModel.Details" HeaderClass="my-custom-header"
+                                 Filterable=false SortMode="SortMode.None" Bordered="true" Dense="true" EditMode="DataGridEditMode.Cell">                             
+                        <Columns>
+                            <TemplateColumn Title="Categoría">
+                                <CellTemplate>
+                                    <MudSelect T="int"
+                                               Margin="Margin.Dense"
+                                               Variant="Variant.Outlined"
+                                               AnchorOrigin="Origin.BottomCenter"
+                                               TransformOrigin="Origin.TopCenter"
+                                               @bind-Value="context.Item.CategoryId"
+                                               Clearable>
+                                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una categoría</MudSelectItem>
+                                        @if (ViewModel.Categories != null)
+                                        {
+                                            @foreach (var category in ViewModel.Categories)
+                                            {
+                                                <MudSelectItem T="int" Value="@category.Id">@category.Description</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Producto">
+                                <CellTemplate>
+                                    <MudSelect T="int"
+                                               Margin="Margin.Dense"
+                                               Variant="Variant.Outlined"
+                                               AnchorOrigin="Origin.BottomCenter"
+                                               TransformOrigin="Origin.TopCenter"
+                                               @bind-Value="context.Item.MaterialId"
+                                               Clearable>
+                                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una producto</MudSelectItem>
+                                        @foreach (var m in ViewModel.Materials.Where(m => m.CategoryId == context.Item.CategoryId))
+                                        {
+                                            <MudSelectItem T="int" Value="@m.Id">@m.ArticleName - @m.CommercialName</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Marca">
+                                <CellTemplate>
+                                    <MudTextField/>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Plaga/Enfermedad">
+                                <CellTemplate>
+                                    <MudTextField Placeholder="Plaga/Enfermedad"></MudTextField>
+                                </CellTemplate>                            
+                            </TemplateColumn>
+                            <TemplateColumn Title="Cantidad Requerida">
+                                <CellTemplate>
+                                    <MudNumericField T="decimal"
+                                                     Format="N2"
+                                                     Margin="Margin.Dense"
+                                                     @bind-Value="context.Item.AmountRequired"
+                                                     @bind-Value:after="(() => CalculateEstimatedAmount(context.Item))"
+                                                     Adornment="Adornment.End"
+                                                     AdornmentText="@context.Item.AmountRequiredUnit" />
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Unidad">
+                                <CellTemplate>
+                                    <MudSelect T="string"
+                                               Margin="Margin.Dense"
+                                               AnchorOrigin="Origin.BottomCenter"
+                                               TransformOrigin="Origin.TopCenter"
+                                               @bind-Value="context.Item.AmountRequiredUnit"
+                                               @bind-Value:after="(() => CalculateEstimatedAmount(context.Item))">
+                                        <MudSelectItem Value="@("kg")">kg</MudSelectItem>
+                                        <MudSelectItem Value="@("gr")">gr</MudSelectItem>
+                                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
+                                        <MudSelectItem Value="@("cc")">cc</MudSelectItem>
+                                    </MudSelect>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Cantidad Estimada">
+                                <CellTemplate>
+                                    <MudText Typo="Typo.body1">@context.Item.EstimatedAmount.ToString("F") @context.Item.EstimatedAmountUnit</MudText>
+                                </CellTemplate>
+                            </TemplateColumn>
+                            <TemplateColumn Title="Acciones" CellClass="d-flex justify-center align-center h-100">
+                                <CellTemplate>
+                                    <MudIconButton Icon="fa-solid fa-calculator"
+                                                   Color="Color.Info"
+                                                   Variant="Variant.Text"
+                                                   Size="Size.Medium"
+                                                   @onclick="@(() => CalculateEstimatedAmount(context.Item))" />
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   Variant="Variant.Text"
+                                                   Size="Size.Medium"
+                                                   @onclick="@(() => RemoveMaterial(context.Item))" />
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                    </MudDataGrid>
+                </MudItem>
+            </MudGrid>
         }
-        <MudGrid Spacing="2" Justify="Justify.FlexStart" Class="mt-2">
-            @foreach (var detail in ViewModel.Details)
+    </div>
+</div>
+@* <MudText Typo="Typo.body1">@TotalAreaSectorService.TotalAreaSectors</MudText> *@
+<style>
+.btnDelete {
+    margin-top: 30px;
+}
+.my-custom-header {
+    background-color: #F1F3F6;
+    color: white;
+    font-size: 1.1em;
+}
+</style>
+
+@* @foreach (var detail in ViewModel.Details)
             {
                 <MudItem xs="12" lg="3">
                     <MudSelect T="int"
@@ -120,26 +252,23 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detail.AmountRequired" Label="Cantidad Requerida/Dosis" Margin="Margin.Dense" />
+                    <MudNumericField T="decimal"
+                                     Format="N2"
+                                     @bind-Value="detail.AmountRequired"
+                                     Label="Cantidad Requerida/Dosis"
+                                     Margin="Margin.Dense" />
                     <MudSelect T="string" @bind-Value="detail.AmountRequiredUnit" Label="Unidad" Margin="Margin.Dense"
                         AnchorOrigin="Origin.BottomCenter"
                         TransformOrigin="Origin.TopCenter">
                         <MudSelectItem Value="@("kg")">kg</MudSelectItem>
                         <MudSelectItem Value="@("gr")">gr</MudSelectItem>
-                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
+                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>s
                         <MudSelectItem Value="@("cc")">cc</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" lg="2">
-                    <MudTextField T="decimal" @bind-Value="detail.EstimatedAmount" Label="Cantidad total estimada" Margin="Margin.Dense" />
-                    <MudSelect T="string" @bind-Value="detail.EstimatedAmountUnit" Label="Unidad" Margin="Margin.Dense"
-                        AnchorOrigin="Origin.BottomCenter"
-                        TransformOrigin="Origin.TopCenter">
-                        <MudSelectItem Value="@("kg")">kg</MudSelectItem>
-                        <MudSelectItem Value="@("gr")">gr</MudSelectItem>
-                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
-                        <MudSelectItem Value="@("cc")">cc</MudSelectItem>
-                    </MudSelect>
+                    <MudText Typo="Typo.caption">Cantidad Requerida</MudText>
+                    <MudText Typo="Typo.caption">@detail.EstimatedAmount @detail.AmountRequiredUnit</MudText>
                 </MudItem>
                 <MudSpacer/>
                 <MudItem xs="12" lg="1" Class="btnDelete">
@@ -147,56 +276,7 @@
                                    Color="Color.Error"
                                    Variant="Variant.Filled"
                                    Size="Size.Medium"
-                                   @onclick="@(() => RemoveMaterial(detail))"
-                                   Tooltip="Eliminar material" />
+                                   @onclick="@(() => RemoveMaterial(detail))"/>
                 </MudItem>
                 <MudDivider style="border-color: black;" Class="mt-3 mb-3" />
-            }
-        </MudGrid>
-    </div>
-</div>
-<style>
-    .btnDelete {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 10px;
-    }
-</style>
-@code {
-    private int _selectedPlagueDisease;
-    private int _selectedMachineId;
-    private bool _disableButtonMachine = false;
-
-    [Parameter] public NewRecipeViewModel ViewModel { get; set; }
-
-    private void OnMachineSelected(int id)
-    {
-        _selectedMachineId = id;
-        var machine = ViewModel.MachineList?.FirstOrDefault(m => m.Id == id);
-        if (machine is not null)
-        {
-            ViewModel.Machine = machine;
-            ViewModel.MachineId = machine.Id; // opcional, si usás IdMaquina en el DTO
-        }
-    }
-    private void AddMaterial()
-    {
-        ViewModel.Details.Add(new DetailRecipeDTO());
-    }
-    private void RemoveMaterial(DetailRecipeDTO material)
-    {
-        ViewModel.Details.Remove(material);
-    }
-    private void RemoveMachine()
-    {
-        ViewModel.Machine = null;
-        _selectedMachineId = 0;
-        _disableButtonMachine = false;
-    }
-    private void AddMachine()
-    {
-        ViewModel.Machine = new MachineRecipeDTO();
-        _disableButtonMachine = true;
-    }
-}
+            } *@

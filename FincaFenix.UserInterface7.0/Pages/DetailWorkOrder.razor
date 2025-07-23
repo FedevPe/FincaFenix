@@ -17,7 +17,7 @@
  else
  {
      <MudGrid Justify="Justify.FlexStart" Spacing="2">
-        <MudItem xs="12" lg="10" md="12" sm="12">
+        <MudItem xs="12" lg="9" md="12" sm="12">
              <GeneralInformationWorkOrder 
                  OrderNumber="@InfoVM.WOInfo?.WorkOrder.OrderNum"
                  FarmWorkOrder="@InfoVM.WOInfo?.Farm.Name"
@@ -27,9 +27,9 @@
                  WorkOrderDescription="@InfoVM.WOInfo.WorkOrder.Description"
                  StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"/>
         </MudItem>
-        <MudItem xs="12" lg="2" md="12" sm="12">
+        <MudItem xs="12" lg="3" md="12" sm="12">
             <div class="d-flex h-100 w-100">
-                <MudPaper Elevation="2" Class="p-3">
+                <MudPaper Elevation="2" Class="p-3 w-100">
                     <DetailWorkOrderActions 
                         IdWorkOrder="@InfoVM.WOInfo.WorkOrder.Id"
                         WorkOrderState="@InfoVM.WOInfo.WorkOrder.State"/>
@@ -41,7 +41,14 @@
     <MudGrid Justify="Justify.FlexStart" Spacing="2">
        <MudItem xs="12" lg="12">
             <MudPaper Elevation="2" class="mt-3 p-3">
-              <ActivityLog />               
+                @if (DetailsVM.ActivityWorkOrderDTOs.Any())
+                {
+                    <ActivityLog ActivityList="DetailsVM.ActivityWorkOrderDTOs"/>               
+                }
+                else
+                {
+                    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-3 mb-3"><b>No hay registros de actividad para esta orden de trabajo.</b></MudText>
+                }
             </MudPaper>
        </MudItem>       
     </MudGrid>
@@ -49,12 +56,14 @@
 
 @code {
     [Inject] private GeneralInfoWorkOrderViewModel InfoVM { get; set; }
+    [Inject] private LoadDetailsWorkOrderViewModel DetailsVM { get; set; }
 
     [Parameter] public int IdWorkOrder { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await InfoVM.LoadDataWorkOrderById(IdWorkOrder);
+        await DetailsVM.LoadActivityLog(IdWorkOrder);
         await Task.Delay(1500);
         StateHasChanged();
     }
