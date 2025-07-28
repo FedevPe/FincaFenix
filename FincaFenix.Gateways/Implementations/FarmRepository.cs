@@ -6,6 +6,11 @@ namespace FincaFenix.Gateways.Implementations
 {
     public class FarmRepository(IFarmQueryService queryService) : IFarmRepository
     {
+        public Task<bool> Exists(int id)
+        {
+            return queryService.Exists(id);
+        }
+
         public async Task<FarmEntity> GetFarmById(int farmId)
         {
             return await queryService.GetFarmById(farmId);

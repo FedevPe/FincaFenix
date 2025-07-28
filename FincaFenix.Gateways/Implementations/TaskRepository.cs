@@ -6,6 +6,11 @@ namespace FincaFenix.Gateways.Implementations
 {
     public class TaskRepository(ITaskQueryService queryService) : ITaskRepository
     {
+        public async Task<bool> Exists(int id)
+        {
+            return await queryService.Exists(id);
+        }
+
         public async Task<IEnumerable<TaskEntity>> GetAllTasks()
         {
             return await queryService.GetTaskList();

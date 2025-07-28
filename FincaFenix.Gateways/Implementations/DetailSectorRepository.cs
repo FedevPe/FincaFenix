@@ -6,6 +6,11 @@ namespace FincaFenix.Gateways.Implementations
 {
     public class DetailSectorRepository(IDetailSectorQueryService queryService) : IDetailSectorRepository
     {
+        public Task<bool> Exists(int id)
+        {
+            return queryService.Exists(id);
+        }
+
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByFarmId(int farmId)
         {
             return await queryService.GetSectorListByFarmId(farmId);
