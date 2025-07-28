@@ -19,8 +19,8 @@ namespace FincaFenix.ViewModels.ViewModels
                 this.Recipe = new RecipeWorkOrderDTO
                 {
                     MachineId = NewRecipeViewModel.Machine.Id,
-                    Dose = NewRecipeViewModel.Dosage,
-                    DoseUnit = NewRecipeViewModel.DosageUnit,
+                    VolumeMachine = NewRecipeViewModel.Dosage,
+                    VolumeMachineUnit = NewRecipeViewModel.DosageUnit,
                     Details = NewRecipeViewModel.Details.Select(m => new DetailRecipeDTO
                     {
                         MaterialId = m.MaterialId,
