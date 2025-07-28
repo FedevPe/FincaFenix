@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,8 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
-	  <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
-
+    <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
   </ItemGroup>
 
 </Project>
