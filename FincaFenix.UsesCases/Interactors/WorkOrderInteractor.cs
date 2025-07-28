@@ -1,10 +1,8 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.Entities.POCOEntities;
 using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
 using FincaFenix.UsesCases.Repository;
-using FincaFenix.Validations.Validators;
 
 namespace FincaFenix.UsesCases.Interactors
 {
@@ -26,13 +24,10 @@ namespace FincaFenix.UsesCases.Interactors
             // 1. Mapear el DTO a la entidad completa (incluyendo Recipe y WorkedSectors)
             var workOrderEntity = WorkOrderMapper.ToEntity(workOrder);
 
-            // 2. Validar la entidad mapeada
-            WorkOrderValidator.Validate(workOrderEntity);
-
-            // 3. Persistir la orden de trabajo
+            // 2. Persistir la orden de trabajo
             var idWorkOrder = await repository.AddWorkOrder(workOrderEntity);
 
-            // 4. Presentar el resultado
+            // 3. Presentar el resultado
             await presenter.Handle(idWorkOrder);
         }
     }

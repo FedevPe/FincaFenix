@@ -36,10 +36,10 @@ namespace FincaFenix.UsesCases.Aggregates
         {
             return new RecipeEntity
             {
-                Dosage = recipeDTO.Dose,
-                DosageUnit = recipeDTO.DoseUnit,
+                Dosage = recipeDTO.VolumeMachine,
+                DosageUnit = recipeDTO.VolumeMachineUnit,
                 MachineId = recipeDTO.MachineId,
-                State = recipeDTO.State,
+                State = recipeDTO.Status,
                 IsDeleted = false,
                 DetailRecipeList = recipeDTO.Details?.Select(dr => MapDetailRecipe(dr)).ToList() ?? []
             };
