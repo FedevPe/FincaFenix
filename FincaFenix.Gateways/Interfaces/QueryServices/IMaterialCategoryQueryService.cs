@@ -5,5 +5,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     public interface IMaterialCategoryQueryService
     {
         Task<IEnumerable<MaterialCategoryEntity>> GetCategoriesList();
+        Task<bool> Exists(int id);
     }
 }

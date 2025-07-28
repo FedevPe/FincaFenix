@@ -6,5 +6,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     {
         Task<IEnumerable<TaskEntity>> GetTaskList();
         Task<TaskEntity> GetTaskById(int id);
+        Task<bool> Exists(int id);
     }
 }

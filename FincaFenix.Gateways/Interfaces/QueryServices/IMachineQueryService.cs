@@ -5,5 +5,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     public interface IMachineQueryService
     {
         Task<IEnumerable<MachineEntity>> GetMachinesAsync();
+        Task<bool> Exists(int id);
     }
 }

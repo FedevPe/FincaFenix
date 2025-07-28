@@ -6,7 +6,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices
     {
         Task<IEnumerable<MaterialEntity>> GetMaterialListByCategoryId(int categoryId);
         Task<IEnumerable<MaterialEntity>> GetMaterialList();
-
-
+        Task<bool> Exists(int id);
     }
 }
