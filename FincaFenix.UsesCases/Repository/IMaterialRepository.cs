@@ -7,6 +7,7 @@ namespace FincaFenix.UsesCases.Repository
         Task<IEnumerable<MaterialEntity>> GetAllMaterialByCategoryId(int categoryId);
         Task<IEnumerable<MaterialEntity>> GetMaterialByOrderIdAsync(int id);
         Task<IEnumerable<MaterialEntity>> GetMaterialList();
+        Task<bool> Exists(int id);
 
 
     }

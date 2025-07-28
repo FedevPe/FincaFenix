@@ -6,5 +6,6 @@ namespace FincaFenix.UsesCases.Repository
     {
         Task<TaskEntity> GetTaskById(int id);
         Task<IEnumerable<TaskEntity>> GetAllTasks();
+        Task<bool> Exists(int id);
     }
 }

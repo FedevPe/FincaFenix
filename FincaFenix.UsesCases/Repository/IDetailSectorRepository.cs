@@ -6,5 +6,6 @@ namespace FincaFenix.UsesCases.Repository
     {
         Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByFarmId(int farmId);
         Task<IEnumerable<DetailSectorFarmEntity>> GetAllSectorsByOrderId(int orderId);
+        Task<bool> Exists(int id);
     }
 }

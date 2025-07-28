@@ -5,5 +5,6 @@ namespace FincaFenix.UsesCases.Repository
     public interface IMachineRepository
     {
         Task<IEnumerable<MachineEntity>> GetMachineList();
+        Task<bool> Exists(int id);
     }
 }
