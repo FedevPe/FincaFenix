@@ -7,6 +7,11 @@ namespace FincaFenix.EFCore.Services.QueryServices
 {
     public class DetailSectorQueryService : FincaFenixContext, IDetailSectorQueryService
     {
+        public async Task<bool> Exists(int id)
+        {
+            return await DetailSectors.AnyAsync(s => s.Id == id);
+        }
+
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByFarmId(int farmId)
         {
             return await DetailSectors.Where(ds => ds.FarmId == farmId)

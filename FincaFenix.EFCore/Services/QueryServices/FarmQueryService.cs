@@ -7,6 +7,11 @@ namespace FincaFenix.EFCore.Services.QueryServices
 {
     public class FarmQueryService : FincaFenixContext, IFarmQueryService
     {
+        public Task<bool> Exists(int id)
+        {
+            return Farms.AnyAsync(f => f.Id == id);
+        }
+
         public Task<FarmEntity> GetFarmById(int farmId)
         {
             return Farms
