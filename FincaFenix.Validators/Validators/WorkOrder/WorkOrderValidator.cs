@@ -4,20 +4,13 @@ using FluentValidation;
 
 namespace FincaFenix.Validators.Validators.WorkOrder
 {
-    public class WorkOrderValidator  : AbstractValidator<WorkOrderDTO>
+    public class WorkOrderValidator : AbstractValidator<WorkOrderDTO>
     {
         public WorkOrderValidator(
             ITaskRepository taskRepo,
             IFarmRepository farmRepo,
-            IDetailSectorRepository sectorRepo, 
-            bool validateId = false,
-            bool validateRecipe = false)
+            IDetailSectorRepository sectorRepo)
         {
-            if (validateId)
-            {
-                RuleFor(wo => wo.Id)
-                    .GreaterThan(0).WithMessage("La orden de trabajo no es válida.");
-            }
             RuleFor(wo => wo.TaskId)
                 .GreaterThan(0).WithMessage("La orden de trabajo debe tener una Tarea relacionada.");
             RuleFor(dsf => dsf.TaskId)
@@ -48,7 +41,6 @@ namespace FincaFenix.Validators.Validators.WorkOrder
 
             RuleForEach(wo => wo.SectorList).SetValidator(new DetailSectorFarmValidator(sectorRepo))
                 .WithMessage("Los sectores de la orden de trabajo no son válidos.");
-
         }
     }
 }
