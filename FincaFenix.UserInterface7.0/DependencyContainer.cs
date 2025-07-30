@@ -1,5 +1,5 @@
-﻿
-using FincaFenix.UserInterface7._0.Services;
+﻿using FincaFenix.UserInterface7._0.Services;
+using FincaFenix.UserInterface7._0.Validators;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,6 +9,10 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<TextAppBarState>()
                     .AddScoped<TotalAreaSectorService>();
+
+            services.AddScoped<NewOrderDataValidator>()
+                    .AddScoped<NewRecipeValidator>()
+                    .AddScoped<CreateWorkOrderValidator>();
 
             return services;
         }
