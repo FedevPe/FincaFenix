@@ -3,7 +3,7 @@ using FincaFenix.UsesCases.Controllers;
 
 namespace FincaFenix.ViewModels.ViewModels
 {
-    public class InfoNewWorkOrderViewModel (
+    public class NewOrderDataViewModel (
         IFarmController farm,
         IDetailSectorController sector,
         ITaskController task)
@@ -11,6 +11,7 @@ namespace FincaFenix.ViewModels.ViewModels
         public int SelectedFarmId { get; set; }
         public int SelectedTaskId { get; set; }
         public DateTime? StartDate { get; set; } = DateTime.Now;
+        public DateTime? CreatedDate { get; set; } = DateTime.Now;
         public List<DetailSectorFarmDTO> SelectedSectors { get; set; } = new List<DetailSectorFarmDTO>();
 
         public decimal? TotalAreaSectors { get; set; } = 0;
@@ -23,7 +24,6 @@ namespace FincaFenix.ViewModels.ViewModels
         {
             await Task.WhenAll(LoadFarmsAsync(), LoadTasksAsync());
         }
-
         public async Task LoadFarmsAsync()
         {
             Farms = await farm.GetListFarm();

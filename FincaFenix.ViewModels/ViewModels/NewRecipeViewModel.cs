@@ -7,16 +7,17 @@ namespace FincaFenix.ViewModels.ViewModels
     public class NewRecipeViewModel(
         IMaterialController material,
         IMaterialCategoryController categories,
-        IMachineController machine) : RecipeWorkOrderDTO
+        IMachineController machine)
     {
-        public decimal TRV { get; set; }
-        public decimal Dosage { get; set; }
-        public string DosageUnit { get; set; }
-        public string Message { get; set; }
-        public decimal? TotalAreaSectors { get; set; } = 0;
+        public int MachineId { get; set; }
+        public decimal VolumeMachine { get; set; }
+        public string VolumeMachineUnit { get; set; } = string.Empty;
+        public decimal TRV { get; set; } = 0;
 
+        public decimal? TotalAreaSectors { get; set; } = 0;
         public IEnumerable<MachineRecipeDTO>? MachineList { get; set; }
         public MachineRecipeDTO? Machine { get; set; }
+        public List<DetailRecipeDTO> Details { get; set; } = new List<DetailRecipeDTO>();
         public IEnumerable<MaterialOrderDTO>? Materials { get; set; }
         public IEnumerable<MaterialCategoryDTO>? Categories { get; set; }
 
@@ -69,24 +70,6 @@ namespace FincaFenix.ViewModels.ViewModels
         }
         public decimal CalculateEstimateAmount(decimal TRV, decimal amountRequired, decimal? totalSurface, string measureUnit)
         {
-            if (TRV <= 0)
-            {
-                Message = "TRV debe ser mayor que cero.";
-                return 0;
-            }
-
-            if (amountRequired <= 0)
-            {
-                Message = "La cantidad requerida debe ser mayor que cero.";
-                return 0;
-            }
-
-            if (totalSurface <= 0 || totalSurface == null)
-            {
-                Message = "La superficie total no es válida para el cálculo.";
-                return 0;
-            }
-
             if (measureUnit != "lts" && measureUnit != "kg" )
             {
                 decimal estimatedAmount = ((amountRequired * TRV / 1000M) * totalSurface.Value)/1000;

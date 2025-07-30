@@ -4,24 +4,32 @@ using FincaFenix.UsesCases.Controllers;
 
 namespace FincaFenix.ViewModels.ViewModels
 {
-    public class CreateWorkOrderViewModel(IWorkOrderController wo) : WorkOrderDTO
+    public class CreateWorkOrderViewModel(
+        IWorkOrderController woController,
+        NewOrderDataViewModel orderData,
+        NewRecipeViewModel recipeData)
     {
-        public async Task SetDataWorkOrder(NewRecipeViewModel NewRecipeViewModel, InfoNewWorkOrderViewModel OrderDataViewModel)
-        {
-            this.FarmId = OrderDataViewModel.SelectedFarmId;
-            this.TaskId = OrderDataViewModel.SelectedTaskId;
-            this.StartDate = OrderDataViewModel.StartDate;
-            this.Description = Description;
-            this.SectorList = OrderDataViewModel.SelectedSectors.ToList();
+        public WorkOrderDTO WorkOrder { get; set; } = new WorkOrderDTO();
+        public NewOrderDataViewModel OrderData { get; set; } = orderData;
+        public NewRecipeViewModel RecipeData { get; set; } = recipeData;
 
-            if (NewRecipeViewModel.Machine != null && NewRecipeViewModel.Details.Count > 0)
+
+        public async Task SetDataWorkOrder()
+        {
+            WorkOrder.FarmId = OrderData.SelectedFarmId;
+            WorkOrder.TaskId = OrderData.SelectedTaskId;
+            WorkOrder.StartDate = OrderData.StartDate;
+            WorkOrder.Status = OrderData.StartDate > OrderData.CreatedDate ? "Pendiente" : "Activo";
+            WorkOrder.SectorList = OrderData.SelectedSectors.ToList();
+
+            if (RecipeData.Machine != null && RecipeData.Details.Count > 0)
             {
-                this.Recipe = new RecipeWorkOrderDTO
+                WorkOrder.Recipe = new RecipeWorkOrderDTO
                 {
-                    MachineId = NewRecipeViewModel.Machine.Id,
-                    VolumeMachine = NewRecipeViewModel.Dosage,
-                    VolumeMachineUnit = NewRecipeViewModel.DosageUnit,
-                    Details = NewRecipeViewModel.Details.Select(m => new DetailRecipeDTO
+                    MachineId = RecipeData.Machine.Id,
+                    VolumeMachine = RecipeData.VolumeMachine,
+                    VolumeMachineUnit = RecipeData.VolumeMachineUnit,
+                    Details = RecipeData.Details.Select(m => new DetailRecipeDTO
                     {
                         MaterialId = m.MaterialId,
                         AmountRequired = m.AmountRequired,
@@ -33,14 +41,10 @@ namespace FincaFenix.ViewModels.ViewModels
             }
             else
             {
-                this.Recipe = null;
+                WorkOrder.Recipe = null;
             }
 
-            await SaveWorkOrder();
-        }
-        public async Task SaveWorkOrder()
-        {
-            await wo.CreateWorkOrder(this);
+            await woController.CreateWorkOrder(WorkOrder);
         }
     }
 }
