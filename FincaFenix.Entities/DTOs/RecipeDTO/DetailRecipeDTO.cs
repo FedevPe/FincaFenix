@@ -8,5 +8,7 @@
         public string AmountRequiredUnit { get; set; }
         public decimal EstimatedAmount { get; set; } = 0;
         public string EstimatedAmountUnit { get; set; }
+        public string Brand { get; set; }
+        public string PestDisease { get; set; }
     }
 }
