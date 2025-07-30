@@ -51,7 +51,7 @@
         {
             // Aquí es donde llamas a tu lógica para actualizar el estado de la orden.
             await ChangeWorkOrderStatus(newState);
-            SnackbarService.Add($"Estado de la orden actualizado a '{newState}'", Severity.Success);
+            SnackbarService.Add($"Estado de la orden actualizado a '{newState}'", MudBlazor.Severity.Success);
         }        
     }
     private async Task ChangeWorkOrderStatus(string newState)

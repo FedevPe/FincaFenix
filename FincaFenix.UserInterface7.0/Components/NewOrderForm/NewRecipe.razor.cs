@@ -1,36 +1,36 @@
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.UserInterface7._0.Services;
+using FincaFenix.UserInterface7._0.Validators;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using System;
 
 namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
 {
     public partial class NewRecipe
     {
-        private int _selectedPlagueDisease;
-        private int _selectedMachineId;
         private bool _recipeInitialized = false;
 
-        [Parameter] public NewRecipeViewModel ViewModel { get; set; }
         [Inject] private IDialogService DialogService { get; set; }
-        [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
         [Inject] private ISnackbar SnackbarService { get; set; }
+        [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
+        [Parameter] public NewRecipeViewModel ViewModel { get; set; }
+        [Inject] public NewRecipeValidator Validator { get; set; }
+
+        private MudForm _form;
+
         protected override void OnInitialized()
         {
-            // Suscribirse a los cambios del servicio
             TotalAreaSectorService.OnChange += StateHasChanged;
         }
 
         public void Dispose()
         {
-            // ¡IMPORTANTE! Desuscribirse para evitar fugas de memoria
             TotalAreaSectorService.OnChange -= StateHasChanged;
         }
         private void OnMachineSelected(int id)
         {
-            _selectedMachineId = id;
+            ViewModel.MachineId = id;
             var machine = ViewModel.MachineList?.FirstOrDefault(m => m.Id == id);
             if (machine is not null)
             {
@@ -69,7 +69,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         private void RemoveMachine()
         {
             ViewModel.RemoveMachine();
-            _selectedMachineId = 0;
+            ViewModel.Machine.Id = 0;
             if (!ViewModel.Details.Any())
             {
                 _recipeInitialized = false; // Deshabilita la sección de receta
@@ -77,10 +77,10 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         }
         private void AddRecipe()
         {
-            if (!_recipeInitialized) 
+            if (!_recipeInitialized)
             {
                 ViewModel.InitializeRecipe(TotalAreaSectorService.TotalAreaSectors);
-                _recipeInitialized = true; 
+                _recipeInitialized = true;
             }
             StateHasChanged();
         }
@@ -90,7 +90,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
             {
                 if (detail.AmountRequired <= 0)
                 {
-                    SnackbarService.Add("La 'Cantidad Requerida' no es válida para el cálculo.", Severity.Warning);
+                    SnackbarService.Add("La 'Cantidad Requerida' no es válida para el cálculo.", MudBlazor.Severity.Warning);
                     return;
                 }
 
@@ -114,10 +114,10 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
             {
                 // Loguear la excepción para depuración (opcional, pero recomendado en aplicaciones reales)
                 Console.WriteLine($"Error al calcular la cantidad estimada: {ex.Message}");
-                ViewModel.Message = "Ocurrió un error al calcular la cantidad estimada. Verifique los valores ingresados.";
-                SnackbarService.Add(ViewModel.Message, Severity.Error);
-                throw;
-            }            
+                SnackbarService.Add("Ocurrió un error al calcular la cantidad estimada. Verifique los valores ingresados.", MudBlazor.Severity.Error);
+                detail.EstimatedAmount = 0;
+                StateHasChanged();
+            }
         }
     }
 }

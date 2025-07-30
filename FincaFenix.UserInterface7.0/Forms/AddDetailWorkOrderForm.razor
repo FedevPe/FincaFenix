@@ -174,7 +174,7 @@
         await form.Validate();
         if (!form.IsValid)
         {
-            Snackbar.Add("Por favor, corrige los errores del formulario.", Severity.Warning);
+            Snackbar.Add("Por favor, corrige los errores del formulario.", MudBlazor.Severity.Warning);
             return;
         }
 
@@ -184,18 +184,18 @@
         {
             if (await NewDetailVM.SaveDetailWorkOrderAsync(NewDetailVM))
             {
-                Snackbar.Add("Actividad registrada con éxito.", Severity.Success);
+                Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
                 NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
             }
             else
             {
-                Snackbar.Add("Error al registrar la actividad. Inténtelo de nuevo.", Severity.Error);
+                Snackbar.Add("Error al registrar la actividad. Inténtelo de nuevo.", MudBlazor.Severity.Error);
             }
         }
         catch (Exception ex)
         {
             // Capturar errores inesperados del caso de uso o la persistencia
-            Snackbar.Add($"Ocurrió un error inesperado: {ex.Message}", Severity.Error);
+            Snackbar.Add($"Ocurrió un error inesperado: {ex.Message}", MudBlazor.Severity.Error);
             // Considera loggear el error completo (ex) aquí para depuración
         }
     }

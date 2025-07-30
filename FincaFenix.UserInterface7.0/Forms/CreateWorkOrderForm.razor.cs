@@ -1,28 +1,43 @@
+using FincaFenix.UserInterface7._0.Validators;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace FincaFenix.UserInterface7._0.Forms
 {
     public partial class CreateWorkOrderForm
     {
-        [Inject] InfoNewWorkOrderViewModel OrderDataViewModel { get; set; } = default!;
-        [Inject] NewRecipeViewModel NewRecipeViewModel { get; set; } = default!;
-        [Inject] CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
-        [Inject] NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] public CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
+        [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] public ISnackbar Snackbar { get; set; } = default!;
+        [Inject] public CreateWorkOrderValidator Validator { get; set; } = default!;
 
-        private string Description { get; set; } = string.Empty;
+        private MudForm createWorkOrderForm;
 
         protected override async Task OnInitializedAsync()
         {
-            await OrderDataViewModel.LoadInitializeAsync();
-            await NewRecipeViewModel.LoadInitializeAsync();
+            await CreateWorkOrderViewModel.OrderData.LoadInitializeAsync();
+            await CreateWorkOrderViewModel.RecipeData.LoadInitializeAsync();
         }
         private async Task SaveWorkOrder()
         {
-            await CreateWorkOrderViewModel.SetDataWorkOrder(NewRecipeViewModel, OrderDataViewModel);
-            // Redireccionar tras guardar
-            NavigationManager.NavigateTo("/ordenestrabajo");
-        }
+            // Validar el formulario completo
+            await createWorkOrderForm.Validate();
 
+            // Si el formulario es válido (incluyendo los sub-ViewModels a través de los validadores encadenados)
+            if (createWorkOrderForm.IsValid)
+            {
+                // Mapear y guardar los datos usando el ViewModel principal
+                await CreateWorkOrderViewModel.SetDataWorkOrder();
+                // Redireccionar tras guardar
+                NavigationManager.NavigateTo("/ordenestrabajo");
+            }
+            else
+            {
+                // Si la validación falla, MudBlazor ya mostrará los mensajes de error
+                // Puedes agregar aquí alguna notificación o log si lo deseas
+                Console.WriteLine("Formulario inválido. Por favor, corrija los errores.");
+            }
+        }
     }
 }

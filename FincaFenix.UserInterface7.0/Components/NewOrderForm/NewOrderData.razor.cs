@@ -1,16 +1,19 @@
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Services;
+using FincaFenix.UserInterface7._0.Validators;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
 {
     public partial class NewOrderData
     {
         [Inject] public TotalAreaSectorService TotalAreaSectorService { get; set; }
+        [Inject] public NewOrderDataValidator Validator { get; set; }
+        [Parameter] public NewOrderDataViewModel ViewModel { get; set; }
 
-        [Parameter] public InfoNewWorkOrderViewModel ViewModel { get; set; }
-
+        private MudForm _form;
         public decimal? TotalArea { get; set; } = 0;
         private async Task OnFarmChanged(int farmId)
         {

@@ -2,37 +2,43 @@
 
 <PageTitle>Nueva orden de trabajo</PageTitle>
 
-
-    <NewOrderData ViewModel=OrderDataViewModel/>
-    <NewRecipe ViewModel=NewRecipeViewModel/>
+<MudForm @ref="createWorkOrderForm" Model="CreateWorkOrderViewModel" Validation="@(Validator.ValidateValue)">
+    <NewOrderData ViewModel=CreateWorkOrderViewModel.OrderData />
+    <NewRecipe ViewModel=CreateWorkOrderViewModel.RecipeData />
 
     <div class="container-fluid shadow mt-3 rounded bg-color-white p-4 mb-4">
         <MudGrid Justify="Justify.Center">
             <MudItem lg="12" xs="12">
                 <MudText Typo="Typo.h6">Descripción</MudText>
-                <MudTextField T="string" @bind-Value="Description"
+                <MudTextField T="string"
+                              @bind-Value="CreateWorkOrderViewModel.WorkOrder.Description"
                               Placeholder="Ingrese una descripción de la orden"
-                              Variant="Variant.Outlined" Margin="Margin.Dense"
-                              FullWidth="true" Lines="3" />
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense"
+                              FullWidth="true"
+                              Lines="3"
+                              For="@(() => CreateWorkOrderViewModel.WorkOrder.Description)" />
             </MudItem>
         </MudGrid>
     </div>
-    <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
-        <MudGrid Spacing="1" Justify="Justify.FlexEnd">
-            <MudItem>
-                <MudButton Href="/ordenestrabajo"
-                           Variant="Variant.Filled"
-                           Color="Color.Error"
-                           Size="Size.Small"
-                           StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
-            </MudItem>
-            <MudItem>
-                <MudButton OnClick="SaveWorkOrder"
-                           Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           Size="Size.Small"
-                           StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
-            </MudItem>
-        </MudGrid>
-    </div>
+</MudForm>
+<div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
+    <MudGrid Spacing="1" Justify="Justify.FlexEnd">
+        <MudItem>
+            <MudButton Href="/ordenestrabajo"
+                       Variant="Variant.Filled"
+                       Color="Color.Error"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
+        </MudItem>
+        <MudItem>
+            <MudButton OnClick="(async () => await SaveWorkOrder())"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Save">Guardar</MudButton>
+        </MudItem>
+    </MudGrid>
+</div>
+
 
