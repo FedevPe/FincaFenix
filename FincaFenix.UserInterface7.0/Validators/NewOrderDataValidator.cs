@@ -17,7 +17,7 @@ namespace FincaFenix.UserInterface7._0.Validators
                 .NotEmpty().WithMessage("La fecha de creación no puede estar vacía.");
             RuleFor(x => x.SelectedSectors)
                 .NotNull().WithMessage("Debe seleccionar al menos un sector.")
-                .Must(sectors => sectors.Any()).WithMessage("Debe seleccionar al menos un sector.");
+                .Must(sectors => sectors.Any()).WithMessage("Debe seleccionar al menos un sector.");            
         }
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {

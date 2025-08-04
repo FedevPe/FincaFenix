@@ -12,7 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<NewOrderDataValidator>()
                     .AddScoped<NewRecipeValidator>()
-                    .AddScoped<CreateWorkOrderValidator>();
+                    .AddScoped<CreateWorkOrderValidator>()
+                    .AddScoped<DetailRecipeUIValidator>();
 
             return services;
         }

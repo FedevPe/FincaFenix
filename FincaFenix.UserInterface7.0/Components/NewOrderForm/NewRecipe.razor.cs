@@ -1,6 +1,7 @@
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.UserInterface7._0.Validators;
+using FincaFenix.Validators.Validators.Recipe;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -16,6 +17,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
         [Parameter] public NewRecipeViewModel ViewModel { get; set; }
         [Inject] public NewRecipeValidator Validator { get; set; }
+        [Inject] public DetailRecipeUIValidator ValidatorDetail { get; set; } = new DetailRecipeUIValidator();
 
         private MudForm _form;
 

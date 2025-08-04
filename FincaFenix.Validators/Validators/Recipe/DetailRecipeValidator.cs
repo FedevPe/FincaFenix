@@ -22,11 +22,11 @@ namespace FincaFenix.Validators.Validators.Recipe
             RuleFor(dr => dr.MaterialId)
                 .GreaterThan(0).WithMessage("El material seleccionado de la receta no es válido.");
             RuleFor(dr => dr.MaterialId)
-                .MustAsync(async (id, CancellationToken) =>
-                {
-                    return await materialRepository.Exists(id);
-                })
-                .WithMessage("El material seleccionado de la receta no existe en la base de datos.");
+                    .MustAsync(async (id, CancellationToken) =>
+                    {
+                        return await materialRepository.Exists(id);
+                    })
+                    .WithMessage("El material seleccionado de la receta no existe en la base de datos.");
 
             RuleFor(dr => dr.AmountRequired)
                 .GreaterThanOrEqualTo(0).WithMessage("La cantidad requerida del material no puede ser menor o igual a 0.")
@@ -39,7 +39,6 @@ namespace FincaFenix.Validators.Validators.Recipe
                 .NotEmpty().WithMessage("La cantidad estimada del material no puede estar vacía.");
             RuleFor(dr => dr.EstimatedAmountUnit)
                 .NotEmpty().WithMessage("La unidad de cantidad requerida del material no puede estar vacía.");
-
         }
     }
 }

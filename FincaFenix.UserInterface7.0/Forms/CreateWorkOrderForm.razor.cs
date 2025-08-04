@@ -34,9 +34,7 @@ namespace FincaFenix.UserInterface7._0.Forms
             }
             else
             {
-                // Si la validación falla, MudBlazor ya mostrará los mensajes de error
-                // Puedes agregar aquí alguna notificación o log si lo deseas
-                Console.WriteLine("Formulario inválido. Por favor, corrija los errores.");
+                Snackbar.Add("Por favor, completá todos los campos requeridos", Severity.Error);
             }
         }
     }
