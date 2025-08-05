@@ -1,4 +1,4 @@
-using FincaFenix.UserInterface7._0.Validators;
+using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,7 +10,7 @@ namespace FincaFenix.UserInterface7._0.Forms
         [Inject] public CreateWorkOrderViewModel CreateWorkOrderViewModel { get; set; } = default!;
         [Inject] public NavigationManager NavigationManager { get; set; } = default!;
         [Inject] public ISnackbar Snackbar { get; set; } = default!;
-        [Inject] public CreateWorkOrderValidator Validator { get; set; } = default!;
+        [Inject] public CreateWorkOrderUIValidator Validator { get; set; } = default!;
 
         private MudForm createWorkOrderForm;
 
@@ -27,14 +27,22 @@ namespace FincaFenix.UserInterface7._0.Forms
             // Si el formulario es válido (incluyendo los sub-ViewModels a través de los validadores encadenados)
             if (createWorkOrderForm.IsValid)
             {
-                // Mapear y guardar los datos usando el ViewModel principal
-                await CreateWorkOrderViewModel.SetDataWorkOrder();
-                // Redireccionar tras guardar
-                NavigationManager.NavigateTo("/ordenestrabajo");
+                    await CreateWorkOrderViewModel.SetDataWorkOrder();
+                    // Redireccionar tras guardar
+                    NavigationManager.NavigateTo("/ordenestrabajo");
+                //try
+                //{
+                //    // Mapear y guardar los datos usando el ViewModel principal
+                //}
+                //catch (Exception ex)
+                //{
+                //    Snackbar.Add($"{ex.Message}", Severity.Error);
+                //}
+                
             }
             else
             {
-                Snackbar.Add("Por favor, completá todos los campos requeridos", Severity.Error);
+                Snackbar.Add("Por favor, completá todos los campos requeridos.", Severity.Error);
             }
         }
     }
