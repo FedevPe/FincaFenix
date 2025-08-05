@@ -1,6 +1,6 @@
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Services;
-using FincaFenix.UserInterface7._0.Validators;
+using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -10,7 +10,8 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
     public partial class NewOrderData
     {
         [Inject] public TotalAreaSectorService TotalAreaSectorService { get; set; }
-        [Inject] public NewOrderDataValidator Validator { get; set; }
+        [Inject] public NewOrderDataUIValidator Validator { get; set; }
+        [Inject] public NewDetailSectorUIValidator DetailSectorValidator { get; set; }
         [Parameter] public NewOrderDataViewModel ViewModel { get; set; }
 
         private MudForm _form;
@@ -37,6 +38,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         {
             decimal? oldArea = currentSector.Area;
             var fullSelectedSector = ViewModel.Sectors.FirstOrDefault(s => s.Id == selectedId);
+            //ViewModel.Sectors.ToList().Remove(fullSelectedSector);
 
             if (fullSelectedSector != null && selectedId > 0) // Asegúrate de que no sea la opción "Seleccione un cuadro"
             {

@@ -73,20 +73,25 @@
                 @if (ViewModel.SelectedSectors.Any())
                 {
                     <MudItem xs="12" lg="12">
-                        <MudDataGrid T="DetailSectorFarmDTO" Items="@ViewModel.SelectedSectors"
-                                     Filterable=false SortMode="SortMode.None"
-                                     Bordered="true" Dense="true" HeaderClass="my-custom-header" EditMode="DataGridEditMode.Cell">
-                            <Columns>
-                                <TemplateColumn Title="Cuadro">
-                                    <CellTemplate>
-                                        <MudSelect T="int"
-                                                   Margin="Margin.Dense" FullWidth="true"
-                                                   Variant="Variant.Outlined"
+                        <MudTable T="DetailSectorFarmDTO" Items="@ViewModel.SelectedSectors" Hover="true" Dense="true" Bordered="true" Class="mt-3">
+                            <HeaderContent>
+                                <MudTh Class="my-custom-header text-white">Cuadro</MudTh>
+                                <MudTh Class="my-custom-header text-white">Fruta</MudTh>
+                                <MudTh Class="my-custom-header text-white">Variedad</MudTh>
+                                <MudTh Class="my-custom-header text-white">Superficie</MudTh>
+                                <MudTh Class="my-custom-header text-white">Eliminar</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Cuadro" >
+                                    <MudForm Model="context" Validation="@(DetailSectorValidator.ValidateValue)">
+                                        <MudSelect T="int" style="width: 550px"
+                                                   Margin="Margin.Dense" FullWidth="false"
+                                                   Variant="Variant.Text"
                                                    AnchorOrigin="Origin.BottomRight"
                                                    TransformOrigin="Origin.TopRight"
-                                                   Value="context.Item.Id"
-                                                   ValueChanged="@((int selectedId) => OnSectorSelected(context.Item, selectedId))"
-                                                   For="@(() => context.Item.Id)">
+                                                   Value="context.Id"
+                                                   ValueChanged="@((int selectedId) => OnSectorSelected(context, selectedId))"
+                                                   For="@(() => context.Id)">
 
                                             <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un cuadro</MudSelectItem>
                                             @foreach (var sector in ViewModel.Sectors)
@@ -94,26 +99,25 @@
                                                 <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
                                             }
                                         </MudSelect>
-                                    </CellTemplate>
-                                </TemplateColumn>
-                                <PropertyColumn Property="x => x.FruitName" Title="Fruta" />
-                                <PropertyColumn Property="x => x.VarietyName" Title="Variedad" />
-                                <TemplateColumn Title="Superficie">
-                                    <CellTemplate>
-                                        <MudText Typo="Typo.body2">@context.Item.Area ha</MudText>
-                                    </CellTemplate>
-                                </TemplateColumn>
-                                <TemplateColumn Title="Eliminar">
-                                    <CellTemplate>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                       Color="Color.Error"
-                                                       Variant="Variant.Text"
-                                                       Size="Size.Medium"
-                                                       OnClick="(() => RemoveSectorFromSelection(context.Item))" />
-                                    </CellTemplate>
-                                </TemplateColumn>
-                            </Columns>
-                        </MudDataGrid>
+                                    </MudForm>
+                                </MudTd>
+                                <MudTd DataLabel="Fruta">@context.FruitName</MudTd>
+                                <MudTd DataLabel="Variedad">@context.VarietyName</MudTd>
+                                <MudTd DataLabel="Superficie">
+                                    @if(context.Id != 0)
+                                    {
+                                        <MudText Typo="Typo.body2">@context.Area ha</MudText>                                        
+                                    }
+                                </MudTd>
+                                <MudTd DataLabel="Eliminar">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   Variant="Variant.Text"
+                                                   Size="Size.Medium"
+                                                   OnClick="(() => RemoveSectorFromSelection(context))" />
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>                       
                     </MudItem>
                     <MudItem xs="12" lg="12">
                         <MudDivider Style="border-color: black" />
@@ -126,4 +130,3 @@
         </MudGrid>
     </div>
 </MudForm>
-

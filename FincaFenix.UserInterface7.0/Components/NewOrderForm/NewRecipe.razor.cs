@@ -1,7 +1,6 @@
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.UserInterface7._0.Services;
-using FincaFenix.UserInterface7._0.Validators;
-using FincaFenix.Validators.Validators.Recipe;
+using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -15,9 +14,9 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private ISnackbar SnackbarService { get; set; }
         [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
+        [Inject] public NewRecipeUIValidator Validator { get; set; }
+        [Inject] public NewDetailRecipeUIValidator ValidatorDetail { get; set; } = new NewDetailRecipeUIValidator();
         [Parameter] public NewRecipeViewModel ViewModel { get; set; }
-        [Inject] public NewRecipeValidator Validator { get; set; }
-        [Inject] public DetailRecipeUIValidator ValidatorDetail { get; set; } = new DetailRecipeUIValidator();
 
         private MudForm _form;
 
@@ -71,10 +70,9 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         private void RemoveMachine()
         {
             ViewModel.RemoveMachine();
-            ViewModel.Machine.Id = 0;
             if (!ViewModel.Details.Any())
             {
-                _recipeInitialized = false; // Deshabilita la sección de receta
+                _recipeInitialized = false;
             }
         }
         private void AddRecipe()
