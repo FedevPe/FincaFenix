@@ -3,14 +3,14 @@ using FincaFenix.UsesCases.Controllers;
 
 namespace FincaFenix.ViewModels.ViewModels
 {
-    public class CreateDetailWorkOrderViewModel(
+    public class RegistryActivityViewModel(
         IDetailWorkOrderController detailWO)
     {
         public int WorkOrderId { get; set; }
         public int EmployeeId { get; set; }
         public DateTime? ActivityDate { get; set; }
         public List<AddDetailWorkOrderDTO> ActivityDetails { get; set; } = new List<AddDetailWorkOrderDTO>();
-        public async Task<bool> SaveDetailWorkOrderAsync(CreateDetailWorkOrderViewModel viewModel)
+        public async Task<bool> SaveDetailWorkOrderAsync(RegistryActivityViewModel viewModel)
         {
             try
             {

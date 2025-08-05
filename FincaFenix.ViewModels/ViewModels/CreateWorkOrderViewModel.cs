@@ -29,11 +29,14 @@ namespace FincaFenix.ViewModels.ViewModels
                     MachineId = RecipeData.Machine.Id,
                     VolumeMachine = RecipeData.VolumeMachine,
                     VolumeMachineUnit = RecipeData.VolumeMachineUnit,
+                    TRV = RecipeData.TRV,
                     Details = RecipeData.Details.Select(m => new DetailRecipeDTO
                     {
                         MaterialId = m.MaterialId,
                         AmountRequired = m.AmountRequired,
                         AmountRequiredUnit = m.AmountRequiredUnit,
+                        PestDisease = m.PestDisease,
+                        Brand = m.Brand,
                         EstimatedAmount = m.EstimatedAmount,
                         EstimatedAmountUnit = m.AmountRequiredUnit
                     }).ToList()
