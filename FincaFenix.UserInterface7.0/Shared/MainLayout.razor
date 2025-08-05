@@ -32,7 +32,7 @@
 @code{
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
     bool _drawerOpen = false;
-    [Inject] public TextAppBarState TextAppBar { get; set; }
+    [Inject] public TextAppBarStateService TextAppBar { get; set; }
 
     protected override void OnInitialized()
     {
