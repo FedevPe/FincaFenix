@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-
-namespace FincaFenix.UserInterface7._0.Services
+﻿namespace FincaFenix.UserInterface7._0.Services
 {
-    public class TextAppBarState
+    public class TextAppBarStateService
     {
         private Func<Func<Task>, Task> _invokeAsync;
 
@@ -30,7 +28,8 @@ namespace FincaFenix.UserInterface7._0.Services
         private void NotifyStateChanged()
         {
             if (_invokeAsync is not null)
-                _ = _invokeAsync(() => {
+                _ = _invokeAsync(() =>
+                {
                     OnChange?.Invoke();
                     return Task.CompletedTask;
                 });
