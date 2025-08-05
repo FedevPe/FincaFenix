@@ -40,6 +40,7 @@ namespace FincaFenix.UsesCases.Aggregates
                 DosageUnit = recipeDTO.VolumeMachineUnit,
                 MachineId = recipeDTO.MachineId,
                 State = recipeDTO.Status,
+                TRV = recipeDTO.TRV,
                 IsDeleted = false,
                 DetailRecipeList = recipeDTO.Details?.Select(dr => MapDetailRecipe(dr)).ToList() ?? []
             };
@@ -53,7 +54,9 @@ namespace FincaFenix.UsesCases.Aggregates
                 AmountRequired = drDTO.AmountRequired,
                 AmountRequiredUnit = drDTO.AmountRequiredUnit,
                 EstimatedAmount = drDTO.EstimatedAmount,
-                EstimatedAmountUnit = drDTO.EstimatedAmountUnit
+                EstimatedAmountUnit = drDTO.EstimatedAmountUnit,
+                Brand = drDTO.Brand,
+                DiseasePlague = drDTO.PestDisease
             };
         }
 
