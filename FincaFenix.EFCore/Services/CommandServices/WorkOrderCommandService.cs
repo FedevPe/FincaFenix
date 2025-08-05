@@ -13,8 +13,7 @@ namespace FincaFenix.EFCore.Services.CommandServices
             var reNumber = CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "Receta");
 
             try
-            {
-                
+            {                
                 if (workOrder.Recipe != null)
                 {
                     workOrder.Recipe.NumRecipe = reNumber.LastNumber.ToString();
@@ -34,16 +33,17 @@ namespace FincaFenix.EFCore.Services.CommandServices
                 woNumber.LastNumber++;
                 await SaveChangesAsync();
 
-                if (workOrder.WorkedSectors != null && workOrder.WorkedSectors.Any())
-                {
-                    foreach (var sector in workOrder.WorkedSectors)
-                    {
-                        sector.WorkOrderId = workOrder.Id;
-                    }
+                //if (workOrder.WorkedSectors != null && workOrder.WorkedSectors.Any())
+                //{
+                //    foreach (var sector in workOrder.WorkedSectors)
+                //    {
+                //        sector.Id = 0;
+                //        sector.WorkOrderId = workOrder.Id;
+                //    }
 
-                    WorkOrderWorkedSectors.AddRange(workOrder.WorkedSectors);
-                    await SaveChangesAsync();
-                }
+                //    WorkOrderWorkedSectors.AddRange(workOrder.WorkedSectors);
+                //    await SaveChangesAsync();
+                //}
 
                 await transaction.CommitAsync();
                 return workOrder.Id;
