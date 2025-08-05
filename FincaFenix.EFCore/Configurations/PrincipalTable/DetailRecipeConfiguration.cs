@@ -23,8 +23,8 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(dr => dr.EstimatedAmount).HasColumnName("CantEstimada").IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(dr => dr.EstimatedAmountUnit).HasColumnName("UnidadCantEstimada").IsRequired().HasMaxLength(10);
             builder.Property(dr => dr.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();
-
-
+            builder.Property(dr => dr.Brand).HasColumnName("Marca").IsRequired().HasMaxLength(50);
+            builder.Property(dr => dr.DiseasePlague).HasColumnName("EnfermedadPlaga").IsRequired().HasMaxLength(50);
         }
     }
 }
