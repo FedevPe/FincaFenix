@@ -14,8 +14,7 @@ namespace FincaFenix.Entities.POCOEntities
         public string State { get; set; }
         public bool IsDeleted { get; set; }
 
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        [Timestamp] public byte[] RowVersion { get; set; }
 
         public ICollection<DetailRecipeEntity> DetailRecipeList { get; set; } = new List<DetailRecipeEntity>();
     }

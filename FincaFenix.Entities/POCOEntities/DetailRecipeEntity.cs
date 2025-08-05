@@ -1,14 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FincaFenix.Entities.POCOEntities
+﻿namespace FincaFenix.Entities.POCOEntities
 {
     public class DetailRecipeEntity
     {
         public int Id { get; set; }
-        public int RecipeId{ get; set; }
+        public int RecipeId { get; set; }
         public RecipeEntity Recipe { get; set; }
         public int MaterialId { get; set; }
         public MaterialEntity Material { get; set; }
+        public string Brand { get; set; }
+        public string DiseasePlague { get; set; }
         public decimal AmountRequired { get; set; }
         public string AmountRequiredUnit { get; set; }
         public decimal EstimatedAmount { get; set; }
