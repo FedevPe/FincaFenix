@@ -25,9 +25,9 @@ namespace FincaFenix.UserInterface7._0
             builder.Services.AddUIServices();
             builder.Services.AddMudServices(config =>
             {
-                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomEnd;
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomStart;
                 config.SnackbarConfiguration.ShowCloseIcon = true;
-                config.SnackbarConfiguration.SnackbarVariant = Variant.Text;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
                 config.SnackbarConfiguration.VisibleStateDuration = 3000;
                 config.SnackbarConfiguration.HideTransitionDuration = 500;
             });

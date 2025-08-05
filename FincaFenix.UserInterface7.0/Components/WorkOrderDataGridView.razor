@@ -44,7 +44,7 @@
 
     public void OpenActivityForm(string woSelectedStatus, int idWorkOrder)
     {
-        if (woSelectedStatus == "Activo")
+        if (woSelectedStatus != "Cerrado")
         {
             NavigationManager.NavigateTo($"/actividad/registrar/{idWorkOrder}");
         }
