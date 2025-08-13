@@ -4,8 +4,8 @@ namespace FincaFenix.UsesCases.Controllers
 {
     public interface IMaterialController
     {
-        Task<IEnumerable<MaterialOrderDTO>> GetListMaterialByCategoryId(int categoryId);
-        Task<IEnumerable<MaterialOrderDTO>> GetListMaterialByRecipeId(int recipeId);
-        Task<IEnumerable<MaterialOrderDTO>> GetMaterialList();
+        Task<IEnumerable<MaterialRecipeDTO>> GetListMaterialByCategoryId(int categoryId);
+        Task<IEnumerable<MaterialRecipeDTO>> GetListMaterialByRecipeId(int recipeId);
+        Task<IEnumerable<MaterialRecipeDTO>> GetMaterialList();
     }
 }

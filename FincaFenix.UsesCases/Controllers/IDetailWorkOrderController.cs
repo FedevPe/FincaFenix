@@ -5,6 +5,6 @@ namespace FincaFenix.UsesCases.Controllers
     public interface IDetailWorkOrderController
     {
         Task<bool> CreateDetailWorkOrder(AddDetailWorkOrderDTO dto);
-        Task<IEnumerable<ActivityWorkOrderDTO>>GetActivitiesByOrderId(int orderId);
+        Task<IEnumerable<DetailWorkOrderDTO>>GetActivitiesByOrderId(int orderId);
     }
 }
