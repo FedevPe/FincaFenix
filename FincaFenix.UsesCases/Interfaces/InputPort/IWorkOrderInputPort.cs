@@ -6,6 +6,8 @@ namespace FincaFenix.UsesCases.Interfaces.InputPort
     {
         Task Handle(WorkOrderDTO workOrder);
         Task GetWorkOrderById(int id);
+        Task GetWorkOrderAndRecipeByIdWorkorder(int id);
         Task GetWorkOrderListPaginated(int pageNumber, int pageSize, string status);
+        Task GetAllWorkOrderList();
     }
 }
