@@ -1,4 +1,5 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
@@ -10,14 +11,25 @@ namespace FincaFenix.UsesCases.Interactors
         IWorkOrderOutputPort presenter,
         IWorkOrderRepository repository) : IWorkOrderInputPort
     {
+        public async Task GetWorkOrderAndRecipeByIdWorkorder(int id)
+        {
+            await presenter.Handle(await repository.GetWorkOrderAndRecipeByIdWorkorder(id));
+        }
+
         public async Task GetWorkOrderById(int id)
         {
             await presenter.Handle(await repository.GetWorkOrderById(id));
         }
+
+        public async Task GetAllWorkOrderList()
+        {
+            await presenter.HandleList(await repository.GetAllWorkOrderList());
+        }
+
         public async Task GetWorkOrderListPaginated(int pageNumber, int pageSize, string status)
         {
             var (workOrders, totalCount) = await repository.GetWorkOrderList(pageNumber, pageSize, status);
-            await presenter.HandleList(workOrders, totalCount);
+            await presenter.HandleListPaginated(workOrders, totalCount);
         }
         public async Task Handle(WorkOrderDTO workOrder)
         {
