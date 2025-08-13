@@ -36,6 +36,18 @@
 
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        function downloadFileFromBase64(fileName, base64String) {
+            // Convierte la cadena Base64 a un blob de datos binarios
+            const link = document.createElement('a');
+            link.href = `data:application/pdf;base64,${base64String}`;
+            link.download = fileName;
 
+            // Simula un clic para iniciar la descarga
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 </body>
 </html>
