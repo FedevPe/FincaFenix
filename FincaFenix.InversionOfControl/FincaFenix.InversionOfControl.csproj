@@ -16,6 +16,7 @@
     <ProjectReference Include="..\FincaFenix.EFCore\FincaFenix.EFCore.csproj" />
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
     <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
+    <ProjectReference Include="..\FincaFenix.PDF\FincaFenix.PDF.csproj" />
     <ProjectReference Include="..\FincaFenix.Presenters\FincaFenix.Presenters.csproj" />
     <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
     <ProjectReference Include="..\FincaFenix.Validators\FincaFenix.Validators.csproj" />
