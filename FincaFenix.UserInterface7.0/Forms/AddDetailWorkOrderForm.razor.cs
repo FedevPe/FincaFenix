@@ -23,11 +23,9 @@ namespace FincaFenix.UserInterface7._0.Forms
         protected override async Task OnInitializedAsync()
         {
             await InfoVM.LoadDataWorkOrderById(WorkOrderId);
+            ViewModel.ActivityDetails.Add(new AddDetailWorkOrderDTO());
 
-            if (!ViewModel.ActivityDetails.Any())
-            {
-                ViewModel.ActivityDetails.Add(new AddDetailWorkOrderDTO());
-            }
+            await ViewModel.LoadEmployeesAsync(InfoVM.WOInfo.Farm.Id);
 
             ViewModel.WorkOrderId = WorkOrderId;
             ViewModel.ActivityDate = DateTime.Now;
@@ -42,7 +40,6 @@ namespace FincaFenix.UserInterface7._0.Forms
         }
         private async Task HandleSave()
         {
-
             // 1. Validar el formulario de la UI
             await form.Validate();
             if (!form.IsValid)
@@ -50,38 +47,33 @@ namespace FincaFenix.UserInterface7._0.Forms
                 Snackbar.Add("Por favor, completá todos los campos requeridos.", MudBlazor.Severity.Error);
                 return;
             }
-            Snackbar.Add($"Guardando actividad... HorasTotales = {SumWorkHours()}", MudBlazor.Severity.Info);
-            if (SumWorkHours() > 9)
+
+            // ---
+
+            // 2. Validar las horas trabajadas
+            var totalHours = SumWorkHours();
+            if (totalHours <= 0 || totalHours > 9)
             {
-                Snackbar.Add("El total de horas trabajadas no puede ser mayor a 9 horas.", MudBlazor.Severity.Warning);
-                return;
-            }
-            else if (SumWorkHours() <= 8)
-            {
-                Snackbar.Add("El total de horas trabajadas debe ser mayor o igual a 8 horas.", MudBlazor.Severity.Warning);
+                Snackbar.Add("El total de horas trabajadas debe ser mayor a 0 y menor o igual a 9.", MudBlazor.Severity.Error);
                 return;
             }
 
-            // 2. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
+            // ---
+
+            Snackbar.Add($"Guardando actividad... HorasTotales = {totalHours}", MudBlazor.Severity.Info);
+
+            // 3. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
             // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada
-            try
+            if (await ViewModel.SaveDetailWorkOrderAsync(ViewModel))
             {
-                if (await ViewModel.SaveDetailWorkOrderAsync(ViewModel))
-                {
-                    Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
-                    NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
-                }
-                else
-                {
-                    Snackbar.Add("Error al registrar la actividad. Inténtelo de nuevo.", MudBlazor.Severity.Error);
-                }
+                Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
+                NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
             }
-            catch (Exception ex)
+            else
             {
-                // Capturar errores inesperados del caso de uso o la persistencia
-                Snackbar.Add($"Ocurrió un error inesperado: {ex.Message}", MudBlazor.Severity.Error);
-                // Considera loggear el error completo (ex) aquí para depuración
+                Snackbar.Add("Error al registrar la actividad.", MudBlazor.Severity.Error);
             }
+
         }
         private decimal SumWorkHours()
         {
