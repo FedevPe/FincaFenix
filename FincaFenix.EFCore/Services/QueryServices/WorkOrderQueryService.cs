@@ -1,6 +1,7 @@
 ﻿using FincaFenix.EFCore.Context;
-using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.QueryServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,10 @@ namespace FincaFenix.EFCore.Services.QueryServices
 {
     public class WorkOrderQueryService : FincaFenixContext, IWorkOrderQueryService
     {
-        public async Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders , int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status)
+        public async Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status)
         {
             var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
-            
+
             var totalCount = await query.CountAsync(); //Cuenta la cantidad de registros que cumplen la condición
 
             var workOrders = await WorkOrders
@@ -23,24 +24,24 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .Skip((pageNumber - 1) * pageSize)
                 // Toma el número de registros que se especifica en pageSize, define la cantidad de registros a devolver por página
                 .Take(pageSize)
-                .Select(wo => new InfoWorkOrderDTO
+                .Select(wo => new ShowWorkOrderDTO
                 {
                     Id = wo.Id,
                     OrderNum = wo.OrderNum,
-                    TaskOrder = wo.Task != null ? new TaskDTO
+                    Task = wo.Task != null ? new TaskDTO
                     {
                         Id = wo.Task.Id,
                         Description = wo.Task.Description
-                    }: null,
-                    FarmOrder = wo.Farm != null ? new FarmDTO
+                    } : null,
+                    Farm = wo.Farm != null ? new FarmDTO
                     {
                         Id = wo.Farm.Id,
                         Name = wo.Farm.Name
-                    }: null,
+                    } : null,
                     CreatedDate = wo.CreatedDate,
                     StartDate = wo.StartDate,
                     Status = wo.Status,
-                    RelationatedSector = wo.WorkedSectors
+                    SectorList = wo.WorkedSectors
                         .Select(wos => new DetailSectorFarmDTO
                         {
                             Id = wos.SectorFarm.Id,
@@ -53,53 +54,86 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
             return (workOrders, totalCount);
         }
-        public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderInfoById(int id)
+        public async Task<InfoWorkOrderDTO> GetWorkOrderInfoById(int id)
         {
             return await WorkOrders
                 .Where(wo => wo.Id == id && !wo.IsDeleted)
-                .Select(wo => new ShowInfoAddActivityFormDTO
+                .Select(wo => new InfoWorkOrderDTO
                 {
-                    WorkOrder = new WorkOrderInfoDTO
-                    {
-                        Id = wo.Id,
-                        OrderNum = wo.OrderNum,
-                        State = wo.Status,
-                        StartDate = wo.StartDate,
-                        Description = wo.Description,
-                        IsDeleted = wo.IsDeleted
-                    },
-                    Farm = new FarmDTO
-                    {
-                        Id = wo.Farm.Id,
-                        Name = wo.Farm.Name
-                    },
-                    Task = new TaskDTO
+                    Id = wo.Id,
+                    OrderNum = wo.OrderNum,
+                    TaskOrder = wo.Task != null ? new TaskDTO
                     {
                         Id = wo.Task.Id,
                         Description = wo.Task.Description
-                    },
-                    SectorList = wo.WorkedSectors
-                                    .Select(wos => new DetailSectorFarmDTO
-                                    {
-                                        Id = wos.SectorFarm.Id,
-                                        FarmId = wos.SectorFarm.FarmId,
-                                        SectorName = wos.SectorFarm.SectorName,
-
-                                    })
-                                    .OrderBy(dto => dto.SectorName)
-                                    .ToList(),
-                    EmployeeList = wo.Farm.FarmList
-                                        .Where(ef => !ef.Employee.IsDeleted)
-                                        .Select(ef => new EmployeeDTO
-                                        {
-                                            Id = ef.Employee.Id,
-                                            Name = ef.Employee.Name,
-                                            LastName = ef.Employee.LastName,
-                                        })
-                                        .OrderBy(dto => dto.Name)
-                                        .ToList()
+                    } : null,
+                    FarmOrder = wo.Farm != null ? new FarmDTO
+                    {
+                        Id = wo.Farm.Id,
+                        Name = wo.Farm.Name
+                    } : null,
+                    CreatedDate = wo.CreatedDate,
+                    StartDate = wo.StartDate,
+                    Status = wo.Status,
+                    RelationatedSector = wo.WorkedSectors
+                        .Select(wos => new DetailSectorFarmDTO
+                        {
+                            Id = wos.SectorFarm.Id,
+                            FarmId = wos.SectorFarm.FarmId,
+                            SectorName = wos.SectorFarm.SectorName
+                        })
+                        .OrderBy(dto => dto.SectorName)
+                        .ToList(),
+                    Description = wo.Description
                 })
                 .FirstOrDefaultAsync();
+        }
+        public async Task<WorkOrderEntity> GetWorkOrderAndRecipeByIdWorkorder(int id)
+        {
+            return await WorkOrders.Where(wo => wo.Id == id)
+                .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
+                    .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
+                .Include(wo => wo.DetailWorkOrderList)
+                    .ThenInclude(dwo => dwo.SectorWorked) // Incluye el Sector Trabajado para cada Detalle de Orden de Trabajo
+                .Include(wo => wo.Task)
+                .Include(wo => wo.Farm)
+                .Include(wo => wo.Recipe) // Incluye la Receta
+                    .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
+                        .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
+                .Include(wo => wo.Recipe)
+                    .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
+                .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
+                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                        .ThenInclude(sf => sf.Variety)// Incluye la Finca para cada SectorFarm
+                            .ThenInclude(v => v.Fruit) // Incluye la Fruta para cada Variedad
+                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
+                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                        .ThenInclude(sf => sf.Farm)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList()
+        {
+            return await WorkOrders.Where(wo => !wo.IsDeleted)
+                .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
+                    .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
+                .Include(wo => wo.DetailWorkOrderList)
+                    .ThenInclude(dwo => dwo.SectorWorked) // Incluye el Sector Trabajado para cada Detalle de Orden de Trabajo
+                .Include(wo => wo.Task)
+                .Include(wo => wo.Farm)
+                .Include(wo => wo.Recipe) // Incluye la Receta
+                    .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
+                        .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
+                .Include(wo => wo.Recipe)
+                    .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
+                .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
+                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                        .ThenInclude(sf => sf.Variety)// Incluye la Finca para cada SectorFarm
+                            .ThenInclude(v => v.Fruit) // Incluye la Fruta para cada Variedad
+                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
+                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                        .ThenInclude(sf => sf.Farm)
+                 .ToListAsync();
         }
     }
 }

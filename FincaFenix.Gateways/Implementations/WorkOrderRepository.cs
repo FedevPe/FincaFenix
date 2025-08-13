@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices;
@@ -16,12 +16,22 @@ namespace FincaFenix.Gateways.Implementations
             return await commandService.SaveWorkOrder(workOrder);
         }
 
-        public async Task<ShowInfoAddActivityFormDTO> GetWorkOrderById(int id)
+        public async Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList()
+        {
+            return await queryService.GetAllWorkOrderList();
+        }
+
+        public async Task<WorkOrderEntity> GetWorkOrderAndRecipeByIdWorkorder(int id)
+        {
+            return await queryService.GetWorkOrderAndRecipeByIdWorkorder(id);
+        }
+
+        public async Task<InfoWorkOrderDTO> GetWorkOrderById(int id)
         {
             return await queryService.GetWorkOrderInfoById(id);
         }
 
-        public async Task<(IEnumerable<InfoWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize, string status)
+        public async Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderList(int pageNumber, int pageSize, string status)
         {
             return await queryService.GetWorkOrderListPaged(pageNumber, pageSize, status);
         }
