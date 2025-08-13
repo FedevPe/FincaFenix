@@ -1,4 +1,4 @@
-﻿<MudDataGrid T="ActivityWorkOrderDTO" Items="@ActivityList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter" Hideable="true">
+﻿@* <MudDataGrid T="ActivityWorkOrderDTO" Items="@ActivityList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter" Hideable="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Registro de Actividad</MudText>
         <MudSpacer />
@@ -13,16 +13,16 @@
         <PropertyColumn Property="x => x.Performance" Title="Rendimiento" />
         <PropertyColumn Property="x => x.Description" Title="Observaciones" />
     </Columns>
-</MudDataGrid>
+</MudDataGrid> *@
 
 
 @code {
     private string _searchString;
 
-    [Parameter] public IEnumerable<ActivityWorkOrderDTO> ActivityList { get; set; }
+    [Parameter] public IEnumerable<DetailWorkOrderDTO> ActivityList { get; set; }
 
     // Filtro rápido para buscar por nombre de operario
-    private Func<ActivityWorkOrderDTO, bool> _quickFilter => activity =>
+    private Func<DetailWorkOrderDTO, bool> _quickFilter => activity =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;
