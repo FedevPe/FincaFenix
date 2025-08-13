@@ -1,18 +1,21 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.POCOEntities;
+using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
 
 namespace FincaFenix.Presenters.Implementations
 {
     public class WorkOrderPresenter : IWorkOrderOutputPort
     {
-        public ShowInfoAddActivityFormDTO? WorkOrder { get; private set; }
+        public InfoWorkOrderDTO? WorkOrder { get; private set; }
+        public ShowWorkOrderDTO? WorkOrderInfo { get; private set; }
         public IEnumerable<WorkOrderDTO>? WorkOrderList { get; private set; }
-        public IEnumerable<InfoWorkOrderDTO>? InfoWorkOrderCard { get; private set; } 
+        public List<ShowWorkOrderDTO>? InfoWorkOrderList { get; private set; }
         public int TotalCount { get; private set; }
         public bool IsSaved { get; private set; } = false;
 
-        public Task Handle(ShowInfoAddActivityFormDTO workOrder)
+        public Task Handle(InfoWorkOrderDTO workOrder)
         {
             if (workOrder == null)
                 throw new ArgumentNullException(nameof(workOrder), "Work order cannot be null.");
@@ -27,9 +30,21 @@ namespace FincaFenix.Presenters.Implementations
 
             return Task.CompletedTask;
         }
-        public Task HandleList(IEnumerable<InfoWorkOrderDTO> listDTO, int totalAcount)
+
+        public async Task Handle(WorkOrderEntity workOrderEntity)
         {
-            InfoWorkOrderCard = listDTO;
+            WorkOrderInfo = WorkOrderMapper.EntityToDTO(workOrderEntity);
+            await Task.CompletedTask;
+        }
+        public Task HandleList(IEnumerable<WorkOrderEntity> listDTO)
+        {
+            InfoWorkOrderList = listDTO.Select(wo => WorkOrderMapper.EntityToDTO(wo)).ToList();
+            return Task.CompletedTask;
+        }
+
+        public Task HandleListPaginated(IEnumerable<ShowWorkOrderDTO> listDTO, int totalAcount)
+        {
+            InfoWorkOrderList = listDTO.ToList();
             TotalCount = totalAcount;
             return Task.CompletedTask;
         }

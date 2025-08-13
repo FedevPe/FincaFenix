@@ -7,7 +7,7 @@ namespace FincaFenix.Presenters.Implementations
     public class MaterialPresenter : IMaterialOutputPort
     {
 
-        public List<MaterialOrderDTO>? MaterialList { get; private set; }
+        public List<MaterialRecipeDTO>? MaterialList { get; private set; }
 
         public Task Handle(MaterialEntity material)
         {
@@ -16,7 +16,7 @@ namespace FincaFenix.Presenters.Implementations
 
         public Task HandleList(IEnumerable<MaterialEntity> materialList)
         {
-            MaterialList = materialList.Select(material => new MaterialOrderDTO
+            MaterialList = materialList.Select(material => new MaterialRecipeDTO
             {
                 Id = material.Id,
                 ArticleName = material.ArticleName,
