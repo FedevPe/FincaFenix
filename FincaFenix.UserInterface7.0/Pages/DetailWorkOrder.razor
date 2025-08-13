@@ -1,6 +1,5 @@
 ﻿@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
 
-
  @if (InfoVM.IsLoading)
  {
      <div class="d-flex flex-column justify-center align-center py-5">
@@ -18,21 +17,12 @@
  {
      <MudGrid Justify="Justify.FlexStart" Spacing="2">
         <MudItem xs="12" lg="9" md="12" sm="12">
-             <GeneralInformationWorkOrder 
-                 OrderNumber="@InfoVM.WOInfo?.WorkOrder.OrderNum"
-                 FarmWorkOrder="@InfoVM.WOInfo?.Farm.Name"
-                 TaskWorkOrder="@InfoVM.WOInfo?.Task.Description"
-                 SectorList="@InfoVM.WOInfo.SectorList"
-                 DateWorkOrder="@InfoVM.WOInfo.WorkOrder.StartDate"
-                 WorkOrderDescription="@InfoVM.WOInfo.WorkOrder.Description"
-                 StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"/>
+             <GeneralInformationWorkOrder InfoWO="@InfoVM.WOInfo"/>
         </MudItem>
         <MudItem xs="12" lg="3" md="12" sm="12">
             <div class="d-flex h-100 w-100">
                 <MudPaper Elevation="2" Class="p-3 w-100">
-                    <DetailWorkOrderActions 
-                        IdWorkOrder="@InfoVM.WOInfo.WorkOrder.Id"
-                        WorkOrderState="@InfoVM.WOInfo.WorkOrder.State"/>
+                    <DetailWorkOrderActions InfoWO="@InfoVM.WOInfo" />
                 </MudPaper>
             </div>
         </MudItem>
@@ -64,7 +54,7 @@
     {
         await InfoVM.LoadDataWorkOrderById(IdWorkOrder);
         await DetailsVM.LoadActivityLog(IdWorkOrder);
-        await Task.Delay(1500);
+        await Task.Delay(0);
         StateHasChanged();
     }
 }
