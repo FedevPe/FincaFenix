@@ -9,8 +9,8 @@ namespace FincaFenix.Entities.POCOEntities
         public int MachineId { get; set; }
         public MachineEntity Machine { get; set; }
         public decimal TRV { get; set; }
-        public decimal Dosage { get; set; }
-        public string DosageUnit { get; set; }
+        public decimal VolumeMachine { get; set; }
+        public string VolumeMachineUnit { get; set; }
         public string State { get; set; }
         public bool IsDeleted { get; set; }
 
