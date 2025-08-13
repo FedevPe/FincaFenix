@@ -9,6 +9,7 @@
         public DateTime? CreatedDate { get; set; }
         public DateTime? StartDate { get; set; }
         public string Status { get; set; }
+        public string Description { get; set; }
         public IEnumerable<DetailSectorFarmDTO> RelationatedSector { get; set; } = new List<DetailSectorFarmDTO>();
 
     }

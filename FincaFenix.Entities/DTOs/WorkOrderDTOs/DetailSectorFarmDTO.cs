@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int FarmId { get; set; }
+        public FarmDTO Farm { get; set; }
         public string SectorName { get; set; }
         public int? VarietyId { get; set; }
         public string VarietyName { get; set; }
