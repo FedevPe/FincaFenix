@@ -7,6 +7,13 @@ namespace FincaFenix.ViewModels.ViewModels
         ITaskController task,
         IFarmController farm)
     {
+        public string? SearchTerm { get; set; }
+        public int FincaId { get; set; }
+        public int TaskId { get; set; }
+        public string? State { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
         public IEnumerable<FarmDTO> Farms { get; set; } = new List<FarmDTO>();
         public IEnumerable<TaskDTO> Tasks { get; set; } = new List<TaskDTO>();
 

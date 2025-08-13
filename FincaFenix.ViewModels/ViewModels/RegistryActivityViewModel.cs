@@ -4,12 +4,20 @@ using FincaFenix.UsesCases.Controllers;
 namespace FincaFenix.ViewModels.ViewModels
 {
     public class RegistryActivityViewModel(
-        IDetailWorkOrderController detailWO)
+        IDetailWorkOrderController detailWO,
+        IEmployeeController emController)
     {
         public int WorkOrderId { get; set; }
         public int EmployeeId { get; set; }
         public DateTime? ActivityDate { get; set; }
+        public IEnumerable<EmployeeDTO> Employees { get; set; } = new List<EmployeeDTO>();
         public List<AddDetailWorkOrderDTO> ActivityDetails { get; set; } = new List<AddDetailWorkOrderDTO>();
+
+        public async Task LoadEmployeesAsync(int idFarm)
+        {
+            Employees = await emController.GetAllEmployeesAsync(idFarm);
+        }
+
         public async Task<bool> SaveDetailWorkOrderAsync(RegistryActivityViewModel viewModel)
         {
             try

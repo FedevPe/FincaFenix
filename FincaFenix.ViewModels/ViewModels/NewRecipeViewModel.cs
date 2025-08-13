@@ -18,7 +18,7 @@ namespace FincaFenix.ViewModels.ViewModels
         public IEnumerable<MachineRecipeDTO>? MachineList { get; set; }
         public MachineRecipeDTO? Machine { get; set; }
         public List<DetailRecipeDTO> Details { get; set; } = new List<DetailRecipeDTO>();
-        public IEnumerable<MaterialOrderDTO>? Materials { get; set; }
+        public IEnumerable<MaterialRecipeDTO>? Materials { get; set; }
         public IEnumerable<MaterialCategoryDTO>? Categories { get; set; }
 
         public void InitializeRecipe(decimal? totalSurface)

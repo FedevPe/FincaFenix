@@ -6,7 +6,7 @@ namespace FincaFenix.ViewModels.ViewModels
     public class LoadDetailsWorkOrderViewModel(
         IDetailWorkOrderController detail)
     {
-        public IEnumerable<ActivityWorkOrderDTO>? ActivityWorkOrderDTOs { get; set; }
+        public IEnumerable<DetailWorkOrderDTO>? ActivityWorkOrderDTOs { get; set; }
 
         public async Task LoadActivityLog(int orderId)
         {
