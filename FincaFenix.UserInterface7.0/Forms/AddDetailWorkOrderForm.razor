@@ -9,14 +9,7 @@
     }
     else
     {
-        <GeneralInformationWorkOrder 
-            OrderNumber="@InfoVM.WOInfo.WorkOrder.OrderNum"
-            FarmWorkOrder="@InfoVM.WOInfo.Farm.Name"
-            TaskWorkOrder="@InfoVM.WOInfo.Task.Description"
-            SectorList="@InfoVM.WOInfo.SectorList"
-            DateWorkOrder="@InfoVM.WOInfo.WorkOrder.StartDate"
-            StateWorkOrder="@InfoVM.WOInfo.WorkOrder.State"
-            WorkOrderDescription="@InfoVM.WOInfo.WorkOrder.Description"/>
+        <GeneralInformationWorkOrder InfoWO="InfoVM.WOInfo" />
         <MudForm @ref="form" Model="ViewModel" Validation="@(ValidatorVM.ValidateValue)">
             <MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
                 <MudGrid Justify="Justify.FlexStart">
@@ -36,7 +29,7 @@
                                            TransformOrigin="Origin.TopRight"
                                            For="@(() => ViewModel.EmployeeId)">
                                     <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                   @foreach (var worker in InfoVM.WOInfo.EmployeeList.OrderBy(x => x.Name))
+                                   @foreach (var worker in ViewModel.Employees.OrderBy(x => x.Name))
                                    {
                                            <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
                                    }
