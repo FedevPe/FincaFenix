@@ -3,10 +3,10 @@
         <div class="d-flex align-center justify-space-between ">
             <div>
                 <MudText Typo="Typo.h5" Class="card-title mb-1">
-                    Orden N°@NumWorkOrder
+                    Orden N° @InfoWO.OrderNum
                 </MudText>
                 <MudText Typo="Typo.body2" Class="card-subtitle">
-                    Finca @FarmWorkOrder
+                    Finca @InfoWO.Farm.Name
                 </MudText>
             </div>
             <MudIcon Icon="fa-solid fa-seedling"
@@ -25,7 +25,7 @@
                          Color="Color.Info"
                          Class="content-icon me-2" />
                 <MudText Typo="Typo.body1" Class="content-text">
-                    @TaskWorkOrder
+                    @InfoWO.Task.Description
                 </MudText>
             </div>
             <div class="d-flex mt-1">
@@ -34,7 +34,7 @@
                          Color="Color.Primary"
                          Class="content-icon me-2" />
                 <MudText Typo="Typo.body1" Class="content-text">
-                    @DateWorkOrder.Value.ToShortDateString()
+                    @InfoWO.CreatedDate.Value.ToShortDateString()
                 </MudText>
             </div>
             <MudGrid Class="mt-1" Justify="Justify.FlexStart" Spacing="0">
@@ -46,7 +46,7 @@
                             Class="status-chip"
                             Label="true"
                             Style="color: black">
-                        @StatusWorkOrder
+                        @InfoWO.Status
                     </MudChip>
                 </MudItem>  
                 <MudItem>
@@ -57,9 +57,9 @@
                              Class="sector-chip"
                              Label="true"
                              Style="color: black">
-                        @if (SectorList != null && SectorList.Any())
-                        {                            
-                            @string.Join(" - ", SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))                            
+                        @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
+                        {
+                            @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
                         }
                         else
                         {
@@ -71,7 +71,6 @@
         </div>
     </MudCardContent>
     
-    <!-- Footer con acciones (opcional) -->
     <MudCardActions Class="card-actions pa-3 d-flex justify-content-center align-items-center">
         <MudGrid Justify="Justify.Center" Spacing="3">
             <MudItem>
@@ -97,22 +96,9 @@
 </MudCard>
 
 @code {
-    [Parameter]
-    public string NumWorkOrder { get; set; }
-    [Parameter]
-    public string FarmWorkOrder { get; set; }
-    [Parameter]
-    public string TaskWorkOrder { get; set; }
-    [Parameter]
-    public DateTime? DateWorkOrder { get; set; }
-    [Parameter]
-    public string StatusWorkOrder { get; set; }
-    [Parameter]
-    public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
-    [Parameter]
-    public int IdWorkOrder { get; set; }
+    [Parameter] public ShowWorkOrderDTO InfoWO { get; set; }
 
-    private MudBlazor.Color ColorText => StatusWorkOrder switch
+    private MudBlazor.Color ColorText => InfoWO.Status switch
     {
         "Cerrado" => MudBlazor.Color.Error,
         "Pendiente" => MudBlazor.Color.Warning,
@@ -125,18 +111,18 @@
 
     public void OpenActivityForm()
     {
-        if(StatusWorkOrder == "Activo")
+        if (InfoWO.Status == "Activo")
         {
-            NavigationManager.NavigateTo($"/actividad/registrar/{IdWorkOrder}");
+            NavigationManager.NavigateTo($"/actividad/registrar/{InfoWO.Id}");
         }
         else
         {
-            Snackbar.Add($"La orden de trabajo N° {IdWorkOrder} no se encuentra activa.", MudBlazor.Severity.Warning);
+            Snackbar.Add($"La orden de trabajo N° {InfoWO.Id} no se encuentra activa.", MudBlazor.Severity.Warning);
         }
     }
     public void OpenWorkOrderDetails()
     {
-        NavigationManager.NavigateTo($"/ordentrabajo/{IdWorkOrder}/detalle/");
+        NavigationManager.NavigateTo($"/ordentrabajo/{InfoWO.Id}/detalle/");
     }
 }
 
