@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
     <ProjectReference Include="..\FincaFenix.InversionOfControl\FincaFenix.InversionOfControl.csproj" />
+    <ProjectReference Include="..\FincaFenix.PDF\FincaFenix.PDF.csproj" />
     <ProjectReference Include="..\FincaFenix.ViewModels\FincaFenix.ViewModels.csproj" />
   </ItemGroup>
 

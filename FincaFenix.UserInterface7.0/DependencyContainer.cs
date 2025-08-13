@@ -9,9 +9,12 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddUIServices(this IServiceCollection services)
         {
+            //Services
             services.AddScoped<TextAppBarStateService>()
-                    .AddScoped<TotalAreaSectorService>();
+                    .AddScoped<TotalAreaSectorService>()
+                    .AddScoped<PDFService>();
 
+            //Validators
             services.AddScoped<NewOrderDataUIValidator>()
                     .AddScoped<NewRecipeUIValidator>()
                     .AddScoped<CreateWorkOrderUIValidator>()
