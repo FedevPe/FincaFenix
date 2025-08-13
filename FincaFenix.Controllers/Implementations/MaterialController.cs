@@ -13,19 +13,19 @@ namespace FincaFenixControllers.Implementations
         IMaterialOutputPort presenter) : IMaterialController
     {
         [HttpGet("{categoryId}/material")]
-        public async Task<IEnumerable<MaterialOrderDTO>> GetListMaterialByCategoryId(int categoryId)
+        public async Task<IEnumerable<MaterialRecipeDTO>> GetListMaterialByCategoryId(int categoryId)
         {
             await interactor.GetMaterialListByCategoryId(categoryId);
             return presenter.MaterialList;
         }
         [HttpGet("{recipeId}/material")]
-        public async Task<IEnumerable<MaterialOrderDTO>> GetListMaterialByRecipeId(int recipeId)
+        public async Task<IEnumerable<MaterialRecipeDTO>> GetListMaterialByRecipeId(int recipeId)
         {
             await interactor.GetMaterialListByCategoryId(recipeId);
             return presenter.MaterialList;
         }
         [HttpGet("getmateriallist")]
-        public async Task<IEnumerable<MaterialOrderDTO>> GetMaterialList()
+        public async Task<IEnumerable<MaterialRecipeDTO>> GetMaterialList()
         {
             await interactor.GetMaterialList();
             return presenter.MaterialList;
