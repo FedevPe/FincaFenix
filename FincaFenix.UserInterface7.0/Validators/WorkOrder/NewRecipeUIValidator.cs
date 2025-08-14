@@ -7,12 +7,18 @@ namespace FincaFenix.UserInterface7._0.Validators.WorkOrder
     {
         public NewRecipeUIValidator() 
         {
-            RuleFor(x => x.MachineId)
-                .GreaterThan(0).WithMessage("Debe seleccionar una máquina válida.");
-            RuleFor(x => x.VolumeMachine)
-                .GreaterThan(0).WithMessage("El volumen de la máquina debe ser mayor que cero.");
-            RuleFor(x => x.VolumeMachineUnit)
-                .NotEmpty().WithMessage("La unidad de volumen de la máquina no puede estar vacía.");
+            RuleFor(x => x.Machine.Id)
+                .GreaterThan(0).WithMessage("Debe seleccionar una máquina válida.")
+                .NotNull().WithMessage("El campo es obligatorio");
+            RuleFor(x => x.Machine.Capacity)
+                .GreaterThan(0).WithMessage("El volumen de la máquina debe ser mayor que cero.")
+                .NotNull().WithMessage("El campo es obligatorio");
+            RuleFor(x => x.Machine.CapacityUnit)
+                .NotEmpty().WithMessage("La unidad de volumen de la máquina no puede estar vacía.")
+                .NotNull().WithMessage("El campo es obligatorio");
+            RuleFor(x => x.Machine.TRV)
+                .GreaterThan(0).WithMessage("El volumen de la máquina debe ser mayor que cero.")
+                .NotNull().WithMessage("El campo es obligatorio");
             RuleFor(x => x.Details)
                 .NotNull().WithMessage("La lista de detalles no puede ser nula.")
                 .Must(details => details.Any()).WithMessage("Debe agregar al menos un material a la receta.");

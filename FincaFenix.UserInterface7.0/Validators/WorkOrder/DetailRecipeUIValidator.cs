@@ -21,6 +21,9 @@ namespace FincaFenix.UserInterface7._0.Validators.WorkOrder
                 .NotEmpty().WithMessage("Campo obligatorio");
             RuleFor(dr => dr.AmountRequiredUnit)
                 .NotEmpty().WithMessage("Campo obligatorio");
+            RuleFor(dr => dr.EstimatedAmount)
+                .Empty().WithMessage("El campo cantidad estimada debe estar vacío.")
+                .GreaterThanOrEqualTo(0).WithMessage("La cantidad estimada no puede ser menor o igual a 0.");
         }
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
