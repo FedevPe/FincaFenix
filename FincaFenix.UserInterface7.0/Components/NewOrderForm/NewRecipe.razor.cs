@@ -15,7 +15,8 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         [Inject] private ISnackbar SnackbarService { get; set; }
         [Inject] private TotalAreaSectorService TotalAreaSectorService { get; set; }
         [Inject] public NewRecipeUIValidator Validator { get; set; }
-        [Inject] public NewDetailRecipeUIValidator ValidatorDetail { get; set; } = new NewDetailRecipeUIValidator();
+        [Inject] public NewDetailRecipeUIValidator ValidatorDetail { get; set; }
+        [Inject] public RecipeMachineUIValidator ValidatorMachine { get; set; }
         [Parameter] public NewRecipeViewModel ViewModel { get; set; }
 
         private MudForm _form;
@@ -31,7 +32,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         }
         private void OnMachineSelected(int id)
         {
-            ViewModel.MachineId = id;
+            ViewModel.Machine.Id = id;
             var machine = ViewModel.MachineList?.FirstOrDefault(m => m.Id == id);
             if (machine is not null)
             {
@@ -50,7 +51,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
                 // Intentamos obtener el resultado como un decimal
                 if (result.Data is decimal trvValue)
                 {
-                    ViewModel.TRV = trvValue;
+                    ViewModel.Machine.TRV = trvValue;
                     StateHasChanged();
                 }
             }
@@ -66,14 +67,6 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         {
             ViewModel.RemoveMaterial(material);
             if (!ViewModel.Details.Any() && ViewModel.Machine == null) _recipeInitialized = false;
-        }
-        private void RemoveMachine()
-        {
-            ViewModel.RemoveMachine();
-            if (!ViewModel.Details.Any())
-            {
-                _recipeInitialized = false;
-            }
         }
         private void AddRecipe()
         {
@@ -95,7 +88,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
                 }
 
                 detail.EstimatedAmount = ViewModel.CalculateEstimateAmount(
-                    ViewModel.TRV,
+                    ViewModel.Machine.TRV,
                     detail.AmountRequired,
                     TotalAreaSectorService.TotalAreaSectors,
                     detail.AmountRequiredUnit

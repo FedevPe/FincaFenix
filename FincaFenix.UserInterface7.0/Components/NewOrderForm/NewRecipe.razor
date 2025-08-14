@@ -1,4 +1,653 @@
 ﻿<MudForm @ref="_form" Model="ViewModel" Validation="@(Validator.ValidateValue)">
+    <div class="materials-container">
+        <!-- Header Section -->
+        <div class="materials-header">
+            <div class="header-content">
+                <div class="header-icon-wrapper">
+                    <MudIcon Icon="@Icons.Material.Filled.FormatListBulleted" Class="header-icon" />
+                </div>
+                <div class="header-text">
+                    <MudText Class="header-title" Typo="Typo.h4">Lista de materiales</MudText>
+                    <MudText Class="header-subtitle" Typo="Typo.subtitle1">Agregue los materiales necesarios para la orden de trabajo</MudText>
+                </div>
+                <div class="header-actions">
+                    <MudButton Variant="Variant.Filled" 
+                             Color="Color.Info"
+                             Size="Size.Medium"
+                             StartIcon="@Icons.Material.Filled.Add"
+                             Class="action-btn recipe-btn"
+                             @onclick="AddRecipe" 
+                             Disabled="_recipeInitialized">
+                        Crear Receta
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" 
+                             Color="Color.Primary"
+                             Size="Size.Medium"
+                             StartIcon="@Icons.Material.Filled.Add" 
+                             Class="action-btn material-btn"
+                             Disabled="@(!_recipeInitialized)"
+                             @onclick="AddMaterial">
+                        Agregar Insumo
+                    </MudButton>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+        </div>
+
+        <!-- Machine Configuration Section con Validaciones Implementadas -->
+        @if (ViewModel.Machine != null)
+        {
+            <MudForm @ref="_form" Model="ViewModel.Machine" Validation="@(ValidatorMachine.ValidateValue)">
+                <div class="materials-table-section">
+                    <div class="materials-table-section">
+                        <div class="table-header">
+                            <!-- Header de la sección -->
+                            <div class="table-header-content">
+                                <div class="field-label">
+                                    <MudIcon Icon="@Icons.Material.Filled.Build" Class="table-header-icon" />
+                                    <MudText Class="table-header-title" Typo="Typo.h6">Maquinaria</MudText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="materials-table-container">
+                            <!-- Tabla de maquinaria -->
+                            <MudTable T="MachineRecipeDTO"
+                                      Items="@(new List<MachineRecipeDTO> { ViewModel.Machine })"
+                                      Class="materials-table"
+                                      Bordered="true"
+                                      Dense="true"
+                                      Hover="true"
+                                      Elevation="0">
+                                <HeaderContent>
+                                    <MudTh Class="materials-table-header">
+                                        <div class="header-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Build" Class="header-icon" />
+                                            <span>Maquinaria</span>
+                                        </div>
+                                    </MudTh>
+                                    <MudTh Class="materials-table-header">
+                                        <div class="header-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Water" Class="header-icon" />
+                                            <span>Volumen</span>
+                                        </div>
+                                    </MudTh>
+                                    <MudTh Class="materials-table-header">
+                                        <div class="header-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Scale" Class="header-icon" />
+                                            <span>Unidad</span>
+                                        </div>
+                                    </MudTh>
+                                    <MudTh Class="materials-table-header">
+                                        <div class="header-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Speed" Class="header-icon" />
+                                            <span>TRV</span>
+                                        </div>
+                                    </MudTh>
+                                    <MudTh Class="materials-table-header">
+                                        <div class="header-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+                                            <span>Acciones</span>
+                                        </div>
+                                    </MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd Class="materials-table-cell">
+                                        <!-- Selector de Maquinaria con validación -->
+                                        <MudSelect T="int"
+                                                   @bind-Value="context.Id"
+                                                   @bind-Value:event="onchange"
+                                                   ValueChanged="OnMachineSelected"
+                                                   Margin="Margin.Dense"
+                                                   Variant="Variant.Text"
+                                                   AnchorOrigin="Origin.BottomCenter"
+                                                   TransformOrigin="Origin.TopCenter"
+                                                   For="@(() => context.Id)"
+                                                   Validation="@(ValidatorMachine.ValidateValue)"
+                                                   Class="table-select"
+                                                   Clearable>
+                                            <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un elemento</MudSelectItem>
+                                            @foreach (var machine in ViewModel.MachineList)
+                                            {
+                                                <MudSelectItem T="int" Value="@machine.Id">@machine.Name</MudSelectItem>
+                                            }
+                                        </MudSelect>
+                                    </MudTd>
+
+                                    <MudTd Class="materials-table-cell">
+                                        @if (context.Id != 0)
+                                        {
+                                            <!-- Campo de Capacidad con validación -->
+                                            <MudNumericField T="decimal"
+                                                             @bind-Value="context.Capacity"
+                                                             Min="0.01m"
+                                                             Format="N2"
+                                                             Margin="Margin.Dense"
+                                                             Variant="Variant.Text"
+                                                             For="@(() => context.Capacity)"
+                                                             Validation="@(ValidatorMachine.ValidateValue)"
+                                                             Class="table-numeric"
+                                                             Placeholder="Ingrese capacidad" />
+                                        }
+                                        else
+                                        {
+                                            <MudText Class="text-muted" Typo="Typo.body2">-</MudText>
+                                        }
+                                    </MudTd>
+
+                                    <MudTd Class="materials-table-cell">
+                                        @if (context.Id != 0)
+                                        {
+                                            <!-- Mostrar unidad de capacidad -->
+                                            <MudText Typo="Typo.body1" Class="unit-text">@context.CapacityUnit</MudText>
+                                        }
+                                        else
+                                        {
+                                            <MudText Class="text-muted" Typo="Typo.body2">-</MudText>
+                                        }
+                                    </MudTd>
+
+                                    <MudTd Class="materials-table-cell">
+                                        @if (context.Id != 0)
+                                        {
+                                            <!-- Campo TRV con validación -->
+                                            <MudNumericField T="decimal"
+                                                             Min="0.01m"
+                                                             Format="N2"
+                                                             Margin="Margin.Dense"
+                                                             Variant="Variant.Text"
+                                                             @bind-Value="context.TRV"
+                                                             For="@(() => context.TRV)"
+                                                             Validation="@(ValidatorMachine.ValidateValue)"
+                                                             Class="table-numeric"
+                                                             Adornment="Adornment.End"
+                                                             AdornmentText="m³/ha"
+                                                             Placeholder="Ingrese TRV" />
+                                        }
+                                        else
+                                        {
+                                            <MudText Class="text-muted" Typo="Typo.body2">-</MudText>
+                                        }
+                                    </MudTd>
+
+                                    <MudTd Class="materials-table-cell">
+                                        @if (context.Id != 0)
+                                        {
+                                            <div class="table-actions">
+                                                <MudTooltip Text="Calcular TRV">
+                                                    <MudButton Variant="Variant.Filled"
+                                                               Color="Color.Info"
+                                                               Size="Size.Small"
+                                                               StartIcon="@Icons.Material.Filled.Calculate"
+                                                               Class="action-btn"
+                                                               OnClick="OpenTRVCalculatorDialog">
+                                                        CALCULAR TRV
+                                                    </MudButton>
+                                                </MudTooltip>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <MudText Class="text-muted" Typo="Typo.body2">-</MudText>
+                                        }
+                                    </MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        </div>
+                    </div>
+                </div>
+            </MudForm>
+        }
+
+        <!-- Materials Table Section -->
+        @if (ViewModel.Details.Count() != 0)
+        {
+            <div class="materials-table-section">
+                <div class="table-header">
+                    <div class="table-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Inventory" Class="table-header-icon" />
+                        <MudText Class="table-header-title" Typo="Typo.h6">Materiales</MudText>
+                    </div>
+                </div>
+
+                <div class="materials-table-container">
+                    <MudTable T="DetailRecipeDTO" 
+                            Items="@ViewModel.Details" 
+                            Class="materials-table" 
+                            Bordered="true" 
+                            Dense="true" 
+                            Hover="true"
+                            Elevation="0"
+                            Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Category" Class="header-icon" />
+                                    <span>Categoría</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Inventory2" Class="header-icon" />
+                                    <span>Producto</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.BrandingWatermark" Class="header-icon" />
+                                    <span>Marca</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.BugReport" Class="header-icon" />
+                                    <span>Plaga/Enfermedad</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Scale" Class="header-icon" />
+                                    <span>Cant. Requerida</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Straighten" Class="header-icon" />
+                                    <span>Unidad</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="header-icon" />
+                                    <span>Cant. Estimada</span>
+                                </div>
+                            </MudTh>
+                            <MudTh Class="materials-table-header">
+                                <div class="header-content">
+                                    <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+                                    <span>Acciones</span>
+                                </div>
+                            </MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudSelect T="int"
+                                             Margin="Margin.Dense"
+                                             Variant="Variant.Text"
+                                             AnchorOrigin="Origin.BottomCenter"
+                                             TransformOrigin="Origin.TopCenter"
+                                             @bind-Value="context.CategoryId"
+                                             For="@(() => context.CategoryId)"
+                                             Class="table-select"
+                                             Clearable>
+                                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una categoría</MudSelectItem>
+                                        @if (ViewModel.Categories != null)
+                                        {
+                                            @foreach (var category in ViewModel.Categories)
+                                            {
+                                                <MudSelectItem T="int" Value="@category.Id">@category.Description</MudSelectItem>
+                                            }
+                                        }
+                                    </MudSelect>
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudSelect T="int"
+                                             Margin="Margin.Dense"
+                                             Variant="Variant.Text"
+                                             AnchorOrigin="Origin.BottomCenter"
+                                             TransformOrigin="Origin.TopCenter"
+                                             @bind-Value="context.MaterialId"
+                                             For="@(() => context.MaterialId)"
+                                             Class="table-select"
+                                             Clearable>
+                                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un producto</MudSelectItem>
+                                        @foreach (var m in ViewModel.Materials.Where(m => m.CategoryId == context.CategoryId))
+                                        {
+                                            <MudSelectItem T="int" Value="@m.Id">@m.ArticleName - @m.CommercialName</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudTextField @bind-Value="context.Brand" 
+                                                Placeholder="Marca" 
+                                                Variant="Variant.Text"
+                                                Class="table-input"
+                                                For="@(() => context.Brand)" />
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudTextField @bind-Value="context.PestDisease" 
+                                                Placeholder="Plaga/Enfermedad" 
+                                                Variant="Variant.Text"
+                                                Class="table-input"
+                                                For="@(() => context.PestDisease)" />
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudNumericField T="decimal"
+                                                   Format="N2"
+                                                   Margin="Margin.Dense"
+                                                   Variant="Variant.Text"
+                                                   @bind-Value="context.AmountRequired"
+                                                   @bind-Value:after="(() => CalculateEstimatedAmount(context))"
+                                                   Adornment="Adornment.End"
+                                                   AdornmentText="@context.AmountRequiredUnit"
+                                                   Class="table-numeric"
+                                                   For="@(() => context.AmountRequired)" />
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <MudForm Model="@context" Validation="@(ValidatorDetail.ValidateValue)">
+                                    <MudSelect T="string"
+                                             Margin="Margin.Dense"
+                                             Variant="Variant.Text"
+                                             AnchorOrigin="Origin.BottomCenter"
+                                             TransformOrigin="Origin.TopCenter"
+                                             @bind-Value="context.AmountRequiredUnit"
+                                             For="@(() => context.AmountRequiredUnit)"
+                                             Class="table-select unit-select"
+                                             @bind-Value:after="(() => CalculateEstimatedAmount(context))">
+                                        <MudSelectItem Value="@("kg")">kg</MudSelectItem>
+                                        <MudSelectItem Value="@("gr")">gr</MudSelectItem>
+                                        <MudSelectItem Value="@("lts")">lts</MudSelectItem>
+                                        <MudSelectItem Value="@("cc")">cc</MudSelectItem>
+                                    </MudSelect>
+                                </MudForm>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <div class="estimated-amount">
+                                    <MudChip T="string" Size="Size.Small" 
+                                           Variant="Variant.Filled" 
+                                           Color="Color.Success"
+                                           Class="amount-chip">
+                                        @context.EstimatedAmount.ToString("F") @context.EstimatedAmountUnit
+                                    </MudChip>
+                                </div>
+                            </MudTd>
+                            <MudTd Class="materials-table-cell">
+                                <div class="table-actions">
+                                    <MudTooltip Text="Calcular cantidad">
+                                        <MudIconButton Icon="fa-solid fa-calculator"
+                                                     Color="Color.Info"
+                                                     Variant="Variant.Text"
+                                                     Size="Size.Small"
+                                                     Class="action-btn calc-btn"
+                                                     @onclick="@(() => CalculateEstimatedAmount(context))" />
+                                    </MudTooltip>
+                                    <MudTooltip Text="Eliminar material">
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                     Color="Color.Error"
+                                                     Variant="Variant.Text"
+                                                     Size="Size.Small"
+                                                     Class="action-btn delete-btn"
+                                                     @onclick="@(() => RemoveMaterial(context))" />
+                                    </MudTooltip>
+                                </div>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </div>
+            </div>
+        }
+    </div>
+</MudForm>
+
+<style>
+.materials-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Header Styles */
+.materials-header {
+    background: #ffffff;
+    padding: 2rem;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.header-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #00796B 0%, #004d47 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-icon {
+    font-size: 40px !important;
+    color: white;
+}
+
+.header-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.header-title {
+    color: #1a202c !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.header-subtitle {
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.recipe-btn:hover {
+    transform: translateY(-2px) !important;
+}
+
+.material-btn:hover {
+    transform: translateY(-2px) !important;
+}
+
+.header-divider {
+    height: 4px;
+    background: linear-gradient(90deg, #00796B, #004d47, #00796B);
+    margin-top: 1rem;
+    border-radius: 2px;
+}
+    /* Estilos existentes que deben mantenerse */
+    .field-group {
+        margin-bottom: 16px;
+    }
+
+    .field-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .field-icon {
+        color: var(--mud-palette-primary);
+        font-size: 20px;
+    }
+
+    .field-title {
+        color: var(--mud-palette-text-primary);
+        font-weight: 600;
+    }
+
+/* Materials Table Section */
+.materials-table-section {
+    margin: 0.3rem 1.5rem;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem 0;
+}
+
+.table-header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.table-header-icon {
+    font-size: 24px !important;
+    color: #00796B;
+}
+
+.table-header-title {
+    color: #1a202c !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.items-count {
+    font-weight: 600;
+}
+
+.materials-table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.materials-table {
+    background: transparent !important;
+}
+
+.materials-table-header {
+    background: #00796B !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 1rem 1.25rem !important;
+    border: none !important;
+}
+
+.materials-table-header .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.materials-table-header .header-icon {
+    font-size: 16px !important;
+    opacity: 0.9;
+}
+
+.materials-table-cell {
+    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+    vertical-align: middle !important;
+    background: white;
+}
+
+.materials-table tbody tr:hover .materials-table-cell {
+    background: #f8fafb !important;
+}
+
+.table-select, .table-input, .table-numeric {
+    border: none !important;
+    background: transparent !important;
+}
+
+.table-select .mud-input-root, 
+.table-input .mud-input-root,
+.table-numeric .mud-input-root {
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+.unit-select {
+    max-width: 80px;
+}
+
+.estimated-amount {
+    display: flex;
+    justify-content: center;
+}
+
+.amount-chip {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.action-btn {
+    transition: all 0.2s ease !important;
+}
+
+.calc-btn:hover {
+    background: rgba(33, 150, 243, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+.delete-btn:hover {
+    background: rgba(244, 67, 54, 0.08) !important;
+    transform: translateY(-1px);
+}
+
+@@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.materials-header {
+    animation: slideInDown 0.6s ease-out;
+}
+
+.machine-section {
+    animation: slideInUp 0.5s ease-out;
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+</style>
+@* <MudForm @ref="_form" Model="ViewModel" Validation="@(Validator.ValidateValue)">
     <div class="container-fluid bg-color-white p-4 rounded shadow mt-3">
         <div class="d-flex mb-2">
             <MudText Typo="Typo.h4">
@@ -216,4 +865,4 @@
     .btnDelete{
         margin-top: 30px;
     }
-</style>
+</style> *@

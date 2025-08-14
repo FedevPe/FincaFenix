@@ -1,0 +1,460 @@
+﻿<div class="modern-table-container">
+    <MudTable T="ShowWorkOrderDTO"
+              Items="@WorkOrderList"
+              Hover="true"
+              Breakpoint="Breakpoint.Sm"
+              SortLabel="sort"
+              Dense="false"
+              FixedFooter="true"
+              Bordered="false"
+              Class="modern-table"
+              Elevation="0">
+        <HeaderContent>
+            <MudTh Class="modern-header">
+                <MudTableSortLabel SortBy="new Func<ShowWorkOrderDTO, object>(x => int.Parse(x.OrderNum))">
+                    <div class="header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Numbers" Class="header-icon" />
+                        <span>Orden N°</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <MudTableSortLabel SortBy="new Func<ShowWorkOrderDTO, object>(x => x.StartDate)">
+                    <div class="header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="header-icon" />
+                        <span>Fecha de Inicio</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <MudTableSortLabel SortBy="new Func<ShowWorkOrderDTO, object>(x => x.Status)">
+                    <div class="header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Flag" Class="header-icon" />
+                        <span>Estado</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <MudTableSortLabel SortBy="new Func<ShowWorkOrderDTO, object>(x => x.Farm.Name)">
+                    <div class="header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.LocationCity" Class="header-icon" />
+                        <span>Finca</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <div class="header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="header-icon" />
+                    <span>Cuadros</span>
+                </div>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <div class="header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Task" Class="header-icon" />
+                    <span>Tarea</span>
+                </div>
+            </MudTh>
+            <MudTh Class="modern-header">
+                <div class="header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+                    <span>Acciones</span>
+                </div>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Orden N°" Class="modern-cell">
+                <div class="cell-content">
+                    <MudChip T="string" Class="order-number-chip" Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary">
+                        #@context.OrderNum
+                    </MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Fecha de Inicio" Class="modern-cell">
+                <div class="cell-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Event" Class="cell-icon" />
+                    <span>@context.StartDate.Value.ToString("dd/MM/yyyy")</span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Estado" Class="modern-cell">
+                <div class="cell-content">
+                    <MudChip T="string" Class="@GetStatusChipClass(context.Status)" Size="Size.Small" Variant="Variant.Filled">
+                        @context.Status
+                    </MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Finca" Class="modern-cell">
+                <div class="cell-content">
+                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="cell-icon" />
+                    <span>@context.Farm.Name</span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Cuadros" Class="modern-cell">
+                <div class="cell-content sectors-content">
+                    @if (context.SectorList != null && context.SectorList.Any())
+                    {
+                        @foreach (var sector in context.SectorList.Take(3))
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Info" Class="sector-chip">
+                                @sector.SectorName
+                            </MudChip>
+                        }
+                        @if (context.SectorList.Count() > 3)
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default" Class="sector-chip">
+                                +@(context.SectorList.Count() - 3)
+                            </MudChip>
+                        }
+                    }
+                    else
+                    {
+                        <span class="no-sectors">Sin cuadros</span>
+                    }
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Tarea" Class="modern-cell">
+                <div class="cell-content task-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="cell-icon" />
+                    <MudTooltip Text="@context.Task.Description">
+                        <span class="task-description">@context.Task.Description</span>
+                    </MudTooltip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Acciones" Class="modern-cell">
+                <div class="actions-container">
+                    <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" Class="action-buttons">
+                        <MudTooltip Text="Agregar Actividad">
+                            <MudIconButton Icon="@Icons.Material.Filled.AddTask" 
+                                         Color="Color.Secondary" 
+                                         Size="Size.Small"
+                                         Class="action-btn action-btn-secondary"
+                                         OnClick="@(() => OpenActivityForm(context.Status, context.Id))" />
+                        </MudTooltip>
+                        <MudTooltip Text="Ver Detalles">
+                            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
+                                         Color="Color.Info" 
+                                         Size="Size.Small"
+                                         Class="action-btn action-btn-info"
+                                         OnClick="@(() => OpenWorkOrderDetails(context.Id))" />
+                        </MudTooltip>
+                        <MudTooltip Text="Generar PDF">
+                            <MudIconButton Icon="@Icons.Custom.FileFormats.FilePdf" 
+                                         Color="Color.Error" 
+                                         Size="Size.Small"
+                                         Class="action-btn action-btn-error"
+                                         OnClick="@(() => GeneratePDF(context))" />
+                        </MudTooltip>
+                    </MudButtonGroup>
+                </div>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <div class="modern-pager">
+                <MudTablePager PageSizeOptions="new int[] { 10, 20, }" />
+            </div>
+        </PagerContent>
+    </MudTable>
+</div>
+
+<style>
+.modern-table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.modern-table {
+    background: transparent !important;
+}
+
+.modern-header {
+    background: #00796B !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 1rem 1.25rem !important;
+    border: none !important;
+    position: relative;
+}
+
+.modern-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.header-icon {
+    font-size: 18px !important;
+    opacity: 0.9;
+}
+
+.modern-cell {
+    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    vertical-align: middle !important;
+    background: white;
+    transition: background-color 0.2s ease;
+}
+
+.modern-table tbody tr:hover .modern-cell {
+    background: #f8fafb !important;
+}
+
+.cell-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cell-icon {
+    font-size: 16px !important;
+    color: #64748b;
+    opacity: 0.7;
+}
+
+.order-number-chip {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.sectors-content {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.sector-chip {
+    margin: 0.125rem;
+    font-size: 0.75rem;
+    height: 24px;
+}
+
+.task-content {
+    max-width: 200px;
+}
+
+.task-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+    display: block;
+}
+
+.no-sectors {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: center;
+}
+
+.action-buttons {
+    box-shadow: none;
+}
+
+.action-btn {
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    transition: all 0.2s ease !important;
+    background: white !important;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.action-btn-secondary:hover {
+    background: rgba(156, 39, 176, 0.04) !important;
+}
+
+.action-btn-info:hover {
+    background: rgba(33, 150, 243, 0.04) !important;
+}
+
+.action-btn-error:hover {
+    background: rgba(244, 67, 54, 0.04) !important;
+}
+
+.modern-footer {
+    background: linear-gradient(135deg, #f8fafb 0%, #ffffff 100%) !important;
+    border-top: 2px solid #00796B !important;
+    padding: 1.25rem !important;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.footer-icon {
+    color: #00796B;
+    font-size: 20px !important;
+}
+
+.footer-text {
+    color: #374151 !important;
+    margin: 0 !important;
+}
+
+.footer-summary {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.summary-chip {
+    font-size: 0.75rem;
+    height: 24px;
+}
+
+.modern-pager {
+    padding: 1rem;
+    background: #ffffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Chips de estado con colores específicos */
+.status-activo {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    color: white !important;
+}
+.status-cerrado {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    color: white !important;
+}
+
+.status-pendiente {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    color: white !important;
+}
+
+.status-creado {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    color: white !important;
+}
+
+/* Responsive Design */
+@@media (max-width: 768px) {
+    .modern-table-container {
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+    
+    .modern-header,
+    .modern-cell {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+    
+    .header-icon {
+        font-size: 16px !important;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .task-description {
+        max-width: 120px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .sectors-content {
+        justify-content: flex-start;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .summary-chip {
+        font-size: 0.7rem;
+        height: 20px;
+    }
+}
+
+/* Animaciones suaves */
+@@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-table tbody tr {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.modern-table tbody tr:nth-child(odd) {
+    animation-delay: 0.05s;
+}
+
+.modern-table tbody tr:nth-child(even) {
+    animation-delay: 0.1s;
+}
+</style>
+
+@code {
+    private string GetStatusChipClass(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "activo" => "status-activo",
+            "cerrado" => "status-cerrado",
+            "pendiente" => "status-pendiente",
+            "creado" => "status-creado",
+            _ => "status-creado"
+        };
+    }
+    
+    private string GetStatusIcon(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "activo" => Icons.Material.Filled.PlayArrow,
+            "cerrado" => Icons.Material.Filled.CheckCircle,
+            "pendiente" => Icons.Material.Filled.Schedule,
+            "creado" => Icons.Material.Filled.Add,
+            _ => Icons.Material.Filled.Circle
+        };
+    }
+}
+

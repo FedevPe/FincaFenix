@@ -21,7 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<NewDetailRecipeUIValidator>()
                     .AddScoped<NewDetailSectorUIValidator>()
                     .AddScoped<DetailActivityUIValidator>()
-                    .AddScoped<RegistryActivityViewModelValidator>();
+                    .AddScoped<RegistryActivityViewModelValidator>()
+                    .AddScoped<RecipeMachineUIValidator>();
 
             return services;
         }

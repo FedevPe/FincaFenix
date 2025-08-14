@@ -7,11 +7,11 @@
         </MudItem>
     </MudGrid>
 </div>
-@* <SearchBar OnSearch="HandleSearch" /> *@
 <div class="container-fluid shadow p-3 border rounded mt-3 mb-3 bg-color-white">
+    <StatsCard WorkOrderList="@ViewModel.AllWorkOrderList"/>
     <MudGrid Justify="Justify.FlexStart" Spacing="1">
         <MudItem>
-            <MudText Typo="Typo.h5"><b>@textContent</b></MudText>
+            <MudText Typo="Typo.h5"><b>Ordenes de Trabajo</b></MudText>
         </MudItem>
         <MudSpacer />
         <MudToggleGroup T="bool" Value="renderWorkOrderCard" ValueChanged="HandleToggleChanged">
@@ -37,7 +37,7 @@
             <MudText Typo="Typo.h6" Style="margin-top:30px">Cargando órdenes de trabajo...</MudText>
         </div>
     }
-    else if (ViewModel.WorkOrderList is null || !ViewModel.WorkOrderList.Any())
+    else if ((ViewModel.AllWorkOrderList is null || !ViewModel.AllWorkOrderList.Any()) && (ViewModel.WorkOrderPaginatedList is null || !ViewModel.WorkOrderPaginatedList.Any()))
     {
         <MudItem xs="12">
             <MudText Typo="Typo.body1" Align="Align.Center">No se encontraron órdenes de trabajo activas o pendientes.</MudText>
@@ -48,7 +48,7 @@
         if (renderWorkOrderCard)
         {
             <MudGrid spacing="3" justify="Justify.FlexStart" class="mt-1">
-                @foreach (var workorder in ViewModel.WorkOrderList)
+                @foreach (var workorder in ViewModel.WorkOrderPaginatedList)
                 {
                     <MudItem xs="12" sm="12" md="6" lg="3">
                         <WorkOrderCard InfoWO="workorder" />
@@ -69,7 +69,7 @@
         else
         {
             <MudItem xs="12" lg="12">
-                <WorkOrderTable WorkOrderList="@ViewModel.WorkOrderList" />
+                <WorkOrderTable WorkOrderList="@ViewModel.AllWorkOrderList" />
             </MudItem>
         }
     }

@@ -1,4 +1,652 @@
 ﻿<MudForm @ref="_form" Model="ViewModel" Validation="@(Validator.ValidateValue)">
+    <div class="modern-form-container">
+        <!-- Header Section -->
+        <div class="form-header">
+            <div class="header-content">
+                <div class="header-icon-wrapper">
+                    <MudIcon Icon="@Icons.Material.Filled.NoteAdd" Class="header-icon" Size="Size.Small"/>
+                </div>
+                <div class="header-text">
+                    <MudText Class="header-title" Typo="Typo.h4">Nueva Orden de Trabajo</MudText>
+                    <MudText Class="header-subtitle" Typo="Typo.subtitle1">Complete la información necesaria para crear la orden</MudText>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+        </div>
+
+        <!-- Form Fields Section -->
+        <div class="form-fields">
+            <MudGrid Spacing="4" Justify="Justify.FlexStart">
+                <MudItem xs="12" lg="4">
+                    <div class="field-group">
+                        <div class="field-label">
+                            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="field-icon" />
+                            <MudText Typo="Typo.h6" Class="field-title">Fecha de inicio</MudText>
+                        </div>
+                        <div class="field-input-wrapper">
+                            <MudDatePicker Date="ViewModel.StartDate" 
+                                         DateChanged="@((DateTime? newDate) => ViewModel.StartDate = newDate)"
+                                         ShowToolbar="false" 
+                                         Placeholder="@ViewModel.StartDate.Value.ToShortDateString()"
+                                         AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                                         Variant="Variant.Outlined"
+                                         Margin="Margin.Dense"
+                                         AnchorOrigin="Origin.BottomRight"
+                                         TransformOrigin="Origin.TopRight"
+                                         For="@(()=> ViewModel.StartDate)"
+                                         Class="modern-input" />
+                        </div>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" lg="4">
+                    <div class="field-group">
+                        <div class="field-label">
+                            <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="field-icon" />
+                            <MudText Typo="Typo.h6" Class="field-title">Finca</MudText>
+                        </div>
+                        <div class="field-input-wrapper">
+                            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                                     Variant="Variant.Outlined"
+                                     AnchorOrigin="Origin.BottomRight"
+                                     TransformOrigin="Origin.TopRight"
+                                     @bind-Value="ViewModel.SelectedFarmId"
+                                     @bind-Value:event="onchange"
+                                     ValueChanged="@OnFarmChanged"
+                                     For="@(()=> ViewModel.SelectedFarmId)"
+                                     Class="modern-select">
+                                <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una finca</MudSelectItem>
+                                @foreach (var farm in ViewModel.Farms)
+                                {
+                                    <MudSelectItem T="int" Value="@farm.Id">@farm.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12" lg="4">
+                    <div class="field-group">
+                        <div class="field-label">
+                            <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="field-icon" />
+                            <MudText Typo="Typo.h6" Class="field-title">Tarea</MudText>
+                        </div>
+                        <div class="field-input-wrapper">
+                            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
+                                     Variant="Variant.Outlined"
+                                     AnchorOrigin="Origin.BottomRight"
+                                     TransformOrigin="Origin.TopRight"
+                                     @bind-Value="ViewModel.SelectedTaskId"
+                                     For="@(() => ViewModel.SelectedTaskId)"
+                                     Class="modern-select">
+                                <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una tarea</MudSelectItem>
+                                @foreach (var task in ViewModel.Tasks)
+                                {
+                                    <MudSelectItem T="int" Value="@task.Id">@task.Description</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </div>
+                    </div>
+                </MudItem>
+
+                @if (ViewModel.SelectedFarmId != 0)
+                {
+                    <!-- Sectors Section -->
+                    <MudItem xs="12" lg="12">
+                        <div class="sectors-section">
+                            <div class="section-header">
+                                <div class="section-header-content">
+                                    <div class="section-icon-wrapper">
+                                        <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="section-icon" />
+                                    </div>
+                                    <div class="section-info">
+                                        <MudText Class="section-title" Typo="Typo.h6">
+                                            Cuadros de la Finca @ViewModel.Farms.FirstOrDefault(f => f.Id == ViewModel.SelectedFarmId).Name
+                                        </MudText>
+                                        <MudText Class="section-subtitle" Typo="Typo.body2">
+                                            Seleccione los cuadros donde se realizará la tarea
+                                        </MudText>
+                                    </div>
+                                </div>
+                                <MudButton Variant="Variant.Filled" 
+                                         Color="Color.Primary" 
+                                         Size="Size.Medium" 
+                                         StartIcon="@Icons.Material.Filled.Add"
+                                         Class="add-sector-btn"
+                                         onclick="AddSectorToSelection">
+                                    Agregar Cuadro
+                                </MudButton>
+                            </div>
+
+                            @if (ViewModel.SelectedSectors.Any())
+                            {
+                                <div class="sectors-table-container">
+                                    <MudTable T="DetailSectorFarmDTO" 
+                                            Items="@ViewModel.SelectedSectors" 
+                                            Hover="true" 
+                                            Dense="true" 
+                                            Bordered="true"
+                                            Class="sectors-table"
+                                            Elevation="0">
+                                        <HeaderContent>
+                                            <MudTh Class="sectors-table-header">
+                                                <div class="header-content">
+                                                    <MudIcon Icon="@Icons.Material.Filled.CropFree" Class="header-icon" />
+                                                    <span>Cuadro</span>
+                                                </div>
+                                            </MudTh>
+                                            <MudTh Class="sectors-table-header">
+                                                <div class="header-content">
+                                                    <MudIcon Icon="fa-solid fa-apple-whole" Class="header-icon" />
+                                                    <span>Fruta</span>
+                                                </div>
+                                            </MudTh>
+                                            <MudTh Class="sectors-table-header">
+                                                <div class="header-content">
+                                                    <MudIcon Icon="fa-solid fa-seedling" Class="header-icon" />
+                                                    <span>Variedad</span>
+                                                </div>
+                                            </MudTh>
+                                            <MudTh Class="sectors-table-header">
+                                                <div class="header-content">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Straighten" Class="header-icon" />
+                                                    <span>Superficie</span>
+                                                </div>
+                                            </MudTh>
+                                            <MudTh Class="sectors-table-header">
+                                                <div class="header-content">
+                                                    <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+                                                    <span>Acción</span>
+                                                </div>
+                                            </MudTh>
+                                        </HeaderContent>
+                                        <RowTemplate>
+                                            <MudTd Class="sectors-table-cell">
+                                                <MudForm Model="context" Validation="@(DetailSectorValidator.ValidateValue)">
+                                                    <MudSelect T="int" 
+                                                             Margin="Margin.Dense" 
+                                                             FullWidth="true"
+                                                             Variant="Variant.Outlined"
+                                                             AnchorOrigin="Origin.BottomRight"
+                                                             TransformOrigin="Origin.TopRight"
+                                                             Value="context.Id"
+                                                             ValueChanged="@((int selectedId) => OnSectorSelected(context, selectedId))"
+                                                             For="@(() => context.Id)"
+                                                             Class="sector-select">
+                                                        <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un cuadro</MudSelectItem>
+                                                        @foreach (var sector in ViewModel.Sectors)
+                                                        {
+                                                            <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
+                                                        }
+                                                    </MudSelect>
+                                                </MudForm>
+                                            </MudTd>
+                                            <MudTd Class="sectors-table-cell">
+                                                <div class="cell-content">
+                                                    <span>@context.FruitName</span>
+                                                </div>
+                                            </MudTd>
+                                            <MudTd Class="sectors-table-cell">
+                                                <div class="cell-content">
+                                                    <span>@context.VarietyName</span>
+                                                </div>
+                                            </MudTd>
+                                            <MudTd Class="sectors-table-cell">
+                                                @if(context.Id != 0)
+                                                {
+                                                    <MudChip T="string" Size="Size.Small" 
+                                                           Variant="Variant.Filled" 
+                                                           Color="Color.Info"
+                                                           Class="area-chip">
+                                                        @context.Area ha
+                                                    </MudChip>
+                                                }
+                                            </MudTd>
+                                            <MudTd Class="sectors-table-cell">
+                                                <MudTooltip Text="Eliminar cuadro">
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                                 Color="Color.Error"
+                                                                 Variant="Variant.Filled"
+                                                                 Size="Size.Small"
+                                                                 Class="delete-btn"
+                                                                 OnClick="(() => RemoveSectorFromSelection(context))" />
+                                                </MudTooltip>
+                                            </MudTd>
+                                        </RowTemplate>
+                                        <FooterContent>
+                                            <MudTr>
+                                                <div class="total-area-summary">
+                                                    <div class="summary-card">
+                                                        <div class="summary-icon-wrapper">
+                                                            <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="summary-icon" />
+                                                        </div>
+                                                        <div class="summary-content">
+                                                            <MudText Class="summary-label" Typo="Typo.body2">Superficie Total</MudText>
+                                                            <MudText Class="summary-value" Typo="Typo.h6">@TotalArea ha</MudText>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </MudTr>
+                                        </FooterContent>
+                                    </MudTable>
+                                </div>
+                            }
+                        </div>
+                    </MudItem>
+                }
+            </MudGrid>
+        </div>
+    </div>
+</MudForm>
+
+<style>
+.modern-form-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Header Styles */
+.form-header {
+    background: #ffffff;
+    padding: 2rem;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.header-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #00796B 0%, #004d47 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-icon {
+    font-size: 30px !important;
+    color: white;
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-title {
+    color: #1a202c !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.2rem !important;
+}
+
+.header-subtitle {
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+.header-divider {
+    height: 4px;
+    background: linear-gradient(90deg, #00796B, #004d47, #00796B);
+    margin-top: 2rem;
+    border-radius: 2px;
+}
+
+/* Form Fields Styles */
+.form-fields {
+    padding: 2rem;
+}
+
+.field-group {
+    margin-bottom: 1rem;
+}
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.field-icon {
+    font-size: 20px !important;
+    color: #00796B;
+}
+
+.field-title {
+    color: #374151 !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.field-input-wrapper {
+    position: relative;
+}
+
+.modern-input, .modern-select {
+    border-radius: 12px !important;
+}
+
+.modern-input .mud-input-root, .modern-select .mud-input-root {
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.modern-input .mud-input-root:hover, .modern-select .mud-input-root:hover {
+    box-shadow: 0 4px 12px rgba(0, 121, 107, 0.15) !important;
+}
+
+.modern-input .mud-input-root.mud-input-root-focused, 
+.modern-select .mud-input-root.mud-input-root-focused {
+    border-color: #00796B !important;
+    box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.1) !important;
+}
+
+/* Sectors Section */
+.sectors-section {
+    background: #f8fafb;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00796B 0%, #004d47 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-icon {
+    font-size: 24px !important;
+    color: white;
+}
+
+.section-info {
+    flex: 1;
+}
+
+.section-title {
+    color: #1a202c !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.section-subtitle {
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+.add-sector-btn {
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+.add-sector-btn:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* Sectors Table */
+.sectors-table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.06);
+    margin: 1rem 0;
+}
+
+.sectors-table {
+    background: transparent !important;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sectors-table-header {
+    background: #00796B !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 1rem 1.25rem !important;
+    border: none !important;
+}
+
+.sectors-table-header .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.sectors-table-header .header-icon {
+    font-size: 16px !important;
+    opacity: 0.9;
+}
+
+.sectors-table-cell {
+    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+    vertical-align: middle !important;
+    background: white;
+}
+
+.sectors-table tbody tr:hover .sectors-table-cell {
+    background: #f8fafb !important;
+}
+
+.cell-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cell-icon {
+    font-size: 16px !important;
+    opacity: 0.7;
+}
+
+.fruit-icon {
+    color: #f59e0b !important;
+}
+
+.variety-icon {
+    color: #10b981 !important;
+}
+
+.area-chip {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.sector-select {
+    min-width: 200px;
+}
+
+.sector-select .mud-input-root {
+    border-radius: 8px !important;
+}
+
+.delete-btn {
+    transition: all 0.2s ease !important;
+}
+
+.delete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3) !important;
+}
+
+/* Total Area Summary */
+.total-area-summary {
+    margin: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.summary-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #00796B 0%, #004d47 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-icon {
+    font-size: 24px !important;
+    color: white;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-label {
+    color: #64748b !important;
+    margin-bottom: 3px !important;
+}
+
+.summary-value {
+    color: #00796B !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+}
+
+/* Responsive Design */
+@@media (max-width: 1024px) {
+    .header-content {
+        gap: 1rem;
+    }
+    
+    .header-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .header-icon {
+        font-size: 30px !important;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .section-header-content {
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+@@media (max-width: 768px) {
+    .form-header, .form-fields {
+        padding: 1.5rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .sectors-section {
+        padding: 1rem;
+    }
+    
+    .sectors-table-header,
+    .sectors-table-cell {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .summary-card {
+        min-width: auto;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@@media (max-width: 600px) {
+    .sector-select {
+        min-width: auto;
+    }
+    
+    .cell-content {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+    
+    .add-sector-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animations */
+@@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sectors-section {
+    animation: slideInUp 0.5s ease-out;
+}
+
+.sectors-table tbody tr {
+    animation: slideInUp 0.3s ease-out;
+}
+
+.sectors-table tbody tr:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.sectors-table tbody tr:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+</style>
+@* <MudForm @ref="_form" Model="ViewModel" Validation="@(Validator.ValidateValue)">
     <div class="container-fluid shadow rounded p-4 bg-color-white">
         <MudGrid Spacing="0" Justify="Justify.FlexStart">
             <MudItem>
@@ -129,4 +777,4 @@
             }
         </MudGrid>
     </div>
-</MudForm>
+</MudForm> *@

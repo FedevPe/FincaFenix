@@ -2,10 +2,9 @@ using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.PDF;
 using FincaFenix.UserInterface7._0.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
 
-namespace FincaFenix.UserInterface7._0.Components
+namespace FincaFenix.UserInterface7._0.Components.Shared
 {
     public partial class WorkOrderTable
     {
