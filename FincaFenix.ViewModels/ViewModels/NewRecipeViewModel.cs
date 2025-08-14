@@ -9,11 +9,7 @@ namespace FincaFenix.ViewModels.ViewModels
         IMaterialCategoryController categories,
         IMachineController machine)
     {
-        public int MachineId { get; set; }
-        public decimal VolumeMachine { get; set; }
-        public string VolumeMachineUnit { get; set; } = string.Empty;
-        public decimal TRV { get; set; } = 0;
-
+        
         public decimal? TotalAreaSectors { get; set; } = 0;
         public IEnumerable<MachineRecipeDTO>? MachineList { get; set; }
         public MachineRecipeDTO? Machine { get; set; }

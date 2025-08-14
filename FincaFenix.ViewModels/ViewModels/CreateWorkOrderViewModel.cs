@@ -27,9 +27,9 @@ namespace FincaFenix.ViewModels.ViewModels
                 WorkOrder.Recipe = new RecipeWorkOrderDTO
                 {
                     MachineId = RecipeData.Machine.Id,
-                    VolumeMachine = RecipeData.VolumeMachine,
-                    VolumeMachineUnit = RecipeData.VolumeMachineUnit,
-                    TRV = RecipeData.TRV,
+                    VolumeMachine = RecipeData.Machine.Capacity,
+                    VolumeMachineUnit = RecipeData.Machine.CapacityUnit,
+                    TRV = RecipeData.Machine.TRV,
                     Details = RecipeData.Details.Select(m => new DetailRecipeDTO
                     {
                         MaterialId = m.MaterialId,
