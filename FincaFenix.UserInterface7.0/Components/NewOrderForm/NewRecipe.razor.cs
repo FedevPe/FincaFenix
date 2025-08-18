@@ -1,4 +1,5 @@
 using FincaFenix.Entities.DTOs.RecipeDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using FincaFenix.ViewModels.ViewModels;
@@ -25,7 +26,12 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
         {
             TotalAreaSectorService.OnChange += StateHasChanged;
         }
-
+        private IEnumerable<MaterialRecipeDTO> GetAvailableMaterials(int contextCategoryId)
+        {
+             return ViewModel.Materials.Where(m =>m.CategoryId == contextCategoryId)
+                .DistinctBy(m => m.ArticleName)
+                .ToList();
+        }
         public void Dispose()
         {
             TotalAreaSectorService.OnChange -= StateHasChanged;

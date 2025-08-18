@@ -9,6 +9,7 @@ namespace FincaFenix.Entities.DTOs.ShowWorkOrder
         public string OrderNum { get; set; }
         public string Status { get; set; }
         public string Description { get; set; }
+        public decimal TotalAreaWorked { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

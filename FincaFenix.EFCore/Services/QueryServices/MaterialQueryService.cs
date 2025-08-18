@@ -19,7 +19,11 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<IEnumerable<MaterialEntity>> GetMaterialListByCategoryId(int categoryId)
         {
-            return await Materials.Where(x => x.CategoryId == categoryId).ToListAsync();
+           return await Materials
+                .Where(x => x.CategoryId == categoryId)
+                .GroupBy(x => x.ArticleName) // Agrupa por el nombre del material para identificar los duplicados.
+                .Select(x => x.First()) // Selecciona el primer elemento de cada grupo.
+                .ToListAsync();
         }
     }
 }

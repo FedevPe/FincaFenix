@@ -1,4 +1,5 @@
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Validators.DetailWorkOrder;
 using FincaFenix.UserInterface7._0.Validators.RegisterActivity;
 using FincaFenix.ViewModels.ViewModels;
@@ -19,6 +20,8 @@ namespace FincaFenix.UserInterface7._0.Forms
         [Parameter] public int WorkOrderId { get; set; }
 
         private MudForm form;
+        private bool IsAddButtonDisabled =>
+            ViewModel.ActivityDetails.Count >= (InfoVM.WOInfo?.SectorList.Count() ?? 0);
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,6 +32,17 @@ namespace FincaFenix.UserInterface7._0.Forms
 
             ViewModel.WorkOrderId = WorkOrderId;
             ViewModel.ActivityDate = DateTime.Now;
+        }
+        private IEnumerable<DetailSectorFarmDTO> GetAvailableSectors(int currentSectorId)
+        {
+            // Obtiene los IDs de los sectores que ya están seleccionados en la tabla
+            var selectedIds = ViewModel.ActivityDetails
+                                        .Where(d => d.Info.SectorWorkedId != 0 && d.Info.SectorWorkedId != currentSectorId)
+                                        .Select(d => d.Info.SectorWorkedId)
+                                        .ToList();
+
+            // Filtra la lista original de sectores para mostrar solo los no seleccionados
+            return InfoVM.WOInfo.SectorList.Where(s => !selectedIds.Contains(s.Id));
         }
         private void AddDetailWorkOrder()
         {
@@ -57,10 +71,6 @@ namespace FincaFenix.UserInterface7._0.Forms
                 Snackbar.Add("El total de horas trabajadas debe ser mayor a 0 y menor o igual a 9.", MudBlazor.Severity.Error);
                 return;
             }
-
-            // ---
-
-            Snackbar.Add($"Guardando actividad... HorasTotales = {totalHours}", MudBlazor.Severity.Info);
 
             // 3. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
             // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada

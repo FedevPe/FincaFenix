@@ -19,6 +19,7 @@ namespace FincaFenix.UsesCases.Aggregates
                 StartDate = workOrderDTO.StartDate,
                 Status = workOrderDTO.StartDate > workOrderDTO.CreatedDate ? "Pendiente" : "Activo",
                 Description = workOrderDTO.Description,
+                TotalAreaWorked = workOrderDTO.TotalArea.Value,
                 IsDeleted = false
             };
 
@@ -82,6 +83,7 @@ namespace FincaFenix.UsesCases.Aggregates
                 StartDate = workOrderEntity.StartDate,
                 EndDate = workOrderEntity.EndDate,
                 IsDeleted = workOrderEntity.IsDeleted,
+                TotalAreaWorked = workOrderEntity.TotalAreaWorked,
                 Task = new TaskDTO
                 {
                     Id = workOrderEntity.Task.Id,

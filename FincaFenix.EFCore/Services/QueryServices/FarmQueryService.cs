@@ -21,7 +21,9 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<IEnumerable<FarmEntity>> GetFarmList()
         {
-            return await Farms.OrderBy(t => t.Name).ToListAsync();
+            return await Farms.Where( f => !f.IsDeleted)
+                .OrderBy(t => t.Name)
+                .ToListAsync();
         }
     }
 }

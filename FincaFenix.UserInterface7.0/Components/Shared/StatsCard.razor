@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="stats-trend">
-                    <MudIcon Icon="@Icons.Material.Filled.Summarize" Class="trend-icon trend-up" />
+                    <MudIcon Icon="@Icons.Material.Filled.Summarize" Class="trend-icon trend-created" />
                     <span class="trend-text">Total de órdenes creadas</span>
                 </div>
             </MudPaper>
@@ -171,6 +171,10 @@
         border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
 
+    trend{
+
+    }
+
     .trend-icon {
         font-size: 16px !important;
     }
@@ -230,6 +234,9 @@
         color: #f59e0b !important;
     }
 
+    .trend-created{
+        color: #3b82f6 !important;
+    }
     .trend-up {
         color: #10b981 !important;
     }
@@ -244,8 +251,7 @@
 
     /* Responsive adjustments */
     @@media (max-width: 960px) {
-        .stats-container
-
+    .stats-container
     {
         padding: 1.5rem 1rem;
     }
@@ -289,21 +295,21 @@
         animation: slideUp 0.6s ease-out;
     }
 
-        .stats-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
+    .stats-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
 
-        .stats-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
+    .stats-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
 
-        .stats-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
+    .stats-card:nth-child(3) {
+        animation-delay: 0.3s;
+    }
 
-        .stats-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
+    .stats-card:nth-child(4) {
+        animation-delay: 0.4s;
+    }
 
 </style>
 @code{

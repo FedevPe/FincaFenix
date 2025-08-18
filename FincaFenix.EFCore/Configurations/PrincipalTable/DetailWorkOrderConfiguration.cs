@@ -19,8 +19,8 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
                 .OnDelete(DeleteBehavior.NoAction);
             builder.Property(d => d.EmployeeId).HasColumnName("IdEmpleado").IsRequired();
             builder.Property(d => d.SectorWorkedId).HasColumnName("IdSectorTrabajado").IsRequired();
-            builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(5, 2);
-            builder.Property(d => d.Performance).HasColumnName("Rendimiento").IsRequired().HasPrecision(5, 2);
+            builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(18, 2);
+            builder.Property(d => d.Performance).HasColumnName("Rendimiento").IsRequired().HasPrecision(18, 5);
             builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired(false).HasMaxLength(500);
             builder.Property(d => d.RowVersion).HasColumnName("RowVersion").IsRowVersion().IsRequired().ValueGeneratedOnAddOrUpdate();
 

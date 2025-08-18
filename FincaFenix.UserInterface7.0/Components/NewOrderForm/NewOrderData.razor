@@ -163,18 +163,18 @@
                                         <RowTemplate>
                                             <MudTd Class="sectors-table-cell">
                                                 <MudForm Model="context" Validation="@(DetailSectorValidator.ValidateValue)">
-                                                    <MudSelect T="int" 
-                                                             Margin="Margin.Dense" 
-                                                             FullWidth="true"
-                                                             Variant="Variant.Outlined"
-                                                             AnchorOrigin="Origin.BottomRight"
-                                                             TransformOrigin="Origin.TopRight"
-                                                             Value="context.Id"
-                                                             ValueChanged="@((int selectedId) => OnSectorSelected(context, selectedId))"
-                                                             For="@(() => context.Id)"
-                                                             Class="sector-select">
+                                                    <MudSelect T="int"
+                                                               Margin="Margin.Dense"
+                                                               FullWidth="true"
+                                                               Variant="Variant.Outlined"
+                                                               AnchorOrigin="Origin.BottomRight"
+                                                               TransformOrigin="Origin.TopRight"
+                                                               Value="context.Id"
+                                                               ValueChanged="@((int selectedId) => OnSectorSelected(context, selectedId))"
+                                                               For="@(() => context.Id)"
+                                                               Class="sector-select">
                                                         <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un cuadro</MudSelectItem>
-                                                        @foreach (var sector in ViewModel.Sectors)
+                                                        @foreach (var sector in GetAvailableSectors(context.Id)) // 👈 CÓDIGO REFACTORIZADO
                                                         {
                                                             <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
                                                         }
@@ -206,9 +206,9 @@
                                                 <MudTooltip Text="Eliminar cuadro">
                                                     <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                                                  Color="Color.Error"
-                                                                 Variant="Variant.Filled"
+                                                                 Variant="Variant.Text"
                                                                  Size="Size.Small"
-                                                                 Class="delete-btn"
+                                                                   Class="action-btn delete-btn"
                                                                  OnClick="(() => RemoveSectorFromSelection(context))" />
                                                 </MudTooltip>
                                             </MudTd>
@@ -469,15 +469,6 @@
     font-size: 16px !important;
     opacity: 0.7;
 }
-
-.fruit-icon {
-    color: #f59e0b !important;
-}
-
-.variety-icon {
-    color: #10b981 !important;
-}
-
 .area-chip {
     font-weight: 600;
     font-family: monospace;
@@ -489,6 +480,13 @@
 
 .sector-select .mud-input-root {
     border-radius: 8px !important;
+}
+
+.action-btn {
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
 }
 
 .delete-btn {

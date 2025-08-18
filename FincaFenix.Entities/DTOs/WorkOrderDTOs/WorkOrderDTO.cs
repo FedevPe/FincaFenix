@@ -12,6 +12,7 @@ namespace FincaFenix.Entities.DTOs.WorkOrderDTOs
         public DateTime? StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Status { get; set; }
+        public decimal? TotalArea { get; set; } = 0;
         public bool IsDeleted { get; set; }
 
         public RecipeWorkOrderDTO? Recipe { get; set; }

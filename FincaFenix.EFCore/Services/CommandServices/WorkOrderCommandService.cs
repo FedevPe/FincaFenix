@@ -33,18 +33,6 @@ namespace FincaFenix.EFCore.Services.CommandServices
                 woNumber.LastNumber++;
                 await SaveChangesAsync();
 
-                //if (workOrder.WorkedSectors != null && workOrder.WorkedSectors.Any())
-                //{
-                //    foreach (var sector in workOrder.WorkedSectors)
-                //    {
-                //        sector.Id = 0;
-                //        sector.WorkOrderId = workOrder.Id;
-                //    }
-
-                //    WorkOrderWorkedSectors.AddRange(workOrder.WorkedSectors);
-                //    await SaveChangesAsync();
-                //}
-
                 await transaction.CommitAsync();
                 return workOrder.Id;
             }

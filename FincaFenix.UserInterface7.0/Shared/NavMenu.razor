@@ -1,10 +1,11 @@
 ﻿<MudNavMenu Class="bg-color-primary mud-width-full" Color="Color.Tertiary">
-    <MudNavLink Href="/"
+    <MudNavLink Href="/menuPrincipal"
                 Icon="fa-solid fa-house"
                 Match="NavLinkMatch.All"
                 IconColor="Color.Tertiary"
+                Disabled="true"
                 Class="btn-hover">Menú Principal</MudNavLink>
-    <MudNavLink Href="/ordenestrabajo"
+    <MudNavLink Href="/"
                 Icon="fa-solid fa-clipboard-list"
                 Match="NavLinkMatch.All"
                 Class="btn-hover"
@@ -13,13 +14,14 @@
                 Icon="fa-solid fa-chart-line"
                 Match="NavLinkMatch.All"
                 IconColor="Color.Tertiary"
+                Disabled="true"
                 Class="btn-hover">Informes</MudNavLink>
 </MudNavMenu>
 <style>
-    btn-hover{
+    .btn-hover{
         color: white;
     }
-    btn-hover:hover{
+    .btn-hover:hover{
             color: white;
-     }
+    }
 </style>

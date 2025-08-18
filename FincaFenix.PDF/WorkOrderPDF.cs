@@ -203,7 +203,10 @@ namespace FincaFenix.PDF
                         table.Cell().Element(CellStyle).AlignLeft().Text(x =>
                         {
                             x.Span($"TRV: ").Bold();
-                            x.Span($"{DTO.Recipe.TRV.ToString("N2")} m3/ha");
+                        });
+                        table.Cell().Element(CellStyle).AlignLeft().Text(x =>
+                        {
+                            x.Span(($"{DTO.Recipe.TRV.ToString("N2")} m3/ha"));
                         });
                     });
                     table.Cell().Border(1).Table(table =>
@@ -212,10 +215,18 @@ namespace FincaFenix.PDF
                         {
                             columns.RelativeColumn();
                         });
+                        table.Cell().Element(CellStyle).AlignLeft().Text($"Maquinadas: ").Bold();
                         table.Cell().Element(CellStyle).AlignLeft().Text(x =>
                         {
-                            x.Span($"Maquinadas: ").Bold();
-                            x.Span($"");
+                            if (DTO.Recipe != null && DTO.Recipe.VolumeMachine != 0 && DTO.Recipe.TRV != 0)
+                            {
+                                x.Span($"{((DTO.TotalAreaWorked * DTO.Recipe.TRV) / DTO.Recipe.VolumeMachine)}");
+                            }
+                            else
+                            {
+                                x.Span("No disponible");
+                            }
+
                         });
                     });
                 }

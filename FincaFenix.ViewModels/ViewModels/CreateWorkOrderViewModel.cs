@@ -19,6 +19,7 @@ namespace FincaFenix.ViewModels.ViewModels
             WorkOrder.FarmId = OrderData.SelectedFarmId;
             WorkOrder.TaskId = OrderData.SelectedTaskId;
             WorkOrder.StartDate = OrderData.StartDate;
+            WorkOrder.TotalArea = OrderData.TotalAreaSectors;
             WorkOrder.Status = OrderData.StartDate > OrderData.CreatedDate ? "Pendiente" : "Activo";
             WorkOrder.SectorList = OrderData.SelectedSectors.ToList();
 

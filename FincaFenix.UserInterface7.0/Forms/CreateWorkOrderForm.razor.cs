@@ -1,3 +1,4 @@
+using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using FincaFenix.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Components;
@@ -11,13 +12,16 @@ namespace FincaFenix.UserInterface7._0.Forms
         [Inject] public NavigationManager NavigationManager { get; set; } = default!;
         [Inject] public ISnackbar Snackbar { get; set; } = default!;
         [Inject] public CreateWorkOrderUIValidator Validator { get; set; } = default!;
+        [Inject] public TextAppBarStateService TextAppBar { get; set; } = default!;
 
         private MudForm createWorkOrderForm;
+
 
         protected override async Task OnInitializedAsync()
         {
             await CreateWorkOrderViewModel.OrderData.LoadInitializeAsync();
             await CreateWorkOrderViewModel.RecipeData.LoadInitializeAsync();
+            TextAppBar.PageTitle = "Ordenes de Trabajo";
         }
         private async Task SaveWorkOrder()
         {
