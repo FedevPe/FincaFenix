@@ -77,7 +77,7 @@ namespace FincaFenix.UserInterface7._0.Forms
             if (await ViewModel.SaveDetailWorkOrderAsync(ViewModel))
             {
                 Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
-                NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
+                NavigationManager.NavigateTo($"/"); // Redirige después de guardar
             }
             else
             {

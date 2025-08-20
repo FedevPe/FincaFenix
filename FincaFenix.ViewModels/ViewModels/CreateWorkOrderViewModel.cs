@@ -39,7 +39,8 @@ namespace FincaFenix.ViewModels.ViewModels
                         PestDisease = m.PestDisease,
                         Brand = m.Brand,
                         EstimatedAmount = m.EstimatedAmount,
-                        EstimatedAmountUnit = m.AmountRequiredUnit
+                        EstimatedAmountUnit = GetEstimatedAmounUnit(m.AmountRequiredUnit),
+
                     }).ToList()
                 };
             }
@@ -49,6 +50,17 @@ namespace FincaFenix.ViewModels.ViewModels
             }
 
             await woController.CreateWorkOrder(WorkOrder);
+        }
+        private string GetEstimatedAmounUnit(string unit)
+        {
+            return unit?.ToLower() switch
+            {
+                "kg" => "kg",
+                "gr" => "Kg",
+                "lts" => "lts",
+                "cc" => "lts",
+                _ => "lts"
+            };
         }
     }
 }

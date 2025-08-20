@@ -1,57 +1,552 @@
-﻿<MudPaper Elevation="2" class="container-fluid border-light p-4 h-100">
-    <MudGrid Justify="Justify.FlexStart">
-        <MudItem xs="12" lg="12" md="6">
-            <MudText Typo="Typo.h4"><MudIcon Icon="fa-solid fa-clipboard" Color="Color.Dark" Size="Size.Large" />Orden de trabajo N° @InfoWO.OrderNum</MudText>
-        </MudItem>
-    </MudGrid>
-    <MudDivider Style="border-color:black" />
-    <MudGrid Justify="Justify.FlexStart" Spacing="3" Class="mt-2">
-        <MudItem xs="12" lg="2" md="6">
-            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.LocationOn" Style="color: #FF3F39" /> Finca</MudText>
-            <MudText Typo="Typo.subtitle1">@InfoWO.Farm.Name</MudText>
-        </MudItem>
-        <MudItem xs="12" lg="3" md="6">
-            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Task" Color="Color.Primary" /> Tarea</MudText>
-            <MudText Typo="Typo.subtitle1">@InfoWO.Task.Description</MudText>
-        </MudItem>
-        <MudItem xs="12" lg="2" md="6">
-            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Dashboard" Style="color: #FF8D5F" /> Cuadros</MudText>
-            @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
-            {
-                <MudText Typo="Typo.subtitle1">
-                    @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
-                </MudText>
-            }
-            else
-            {
-                <MudText Typo="Typo.subtitle1">No hay cuadros relacionados.</MudText>
-            }
-        </MudItem>
-        <MudItem xs="12" lg="2" md="6">
-            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" /> Fecha</MudText>
-            <MudText Typo="Typo.subtitle1">@InfoWO.StartDate.Value.ToShortDateString()</MudText>
-        </MudItem>
-        <MudItem xs="12" lg="2" md="6">
-            <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.Pending" Color="IconColor" /> Estado</MudText>
-            <MudText Typo="Typo.subtitle1">@InfoWO.Status</MudText>
-        </MudItem>
-        @if ( InfoWO.Description != string.Empty)
+﻿<div class="work-order-card">
+    <div class="card-header-wo">
+        <div class="header-content-wo">
+            <div class="order-badge">
+                <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="badge-icon" />
+                <span class="order-number">ORDEN DE TRABAJO N° @InfoWO.OrderNum</span>
+            </div>
+            <div class="status-indicator">
+                <MudChip T="string"
+                         Class="@GetStatusChipClass(InfoWO.Status)"
+                         Size="Size.Medium"
+                         Variant="Variant.Filled">
+                    <MudIcon Icon="@GetStatusIcon(InfoWO.Status)" Class="status-icon" />
+                    @InfoWO.Status
+                </MudChip>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body-wo">
+        <div class="info-grid">
+            <div class="info-item farm-item">
+                <div class="info-icon-wrapper farm-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-icon" />
+                </div>
+                <div class="info-content">
+                    <span class="info-label">Finca</span>
+                    <span class="info-value">@InfoWO.Farm.Name</span>
+                </div>
+            </div>
+
+            <div class="info-item task-item">
+                <div class="info-icon-wrapper task-icon">
+                    <MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Class="info-icon" />
+                </div>
+                <div class="info-content">
+                    <span class="info-label">Tarea</span>
+                    <span class="info-value task-description">@InfoWO.Task.Description</span>
+                </div>
+            </div>
+
+            <div class="info-item sectors-item">
+                <div class="info-icon-wrapper sectors-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="info-icon" />
+                </div>
+                <div class="info-content">
+                    <span class="info-label">Cuadros</span>
+                    <div class="sectors-container">
+                        @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
+                        {
+                            <span class="info-value date-value">
+                                @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="no-sectors">Sin cuadros asignados</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-item date-item">
+                <div class="info-icon-wrapper date-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
+                </div>
+                <div class="info-content">
+                    <span class="info-label">Fecha de inicio</span>
+                    <span class="info-value date-value">@InfoWO.StartDate.Value.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(InfoWO.Description))
         {
-            <MudItem xs="12" lg="12" md="12">
-                <MudText Typo="Typo.h6">Descripción</MudText>
-                <MudText Typo="Typo.subtitle1">@InfoWO.Description</MudText>
-            </MudItem>            
+            <div class="description-section">
+                <div class="description-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Description" Class="description-icon" />
+                    <span class="description-label">Descripción</span>
+                </div>
+                <div class="description-content">
+                    <MudText Typo="Typo.body1" Class="description-text">@InfoWO.Description</MudText>
+                </div>
+            </div>
         }
-    </MudGrid>
-</MudPaper>
+    </div>
+
+    <div class="card-footer-wo">
+        <div class="footer-content-wo">
+        </div>
+    </div>
+</div>
+
+<style>
+    .work-order-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        width: 100%;
+        height: 100%;
+        /* CAMBIOS PRINCIPALES PARA EL FOOTER */
+        display: flex;
+        flex-direction: column;
+    }
+
+        .work-order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Header Styles */
+    .card-header-wo {
+        background: linear-gradient(135deg, #00796B 0%, #004d40 100%);
+        padding: 1.5rem 2rem;
+        color: white;
+        position: relative;
+        flex-shrink: 0; /* No se encoge */
+    }
+
+        .card-header-wo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+    .header-content-wo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0; /* CORREGIDO: eliminé el margin-bottom */
+    }
+
+    .order-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        flex-shrink: 0; /* AÑADIDO: no se encoge */
+    }
+
+    .badge-icon {
+        font-size: 20px !important;
+        color: white;
+    }
+
+    .order-number {
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: monospace;
+        letter-spacing: 0.5px;
+        white-space: nowrap; /* AÑADIDO: evita salto de línea */
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0; /* AÑADIDO: no se encoge */
+    }
+
+    .status-icon {
+        font-size: 16px !important;
+        margin-right: 0.5rem;
+    }
+
+    .work-order-title {
+        color: white !important;
+        font-weight: 300 !important;
+        margin: 0 !important;
+        opacity: 0.9;
+    }
+
+    /* Body Styles - MODIFICADO PARA FLEXBOX */
+    .card-body-wo {
+        padding: 2rem;
+        flex: 1; /* CRUCIAL: ocupa el espacio disponible */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        background: #f8fafb;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+
+        .info-item:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+    .info-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .farm-icon {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .task-icon {
+        background: linear-gradient(135deg, #00796B 0%, #004d40 100%);
+    }
+
+    .sectors-icon {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .date-icon {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+
+    .info-icon {
+        font-size: 20px !important;
+        color: white;
+    }
+
+    .info-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1e293b;
+        line-height: 1.4;
+    }
+
+    .task-description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .date-value {
+        font-family: monospace;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Sectors Styles */
+    .sectors-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .sector-chip {
+        background: rgba(33, 150, 243, 0.1) !important;
+        color: #1976d2 !important;
+        font-weight: 500;
+        border: 1px solid rgba(33, 150, 243, 0.2);
+    }
+
+    .more-sectors-chip {
+        background: rgba(107, 114, 128, 0.1) !important;
+        color: #6b7280 !important;
+        font-weight: 600;
+    }
+
+    .no-sectors {
+        color: #94a3b8;
+        font-style: italic;
+        font-size: 0.875rem;
+    }
+
+    /* Status Chip Styles */
+    .status-activo {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-cerrado {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .status-pendiente {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .status-creado {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Description Section */
+    .description-section {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .description-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .description-icon {
+        font-size: 20px !important;
+        color: #00796B;
+    }
+
+    .description-label {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .description-content {
+        padding-left: 2.75rem;
+    }
+
+    .description-text {
+        color: #4b5563 !important;
+        line-height: 1.6 !important;
+        margin: 0 !important;
+    }
+
+    /* Footer Styles - CORREGIDO */
+    .card-footer-wo {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        flex-shrink: 0; /* CRUCIAL: no se encoge */
+        margin-top: auto; /* CRUCIAL: se empuja hacia abajo */
+    }
+
+    .footer-content-wo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .footer-text {
+        color: #64748b;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    /* Responsive Design - CORREGIDO */
+    @@media (max-width: 768px) {
+        .work-order-card
+
+    {
+        margin: 1rem;
+        border-radius: 16px;
+    }
+
+    .card-header-wo {
+        padding: 1rem 1.5rem;
+    }
+
+    .header-content-wo {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .order-badge {
+        padding: 0.5rem 1rem;
+        align-self: flex-start;
+    }
+
+    .status-indicator {
+        align-self: flex-end;
+    }
+
+    .card-body-wo {
+        padding: 1.5rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .info-item {
+        padding: 0.75rem;
+    }
+
+    .task-description {
+        max-width: 150px;
+    }
+
+    .sectors-container {
+        gap: 0.25rem;
+    }
+
+    .description-section {
+        padding: 1rem;
+    }
+
+    .description-content {
+        padding-left: 1.5rem;
+    }
+
+    .card-footer-wo {
+        padding: 0.75rem 1rem;
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .info-grid
+
+    {
+        gap: 0.75rem;
+    }
+
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .info-icon-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+    .task-description {
+        max-width: 200px;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+    }
+
+    .header-content-wo {
+        align-items: center;
+    }
+
+    .order-badge,
+    .status-indicator {
+        align-self: center;
+    }
+
+    }
+
+    /* Animations */
+    @@keyframes slideInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .work-order-card {
+        animation: slideInUp 0.4s ease-out;
+    }
+
+    .info-item {
+        animation: slideInUp 0.6s ease-out;
+    }
+
+        .info-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .info-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .info-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .info-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+</style>
+
 @code {
     [Parameter] public ShowWorkOrderDTO InfoWO { get; set; }
 
-    private MudBlazor.Color IconColor => InfoWO.Status switch
+    private string GetStatusChipClass(string status) => status switch
     {
-        "Cerrado" => MudBlazor.Color.Error,
-        "Pendiente" => MudBlazor.Color.Warning,
-        "Activo" => MudBlazor.Color.Secondary,
-        _ => MudBlazor.Color.Default        
+        "Cerrado" => "status-cerrado",
+        "Pendiente" => "status-pendiente",
+        "Activo" => "status-activo",
+        "Creado" => "status-creado",
+        _ => "status-creado"
+    };
+
+    private string GetStatusIcon(string status) => status switch
+    {
+        "Cerrado" => Icons.Material.Filled.CheckCircle,
+        "Pendiente" => Icons.Material.Filled.Schedule,
+        "Activo" => Icons.Material.Filled.PlayCircle,
+        "Creado" => Icons.Material.Filled.NewReleases,
+        _ => Icons.Material.Filled.HelpOutline
     };
 }

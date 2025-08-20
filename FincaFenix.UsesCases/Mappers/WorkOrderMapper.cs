@@ -3,7 +3,6 @@ using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.POCOEntities;
-using System.Net.NetworkInformation;
 
 namespace FincaFenix.UsesCases.Aggregates
 {
@@ -125,6 +124,11 @@ namespace FincaFenix.UsesCases.Aggregates
                             Id = detail.Material.Id,
                             ArticleName = detail.Material.ArticleName,
                             CommercialName = detail.Material.CommercialName,
+                            Category = detail.Material.Category != null ? new MaterialCategoryDTO
+                            {
+                                Id = detail.Material.Category.Id,
+                                Description = detail.Material.Category.Description
+                            } : null
                         },
                         Brand = detail.Brand,
                         PestDisease = detail.DiseasePlague,
