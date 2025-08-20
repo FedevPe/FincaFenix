@@ -1,26 +1,417 @@
-﻿@* <MudDataGrid T="ActivityWorkOrderDTO" Items="@ActivityList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter" Hideable="true">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Registro de Actividad</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Buscar por Operario" Adornment="Adornment.Start" Immediate="true"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <Columns>
-        <PropertyColumn Property="x => x.ActivityDate" Title="Fecha" Format="dd/MM/yyyy" />
-        <PropertyColumn Property="x => x.Employee.Name +' '+ x.Employee.LastName" Title="Nombre del Operario" />
-        <PropertyColumn Property="x => x.Sector.SectorName" Title="Cuadro Trabajado" />
-        <PropertyColumn Property="x => x.WorkedHours" Title="Horas Trabajadas" />
-        <PropertyColumn Property="x => x.Performance" Title="Rendimiento" />
-        <PropertyColumn Property="x => x.Description" Title="Observaciones" />
-    </Columns>
-</MudDataGrid> *@
+﻿<div class="activity-table-wrapper">
+    <MudTable T="DetailWorkOrderDTO"
+              Items="@ActivityList"
+              Dense="true"
+              Hover="true"
+              Bordered="true"
+              Filter="new Func<DetailWorkOrderDTO, bool>(_quickFilter)"
+              Class="activity-mud-table"
+              Elevation="3"
+              Breakpoint="Breakpoint.Sm">
+        <ToolBarContent>
+            <div class="activity-toolbar-content">
+                <MudSpacer />
+                <div class="activity-search-container">
+                    <MudTextField @bind-Value="_searchString"
+                                  Placeholder="Buscar operario..."
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium"
+                                  Margin="Margin.Dense"
+                                  Class="activity-search-field"
+                                  Variant="Variant.Text" />
+                </div>
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh Class="activity-table-header">
+                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.ActivityDate)">
+                    <div class="activity-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="activity-header-icon" />
+                        <span>Fecha</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="activity-table-header">
+                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.Employee.Name)">
+                    <div class="activity-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="activity-header-icon" />
+                        <span>Nombre operario</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="activity-table-header">
+                <div class="activity-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="activity-header-icon" />
+                    <span>Cuadro Trabajado</span>
+                </div>
+            </MudTh>
+            <MudTh Class="activity-table-header">
+                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.WorkedHours)">
+                    <div class="activity-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="activity-header-icon" />
+                        <span>Horas trabajadas</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="activity-table-header">
+                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.Performance)">
+                    <div class="activity-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="activity-header-icon" />
+                        <span>Rendimiento</span>
+                    </div>
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh Class="activity-table-header">
+                <div class="activity-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Notes" Class="activity-header-icon" />
+                    <span>Observaciones</span>
+                </div>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Fecha" Class="activity-table-cell">
+                <div class="activity-cell-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Event" Class="activity-cell-icon" />
+                    <span>@context.ActivityDate.ToString("dd/MM/yyyy")</span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Nombre Operario" Class="activity-table-cell">
+                <div class="activity-cell-content activity-employee-content">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="activity-cell-icon" />
+                    <div class="activity-employee-info">
+                        <span class="activity-employee-name">@context.Employee.Name @context.Employee.LastName</span>
+                    </div>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Cuadro Trabajado" Class="activity-table-cell">
+                <div class="activity-cell-content activity-performance-content">
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="activity-performance-chip">
+                        @context.Sector.SectorName
+                    </MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Horas trabajadas" Class="activity-table-cell">
+                <div class="activity-cell-content activity-hours-content">
+                    <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="activity-cell-icon" />
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="Color.Secondary" Class="activity-performance-chip">
+                        @context.WorkedHours hs
+                    </MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Rendimiento" Class="activity-table-cell">
+                <div class="activity-cell-content activity-performance-content">
+                    <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="activity-cell-icon" />
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled"
+                             Class="activity-performance-chip">
+                        @context.Performance.ToString("N2")
+                    </MudChip>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Observaciones" Class="activity-table-cell">
+                <div class="activity-cell-content activity-observations-content">
+                    @if (!string.IsNullOrEmpty(context.Description))
+                    {
+                        <MudTooltip Text="@context.Description">
+                            <MudIcon Icon="@Icons.Material.Filled.StickyNote2" Class="activity-cell-icon" />
+                            <span class="activity-observation-text">@context.Description</span>
+                        </MudTooltip>
+                    }
+                    else
+                    {
+                        <span class="activity-no-observations">Sin observaciones</span>
+                    }
+                </div>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</div>
 
+<style>
+    .activity-table-wrapper {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .activity-mud-table {
+        background: transparent !important;
+    }
+
+    /* Activity Toolbar Styles */
+    .activity-toolbar-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 1.5rem;
+        background: #ffffff;
+        border-bottom: 2px solid #00796B;
+    }
+
+    .activity-toolbar-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .activity-toolbar-icon {
+        color: #00796B;
+        font-size: 24px !important;
+    }
+
+    .activity-toolbar-text {
+        color: #1f2937 !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+    }
+
+    .activity-search-container {
+        width: 500px;
+        min-width: 250px;
+    }
+
+    .activity-search-field {
+        background: white;
+        border-radius: 12px;
+    }
+
+        .activity-search-field .mud-input-control {
+            border-radius: 12px !important;
+        }
+
+    /* Activity Header Styles */
+    .activity-table-header {
+        background: #00796B !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 1rem 1.25rem !important;
+        border: none !important;
+        position: relative;
+    }
+
+        .activity-table-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+    .activity-header-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+    }
+
+    .activity-header-icon {
+        font-size: 18px !important;
+        opacity: 0.9;
+    }
+
+    /* Activity Cell Styles */
+    .activity-table-cell {
+        padding: 1rem 1.25rem !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+        vertical-align: middle !important;
+        background: white;
+        transition: background-color 0.2s ease;
+    }
+
+    .activity-mud-table tbody tr:hover .activity-table-cell {
+        background: #f8fafb !important;
+    }
+
+    .activity-cell-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-cell-icon {
+        color: #2F2F2E;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    /* Activity Employee Content */
+    .activity-employee-content {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .activity-employee-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .activity-employee-name {
+        font-weight: 500;
+        color: #374151;
+    }
+
+    /* Activity Sector Chip */
+    .activity-sector-chip {
+        background: #F0F0ED !important;
+        color: #2F2F2E !important;
+    }
+
+    /* Activity Hours Content */
+    .activity-hours-content {
+        justify-content: flex-start;
+    }
+
+    .activity-hours-chip {
+        font-weight: 600;
+        font-family: monospace;
+        background: #F0F0ED !important;
+        color: #2F2F2E !important;
+    }
+
+    /* Activity Performance Content */
+    .activity-performance-content {
+        justify-content: flex-start;
+    }
+
+    .activity-performance-chip {
+        font-weight: 600;
+        font-family: monospace;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    /* Activity Observations Content */
+    .activity-observations-content {
+        max-width: 200px;
+    }
+
+    .activity-observation-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 180px;
+        display: block;
+    }
+
+    .activity-no-observations {
+        color: #94a3b8;
+        font-style: italic;
+        font-size: 0.875rem;
+    }
+
+    /* Activity Responsive Design */
+    @@media (max-width: 768px) {
+        .activity-table-wrapper
+
+    {
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+
+    .activity-toolbar-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .activity-table-header,
+    .activity-table-cell {
+        padding: 0.75rem 1rem !important;
+    }
+
+    .activity-header-content {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+
+    .activity-header-icon {
+        font-size: 16px !important;
+    }
+
+    .activity-employee-name {
+        max-width: 120px;
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .activity-toolbar-content
+
+    {
+        padding: 0.75rem;
+    }
+
+    .activity-toolbar-title {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .activity-cell-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    .activity-performance-chip {
+        min-width: 70px;
+    }
+
+    }
+
+    /* Activity Animations */
+    @@keyframes activityTableFadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .activity-mud-table tbody tr {
+        animation: activityTableFadeInUp 0.3s ease-out;
+    }
+
+        .activity-mud-table tbody tr:nth-child(odd) {
+            animation-delay: 0.05s;
+        }
+
+        .activity-mud-table tbody tr:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+    /* Activity Color variations for performance chips */
+    .activity-mud-table .mud-chip.mud-chip-color-success {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+    }
+
+    .activity-mud-table .mud-chip.mud-chip-color-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    }
+
+    .activity-mud-table .mud-chip.mud-chip-color-error {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    }
+</style>
 
 @code {
     private string _searchString;
 
     [Parameter] public IEnumerable<DetailWorkOrderDTO> ActivityList { get; set; }
 
+    // Filt
     // Filtro rápido para buscar por nombre de operario
     private Func<DetailWorkOrderDTO, bool> _quickFilter => activity =>
     {
@@ -28,6 +419,8 @@
             return true;
 
         if (activity.Employee.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (activity.Employee.LastName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

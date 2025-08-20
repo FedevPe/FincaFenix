@@ -1,60 +1,299 @@
 ﻿@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
 
- @if (InfoVM.IsLoading)
- {
-     <div class="d-flex flex-column justify-center align-center py-5">
-         <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
-         <MudText Class="ms-3">Cargando Información...</MudText>
-     </div>
- }
- else if (InfoVM.ErrorMessage != null)
- {
-    <MudAlert Severity="MudBlazor.Severity.Error" Class="my-4">
-         @InfoVM.ErrorMessage
-     </MudAlert>
- }
- else
- {
-     <MudGrid Justify="Justify.FlexStart" Spacing="2">
-        <MudItem xs="12" lg="9" md="12" sm="12">
-             <GeneralInformationWorkOrder InfoWO="@InfoVM.WOInfo"/>
-        </MudItem>
-        <MudItem xs="12" lg="3" md="12" sm="12">
-            <div class="d-flex h-100 w-100">
-                <MudPaper Elevation="2" Class="p-3 w-100">
-                    <DetailWorkOrderActions InfoWO="@InfoVM.WOInfo" />
-                </MudPaper>
+<div class="work-order-detail-page">
+    @if (InfoVM.IsLoading)
+    {
+        <div class="loading-container">
+            <div class="loading-content">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Class="loading-text">Cargando información de la orden...</MudText>
             </div>
-        </MudItem>
+        </div>
+    }
+    else if (InfoVM.ErrorMessage != null)
+    {
+        <div class="error-container">
+            <MudAlert Severity="MudBlazor.Severity.Error" Class="error-alert">
+                <div class="error-content">
+                    <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Class="error-icon" />
+                    <div>
+                        <MudText Typo="Typo.h6">Error al cargar la orden de trabajo</MudText>
+                        <MudText Typo="Typo.body2">@InfoVM.ErrorMessage</MudText>
+                    </div>
+                </div>
+            </MudAlert>
+        </div>
+    }
+    else
+    {
+        <!-- Header Section with Work Order Info and Actions -->
+        <div class="page-header">
+            <div class="header-grid">
+                <div class="main-info-section">
+                    <GeneralInformationWorkOrder InfoWO="@InfoVM.WOInfo"/>
+                </div>
+                <div class="actions-section">
+                    <DetailWorkOrderActions InfoWO="@InfoVM.WOInfo" />
+                </div>
+            </div>
+        </div>
 
-     </MudGrid>
-    <MudGrid Justify="Justify.FlexStart" Spacing="2">
-       <MudItem xs="12" lg="12">
-            <MudPaper Elevation="2" class="mt-3 p-3">
-                @if (DetailsVM.ActivityWorkOrderDTOs.Any())
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- Activity Log Section -->
+            <div class="content-section activity-section">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="section-icon" />
+                    <MudText Typo="Typo.h5" Class="section-title">Registro de Actividades</MudText>
+                </div>
+                
+                @if (InfoVM.WOInfo.DetailsWorkOrder != null && InfoVM.WOInfo.DetailsWorkOrder.Any())
                 {
-                    <ActivityLog ActivityList="DetailsVM.ActivityWorkOrderDTOs"/>               
+                    <ActivityLog ActivityList="InfoVM.WOInfo.DetailsWorkOrder"/>
                 }
                 else
                 {
-                    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-3 mb-3"><b>No hay registros de actividad para esta orden de trabajo.</b></MudText>
+                    <div class="empty-state-card">
+                        <div class="empty-state-content">
+                            <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                            <MudText Typo="Typo.h6" Class="empty-state-title">Sin actividades registradas</MudText>
+                            <MudText Typo="Typo.body1" Class="empty-state-description">
+                                Aún no se han registrado actividades para esta orden de trabajo.
+                            </MudText>
+                        </div>
+                    </div>
                 }
-            </MudPaper>
-       </MudItem>       
-    </MudGrid>
- }
+            </div>
 
-@code {
-    [Inject] private GeneralInfoWorkOrderViewModel InfoVM { get; set; }
-    [Inject] private LoadDetailsWorkOrderViewModel DetailsVM { get; set; }
+            <!-- Recipe Section -->
+            <div class="content-section recipe-section">
+                <div class="section-header">
+                    <MudIcon Icon="@Icons.Material.Filled.Science" Class="section-icon" />
+                    <MudText Typo="Typo.h5" Class="section-title">Receta de Aplicación</MudText>
+                </div>
+                
+                @if (InfoVM.WOInfo.Recipe != null && InfoVM.WOInfo.Recipe.Details != null && InfoVM.WOInfo.Recipe.Details.Any())
+                {
+                    <DetailRecipe Recipe="InfoVM.WOInfo.Recipe"/>
+                }
+                else
+                {
+                    <div class="empty-state-card">
+                        <div class="empty-state-content">
+                            <MudIcon Icon="@Icons.Material.Filled.Science" Class="empty-state-icon" />
+                            <MudText Typo="Typo.h6" Class="empty-state-title">Sin receta asociada</MudText>
+                            <MudText Typo="Typo.body1" Class="empty-state-description">
+                                No hay una receta de productos asociada a esta orden de trabajo.
+                            </MudText>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
 
-    [Parameter] public int IdWorkOrder { get; set; }
+<style>
+.work-order-detail-page {
+    background: #f8fafc;
+}
 
-    protected override async Task OnInitializedAsync()
-    {
-        await InfoVM.LoadDataWorkOrderById(IdWorkOrder);
-        await DetailsVM.LoadActivityLog(IdWorkOrder);
-        await Task.Delay(0);
-        StateHasChanged();
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 3rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.loading-text {
+    color: #64748b !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}
+
+.error-container {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.error-alert {
+    max-width: 600px;
+    border-radius: 16px !important;
+    padding: 1.5rem !important;
+}
+
+.error-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.error-icon {
+    font-size: 24px !important;
+    color: #ef4444;
+    margin-top: 0.25rem;
+}
+
+.page-header {
+    margin-bottom: 1rem;
+}
+
+.header-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: start;
+}
+
+.main-info-section {
+    min-width: 0; /* Permite que el contenido se contraiga */
+    width: 100%;
+    height: 100%;
+}
+
+.actions-section {
+    width: 350px;
+    flex-shrink: 0;
+}
+
+/* Content Sections */
+.content-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.content-section {
+    background: transparent;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.section-icon {
+    font-size: 28px !important;
+    color: #00796B;
+}
+
+.section-title {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+/* Empty State Styles */
+.empty-state-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 3rem 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 1rem 0;
+}
+
+.empty-state-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
+.empty-state-icon {
+    font-size: 48px !important;
+    color: #94a3b8;
+    opacity: 0.7;
+}
+
+.empty-state-title {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.empty-state-description {
+    color: #64748b !important;
+    max-width: 400px !important;
+    line-height: 1.6 !important;
+    margin: 0 !important;
+}
+
+@@media (max-width: 1200px) {
+    .actions-section {
+        width: 320px;
     }
 }
+
+@@media (max-width: 968px) {
+    .header-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .actions-section {
+        width: 100%;
+    }
+}
+
+@@media (max-width: 768px) {
+    .work-order-detail-page {
+        padding: 0.5rem;
+    }
+    
+    .content-sections {
+        gap: 1.5rem;
+    }
+    
+    .section-header {
+        margin-bottom: 1rem;
+        padding: 0;
+    }
+    
+    .section-icon {
+        font-size: 24px !important;
+    }
+    
+    .empty-state-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 40px !important;
+    }
+}
+
+@@media (max-width: 480px) {
+    .loading-content {
+        padding: 2rem 1.5rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .empty-state-card {
+        padding: 1.5rem 1rem;
+    }
+}
+</style>
+

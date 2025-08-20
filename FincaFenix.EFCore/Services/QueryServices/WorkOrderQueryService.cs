@@ -100,6 +100,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .Include(wo => wo.Recipe) // Incluye la Receta
                     .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
                         .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
+                            .ThenInclude(m => m.Category) // Incluye el Categorua para cada Material
                 .Include(wo => wo.Recipe)
                     .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
@@ -124,6 +125,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .Include(wo => wo.Recipe) // Incluye la Receta
                     .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
                         .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
+                            .ThenInclude(m => m.Category) // Incluye la Categoría para cada Material
                 .Include(wo => wo.Recipe)
                     .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados

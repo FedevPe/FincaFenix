@@ -2,149 +2,683 @@
 
 <PageTitle>Registro de actividades</PageTitle>
 
-    @if (InfoVM.IsLoading || InfoVM.WOInfo == null)
-    {
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
-        <MudText Typo="Typo.h6">Cargando información de la orden de trabajo...</MudText>
-    }
-    else
-    {
+@if (InfoVM.IsLoading || InfoVM.WOInfo == null)
+{
+    <div class="loading-container">
+        <div class="loading-content">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+            <MudText Typo="Typo.h6" Class="loading-text">Cargando información de la orden de trabajo...</MudText>
+        </div>
+    </div>
+}
+else
+{
+    <div class="activity-registration-container">
+        <!-- Work Order Info Card -->
         <GeneralInformationWorkOrder InfoWO="InfoVM.WOInfo" />
+
+        <!-- Main Form Container -->
         <MudForm @ref="form" Model="ViewModel" Validation="@(ValidatorVM.ValidateValue)">
-            <MudPaper Elevation="2" class="container-fluid  border-light p-4 mt-3">
-                <MudGrid Justify="Justify.FlexStart">
-                    <MudItem lg="12" >
-                       <MudText Typo="Typo.h5" class="mb-2"><MudIcon Icon="@Icons.Material.Outlined.AppRegistration" Size="Size.Large" style="color: #3F8891" /> Registro de actividad</MudText>
-                        <MudDivider Style="border-color: black;" />
-                    </MudItem>
-                    <MudItem xs="12" lg="12">
-                        <MudGrid Justify="Justify.FlexStart">
-                            <MudTable T="AddDetailWorkOrderDTO"></MudTable>
-                            <MudItem xs="12" lg="6"> 
-                                <MudText Typo="Typo.h6">Operario</MudText>
-                                <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                                          @bind-Value="ViewModel.EmployeeId"
-                                           Variant="Variant.Outlined" Clearable
-                                           AnchorOrigin="Origin.BottomRight"
-                                           TransformOrigin="Origin.TopRight"
-                                           For="@(() => ViewModel.EmployeeId)">
-                                    <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                   @foreach (var worker in ViewModel.Employees.OrderBy(x => x.Name))
-                                   {
-                                           <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
-                                   }
-                                </MudSelect>
-                            </MudItem>
-                            <MudItem xs="12" lg="3">
-                                <MudText Typo="Typo.h6">Fecha</MudText>
-                                <MudDatePicker @bind-value="ViewModel.ActivityDate" Placeholder="@ViewModel.ActivityDate.Value.ToShortDateString()"
-                                              DateChanged="@((DateTime? newDate) => ViewModel.ActivityDate = newDate)"
-                                              ShowToolbar="false" Style="margin-top:10px"
-                                              AnchorOrigin="Origin.BottomRight"
-                                              IsDateDisabledFunc="@((DateTime dt)=>(DateOnly.FromDateTime(ViewModel.ActivityDate.Value) != DateOnly.FromDateTime(dt)))"
-                                              TransformOrigin="Origin.TopRight"
-                                              AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))" 
-                                              For="@(() => ViewModel.ActivityDate)"/>
-                            </MudItem>
-                            <MudFlexBreak/>
-                            <MudItem xs="12" lg="12">
-                                <div class="d-flex mb-2">
-                                   <MudText Typo="Typo.h6"><MudIcon Icon="@Icons.Material.Filled.SpaceDashboard"
-                                       Style="color: #FF8D5F"/>Cuadros trabajados</MudText>
-                                    <MudSpacer />
-                                    <MudButton Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               Size="Size.Medium"
-                                               StartIcon="@Icons.Material.Filled.Add"
-                                               Class="add-sector-btn"
-                                               OnClick="AddDetailWorkOrder"
-                                               Disabled="@IsAddButtonDisabled">
-                                               Agregar Cuadro
-                                    </MudButton>
-                                </div>
-                                <MudDivider Style="border-color: black;" />
-                            </MudItem>
-                        </MudGrid>
-                    </MudItem>
-                </MudGrid>
-            </MudPaper>
-            <MudTable T="AddDetailWorkOrderDTO" Breakpoint="Breakpoint.Sm" Items="ViewModel.ActivityDetails" Hover="true" Bordered="true" Dense="true" Class="mt-3">
-                <HeaderContent>
-                    <MudTh Class="my-custom-header text-white">Cuadro de trabajo</MudTh>
-                    <MudTh Class="my-custom-header text-white">Horas trabajadas</MudTh>
-                    <MudTh Class="my-custom-header text-white">Rendimiento</MudTh>
-                    <MudTh Class="my-custom-header text-white">Observaciones</MudTh>
-                    <MudTh Class="my-custom-header text-white">Eliminar</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="Cuadro de trabajo">
-                        <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
-                            <MudSelect T="int" Margin="Margin.Dense" FullWidth="true"
-                                       Variant="Variant.Text" Clearable
+            <div class="form-main-card">
+                <!-- Header Section -->
+                <div class="form-header">
+                    <div class="header-content">
+                        <div class="header-title">
+                            <MudIcon Icon="@Icons.Material.Outlined.AppRegistration" Class="header-icon" />
+                            <h2 class="title-text">Registro de actividad</h2>
+                        </div>
+                    </div>
+                    <div class="header-divider"></div>
+                </div>
+
+                <!-- Form Body -->
+                <div class="form-body">
+                    <div class="form-grid">
+                        <!-- Employee Selection -->
+                        <div class="form-section employee-section">
+                            <div class="section-header">
+                                <MudIcon Icon="@Icons.Material.Filled.Person" Class="section-icon" />
+                                <span class="section-title">Operario</span>
+                            </div>
+                            <MudSelect T="int"
+                                       @bind-Value="ViewModel.EmployeeId"
+                                       Variant="Variant.Outlined"
+                                       Clearable
+                                       Class="modern-select"
                                        AnchorOrigin="Origin.BottomRight"
                                        TransformOrigin="Origin.TopRight"
-                                       @bind-Value="context.Info.SectorWorkedId"
-                                       For="@(() => context.Info.SectorWorkedId)">
+                                       For="@(() => ViewModel.EmployeeId)">
                                 <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
-                                @foreach (var sector in GetAvailableSectors(context.Info.SectorWorkedId)) 
+                                @foreach (var worker in ViewModel.Employees.OrderBy(x => x.Name))
                                 {
-                                    <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
+                                    <MudSelectItem T="int" Value="@worker.Id">@worker.Name @worker.LastName</MudSelectItem>
                                 }
                             </MudSelect>
-                        </MudForm>
-                    </MudTd>
-                    <MudTd DataLabel="Horas trabajadas">
-                        <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
-                            <MudNumericField @bind-Value="context.Info.WorkedHours"
-                                             For="@(() => context.Info.WorkedHours)"
-                                             T="decimal"
-                                             Margin="Margin.Dense" />
-                        </MudForm>
-                    </MudTd>
-                    <MudTd DataLabel="Rendimiento diario">
-                        <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
-                            <MudNumericField @bind-Value="context.Info.Performance"
-                                             For="@(() => context.Info.Performance)"
-                                             T="decimal"
-                                             Margin="Margin.Dense" />
-                        </MudForm>
-                    </MudTd>
-                    <MudTd DataLabel="Observaciones">
-                        <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
-                            <MudTextField T="string"
-                                          @bind-Value="context.Info.Description"
-                                          For="@(() => context.Info.Description)"
-                                          Placeholder="Observaciones de la actividad"
-                                          Variant="Variant.Text" Margin="Margin.Dense"
-                                          FullWidth="true" Lines="1" />
-                        </MudForm>
-                    </MudTd>
-                    <MudTd DataLabel="Eliminar">
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                       Color="Color.Error"
-                                       Variant="Variant.Filled"
+                        </div>
+
+                        <!-- Date Selection -->
+                        <div class="form-section date-section">
+                            <div class="section-header">
+                                <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="section-icon" />
+                                <span class="section-title">Fecha</span>
+                            </div>
+                            <MudDatePicker @bind-value="ViewModel.ActivityDate"
+                                           Placeholder="@ViewModel.ActivityDate.Value.ToShortDateString()"
+                                           DateChanged="@((DateTime? newDate) => ViewModel.ActivityDate = newDate)"
+                                           ShowToolbar="false"
+                                           Class="modern-datepicker"
+                                           Variant="Variant.Outlined"
+                                           AnchorOrigin="Origin.BottomRight"
+                                           IsDateDisabledFunc="@((DateTime dt)=>(DateOnly.FromDateTime(ViewModel.ActivityDate.Value) != DateOnly.FromDateTime(dt)))"
+                                           TransformOrigin="Origin.TopRight"
+                                           AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
+                                           For="@(() => ViewModel.ActivityDate)" />
+                        </div>
+                    </div>
+
+                    <!-- Sectors Section -->
+                    <div class="sectors-section">
+                        <div class="sectors-header">
+                            <div class="sectors-title">
+                                <MudIcon Icon="@Icons.Material.Filled.SpaceDashboard" Class="sectors-icon" />
+                                <span class="section-title">Cuadros trabajados</span>
+                            </div>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
                                        Size="Size.Medium"
-                                       OnClick="@(() => RemoveDetailWorkOrder(context))" />
-                    </MudTd>
-                </RowTemplate>
-            </MudTable>
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       Class="add-sector-btn"
+                                       OnClick="AddDetailWorkOrder"
+                                       Disabled="@IsAddButtonDisabled">
+                                Agregar Cuadro
+                            </MudButton>
+                        </div>
+                        <div class="sectors-divider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Details Table -->
+            <div class="activity-table-container">
+                <MudTable T="AddDetailWorkOrderDTO"
+                          Breakpoint="Breakpoint.Sm"
+                          Items="ViewModel.ActivityDetails"
+                          Hover="true"
+                          Dense="false"
+                          Class="activity-table"
+                          Elevation="0">
+                    <HeaderContent>
+                        <MudTh Class="activity-header">
+                            <div class="header-content-table">
+                                <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="table-header-icon" />
+                                <span>Cuadro de trabajo</span>
+                            </div>
+                        </MudTh>
+                        <MudTh Class="activity-header">
+                            <div class="header-content-table">
+                                <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="table-header-icon" />
+                                <span>Horas trabajadas</span>
+                            </div>
+                        </MudTh>
+                        <MudTh Class="activity-header">
+                            <div class="header-content-table">
+                                <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="table-header-icon" />
+                                <span>Rendimiento</span>
+                            </div>
+                        </MudTh>
+                        <MudTh Class="activity-header">
+                            <div class="header-content-table">
+                                <MudIcon Icon="@Icons.Material.Filled.Notes" Class="table-header-icon" />
+                                <span>Observaciones</span>
+                            </div>
+                        </MudTh>
+                        <MudTh Class="activity-header">
+                            <div class="header-content-table">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" Class="table-header-icon" />
+                                <span>Eliminar</span>
+                            </div>
+                        </MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Cuadro de trabajo" Class="activity-cell">
+                            <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
+                                <MudSelect T="int"
+                                           Variant="Variant.Text"
+                                           Clearable
+                                           Class="table-select"
+                                           AnchorOrigin="Origin.BottomRight"
+                                           TransformOrigin="Origin.TopRight"
+                                           @bind-Value="context.Info.SectorWorkedId"
+                                           For="@(() => context.Info.SectorWorkedId)">
+                                    <MudSelectItem T="int" Value="0" Disabled="true">Seleccione una opción</MudSelectItem>
+                                    @foreach (var sector in GetAvailableSectors(context.Info.SectorWorkedId))
+                                    {
+                                        <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudForm>
+                        </MudTd>
+                        <MudTd DataLabel="Horas trabajadas" Class="activity-cell">
+                            <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
+                                <MudNumericField @bind-Value="context.Info.WorkedHours"
+                                                 For="@(() => context.Info.WorkedHours)"
+                                                 T="decimal"
+                                                 Variant="Variant.Text"
+                                                 Class="table-numeric" />
+                            </MudForm>
+                        </MudTd>
+                        <MudTd DataLabel="Rendimiento diario" Class="activity-cell">
+                            <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
+                                <MudNumericField @bind-Value="context.Info.Performance"
+                                                 For="@(() => context.Info.Performance)"
+                                                 T="decimal"
+                                                 Variant="Variant.Text"
+                                                 Class="table-numeric" />
+                            </MudForm>
+                        </MudTd>
+                        <MudTd DataLabel="Observaciones" Class="activity-cell">
+                            <MudForm Model="context" Validation="@(ValidatorAR.ValidateValue)">
+                                <MudTextField T="string"
+                                              @bind-Value="context.Info.Description"
+                                              For="@(() => context.Info.Description)"
+                                              Placeholder="Observaciones de la actividad"
+                                              Variant="Variant.Text"
+                                              Class="table-textfield"
+                                              FullWidth="true"
+                                              Lines="1" />
+                            </MudForm>
+                        </MudTd>
+                        <MudTd DataLabel="Eliminar" Class="activity-cell">
+                            <div class="delete-action">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               Size="Size.Medium"
+                                               Class="delete-btn"
+                                               OnClick="@(() => RemoveDetailWorkOrder(context))" />
+                            </div>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </div>
         </MudForm>
-        <div class="container-fluid shadow mt-3 rounded bg-color-white p-2 mb-4">
-            <MudGrid Spacing="1" Justify="Justify.FlexEnd">
-                <MudItem>
-                    <MudButton Href="/ordenestrabajo"
-                               Variant="Variant.Filled"
-                               Color="Color.Error"
-                               Size="Size.Small"
-                               StartIcon="@Icons.Material.Filled.Cancel">Cancelar</MudButton>
-                </MudItem>
-                <MudItem>
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               Size="Size.Small"
-                               StartIcon="@Icons.Material.Filled.Save"
-                               OnClick="HandleSave">Guardar</MudButton>
-                </MudItem>
-            </MudGrid>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons-container">
+            <div class="action-buttons">
+                <MudButton Href="/"
+                           Variant="Variant.Outlined"
+                           Color="Color.Error"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.Cancel"
+                           Class="cancel-btn">
+                    Cancelar
+                </MudButton>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.Save"
+                           Class="save-btn"
+                           OnClick="HandleSave">
+                    Guardar
+                </MudButton>
+            </div>
         </div>
+    </div>
+}
+
+<style>
+    /* Container Principal */
+    .activity-registration-container {
+        padding: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
     }
+
+    /* Loading State */
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+    }
+
+    .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .loading-text {
+        color: #64748b !important;
+        text-align: center;
+    }
+
+    /* Main Form Card */
+    .form-main-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-main-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    /* Form Header */
+    .form-header {
+        background: linear-gradient(135deg, #00796B 0%, #004d40 100%);
+        padding: 2rem;
+        color: white;
+        position: relative;
+    }
+
+        .form-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-icon {
+        font-size: 28px !important;
+        color: white;
+    }
+
+    .title-text {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .header-divider {
+        margin-top: 1rem;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 1px;
+    }
+
+    /* Form Body */
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Form Sections */
+    .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-icon {
+        font-size: 20px !important;
+        color: #00796B;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Modern Form Controls */
+    .modern-select,
+    .modern-datepicker {
+        border-radius: 12px !important;
+    }
+
+        .modern-select .mud-input-control,
+        .modern-datepicker .mud-input-control {
+            border-radius: 12px !important;
+        }
+
+    /* Sectors Section */
+    .sectors-section {
+        margin-top: 2rem;
+    }
+
+    .sectors-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .sectors-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .sectors-icon {
+        font-size: 20px !important;
+        color: #FF8D5F;
+    }
+
+    .add-sector-btn {
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        padding: 0.75rem 1.5rem !important;
+        transition: all 0.2s ease !important;
+    }
+
+        .add-sector-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3) !important;
+        }
+
+    .sectors-divider {
+        height: 2px;
+        background: linear-gradient(90deg, #00796B, rgba(0, 121, 107, 0.1));
+        border-radius: 1px;
+    }
+
+    /* Activity Table */
+    .activity-table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-top: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .activity-table {
+        background: transparent !important;
+    }
+
+    .activity-header {
+        background: #00796B !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 1rem 1.25rem !important;
+        border: none !important;
+        position: relative;
+    }
+
+        .activity-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+    .header-content-table {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+    }
+
+    .table-header-icon {
+        font-size: 18px !important;
+        opacity: 0.9;
+    }
+
+    .activity-cell {
+        padding: 1rem 1.25rem !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+        vertical-align: middle !important;
+        background: white;
+        transition: background-color 0.2s ease;
+    }
+
+    .activity-table tbody tr:hover .activity-cell {
+        background: #f8fafb !important;
+    }
+
+    /* Table Form Controls */
+    .table-select,
+    .table-numeric,
+    .table-textfield {
+        margin: 0 !important;
+    }
+
+        .table-select .mud-input-control,
+        .table-numeric .mud-input-control,
+        .table-textfield .mud-input-control {
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .table-select:hover .mud-input-control,
+        .table-numeric:hover .mud-input-control,
+        .table-textfield:hover .mud-input-control {
+            background: rgba(0, 121, 107, 0.04) !important;
+            border-radius: 8px !important;
+        }
+
+    /* Delete Action */
+    .delete-action {
+        display: flex;
+        justify-content: center;
+    }
+
+    .delete-btn {
+        transition: all 0.2s ease !important;
+    }
+
+        .delete-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3) !important;
+        }
+
+    /* Action Buttons Container */
+    .action-buttons-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 1.5rem 2rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        padding: 0.75rem 2rem !important;
+        transition: all 0.2s ease !important;
+        min-width: 140px;
+    }
+
+        .cancel-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.2) !important;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3) !important;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 1024px) {
+        .form-grid
+
+    {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .sectors-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .activity-registration-container
+
+    {
+        padding: 1rem;
+    }
+
+    .form-header {
+        padding: 1.5rem;
+    }
+
+    .title-text {
+        font-size: 1.5rem;
+    }
+
+    .form-body {
+        padding: 1.5rem;
+    }
+
+    .action-buttons-container {
+        padding: 1rem;
+    }
+
+    .action-buttons {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
+
+    .cancel-btn,
+    .save-btn {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .activity-header,
+    .activity-cell {
+        padding: 0.75rem 1rem !important;
+    }
+
+    .header-content-table {
+        flex-direction: column;
+        gap: 0.25rem;
+        text-align: center;
+    }
+
+    .table-header-icon {
+        font-size: 16px !important;
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .form-header
+
+    {
+        padding: 1rem;
+    }
+
+    .header-title {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .title-text {
+        font-size: 1.25rem;
+    }
+
+    .form-body {
+        padding: 1rem;
+    }
+
+    .sectors-header {
+        gap: 0.75rem;
+    }
+
+    .add-sector-btn {
+        width: 100%;
+    }
+
+    }
+
+    /* Animations */
+    @@keyframes slideInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-main-card,
+    .activity-table-container,
+    .action-buttons-container {
+        animation: slideInUp 0.4s ease-out;
+    }
+
+    .form-main-card {
+        animation-delay: 0.1s;
+    }
+
+    .activity-table-container {
+        animation-delay: 0.2s;
+    }
+
+    .action-buttons-container {
+        animation-delay: 0.3s;
+    }
+
+    .activity-table tbody tr {
+        animation: slideInUp 0.3s ease-out;
+    }
+
+        .activity-table tbody tr:nth-child(odd) {
+            animation-delay: 0.05s;
+        }
+
+        .activity-table tbody tr:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+</style>
