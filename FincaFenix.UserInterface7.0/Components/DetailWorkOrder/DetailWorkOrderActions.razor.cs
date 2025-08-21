@@ -9,6 +9,8 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
     {
         [Parameter] public ShowWorkOrderDTO InfoWO { get; set; }
         [Inject] private PDFService PDFService { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
+
 
         private string GetStatusChipClass(string status) => status switch
         {
@@ -19,6 +21,10 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
             _ => "status-creado"
         };
 
+        private void OpenActivityForm()
+        {
+            NavigationManager.NavigateTo($"/actividad/registrar/{InfoWO.Id}");
+        }
         public async Task GeneratePDF(ShowWorkOrderDTO infoWO)
         {
             var document = new WorkOrderPDF(infoWO);

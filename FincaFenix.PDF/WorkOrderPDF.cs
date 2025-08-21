@@ -2,7 +2,7 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using static QuestPDF.Fluent.DocumentOperation;
+using System.Reflection;
 
 namespace FincaFenix.PDF
 {
@@ -37,6 +37,9 @@ namespace FincaFenix.PDF
         }
         private void BuildHeader(IContainer container)
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            var img = assembly.GetManifestResourceStream("FincaFenix.PDF.Resources.logo_fenix.png.jpg");
+
             container.Table(table =>
             {
                 table.ColumnsDefinition(columns =>
@@ -46,7 +49,7 @@ namespace FincaFenix.PDF
                 });
                 table.Header(header =>
                 {
-                    header.Cell().Border(1).Image("D:\\Repositorios\\FincaFenix\\FincaFenix.PDF\\Resources\\logo_fenix.png.jpg");
+                    header.Cell().Border(1).Image(img);
                     header.Cell().Border(1).AlignMiddle().Column(column =>
                     {
                         column.Item().Text($"ORDEN DE TRABAJO N° {DTO.OrderNum}").SemiBold().FontSize(16).AlignCenter();
@@ -183,7 +186,7 @@ namespace FincaFenix.PDF
                         {
                             columns.RelativeColumn();
                         });
-                        table.Cell().Element(CellStyle).AlignLeft().Text( x =>
+                        table.Cell().Element(CellStyle).AlignLeft().Text(x =>
                         {
                             x.Span($"Maquinaria: ").Bold();
                             x.Span($"{DTO.Recipe.Machine.Name}");
@@ -357,14 +360,14 @@ namespace FincaFenix.PDF
         }
         private void BuildFooter(IContainer footer)
         {
-            
+
             footer.AlignCenter().BorderTop(1).Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(1); 
-                    columns.RelativeColumn(1); 
-                    columns.RelativeColumn(1); 
+                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(1);
                 });
                 table.Cell().Padding(5).AlignCenter().Text("XX-XX-XX-XXX-001-01").Bold();
                 table.Cell().Padding(5).AlignCenter().Text(x =>
