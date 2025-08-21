@@ -19,5 +19,23 @@ namespace FincaFenix.UserInterface7._0.Pages
             await Task.Delay(0);
             StateHasChanged();
         }
+        // Enum para las pestañas
+        public enum WorkOrderTab
+        {
+            Activities,
+            Recipe
+        }
+
+        private WorkOrderTab activeTab = WorkOrderTab.Activities;
+
+        private void SetActiveTab(WorkOrderTab tab)
+        {
+            activeTab = tab;
+        }
+
+        private string GetTabActiveClass(WorkOrderTab tab)
+        {
+            return activeTab == tab ? "active" : "";
+        }
     }
 }

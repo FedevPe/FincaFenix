@@ -4,7 +4,7 @@
             <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
         </div>
         <div class="header-content">
-            <MudText Typo="Typo.h6" Class="panel-title">Acciones disponibles</MudText>
+            <MudText Typo="Typo.h6" Class="panel-title-actions">Acciones disponibles</MudText>
             <span class="panel-subtitle">Gestiona tu orden de trabajo</span>
         </div>
     </div>
@@ -121,7 +121,7 @@
         gap: 0.25rem;
     }
 
-    .panel-title {
+    .panel-title-actions {
         color: white !important;
         font-weight: 600 !important;
         margin: 0 !important;
@@ -403,38 +403,5 @@
     }
 
     }
-
-    /* Animations */
-    @@keyframes slideInRight {
-        from
-
-    {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    }
-
-    .action-card {
-        animation: slideInRight 0.4s ease-out;
-    }
-
-        .action-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .action-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .action-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
 </style>
 
