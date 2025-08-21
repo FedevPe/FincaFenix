@@ -6,6 +6,9 @@ namespace FincaFenix.EFCore.Context
 {
     public class FincaFenixContext : DbContext
     {
+
+        // DB PRODUCCION "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDB;User ID=sa;Password=Axoft2016;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;"
+        // DB TEST "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDBTest;User ID=sa;Password=Axoft2016;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
         private readonly string localServer = "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDB;User ID=sa;Password=Axoft2016;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False;";
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }
