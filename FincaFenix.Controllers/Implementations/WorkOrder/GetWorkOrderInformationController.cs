@@ -1,24 +1,18 @@
 ﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Controllers;
-using FincaFenix.UsesCases.Interfaces.InputPort;
-using FincaFenix.UsesCases.Interfaces.WorkOrder;
+using FincaFenix.UsesCases.Controllers.GetWorkOrderInformation;
+using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
+using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FincaFenixControllers.Implementations
+namespace FincaFenixControllers.Implementations.WorkOrder
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WorkOrderController(
-        IWorkOrderInputPort interactor,
-        IWorkOrderOutputPort presenter) : IWorkOrderController
+    public class GetWorkOrderInformationController(
+        IGetWorkOrderInformationInputPort interactor,
+        IGetWorkOrderInformationOutputPort presenter) : IGetWorkOrderInformationController
     {
-        [HttpPost("createworkorder")]
-        public async Task<bool> CreateWorkOrder(WorkOrderDTO workOrder)
-        {
-            await interactor.Handle(workOrder);
-            return presenter.IsSaved;
-        }
         [HttpGet("getallworkorderinfo")]
         public async Task<List<ShowWorkOrderDTO>> GetAllWorkOrderInfoList()
         {
@@ -44,11 +38,6 @@ namespace FincaFenixControllers.Implementations
         {
             await interactor.GetWorkOrderListPaginated(pageNumber, pageSize, status);
             return (presenter.InfoWorkOrderList, presenter.TotalCount);
-        }
-        [HttpPost("updatestateworkorder")]
-        public Task<bool> UpdateWorkOrderState(WorkOrderDTO workOrder)
-        {
-            throw new NotImplementedException();
         }
     }
 }

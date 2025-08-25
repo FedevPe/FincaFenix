@@ -1,7 +1,7 @@
 ﻿@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
 
 <div class="work-order-detail-page">
-    @if (InfoVM.IsLoading)
+    @if (ViewModel.IsLoading)
     {
         <div class="loading-container">
             <div class="loading-content">
@@ -10,7 +10,7 @@
             </div>
         </div>
     }
-    else if (InfoVM.ErrorMessage != null)
+    else if (ViewModel.ErrorMessage != null)
     {
         <div class="error-container">
             <MudAlert Severity="MudBlazor.Severity.Error" Class="error-alert">
@@ -18,7 +18,7 @@
                     <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Class="error-icon" />
                     <div>
                         <MudText Typo="Typo.h6">Error al cargar la orden de trabajo</MudText>
-                        <MudText Typo="Typo.body2">@InfoVM.ErrorMessage</MudText>
+                        <MudText Typo="Typo.body2">@ViewModel.ErrorMessage</MudText>
                     </div>
                 </div>
             </MudAlert>
@@ -30,10 +30,10 @@
         <div class="page-header">
             <div class="header-grid">
                 <div class="main-info-section">
-                    <GeneralInformationWorkOrder InfoWO="@InfoVM.WOInfo"/>
+                    <GeneralInformationWorkOrder InfoWO="@ViewModel.WOInfo"/>
                 </div>
                 <div class="actions-section">
-                    <DetailWorkOrderActions InfoWO="@InfoVM.WOInfo" />
+                    <DetailWorkOrderActions InfoWO="@ViewModel.WOInfo" />
                 </div>
             </div>
         </div>
@@ -42,11 +42,11 @@
         <div class="tabs-container">
             <!-- Tab Headers -->
             <div class="tabs-header">
-                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Activities)" 
+                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Activities)"
                         @onclick="() => SetActiveTab(WorkOrderTab.Activities)">
                     <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="tab-icon" />
                     <span class="tab-label">Registro de Actividades</span>
-                </button>
+                </button>                
                 
                 <button class="tab-button @GetTabActiveClass(WorkOrderTab.Recipe)" 
                         @onclick="() => SetActiveTab(WorkOrderTab.Recipe)">
@@ -68,9 +68,9 @@
                     <div class="tab-panel">
                         
                         <div class="tab-panel-content">
-                            @if (InfoVM.WOInfo.DetailsWorkOrder != null && InfoVM.WOInfo.DetailsWorkOrder.Any())
+                            @if (ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
                             {
-                                <ActivityLog ActivityList="InfoVM.WOInfo.DetailsWorkOrder"/>
+                                <ActivityLog ActivityList="ViewModel.WOInfo.DetailsWorkOrder"/>
                             }
                             else
                             {
@@ -91,9 +91,9 @@
                 {
                     <div class="tab-panel">                        
                         <div class="tab-panel-content">
-                            @if (InfoVM.WOInfo.Recipe != null && InfoVM.WOInfo.Recipe.Details != null && InfoVM.WOInfo.Recipe.Details.Any())
+                            @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any())
                             {
-                                <DetailRecipe Recipe="InfoVM.WOInfo.Recipe"/>
+                                <DetailRecipe Recipe="ViewModel.WOInfo.Recipe" TotalAreaWorked="ViewModel.WOInfo.TotalAreaWorked"/>
                             }
                             else
                             {

@@ -6,7 +6,7 @@ namespace FincaFenix.UserInterface7._0.Pages
 {
     public partial class DetailWorkOrder
     {
-        [Inject] private GeneralInfoWorkOrderViewModel InfoVM { get; set; }
+        [Inject] private GeneralInfoWorkOrderViewModel ViewModel { get; set; }
         [Inject] private LoadDetailsWorkOrderViewModel DetailsVM { get; set; }
         [Inject] public TextAppBarStateService TextApp { get; set; }
         [Parameter] public int IdWorkOrder { get; set; }
@@ -14,7 +14,7 @@ namespace FincaFenix.UserInterface7._0.Pages
         protected override async Task OnInitializedAsync()
         {
             TextApp.PageTitle = "Detalle de la orden de trabajo";
-            await InfoVM.LoadDataWorkOrderById(IdWorkOrder);
+            await ViewModel.LoadDataWorkOrderById(IdWorkOrder);
             await DetailsVM.LoadActivityLog(IdWorkOrder);
             await Task.Delay(0);
             StateHasChanged();
