@@ -1,4 +1,8 @@
 ﻿using FincaFenix.ViewModels.ViewModels;
+using FincaFenix.ViewModels.ViewModels.UpdateWorkOrder;
+using FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder;
+using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder;
+using FincaFenix.ViewModels.ViewModels.WorkOrderDetails;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,7 +18,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<GeneralInfoWorkOrderViewModel>()
                     .AddTransient<RegistryActivityViewModel>()
                     .AddTransient<LoadWorkOrdersViewModel>()
-                    .AddTransient<LoadDetailsWorkOrderViewModel>();
+                    .AddTransient<LoadDetailsWorkOrderViewModel>()
+                    .AddTransient<UpdateWorkOrderViewModel>();
 
             return services;
         }

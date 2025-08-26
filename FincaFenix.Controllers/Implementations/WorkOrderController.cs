@@ -45,5 +45,10 @@ namespace FincaFenixControllers.Implementations
             await interactor.GetWorkOrderListPaginated(pageNumber, pageSize, status);
             return (presenter.InfoWorkOrderList, presenter.TotalCount);
         }
+        [HttpPost("updatestateworkorder")]
+        public Task<bool> UpdateWorkOrderState(WorkOrderDTO workOrder)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

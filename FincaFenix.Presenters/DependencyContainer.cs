@@ -1,6 +1,8 @@
 ﻿using FincaFenix.Presenters.Implementations;
+using FincaFenix.Presenters.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.Machine;
 using FincaFenix.UsesCases.Interfaces.OutputPort;
+using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.Sectors;
 using FincaFenix.UsesCases.Interfaces.Tasks;
 using FincaFenix.UsesCases.Interfaces.WorkOrder;
@@ -19,7 +21,8 @@ public static class DependencyContainer
                 .AddScoped<IMaterialCategoryOutputPort, MaterialCategoryPresenter>()
                 .AddScoped<IMachineOutputPort, MachinePresenter>()
                 .AddScoped<IEmployeeOutputPort, EmployeePresenter>()
-                .AddScoped<IDetailWorkOrderOutputPort, DetailWorkOrderPresenter>();
+                .AddScoped<IDetailWorkOrderOutputPort, DetailWorkOrderPresenter>()
+                .AddScoped<IUpdateWorkOrderOutputPort, UpdateWorkOrderPresenter>();
 
         return services;
     }

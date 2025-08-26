@@ -1,7 +1,7 @@
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.UserInterface7._0.Validators.WorkOrder;
-using FincaFenix.ViewModels.ViewModels;
+using FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 

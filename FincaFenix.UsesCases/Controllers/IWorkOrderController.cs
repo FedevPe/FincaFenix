@@ -10,5 +10,6 @@ namespace FincaFenix.UsesCases.Controllers
         Task<ShowWorkOrderDTO> GetWorkOrderAndRecipeByIdWorkorder(int id);
         Task<List<ShowWorkOrderDTO>> GetAllWorkOrderInfoList();
         Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalAcount)> GetWorkOrderListPaginated(int pageNumber, int pageSize, string status);
+        Task<bool> UpdateWorkOrderState(WorkOrderDTO workOrder);
     }
 }

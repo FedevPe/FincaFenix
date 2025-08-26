@@ -1,4 +1,11 @@
-﻿<div class="recipe-table-wrapper">
+﻿<div class="recipe-toolbar-content">
+    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">Maquina: @Recipe.Machine.Name</MudChip>
+    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">Capacidad: @Recipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit</MudChip>
+    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">TRV: @Recipe.TRV.ToString("N2") lts/ha</MudChip>
+    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">Hectareas: @TotalAreaWorked.ToString("N2") ha</MudChip>
+    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Calculate" Size="Size.Medium">Maquinadas: @_machineAplications.ToString("N2")</MudChip>
+</div>
+<div class="recipe-table-wrapper">
     <MudTable T="DetailRecipeDTO"
               Items="@Recipe.Details"
               Dense="true"
@@ -7,17 +14,6 @@
               Class="recipe-mud-table"
               Elevation="0"
               Breakpoint="Breakpoint.Sm">
-        <ToolBarContent>
-            <div class="recipe-toolbar-content">
-                <div class="recipe-toolbar-title">
-                    <MudIcon Icon="@Icons.Material.Filled.Science" Class="recipe-toolbar-icon" />
-                    <MudText Typo="Typo.h6" Class="recipe-toolbar-text">Receta</MudText>
-                </div>
-                <MudSpacer />
-                <div class="recipe-summary">
-                </div>
-            </div>
-        </ToolBarContent>
         <HeaderContent>
             <MudTh Class="recipe-table-header">
                 <MudTableSortLabel SortBy="new Func<DetailRecipeDTO, object>(x => x.Material.ArticleName)">
@@ -54,7 +50,7 @@
             <MudTh Class="recipe-table-header">
                 <MudTableSortLabel SortBy="new Func<DetailRecipeDTO, object>(x => x.AmountRequired)">
                     <div class="recipe-header-content">
-                        <MudIcon Icon="@Icons.Material.Filled.ElectricMeter" Class="recipe-header-icon" />
+                        <MudIcon Icon="@Icons.Material.Filled.Science" Class="recipe-header-icon" />
                         <span>Dosis</span>
                     </div>
                 </MudTableSortLabel>
@@ -87,7 +83,7 @@
                     }
                     else
                     {
-                        <span class="recipe-no-brand">Sin marca</span>
+                        <span class="recipe-no-pest">Sin marca</span>
                     }
                 </div>
             </MudTd>
@@ -153,12 +149,14 @@
     .recipe-toolbar-content {
         display: flex;
         align-items: center;
+        justify-content: space-evenly;
         width: 100%;
-        padding: 1.5rem 1.25rem;
         background: #ffffff;
-        border-bottom: 2px solid #00796B;
     }
-
+    .recipe-toolbar-chip{
+        background: #004d40;
+        color: white;
+    }
     .recipe-toolbar-title {
         display: flex;
         align-items: center;
@@ -432,5 +430,12 @@
 </style>
 
 @code {
+    private decimal _machineAplications;
     [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
+    [Parameter] public decimal TotalAreaWorked { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _machineAplications = ((TotalAreaWorked * Recipe.TRV) / Recipe.VolumeMachine);
+    }
 }

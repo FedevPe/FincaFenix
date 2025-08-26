@@ -69,6 +69,18 @@
                     <span class="info-value date-value">@InfoWO.StartDate.Value.ToString("dd/MM/yyyy")</span>
                 </div>
             </div>
+            @if(InfoWO.EndDate != null)
+            {
+                <div class="info-item date-item">
+                    <div class="info-icon-wrapper date-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">Fecha de Finalización</span>
+                        <span class="info-value date-value">@InfoWO.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>                
+            }
         </div>
 
         @if (!string.IsNullOrEmpty(InfoWO.Description))
@@ -488,45 +500,6 @@
 
     }
 
-    /* Animations */
-    @@keyframes slideInUp {
-        from
-
-    {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    }
-
-    .work-order-card {
-        animation: slideInUp 0.4s ease-out;
-    }
-
-    .info-item {
-        animation: slideInUp 0.6s ease-out;
-    }
-
-        .info-item:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .info-item:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .info-item:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .info-item:nth-child(4) {
-            animation-delay: 0.4s;
-        }
 </style>
 
 @code {

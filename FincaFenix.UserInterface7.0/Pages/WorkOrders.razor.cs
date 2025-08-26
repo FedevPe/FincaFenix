@@ -2,6 +2,7 @@ using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Components;
 using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.ViewModels.ViewModels;
+using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder;
 using Microsoft.AspNetCore.Components;
 
 namespace FincaFenix.UserInterface7._0.Pages

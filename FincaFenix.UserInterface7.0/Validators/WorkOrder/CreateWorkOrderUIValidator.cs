@@ -1,4 +1,4 @@
-﻿using FincaFenix.ViewModels.ViewModels;
+﻿using FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder;
 using FluentValidation;
 
 namespace FincaFenix.UserInterface7._0.Validators.WorkOrder

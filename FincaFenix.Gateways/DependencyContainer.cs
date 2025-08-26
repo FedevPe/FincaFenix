@@ -1,5 +1,7 @@
 ﻿using FincaFenix.Gateways.Implementations;
+using FincaFenix.Gateways.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Repository;
+using FincaFenix.UsesCases.Repository.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -15,7 +17,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>()
                     .AddScoped<IMachineRepository, MachineRepository>()
                     .AddScoped<IEmployeeRepository, EmployeeRepository>()
-                    .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>();
+                    .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>()
+                    .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepositor>();
 
             return services;
         }

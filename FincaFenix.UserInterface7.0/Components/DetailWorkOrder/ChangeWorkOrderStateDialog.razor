@@ -1,0 +1,270 @@
+﻿<MudDialog>
+    <TitleContent>
+        <div class="modal-title-container">
+            <MudIcon Icon="@Icons.Material.Filled.SwapHoriz" Class="modal-title-icon" />
+            <MudText Typo="Typo.h6">Cambiar Estado de la Orden</MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="modal-body-content">
+            <!-- Selector de nuevo estado -->
+            <div class="state-selector-section">
+                <MudText Typo="Typo.subtitle2" Class="section-label">Seleccionar nuevo estado:</MudText>
+                <div class="state-options-container">
+                    @foreach (var state in GetAvailableStates())
+                    {
+                        <div class="state-option @(selectedState == state.Value ? "selected" : "")"
+                             @onclick="() => SelectState(state.Value)">
+                            <div class="state-option-indicator">
+                                <div class="state-dot @GetStatusChipClass(state.Value)"></div>
+                            </div>
+                            <div class="state-option-content">
+                                <MudText Typo="Typo.body1" Class="state-option-name">@state.Value</MudText>
+                                <MudText Typo="Typo.body2" Class="state-option-description">@state.Description</MudText>
+                            </div>
+                            @if (selectedState == state.Value)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="state-selected-icon" />
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Advertencia cuando se selecciona "Cerrado" -->
+            @if (selectedState == "Cerrado")
+            {
+                <MudAlert Severity="MudBlazor.Severity.Error" Class="closure-warning-alert" Dense="false" NoIcon="true">
+                    <div class="warning-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Warning" Class="warning-icon" />
+                        <div class="warning-text">
+                            <strong>¡Atención!</strong>
+                            <span>Una vez cerrada la orden, no podrá modificarse ni reactivarse. Esta acción es irreversible.</span>
+                        </div>
+                    </div>
+                </MudAlert>
+            }
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">Cancelar</MudButton>
+        <MudButton Color="@(selectedState == "Cerrado" ? Color.Error : Color.Primary)"
+                   OnClick="ConfirmStateChange"
+                   Disabled="@isProcessing">
+            @if (isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Procesando...</MudText>
+            }
+            else if (selectedState == "Cerrado")
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Lock" Class="me-2" />
+                <span>Cerrar Orden</span>
+            }
+            else
+            {
+                <span>Cambiar Estado</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .modal-title-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .modal-title-icon {
+        color: #f59e0b !important;
+        font-size: 24px !important;
+    }
+
+    .modal-body-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 8px 0;
+    }
+
+    .state-selector-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .section-label {
+        margin-bottom: 0 !important;
+        color: #475569 !important;
+        font-weight: 600 !important;
+    }
+
+    .state-options-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .state-option {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+        .state-option:hover {
+            border-color: #f59e0b;
+            background: #fffbeb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+        }
+
+        .state-option.selected {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+        }
+
+    .state-option-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        flex-shrink: 0;
+    }
+
+    .state-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .state-option-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .state-option-name {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+    }
+
+    .state-option-description {
+        color: #64748b !important;
+        font-size: 0.875rem !important;
+    }
+
+    .state-selected-icon {
+        color: #f59e0b !important;
+        font-size: 24px !important;
+        flex-shrink: 0;
+    }
+
+    /* Advertencia de cierre */
+    .closure-warning-alert {
+        margin: 0 !important;
+        border-radius: 12px !important;
+        border: 2px solid #f59e0b !important;
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+        animation: warningPulse 2s ease-in-out infinite alternate;
+    }
+
+    @@keyframes warningPulse {
+        0%
+
+    {
+        box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+    }
+
+    100% {
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+    }
+
+    }
+
+    .warning-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 4px;
+    }
+
+    .warning-icon {
+        color: #f59e0b !important;
+        font-size: 24px !important;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .warning-text {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .warning-text strong {
+            color: #92400e;
+            font-weight: 700;
+        }
+
+        .warning-text span {
+            color: #78350f;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+    /* Status Chip Styles */
+    .status-activo {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .status-cerrado {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .status-pendiente {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .state-option
+
+    {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .state-option-indicator {
+        width: 36px;
+        height: 36px;
+    }
+
+    .state-dot {
+        width: 14px;
+        height: 14px;
+    }
+
+    .warning-content {
+        gap: 8px;
+    }
+
+    .warning-icon {
+        font-size: 20px !important;
+    }
+
+    }
+</style>
