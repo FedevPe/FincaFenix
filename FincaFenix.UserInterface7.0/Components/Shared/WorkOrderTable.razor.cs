@@ -14,15 +14,15 @@ namespace FincaFenix.UserInterface7._0.Components.Shared
         [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private ISnackbar Snackbar { get; set; }
 
-        public void OpenActivityForm(string woSelectedStatus, int idWorkOrder)
+        public void OpenActivityForm(string woSelectedStatus, int idWorkOrder, string workOrderNum)
         {
-            if (woSelectedStatus != "Cerrado")
+            if (woSelectedStatus == "Activo")
             {
                 NavigationManager.NavigateTo($"/actividad/registrar/{idWorkOrder}");
             }
             else
             {
-                Snackbar.Add($"La orden de trabajo N° {idWorkOrder} no se encuentra activa.", MudBlazor.Severity.Warning);
+                Snackbar.Add($"La orden de trabajo N° {workOrderNum} no se encuentra activa.", MudBlazor.Severity.Info);
             }
         }
         public void OpenWorkOrderDetails(int idWorkOrder)

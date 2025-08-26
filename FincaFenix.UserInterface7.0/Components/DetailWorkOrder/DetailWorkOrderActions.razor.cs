@@ -57,7 +57,14 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
         // Método existente
         private void OpenActivityForm()
         {
-            NavigationManager.NavigateTo($"/actividad/registrar/{InfoWO.Id}");
+            if(InfoWO.Status == "Activo")
+            {
+                NavigationManager.NavigateTo($"/actividad/registrar/{InfoWO.Id}");
+            }
+            else
+            {
+                Snackbar.Add($"La orden de trabajo N° {InfoWO.OrderNum} no se encuentra activa.", Severity.Info);
+            }
         }
         // Método existente
         public async Task GeneratePDF(ShowWorkOrderDTO infoWO)
