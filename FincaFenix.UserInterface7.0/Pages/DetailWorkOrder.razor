@@ -1,4 +1,4 @@
-﻿@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
+@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
 
 <div class="work-order-detail-page">
     @if (ViewModel.IsLoading)
@@ -33,7 +33,7 @@
                     <GeneralInformationWorkOrder InfoWO="@ViewModel.WOInfo"/>
                 </div>
                 <div class="actions-section">
-                    <DetailWorkOrderActions InfoWO="@ViewModel.WOInfo" />
+                    <DetailWorkOrderActions InfoWO="@ViewModel.WOInfo" OnStateChanged="HandleStateChange" />
                 </div>
             </div>
         </div>

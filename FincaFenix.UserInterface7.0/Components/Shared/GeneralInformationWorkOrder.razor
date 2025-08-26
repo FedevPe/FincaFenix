@@ -69,6 +69,18 @@
                     <span class="info-value date-value">@InfoWO.StartDate.Value.ToString("dd/MM/yyyy")</span>
                 </div>
             </div>
+            @if(InfoWO.EndDate != null)
+            {
+                <div class="info-item date-item">
+                    <div class="info-icon-wrapper date-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">Fecha de Finalización</span>
+                        <span class="info-value date-value">@InfoWO.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>                
+            }
         </div>
 
         @if (!string.IsNullOrEmpty(InfoWO.Description))

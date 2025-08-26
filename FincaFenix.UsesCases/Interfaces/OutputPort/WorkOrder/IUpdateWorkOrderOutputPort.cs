@@ -1,8 +1,8 @@
-﻿namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder
+namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder
 {
     public interface IUpdateWorkOrderOutputPort
     {
         public bool IsSuccesUpdate { get; }
-        Task Handle();
+        Task Handle(bool isSucces);
     }
 }

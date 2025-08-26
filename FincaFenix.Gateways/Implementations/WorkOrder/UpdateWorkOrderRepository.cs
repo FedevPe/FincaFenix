@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.POCOEntities;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 
@@ -7,14 +7,14 @@ namespace FincaFenix.Gateways.Implementations.WorkOrder
     public class UpdateWorkOrderRepositor(
         IUpdateWorkOrderCommand command) : IUpdateWorkOrderRepository
     {
-        public Task<bool> UpdateWorkOrderState()
+        public Task<bool> UpdateWorkOrder()
         {
-            return command.UpdateWorkOrderState();
+            return command.UpdateWorkOrder();
         }
 
-        public Task<bool> UpdateWorkOrderState(WorkOrderEntity workOrder)
+        public Task<bool> UpdateWorkOrderState(int workOrderId, string newStatus)
         {
-            return command.UpdateWorkOrderState(workOrder);
+            return command.UpdateWorkOrderState(workOrderId, newStatus);
         }
     }
 }
