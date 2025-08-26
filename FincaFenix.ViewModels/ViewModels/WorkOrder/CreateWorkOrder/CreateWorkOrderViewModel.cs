@@ -1,6 +1,7 @@
 ﻿using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
+using System;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
 {
@@ -36,8 +37,8 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
                         MaterialId = m.MaterialId,
                         AmountRequired = m.AmountRequired,
                         AmountRequiredUnit = m.AmountRequiredUnit,
-                        PestDisease = m.PestDisease,
-                        Brand = m.Brand,
+                        PestDisease = m.PestDisease.ToUpper().Trim(),
+                        Brand = m.Brand.ToUpper(),
                         EstimatedAmount = m.EstimatedAmount,
                         EstimatedAmountUnit = GetEstimatedAmounUnit(m.AmountRequiredUnit),
 
