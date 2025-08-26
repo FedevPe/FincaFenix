@@ -1,4 +1,4 @@
-using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
+﻿using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 

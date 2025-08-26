@@ -28,7 +28,7 @@ namespace FincaFenix.UserInterface7._0.Pages
             StateHasChanged();
             await Task.CompletedTask;
         }
-        // Enum para las pestaÃ±as
+        // Enum para las pestañas
         public enum WorkOrderTab
         {
             Activities,

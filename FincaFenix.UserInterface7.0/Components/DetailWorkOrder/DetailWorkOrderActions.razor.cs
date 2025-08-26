@@ -46,7 +46,7 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
             }
         }
 
-        // MÃ©todo existente para obtener las clases CSS del estado
+        // Método existente para obtener las clases CSS del estado
         private string GetStatusChipClass(string status) => status switch
         {
             "Cerrado" => "status-cerrado",
@@ -54,16 +54,16 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
             _ => "status-activo"
         };
 
-        // MÃ©todo existente
+        // Método existente
         private void OpenActivityForm()
         {
             NavigationManager.NavigateTo($"/actividad/registrar/{InfoWO.Id}");
         }
-        // MÃ©todo existente
+        // Método existente
         public async Task GeneratePDF(ShowWorkOrderDTO infoWO)
         {
             var document = new WorkOrderPDF(infoWO);
-            await PDFService.DownloadPdfAsync(document, $"Orden_de_trabajo_NÂ°_{infoWO.OrderNum}");
+            await PDFService.DownloadPdfAsync(document, $"Orden_de_trabajo_N°_{infoWO.OrderNum}");
         }        
     }
 }

@@ -1,4 +1,4 @@
-namespace FincaFenix.UsesCases.Repository.WorkOrder
+﻿namespace FincaFenix.UsesCases.Repository.WorkOrder
 {
     public interface IUpdateWorkOrderRepository
     {
