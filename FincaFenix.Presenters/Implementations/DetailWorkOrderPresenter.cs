@@ -25,7 +25,7 @@ namespace FincaFenix.Presenters.Implementations
                 Id = e.Id,
                 Performance = e.Performance,
                 WorkedHours = e.WorkedHours,
-                Description = e.Description,
+                Description = e.Description.ToUpper(),
                 ActivityDate = e.ActivityDate,
                 WorkOrder = null,
                 Employee = e.Employee != null ? new EmployeeDTO
