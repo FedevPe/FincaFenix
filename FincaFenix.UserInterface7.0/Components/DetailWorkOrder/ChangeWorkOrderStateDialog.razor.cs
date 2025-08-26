@@ -53,7 +53,7 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
 
                 if (result)
                 {
-                    string message = $"Estado cambiado exitosamente de '{CurrentStatus}' a '{selectedState}'";
+                    string message = $"El estado de la orden se ha modificado correctamente.";
 
                     Snackbar.Add(message, Severity.Success);
                     MudDialog.Close(DialogResult.Ok(result));
