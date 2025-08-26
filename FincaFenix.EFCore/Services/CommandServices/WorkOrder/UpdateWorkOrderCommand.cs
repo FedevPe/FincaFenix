@@ -1,4 +1,4 @@
-﻿using FincaFenix.EFCore.Context;
+using FincaFenix.EFCore.Context;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 using Microsoft.EntityFrameworkCore;
 

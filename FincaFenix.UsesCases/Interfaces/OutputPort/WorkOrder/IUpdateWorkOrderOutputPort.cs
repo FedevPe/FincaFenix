@@ -1,4 +1,4 @@
-﻿namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder
+namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder
 {
     public interface IUpdateWorkOrderOutputPort
     {

@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.POCOEntities;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 
