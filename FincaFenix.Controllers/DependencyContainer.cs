@@ -1,5 +1,5 @@
 ﻿using FincaFenix.UsesCases.Controllers;
-using FincaFenix.UsesCases.Controllers.UpdateWorkOrder;
+using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenixControllers.Implementations;
 using FincaFenixControllers.Implementations.WorkOrder;
 
