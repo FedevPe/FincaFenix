@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.UsesCases.Interfaces.OutputPort;
 
