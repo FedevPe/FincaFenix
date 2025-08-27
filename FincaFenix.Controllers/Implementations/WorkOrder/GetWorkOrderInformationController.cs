@@ -1,6 +1,6 @@
 ﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Controllers.GetWorkOrderInformation;
+using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
 using Microsoft.AspNetCore.Mvc;
