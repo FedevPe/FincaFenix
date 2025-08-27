@@ -1,9 +1,24 @@
-﻿<div class="recipe-toolbar-content">
-    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">Maquina: @Recipe.Machine.Name</MudChip>
-    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">Capacidad: @Recipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit</MudChip>
-    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">TRV: @Recipe.TRV.ToString("N2") lts/ha</MudChip>
-    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">Hectareas: @TotalAreaWorked.ToString("N2") ha</MudChip>
-    <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Calculate" Size="Size.Medium">Maquinadas: @_machineAplications.ToString("N2")</MudChip>
+﻿<div class="recipe-toolbar-content">    
+    <div class="recipe-toolbar-chips">
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Numbers" Size="Size.Medium">
+            Receta N° #@Recipe.NumRecipe
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">
+            Maquina: @Recipe.Machine.Name
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">
+            Capacidad: @Recipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">
+            TRV: @Recipe.TRV.ToString("N2") lts/ha
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">
+            Hectareas: @TotalAreaWorked.ToString("N2") ha
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Calculate" Size="Size.Medium">
+            Maquinadas: @_machineAplications.ToString("N2")
+        </MudChip>
+    </div>
 </div>
 <div class="recipe-table-wrapper">
     <MudTable T="DetailRecipeDTO"
@@ -12,7 +27,7 @@
               Hover="true"
               Bordered="true"
               Class="recipe-mud-table"
-              Elevation="0"
+              Elevation="3"
               Breakpoint="Breakpoint.Sm">
         <HeaderContent>
             <MudTh Class="recipe-table-header">
@@ -66,10 +81,9 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Producto" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-product-content">
-                    <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="recipe-cell-icon recipe-estimate-icon" />
+                <div class="recipe-cell-content recipe-product-content">                    
                     <MudTooltip Text="@context.Material.ArticleName">
-                        <span class="recipe-product-name">@context.Material.ArticleName</span>
+                        <span>@context.Material.ArticleName</span>
                     </MudTooltip>
                 </div>
             </MudTd>
@@ -77,54 +91,47 @@
                 <div class="recipe-cell-content">
                     @if (!string.IsNullOrEmpty(context.Brand))
                     {
-                        <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" Class="recipe-brand-chip">
-                            @context.Brand
-                        </MudChip>
+                        <span>@context.Brand</span>
                     }
                     else
                     {
-                        <span class="recipe-no-pest">Sin marca</span>
+                        <span>Sin marca</span>
                     }
                 </div>
             </MudTd>
             <MudTd DataLabel="Categoría" Class="recipe-table-cell">
-                <div class="recipe-cell-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Science" Class="recipe-cell-icon recipe-estimate-icon" />
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled"
-                             Color="@Color.Secondary"
-                             Class="recipe-category-chip">
-                        @context.Material.Category.Description
-                    </MudChip>
+                <div class="recipe-cell-content">                    
+                    <span>
+                        @context.Material.Category.Description.ToUpper()
+                    </span>
                 </div>
             </MudTd>
             <MudTd DataLabel="Plaga/Enfermedad" Class="recipe-table-cell">
                 <div class="recipe-cell-content recipe-pest-content">
                     @if (!string.IsNullOrEmpty(context.PestDisease))
                     {
-                        <MudChip T="string" Class="recipe-estimate-chip">
+                        <span>
                             @context.PestDisease
-                        </MudChip>
+                        </span>
                     }
                     else
                     {
-                        <span class="recipe-no-pest">Sin registro</span>
+                        <span>Sin registro</span>
                     }
                 </div>
             </MudTd>
             <MudTd DataLabel="Dosis" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-dose-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-cell-icon recipe-estimate-icon" />
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="Color.Secondary" Class="recipe-dose-chip">
+                <div class="recipe-cell-content recipe-dose-content">                    
+                    <span >
                         @context.AmountRequired @context.AmountRequiredUnit
-                    </MudChip>
+                    </span>
                 </div>
             </MudTd>
             <MudTd DataLabel="Cant. Estimada" Class="recipe-table-cell">
-                <div class="recipe-cell-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Functions" Class="recipe-cell-icon recipe-estimate-icon" />
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="recipe-estimate-chip">
+                <div class="recipe-cell-content">                    
+                    <span>
                         @context.EstimatedAmount @context.EstimatedAmountUnit
-                    </MudChip>
+                    </span>
                 </div>
             </MudTd>
         </RowTemplate>
@@ -145,46 +152,76 @@
         background: transparent !important;
     }
 
-    /* Recipe Toolbar Styles */
+    /* Recipe Toolbar Styles - REFACTORIZADO */
     .recipe-toolbar-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-evenly;
-        width: 100%;
-        background: #ffffff;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin: 1.5rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        padding: 1.5rem;
     }
-    .recipe-toolbar-chip{
-        background: #004d40;
-        color: white;
+
+    .recipe-toolbar-header {
+        background: #00796B;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        position: relative;
     }
+
+        .recipe-toolbar-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
     .recipe-toolbar-title {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        justify-content: center;
     }
 
     .recipe-toolbar-icon {
-        color: #00796B;
+        color: white;
         font-size: 24px !important;
     }
 
     .recipe-toolbar-text {
-        color: #1f2937 !important;
+        color: white !important;
         font-weight: 600 !important;
         margin: 0 !important;
+        font-size: 1.25rem !important;
     }
 
-    .recipe-summary {
+    .recipe-toolbar-chips {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .recipe-summary-chip {
-        background: rgba(33, 150, 243, 0.1) !important;
+    .recipe-toolbar-chip {
+        background: #004d40 !important;
         color: white !important;
-        font-weight: 500;
+        font-weight: 500 !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 77, 64, 0.2) !important;
     }
+
+        .recipe-toolbar-chip:hover {
+            background: #00695c !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 77, 64, 0.3) !important;
+        }
 
     /* Recipe Header Styles */
     .recipe-table-header {
@@ -330,9 +367,24 @@
     }
 
     .recipe-toolbar-content {
-        flex-direction: column;
-        gap: 1rem;
+        border-radius: 12px;
+        margin: 1rem 0;
         padding: 1rem;
+    }
+
+    .recipe-toolbar-header {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .recipe-toolbar-chips {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .recipe-toolbar-chip {
+        width: 100%;
+        justify-content: center;
     }
 
     .recipe-table-header,
@@ -368,6 +420,10 @@
         flex-direction: column;
         gap: 0.5rem;
         text-align: center;
+    }
+
+    .recipe-toolbar-text {
+        font-size: 1.1rem !important;
     }
 
     .recipe-cell-content {
