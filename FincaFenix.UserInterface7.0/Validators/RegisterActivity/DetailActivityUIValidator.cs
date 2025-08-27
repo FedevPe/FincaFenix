@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FluentValidation;
 
 namespace FincaFenix.UserInterface7._0.Validators.RegisterActivity

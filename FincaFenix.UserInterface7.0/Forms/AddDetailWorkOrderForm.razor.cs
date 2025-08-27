@@ -1,4 +1,4 @@
-using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UserInterface7._0.Validators.DetailWorkOrder;
 using FincaFenix.UserInterface7._0.Validators.RegisterActivity;

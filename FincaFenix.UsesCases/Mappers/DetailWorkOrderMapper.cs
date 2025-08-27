@@ -1,4 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.Entities.POCOEntities;
 
 namespace FincaFenix.UsesCases.Mappers

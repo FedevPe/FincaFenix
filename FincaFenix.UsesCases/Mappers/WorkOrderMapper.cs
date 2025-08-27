@@ -1,4 +1,5 @@
 ﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;

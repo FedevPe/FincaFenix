@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
+using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 
 namespace FincaFenix.UsesCases.Controllers
 {

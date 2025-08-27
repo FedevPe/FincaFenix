@@ -1,4 +1,4 @@
-﻿using FincaFenix.UsesCases.Controllers.UpdateWorkOrder;
+﻿using FincaFenix.UsesCases.Controllers.WorkOrder;
 
 namespace FincaFenix.ViewModels.ViewModels.UpdateWorkOrder
 {
