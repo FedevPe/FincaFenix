@@ -2,6 +2,7 @@
 using FincaFenix.UsesCases.Interactors.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
+using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrderDetail;
 using FincaFenix.UsesCases.Interfaces.Machine;
 using FincaFenix.UsesCases.Interfaces.Material;
 using FincaFenix.UsesCases.Interfaces.Sectors;
@@ -21,7 +22,7 @@ public static class DependencyContainer
                 .AddTransient<IMaterialCategoryInputPort, MaterialCategoryInteractor>()
                 .AddTransient<IMachineInputPort, MachineInteractor>()
                 .AddTransient<IEmployeeInputPort, EmployeeInteractor>()
-                .AddTransient<IDetailWorkOrderInputPort, DetailWorkOrderInteractor>()
+                .AddTransient<IAddDetailWorkOrderInputPort, DetailWorkOrderInteractor>()
                 .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>();
 
 

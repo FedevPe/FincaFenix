@@ -2,6 +2,7 @@
 using FincaFenix.UserInterface7._0.Validators.DetailWorkOrder;
 using FincaFenix.UserInterface7._0.Validators.RegisterActivity;
 using FincaFenix.UserInterface7._0.Validators.WorkOrder;
+using Microsoft.JSInterop;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
