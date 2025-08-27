@@ -19,7 +19,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<RegistryActivityViewModel>()
                     .AddTransient<LoadWorkOrdersViewModel>()
                     .AddTransient<LoadDetailsWorkOrderViewModel>()
-                    .AddTransient<UpdateWorkOrderViewModel>();
+                    .AddTransient<UpdateWorkOrderViewModel>()
+                    .AddTransient<CalculateMaterialConsumedViewModel>();
 
             return services;
         }
