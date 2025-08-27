@@ -1,4 +1,17 @@
-﻿<div class="activity-table-wrapper">
+﻿<div class="activity-toolbar-content">
+    <MudSpacer />
+    <div class="activity-search-container">
+        <MudTextField @bind-Value="_searchString"
+                      Placeholder="Buscar operario..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Margin="Margin.Dense"
+                      Class="activity-search-field"
+                      Variant="Variant.Text" />
+    </div>
+</div>
+<div class="activity-table-wrapper">
     <MudTable T="DetailWorkOrderDTO"
               Items="@ActivityList"
               Dense="true"
@@ -8,21 +21,6 @@
               Class="activity-mud-table"
               Elevation="3"
               Breakpoint="Breakpoint.Sm">
-        <ToolBarContent>
-            <div class="activity-toolbar-content">
-                <MudSpacer />
-                <div class="activity-search-container">
-                    <MudTextField @bind-Value="_searchString"
-                                  Placeholder="Buscar operario..."
-                                  Adornment="Adornment.Start"
-                                  AdornmentIcon="@Icons.Material.Filled.Search"
-                                  IconSize="Size.Medium"
-                                  Margin="Margin.Dense"
-                                  Class="activity-search-field"
-                                  Variant="Variant.Text" />
-                </div>
-            </div>
-        </ToolBarContent>
         <HeaderContent>
             <MudTh Class="activity-table-header">
                 <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.ActivityDate)">
@@ -86,26 +84,23 @@
             </MudTd>
             <MudTd DataLabel="Cuadro Trabajado" Class="activity-table-cell">
                 <div class="activity-cell-content activity-performance-content">
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Class="activity-performance-chip">
+                    <span>
                         @context.Sector.SectorName
-                    </MudChip>
+                    </span>
                 </div>
             </MudTd>
             <MudTd DataLabel="Horas trabajadas" Class="activity-table-cell">
-                <div class="activity-cell-content activity-hours-content">
-                    <MudIcon Icon="@Icons.Material.Filled.AccessTime" Class="activity-cell-icon" />
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="Color.Secondary" Class="activity-performance-chip">
+                <div class="activity-cell-content activity-hours-content">                    
+                    <span>
                         @context.WorkedHours hs
-                    </MudChip>
+                    </span>
                 </div>
             </MudTd>
             <MudTd DataLabel="Rendimiento" Class="activity-table-cell">
-                <div class="activity-cell-content activity-performance-content">
-                    <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="activity-cell-icon" />
-                    <MudChip T="string" Size="Size.Small" Variant="Variant.Filled"
-                             Class="activity-performance-chip">
+                <div class="activity-cell-content activity-performance-content">                    
+                    <span>
                         @context.Performance.ToString("N2")
-                    </MudChip>
+                    </span>
                 </div>
             </MudTd>
             <MudTd DataLabel="Observaciones" Class="activity-table-cell">
@@ -146,7 +141,6 @@
         width: 100%;
         padding: 1.5rem;
         background: #ffffff;
-        border-bottom: 2px solid #00796B;
     }
 
     .activity-toolbar-title {
