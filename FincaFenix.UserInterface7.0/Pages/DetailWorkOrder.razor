@@ -40,7 +40,7 @@
 
         <!-- Tabs Section -->
         <div class="tabs-container">
-            <!-- Tab Headers -->
+            <!-- Tab Headers -->            
             <div class="tabs-header">
                 <button class="tab-button @GetTabActiveClass(WorkOrderTab.Activities)"
                         @onclick="() => SetActiveTab(WorkOrderTab.Activities)">
@@ -53,7 +53,14 @@
                     <MudIcon Icon="@Icons.Material.Filled.Science" Class="tab-icon" />
                     <span class="tab-label">Receta</span>
                 </button>
-                
+
+                <!-- Pestañas futuras (deshabilitadas por ahora) -->
+                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Consumption)"
+                        @onclick="() => SetActiveTab(WorkOrderTab.Consumption)">
+                    <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="tab-icon" />
+                    <span class="tab-label">Consumos</span>
+                </button>
+
                 <!-- Pestañas futuras (deshabilitadas por ahora) -->
                 <button class="tab-button tab-button-disabled" disabled>
                     <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="tab-icon" />
@@ -62,7 +69,7 @@
             </div>
 
             <!-- Tab Content -->
-            <div class="tab-content">
+            <div class="tab-content" id="data">
                 @if (activeTab == WorkOrderTab.Activities)
                 {
                     <div class="tab-panel">
@@ -103,6 +110,29 @@
                                         <MudText Typo="Typo.h6" Class="empty-state-title">Sin receta asociada</MudText>
                                         <MudText Typo="Typo.body1" Class="empty-state-description">
                                             No hay una receta de productos asociada a esta orden de trabajo.
+                                        </MudText>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (activeTab == WorkOrderTab.Consumption)
+                {
+                    <div class="tab-panel">
+                        <div class="tab-panel-content">
+                            @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any() && ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
+                            {
+                                <RecipeConsumption DetailWorkOrderList="ViewModel.WOInfo.DetailsWorkOrder" Recipe="ViewModel.WOInfo.Recipe" />
+                            }
+                            else
+                            {
+                                <div class="empty-state-card">
+                                    <div class="empty-state-content">
+                                        <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="empty-state-icon" />
+                                        <MudText Typo="Typo.h6" Class="empty-state-title">Sin datos asociados</MudText>
+                                        <MudText Typo="Typo.body1" Class="empty-state-description">
+                                            Aún no se puede calcular el consumo de los productos. No se han registrado actividades.
                                         </MudText>
                                     </div>
                                 </div>
