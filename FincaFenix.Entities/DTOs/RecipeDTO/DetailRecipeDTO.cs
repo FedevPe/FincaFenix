@@ -5,7 +5,6 @@ namespace FincaFenix.Entities.DTOs.RecipeDTO
     public class DetailRecipeDTO
     {
         public int CategoryId { get; set; }
-        public string CategoryName { get; set; }
         public int MaterialId { get; set; }
         public MaterialRecipeDTO Material { get; set; }
         public decimal AmountRequired { get; set; }
@@ -14,5 +13,6 @@ namespace FincaFenix.Entities.DTOs.RecipeDTO
         public string EstimatedAmountUnit { get; set; }
         public string Brand { get; set; }
         public string PestDisease { get; set; }
+        public decimal TotalAmountConsumed { get; set; } = 0;
     }
 }
