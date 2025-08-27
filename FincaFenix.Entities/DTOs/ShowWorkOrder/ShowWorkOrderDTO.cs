@@ -15,7 +15,7 @@ namespace FincaFenix.Entities.DTOs.ShowWorkOrder
         public DateTime? EndDate { get; set; }
         public TaskDTO Task { get; set; }
         public FarmDTO Farm { get; set; }
-        public IEnumerable<DetailWorkOrderDTO.DetailWorkOrderDTO> DetailsWorkOrder { get; set; }
+        public IEnumerable<DetailWorkOrderDTO.GetDetailWorkOrder.DetailWorkOrderDTO> DetailsWorkOrder { get; set; }
         public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
         public RecipeWorkOrderDTO Recipe { get; set; }
         public bool IsDeleted { get; set; }
