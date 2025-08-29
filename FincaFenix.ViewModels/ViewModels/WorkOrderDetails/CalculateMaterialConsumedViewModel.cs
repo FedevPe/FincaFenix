@@ -5,25 +5,42 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
 {
     public class CalculateMaterialConsumedViewModel
     {
-        public decimal TotalPerfomance { get; set; }
-        public async Task CalculateTotalAmountConsume(RecipeWorkOrderDTO recipeWorkOrder, IEnumerable<DetailWorkOrderDTO> detailWorkOrderList)
-        {
-            TotalPerfomance = detailWorkOrderList.Sum(d => d.Performance);
+        public decimal TotalPerfomance { get; private set; }
 
-            foreach (var detail in recipeWorkOrder.Details)
+        public async Task CalculateEstimatedAndConsumedAmounts(RecipeWorkOrderDTO recipe, IEnumerable<DetailWorkOrderDTO> workOrderList, decimal sectorArea)
+        {
+            // Calcula el rendimiento total una sola vez.
+            TotalPerfomance = workOrderList.Sum(d => d.Performance);
+
+            foreach (var detail in recipe.Details)
             {
-                detail.TotalAmountConsumed = CalculateTotalAmount(detail, TotalPerfomance, recipeWorkOrder.TRV);
+                // Calcula y asigna la cantidad estimada usando el parámetro sectorArea.
+                detail.EstimatedAmount = CalculateAmountForSector(detail, recipe.TRV, sectorArea);
+
+                // Calcula y asigna la cantidad consumida.
+                detail.TotalAmountConsumed = CalculateAmount(detail, TotalPerfomance, recipe.TRV);
             }
             await Task.CompletedTask;
         }
 
-        private decimal CalculateTotalAmount(DetailRecipeDTO detail, decimal totalPerformance, decimal trv)
+        // Extrae la lógica de conversión de unidades para reutilizarla.
+        private decimal GetAmountInLitersOrKilos(DetailRecipeDTO detail)
         {
-            var amountRequired = (detail.AmountRequiredUnit == "cc" || detail.AmountRequiredUnit == "gr")
+            return (detail.AmountRequiredUnit == "cc" || detail.AmountRequiredUnit == "gr")
                 ? detail.AmountRequired / 1000m
                 : detail.AmountRequired;
+        }
 
+        private decimal CalculateAmount(DetailRecipeDTO detail, decimal totalPerformance, decimal trv)
+        {
+            var amountRequired = GetAmountInLitersOrKilos(detail);
             return (totalPerformance * amountRequired) / trv;
+        }
+
+        private decimal CalculateAmountForSector(DetailRecipeDTO detail, decimal trv, decimal areaSector)
+        {
+            var amountRequired = GetAmountInLitersOrKilos(detail);
+            return ((trv * amountRequired) / 1000) * areaSector;
         }
     }
 }

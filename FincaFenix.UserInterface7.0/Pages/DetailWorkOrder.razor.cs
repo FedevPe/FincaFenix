@@ -24,8 +24,6 @@ namespace FincaFenix.UserInterface7._0.Pages
         }
         private async Task HandleStateChange()
         {
-            //await ViewModel.LoadDataWorkOrderById(IdWorkOrder);
-            //await DetailsVM.LoadActivityLog(IdWorkOrder);
             NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
             StateHasChanged();
             await Task.CompletedTask;
@@ -35,7 +33,8 @@ namespace FincaFenix.UserInterface7._0.Pages
         {
             Activities,
             Recipe,
-            Consumption
+            Consumption,
+            Graphics
         }
 
         private WorkOrderTab activeTab = WorkOrderTab.Activities;

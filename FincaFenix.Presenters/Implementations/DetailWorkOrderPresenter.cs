@@ -37,6 +37,7 @@ namespace FincaFenix.Presenters.Implementations
                 } : null,
                 Sector = e.SectorWorked != null ? new DetailSectorFarmDTO
                 {
+                    Id= e.SectorWorked.Id,
                     SectorName = e.SectorWorked.SectorName,
                 } : null
 

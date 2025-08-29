@@ -18,8 +18,12 @@ namespace FincaFenix.UserInterface7._0
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
+            builder.Services.AddRazorPages(); 
+            builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
+            {
+                // Solo habilita errores detallados en el entorno de desarrollo
+                options.DetailedErrors = builder.Environment.IsDevelopment();
+            });
             builder.Services.AddControllers();
             builder.Services.AddServicesContainer();
             builder.Services.AddUIServices();

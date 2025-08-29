@@ -8,14 +8,14 @@
     </MudGrid>
 </div>
 <div class="container-fluid shadow p-3 border rounded mt-3 mb-3 bg-color-white">
-    <StatsCard WorkOrderList="@ViewModel.AllWorkOrderList"/>
+    <StatsCard WorkOrderList="@ViewModel.AllWorkOrderList" OnFilterSelectedChanged="HandleFilterSelected" />
     <MudGrid Justify="Justify.FlexStart" Spacing="1">
         <MudItem>
             <MudText Typo="Typo.h5"><b>Ordenes de Trabajo</b></MudText>
         </MudItem>
         <MudSpacer />
         <MudToggleGroup T="bool" Value="renderWorkOrderCard" ValueChanged="HandleToggleChanged">
-            <MudToggleItem Value="true">
+            <MudToggleItem Value="true" Disabled="true">
                 <MudIcon Icon="@Icons.Material.Filled.ViewModule"
                          style="@($"color : {(renderWorkOrderCard ? Colors.Shades.White : Colors.Teal.Darken4)};")"
                          Size="Size.Small" />
@@ -37,10 +37,18 @@
             <MudText Typo="Typo.h6" Style="margin-top:30px">Cargando órdenes de trabajo...</MudText>
         </div>
     }
-    else if ((ViewModel.AllWorkOrderList is null || !ViewModel.AllWorkOrderList.Any()) && (ViewModel.WorkOrderPaginatedList is null || !ViewModel.WorkOrderPaginatedList.Any()))
+    else if ((_filteredWorkOrderList is null || !_filteredWorkOrderList.Any()) && (ViewModel.WorkOrderPaginatedList is null || !ViewModel.WorkOrderPaginatedList.Any()))
     {
         <MudItem xs="12">
-            <MudText Typo="Typo.body1" Align="Align.Center">No se encontraron órdenes de trabajo activas o pendientes.</MudText>
+            <div class="empty-state-card">
+                <div class="empty-state-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                    <MudText Typo="Typo.h6" Class="empty-state-title">No se han encontrado ordenes.</MudText>
+                    <MudText Typo="Typo.body1" Class="empty-state-description">
+                        Ninguna orden cumple con el criterio de busqueda.
+                    </MudText>
+                </div>
+            </div>
         </MudItem>
     }
     else
@@ -48,7 +56,7 @@
         if (renderWorkOrderCard)
         {
             <MudGrid spacing="3" justify="Justify.FlexStart" class="mt-1">
-                @foreach (var workorder in ViewModel.WorkOrderPaginatedList)
+                @foreach (var workorder in _filteredWorkOrderList)
                 {
                     <MudItem xs="12" sm="12" md="6" lg="3">
                         <WorkOrderCard InfoWO="workorder" />
@@ -69,10 +77,82 @@
         else
         {
             <MudItem xs="12" lg="12">
-                <WorkOrderTable WorkOrderList="@ViewModel.AllWorkOrderList" />
+                <WorkOrderTable WorkOrderList="@_filteredWorkOrderList" />
             </MudItem>
         }
     }
 </div>
+<style>
+    /* Empty State Styles */
+    .empty-state-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        border: 1px solid #e2e8f0;
+        margin: 1rem 0;
+        transition: all 0.3s ease;
+    }
+
+    .empty-state-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 48px !important;
+        color: #94a3b8 !important;
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-title {
+        color: #475569 !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+    }
+
+    .empty-state-description {
+        color: #64748b !important;
+        max-width: 400px !important;
+        line-height: 1.6 !important;
+        margin: 0 !important;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .empty-state-card
+
+    {
+        padding: 2rem 1.5rem;
+    }
+
+    .empty-state-icon {
+        font-size: 40px !important;
+    }
+
+    .empty-state-description {
+        max-width: 300px !important;
+        font-size: 0.9rem !important;
+    }
+
+    }
+
+    @@media (max-width: 480px) {
+        .empty-state-card
+
+    {
+        padding: 1.5rem 1rem;
+        margin: 0.5rem 0;
+    }
+
+    .empty-state-icon {
+        font-size: 36px !important;
+    }
+
+    }
+</style>
 
 

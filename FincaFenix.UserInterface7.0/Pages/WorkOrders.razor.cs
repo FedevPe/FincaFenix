@@ -1,9 +1,9 @@
-using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UserInterface7._0.Components;
+using FincaFenix.Entities.DTOs.ShowWorkOrder;
+using FincaFenix.UserInterface7._0.Components.Shared;
 using FincaFenix.UserInterface7._0.Services;
-using FincaFenix.ViewModels.ViewModels;
 using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace FincaFenix.UserInterface7._0.Pages
 {
@@ -13,13 +13,13 @@ namespace FincaFenix.UserInterface7._0.Pages
         [Inject] public TextAppBarStateService TextApp { get; set; }
 
         private bool renderWorkOrderCard = false;
-        private string textContent = "Ordenes de Trabajo";
         private bool _isLoading = true;
-
+        private List<ShowWorkOrderDTO> _filteredWorkOrderList;
         protected override async Task OnInitializedAsync()
         {
             TextApp.PageTitle = "Ordenes de Trabajo";
             await LoadDataAsync();
+            _filteredWorkOrderList = ViewModel.AllWorkOrderList;            
         }
 
         private async Task HandleToggleChanged(bool value)
@@ -47,29 +47,26 @@ namespace FincaFenix.UserInterface7._0.Pages
             // Llama a StateHasChanged para renderizar los datos
             StateHasChanged();
         }
-        private async Task HandleSearch(SearchBarViewModel filter)
+        private void HandleFilterSelected(StatsCard.FilterWorkOrder filter)
         {
-            _isLoading = true;
-            StateHasChanged(); // Muestra el indicador de carga
-
-            try
+            // Aplica la lógica de filtrado en el componente padre.
+            switch (filter)
             {
-                // Lógica para filtrar la lista de órdenes de trabajo
-                // Aquí debes llamar a un nuevo método en tu ViewModel
-                // que acepte los parámetros de búsqueda.
-
-                // Ejemplo:
-                await ViewModel.LoadFilteredWorkOrdersAsync(filter);
+                case StatsCard.FilterWorkOrder.Active:
+                    _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Activo").ToList();
+                    break;
+                case StatsCard.FilterWorkOrder.Pending:
+                    _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Pendiente").ToList();
+                    break;
+                case StatsCard.FilterWorkOrder.Closed:
+                    _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Cerrado").ToList();
+                    break;
+                case StatsCard.FilterWorkOrder.None:
+                default:
+                    _filteredWorkOrderList = ViewModel.AllWorkOrderList;
+                    break;
             }
-            catch (Exception ex)
-            {
-                // Manejar errores
-            }
-            finally
-            {
-                _isLoading = false;
-                StateHasChanged(); // Oculta el indicador y renderiza los datos
-            }
+            StateHasChanged();
         }
     }
 }

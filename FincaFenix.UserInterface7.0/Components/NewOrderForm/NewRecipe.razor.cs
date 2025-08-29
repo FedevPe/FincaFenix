@@ -89,7 +89,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
             {
                 if (detail.AmountRequired <= 0)
                 {
-                    SnackbarService.Add("La 'Cantidad Requerida' no es válida para el cálculo.", MudBlazor.Severity.Warning);
+                    SnackbarService.Add("La 'Dosis' no es válida para el cálculo.", MudBlazor.Severity.Warning);
                     return;
                 }
 

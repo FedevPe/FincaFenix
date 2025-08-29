@@ -29,9 +29,5 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
             CurrentPage = pageNumber;
             await LoadWorkOrderListPaginated();
         }
-        public async Task LoadFilteredWorkOrdersAsync(SearchBarViewModel filter)
-        {
-            await Task.CompletedTask;
-        }
     }
 }

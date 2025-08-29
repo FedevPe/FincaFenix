@@ -1,58 +1,59 @@
 ﻿<div class="actions-panel">
     <div class="panel-header">
         <div class="header-icon-wrapper">
-            <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Class="header-icon" OnClick="OnExpandCollapseClick" />
         </div>
         <div class="header-content">
             <MudText Typo="Typo.h6" Class="panel-title-actions">Acciones disponibles</MudText>
             <span class="panel-subtitle">Gestiona tu orden de trabajo</span>
         </div>
     </div>
+    <MudCollapse Expanded="@_expanded">
+        <div class="actions-container">
+            <div class="action-card primary-action" @onclick="OpenActivityForm">
+                <div class="action-icon-wrapper primary-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.AddTask" Class="action-icon" />
+                </div>
+                <div class="action-content">
+                    <span class="action-title">Agregar Actividad</span>
+                    <span class="action-description">Registra una nueva actividad realizada</span>
+                </div>
+                <div class="action-button">
+                    <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                   Class="action-chevron"
+                                   Size="Size.Small" />
+                </div>
+            </div>
 
-    <div class="actions-container">
-        <div class="action-card primary-action" @onclick="OpenActivityForm">
-            <div class="action-icon-wrapper primary-icon">
-                <MudIcon Icon="@Icons.Material.Filled.AddTask" Class="action-icon" />
+            <div class="action-card secondary-action" onclick="@(() => OpenChangeStateDialog(InfoWO.Id, InfoWO.Status))">
+                <div class="action-icon-wrapper secondary-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.SwapHoriz" Class="action-icon" />
+                </div>
+                <div class="action-content">
+                    <span class="action-title">Cambiar Estado</span>
+                    <span class="action-description">Modifica el estado actual de la orden</span>
+                </div>
+                <div class="current-status">
+                    <MudIcon Icon="fa-solid fa-rotate" Class="action-chevron secondary-chevron" />
+                </div>
             </div>
-            <div class="action-content">
-                <span class="action-title">Agregar Actividad</span>
-                <span class="action-description">Registra una nueva actividad realizada</span>
-            </div>
-            <div class="action-button">
-                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
-                               Class="action-chevron"
-                               Size="Size.Small" />
+
+            <div class="action-card tertiary-action" @onclick="@(() => GeneratePDF(InfoWO))">
+                <div class="action-icon-wrapper tertiary-icon">
+                    <MudIcon Icon="@Icons.Custom.FileFormats.FilePdf" Class="action-icon" />
+                </div>
+                <div class="action-content">
+                    <span class="action-title">Generar PDF</span>
+                    <span class="action-description">Descarga un reporte completo</span>
+                </div>
+                <div class="action-button">
+                    <MudIconButton Icon="@Icons.Material.Filled.Download"
+                                   Class="action-chevron tertiary-chevron"
+                                   Size="Size.Small" />
+                </div>
             </div>
         </div>
-
-        <div class="action-card secondary-action" onclick="@(() => OpenChangeStateDialog(InfoWO.Id, InfoWO.Status))">
-            <div class="action-icon-wrapper secondary-icon">
-                <MudIcon Icon="@Icons.Material.Filled.SwapHoriz" Class="action-icon" />
-            </div>
-            <div class="action-content">
-                <span class="action-title">Cambiar Estado</span>
-                <span class="action-description">Modifica el estado actual de la orden</span>
-            </div>
-            <div class="current-status">
-                <MudIcon Icon="fa-solid fa-rotate" Class="action-chevron secondary-chevron" />
-            </div>
-        </div>
-
-        <div class="action-card tertiary-action" @onclick="@(() => GeneratePDF(InfoWO))">
-            <div class="action-icon-wrapper tertiary-icon">
-                <MudIcon Icon="@Icons.Custom.FileFormats.FilePdf" Class="action-icon" />
-            </div>
-            <div class="action-content">
-                <span class="action-title">Generar PDF</span>
-                <span class="action-description">Descarga un reporte completo</span>
-            </div>
-            <div class="action-button">
-                <MudIconButton Icon="@Icons.Material.Filled.Download"
-                               Class="action-chevron tertiary-chevron"
-                               Size="Size.Small" />
-            </div>
-        </div>
-    </div>
+    </MudCollapse>
 </div>
 
 <style>
@@ -66,7 +67,7 @@
         overflow: hidden;
         border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
-        height: 100%;
+        height: auto;
     }
 
         .actions-panel:hover {
@@ -76,11 +77,12 @@
     /* Header Styles */
     .panel-header {
         background: linear-gradient(135deg, #004d40 0%,#00796B 100%);
-        padding: 1.5rem;
+        padding: 1.25rem 2rem;
         display: flex;
         align-items: center;
         gap: 1rem;
         position: relative;
+        flex-shrink: 0; /* No se encoge */
     }
 
         .panel-header::after {
@@ -133,6 +135,7 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        height: 100%;
     }
 
     .action-card {

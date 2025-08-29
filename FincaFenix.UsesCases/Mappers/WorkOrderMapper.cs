@@ -156,6 +156,7 @@ namespace FincaFenix.UsesCases.Aggregates
                     },
                     Sector = new DetailSectorFarmDTO
                     {
+                        Id = detail.SectorWorkedId,
                         SectorName = detail.SectorWorked.SectorName
                     },
                     Performance = detail.Performance,

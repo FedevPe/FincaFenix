@@ -3,7 +3,7 @@
         <div class="header-content-wo">
             <div class="order-badge">
                 <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="badge-icon" />
-                <span class="order-number">ORDEN DE TRABAJO N° @InfoWO.OrderNum</span>
+                <span class="order-number">Orden de trabajo N° @InfoWO.OrderNum</span>
             </div>
             <div class="status-indicator">
                 <MudChip T="string"
@@ -13,94 +13,98 @@
                     <MudIcon Icon="@GetStatusIcon(InfoWO.Status)" Class="status-icon" />
                     @InfoWO.Status
                 </MudChip>
+                <MudSpacer/>
+                <MudIconButton Icon="@mudIcon" Size="Size.Medium" OnClick="OnExpandCollapseClick" Style="color: white; font-size: 5px">@(_expanded ? "Collapse" : "Expand")</MudIconButton>
             </div>
         </div>
     </div>
 
-    <div class="card-body-wo">
-        <div class="info-grid">
-            <div class="info-item farm-item">
-                <div class="info-icon-wrapper farm-icon">
-                    <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-icon" />
-                </div>
-                <div class="info-content">
-                    <span class="info-label">Finca</span>
-                    <span class="info-value">@InfoWO.Farm.Name</span>
-                </div>
-            </div>
-
-            <div class="info-item task-item">
-                <div class="info-icon-wrapper task-icon">
-                    <MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Class="info-icon" />
-                </div>
-                <div class="info-content">
-                    <span class="info-label">Tarea</span>
-                    <span class="info-value task-description">@InfoWO.Task.Description</span>
-                </div>
-            </div>
-
-            <div class="info-item sectors-item">
-                <div class="info-icon-wrapper sectors-icon">
-                    <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="info-icon" />
-                </div>
-                <div class="info-content">
-                    <span class="info-label">Cuadros</span>
-                    <div class="sectors-container">
-                        @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
-                        {
-                            <span class="info-value date-value">
-                                @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="no-sectors">Sin cuadros asignados</span>
-                        }
+    <MudCollapse Expanded=_expanded>
+        <div class="card-body-wo">
+            <div class="info-grid">
+                <div class="info-item farm-item">
+                    <div class="info-icon-wrapper farm-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-icon" />
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">Finca</span>
+                        <span class="info-value">@InfoWO.Farm.Name</span>
                     </div>
                 </div>
-            </div>
 
-            <div class="info-item date-item">
-                <div class="info-icon-wrapper date-icon">
-                    <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
+                <div class="info-item task-item">
+                    <div class="info-icon-wrapper task-icon">
+                        <MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Class="info-icon" />
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">Tarea</span>
+                        <span class="info-value task-description">@InfoWO.Task.Description</span>
+                    </div>
                 </div>
-                <div class="info-content">
-                    <span class="info-label">Fecha de inicio</span>
-                    <span class="info-value date-value">@InfoWO.StartDate.Value.ToString("dd/MM/yyyy")</span>
+
+                <div class="info-item sectors-item">
+                    <div class="info-icon-wrapper sectors-icon">
+                        <MudIcon Icon="@Icons.Material.Filled.ViewModule" Class="info-icon" />
+                    </div>
+                    <div class="info-content">
+                        <span class="info-label">Cuadros</span>
+                        <div class="sectors-container">
+                            @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
+                            {
+                                <span class="info-value date-value">
+                                    @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="no-sectors">Sin cuadros asignados</span>
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
-            @if(InfoWO.EndDate != null)
-            {
+
                 <div class="info-item date-item">
                     <div class="info-icon-wrapper date-icon">
                         <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
                     </div>
                     <div class="info-content">
-                        <span class="info-label">Fecha de Finalización</span>
-                        <span class="info-value date-value">@InfoWO.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                        <span class="info-label">Fecha de inicio</span>
+                        <span class="info-value date-value">@InfoWO.StartDate.Value.ToString("dd/MM/yyyy")</span>
                     </div>
-                </div>                
+                </div>
+                @if(InfoWO.EndDate != null)
+                {
+                    <div class="info-item date-item">
+                        <div class="info-icon-wrapper date-icon">
+                            <MudIcon Icon="@Icons.Material.Filled.Event" Class="info-icon" />
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Fecha de Finalización</span>
+                            <span class="info-value date-value">@InfoWO.EndDate.Value.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>                
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(InfoWO.Description))
+            {
+                <div class="description-section">
+                    <div class="description-header">
+                        <MudIcon Icon="@Icons.Material.Filled.Description" Class="description-icon" />
+                        <span class="description-label">Descripción</span>
+                    </div>
+                    <div class="description-content">
+                        <MudText Typo="Typo.body1" Class="description-text">@InfoWO.Description</MudText>
+                    </div>
+                </div>
             }
         </div>
 
-        @if (!string.IsNullOrEmpty(InfoWO.Description))
-        {
-            <div class="description-section">
-                <div class="description-header">
-                    <MudIcon Icon="@Icons.Material.Filled.Description" Class="description-icon" />
-                    <span class="description-label">Descripción</span>
-                </div>
-                <div class="description-content">
-                    <MudText Typo="Typo.body1" Class="description-text">@InfoWO.Description</MudText>
-                </div>
+        <div class="card-footer-wo">
+            <div class="footer-content-wo">
             </div>
-        }
-    </div>
-
-    <div class="card-footer-wo">
-        <div class="footer-content-wo">
         </div>
-    </div>
+    </MudCollapse>
 </div>
 
 <style>
@@ -112,14 +116,13 @@
         border: 1px solid rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         width: 100%;
-        height: 100%;
+        height: auto;
         /* CAMBIOS PRINCIPALES PARA EL FOOTER */
         display: flex;
         flex-direction: column;
     }
 
         .work-order-card:hover {
-            transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
@@ -502,24 +505,3 @@
 
 </style>
 
-@code {
-    [Parameter] public ShowWorkOrderDTO InfoWO { get; set; }
-
-    private string GetStatusChipClass(string status) => status switch
-    {
-        "Cerrado" => "status-cerrado",
-        "Pendiente" => "status-pendiente",
-        "Activo" => "status-activo",
-        "Creado" => "status-creado",
-        _ => "status-creado"
-    };
-
-    private string GetStatusIcon(string status) => status switch
-    {
-        "Cerrado" => Icons.Material.Filled.CheckCircle,
-        "Pendiente" => Icons.Material.Filled.Schedule,
-        "Activo" => Icons.Material.Filled.PlayCircle,
-        "Creado" => Icons.Material.Filled.NewReleases,
-        _ => Icons.Material.Filled.HelpOutline
-    };
-}

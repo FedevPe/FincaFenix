@@ -4,7 +4,7 @@ using FincaFenix.UserInterface7._0.Services;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
+namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder.Actions
 {
     public partial class DetailWorkOrderActions
     {
@@ -14,6 +14,9 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
         [Inject] private NavigationManager NavigationManager { get; set; }
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private ISnackbar Snackbar { get; set; }
+
+        private string mudIcon = "fa-solid fa-chevron-down";
+        private bool _expanded = false;
 
         private async Task OpenChangeStateDialog(int workOrderId, string currentStatus)
         {
@@ -71,6 +74,19 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
         {
             var document = new WorkOrderPDF(infoWO);
             await PDFService.DownloadPdfAsync(document, $"Orden_de_trabajo_N°_{infoWO.OrderNum}");
-        }        
+        }
+        private void OnExpandCollapseClick()
+        {
+            _expanded = !_expanded;
+
+            if (_expanded)
+            {
+                mudIcon = "fa-solid fa-chevron-up";
+            }
+            else
+            {
+                mudIcon = "fa-solid fa-chevron-down";
+            }
+        }
     }
 }

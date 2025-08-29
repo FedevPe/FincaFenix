@@ -1,9 +1,8 @@
-using Azure.Core;
 using FincaFenix.ViewModels.ViewModels.UpdateWorkOrder;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder
+namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder.Actions
 {
     public partial class ChangeWorkOrderStateDialog
     {

@@ -1,117 +1,134 @@
 ﻿<div class="my-6">
     <MudGrid Justify="Justify.Center" Spacing="4">
         <MudItem lg="3" md="6" sm="6" xs="12">
-            <MudPaper Class="stats-card stats-card-created" Elevation="0">
-                <div class="stats-content">
-                    <div class="stats-icon-wrapper stats-icon-created">
-                        <MudIcon Icon="@Icons.Material.Filled.Add" Class="stats-icon" />
+            <div class="stats-card stats-card-created @GetFilterActiveClass(FilterWorkOrder.None)" @onclick="() => SetFilterWorkOrder(FilterWorkOrder.None)">
+                <MudPaper Elevation="2" Class="stats-paper">
+                    <div class="stats-content">
+                        <div class="stats-icon-wrapper stats-icon-created">
+                            <MudIcon Icon="@Icons.Material.Filled.Add" Class="stats-icon" />
+                        </div>
+                        <div class="stats-info">
+                            <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Creadas</MudText>
+                            <MudText Class="stats-number stats-number-created" Typo="Typo.h4">@(WorkOrderList?.Count() ?? 0)</MudText>
+                        </div>
                     </div>
-                    <div class="stats-info">
-                        <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Creadas</MudText>
-                        <MudText Class="stats-number stats-number-created" Typo="Typo.h4">@WorkOrderList.Count()</MudText>
+                    <div class="stats-trend">
+                        <MudIcon Icon="@Icons.Material.Filled.Summarize" Class="trend-icon trend-created" />
+                        <span class="trend-text">Total de órdenes creadas</span>
                     </div>
-                </div>
-                <div class="stats-trend">
-                    <MudIcon Icon="@Icons.Material.Filled.Summarize" Class="trend-icon trend-created" />
-                    <span class="trend-text">Total de órdenes creadas</span>
-                </div>
-            </MudPaper>
+                </MudPaper>
+            </div>
         </MudItem>
 
         <MudItem lg="3" md="6" sm="6" xs="12">
-            <MudPaper Class="stats-card stats-card-active" Elevation="0">
-                <div class="stats-content">
-                    <div class="stats-icon-wrapper stats-icon-active">
-                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="stats-icon" />
+            <div class="stats-card stats-card-active @GetFilterActiveClass(FilterWorkOrder.Active)" @onclick="() => SetFilterWorkOrder(FilterWorkOrder.Active)">
+                <MudPaper Elevation="2" Class="stats-paper">
+                    <div class="stats-content">
+                        <div class="stats-icon-wrapper stats-icon-active">
+                            <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Class="stats-icon" />
+                        </div>
+                        <div class="stats-info">
+                            <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Activas</MudText>
+                            <MudText Class="stats-number stats-number-active" Typo="Typo.h4">@(WorkOrderList?.Count(x => x.Status == "Activo") ?? 0)</MudText>
+                        </div>
                     </div>
-                    <div class="stats-info">
-                        <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Activas</MudText>
-                        <MudText Class="stats-number stats-number-active" Typo="Typo.h4">@WorkOrderList.Count(x => x.Status == "Activo")</MudText>
+                    <div class="stats-trend">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="trend-icon trend-up" />
+                        <span class="trend-text">En proceso</span>
                     </div>
-                </div>
-                <div class="stats-trend">
-                    <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="trend-icon trend-up" />
-                    <span class="trend-text">En proceso</span>
-                </div>
-            </MudPaper>
+                </MudPaper>
+            </div>
         </MudItem>
+
         <MudItem lg="3" md="6" sm="6" xs="12">
-            <MudPaper Class="stats-card stats-card-pending" Elevation="0">
-                <div class="stats-content">
-                    <div class="stats-icon-wrapper stats-icon-pending">
-                        <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="stats-icon" />
+            <div class="stats-card stats-card-pending @GetFilterActiveClass(FilterWorkOrder.Pending)" @onclick="() => SetFilterWorkOrder(FilterWorkOrder.Pending)">
+                <MudPaper Elevation="2" Class="stats-paper">
+                    <div class="stats-content">
+                        <div class="stats-icon-wrapper stats-icon-pending">
+                            <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="stats-icon" />
+                        </div>
+                        <div class="stats-info">
+                            <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Pendientes</MudText>
+                            <MudText Class="stats-number stats-number-pending" Typo="Typo.h4">@(WorkOrderList?.Count(x => x.Status == "Pendiente") ?? 0)</MudText>
+                        </div>
                     </div>
-                    <div class="stats-info">
-                        <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Pendientes</MudText>
-                        <MudText Class="stats-number stats-number-pending" Typo="Typo.h4">@WorkOrderList.Count(x => x.Status == "Pendiente")</MudText>
+                    <div class="stats-trend">
+                        <MudIcon Icon="@Icons.Material.Filled.TrendingDown" Class="trend-icon trend-down" />
+                        <span class="trend-text">Pausadas</span>
                     </div>
-                </div>
-                <div class="stats-trend">
-                    <MudIcon Icon="@Icons.Material.Filled.TrendingDown" Class="trend-icon trend-down" />
-                    <span class="trend-text">Pausadas</span>
-                </div>
-            </MudPaper>
+                </MudPaper>
+            </div>
         </MudItem>
+
         <MudItem lg="3" md="6" sm="6" xs="12">
-            <MudPaper Class="stats-card stats-card-closed" Elevation="0">
-                <div class="stats-content">
-                    <div class="stats-icon-wrapper stats-icon-closed">
-                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="stats-icon" />
+            <div class="stats-card stats-card-closed @GetFilterActiveClass(FilterWorkOrder.Closed)" @onclick="() => SetFilterWorkOrder(FilterWorkOrder.Closed)">
+                <MudPaper Elevation="2" Class="stats-paper">
+                    <div class="stats-content">
+                        <div class="stats-icon-wrapper stats-icon-closed">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Class="stats-icon" />
+                        </div>
+                        <div class="stats-info">
+                            <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Cerradas</MudText>
+                            <MudText Class="stats-number stats-number-closed" Typo="Typo.h4">@(WorkOrderList?.Count(x => x.Status == "Cerrado") ?? 0)</MudText>
+                        </div>
                     </div>
-                    <div class="stats-info">
-                        <MudText Class="stats-title" Typo="Typo.subtitle2">Órdenes Cerradas</MudText>
-                        <MudText Class="stats-number stats-number-closed" Typo="Typo.h4">@WorkOrderList.Count(x => x.Status == "Cerrado")</MudText>
+                    <div class="stats-trend">
+                        <MudIcon Icon="@Icons.Material.Filled.Done" Class="trend-icon trend-completed" />
+                        <span class="trend-text">Completadas</span>
                     </div>
-                </div>
-                <div class="stats-trend">
-                    <MudIcon Icon="@Icons.Material.Filled.Done" Class="trend-icon trend-completed" />
-                    <span class="trend-text">Completadas</span>
-                </div>
-            </MudPaper>
+                </MudPaper>
+            </div>
         </MudItem>
     </MudGrid>
 </div>
 
 <style>
-    .stats-container {
-        padding: 2rem 1rem;
-        background: linear-gradient(135deg, #f8fafb 0%, #ffffff 100%);
-        border-radius: 16px;
-        margin: 1.5rem 0;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
     .stats-card {
-        background: white;
-        border-radius: 16px;
-        padding: 1.5rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        position: relative;
-        overflow: hidden;
         cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
     }
 
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--card-gradient-start), var(--card-gradient-end));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    .stats-paper {
+        padding: 1.5rem !important;
+        border-radius: 16px !important;
+        background: white !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
 
-        .stats-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
+    .stats-card:hover .stats-paper {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+    }
 
-            .stats-card:hover::before {
-                opacity: 1;
-            }
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--card-gradient-start), var(--card-gradient-end));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+    }
+
+    .stats-card:hover::before {
+        opacity: 1;
+    }
+
+    .stats-card.active::before {
+        opacity: 1;
+    }
+
+    .stats-card.active .stats-paper {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+    }
 
     .stats-content {
         display: flex;
@@ -141,7 +158,7 @@
 
     .stats-icon {
         font-size: 28px !important;
-        color: var(--icon-color);
+        color: var(--icon-color) !important;
         z-index: 1;
         position: relative;
     }
@@ -169,10 +186,6 @@
         gap: 0.5rem;
         padding-top: 0.75rem;
         border-top: 1px solid rgba(0, 0, 0, 0.06);
-    }
-
-    trend{
-
     }
 
     .trend-icon {
@@ -210,18 +223,6 @@
         color: #10b981 !important;
     }
 
-    .stats-card-closed {
-        --card-gradient-start: #ef4444;
-        --card-gradient-end: #dc2626;
-        --icon-bg-start: #ef4444;
-        --icon-bg-end: #dc2626;
-        --icon-color: #ef4444;
-    }
-
-    .stats-number-closed {
-        color: #ef4444 !important;
-    }
-
     .stats-card-pending {
         --card-gradient-start: #f59e0b;
         --card-gradient-end: #d97706;
@@ -234,9 +235,22 @@
         color: #f59e0b !important;
     }
 
-    .trend-created{
+    .stats-card-closed {
+        --card-gradient-start: #ef4444;
+        --card-gradient-end: #dc2626;
+        --icon-bg-start: #ef4444;
+        --icon-bg-end: #dc2626;
+        --icon-color: #ef4444;
+    }
+
+    .stats-number-closed {
+        color: #ef4444 !important;
+    }
+
+    .trend-created {
         color: #3b82f6 !important;
     }
+
     .trend-up {
         color: #10b981 !important;
     }
@@ -251,13 +265,10 @@
 
     /* Responsive adjustments */
     @@media (max-width: 960px) {
-    .stats-container
-    {
-        padding: 1.5rem 1rem;
-    }
+        .stats-paper
 
-    .stats-card {
-        padding: 1.25rem;
+    {
+        padding: 1.25rem !important;
     }
 
     .stats-content {
@@ -295,23 +306,19 @@
         animation: slideUp 0.6s ease-out;
     }
 
-    .stats-card:nth-child(1) {
-        animation-delay: 0.1s;
-    }
+        .stats-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
 
-    .stats-card:nth-child(2) {
-        animation-delay: 0.2s;
-    }
+        .stats-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
 
-    .stats-card:nth-child(3) {
-        animation-delay: 0.3s;
-    }
+        .stats-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
 
-    .stats-card:nth-child(4) {
-        animation-delay: 0.4s;
-    }
-
+        .stats-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
 </style>
-@code{
-    [Parameter] public List<ShowWorkOrderDTO> WorkOrderList { get; set; }
-}

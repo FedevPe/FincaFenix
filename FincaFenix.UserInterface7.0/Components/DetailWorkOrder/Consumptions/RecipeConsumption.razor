@@ -1,0 +1,426 @@
+﻿<div class="recipe-toolbar-content">
+    <div class="recipe-toolbar-chips">
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Numbers" Size="Size.Medium">
+            Receta N° #@Recipe.NumRecipe
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">
+            Maquina: @Recipe.Machine.Name
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">
+            Capacidad: @Recipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">
+            TRV: @Recipe.TRV.ToString("N2") lts/ha
+        </MudChip>
+        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">
+            Rendimiento total: @_totalPerformance.ToString("N2")
+        </MudChip>
+    </div>
+</div>
+<div class="recipe-table-wrapper mt-4">
+    <MudTable T="DetailRecipeDTO"
+              Items="@Recipe.Details"
+              Dense="true"
+              Hover="true"
+              Bordered="true"
+              Class="recipe-mud-table"
+              Elevation="3"
+              Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Inventory" Class="recipe-header-icon" />
+                    <span>Producto</span>
+                </div>
+            </MudTh>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Circle" Class="recipe-header-icon" />
+                    <span>Marca</span>
+                </div>
+            </MudTh>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Category" Class="recipe-header-icon" />
+                    <span>Categoría</span>
+                </div>
+            </MudTh>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-header-icon" />
+                    <span>Dosis</span>
+                </div>
+            </MudTh>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="recipe-header-icon" />
+                    <span>Cant.Estimada</span>
+                </div>
+            </MudTh>
+            <MudTh Class="recipe-table-header">
+                <div class="recipe-header-content">
+                    <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="recipe-header-icon" />
+                    <span>Cant.Consumida</span>
+                </div>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Producto" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-product-content">
+                    <div class="recipe-product-info">
+                        <span class="recipe-product-name">@context.Material.ArticleName</span>
+                    </div>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Marca" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-brand-content">
+                    <span class="recipe-brand-text">@context.Brand</span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Categoría" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-category-content">
+                    <span>
+                        @context.Material.Category.Description.ToUpper()
+                    </span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Dosis" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-dose-content">
+                    <span>
+                        @context.AmountRequired.ToString("N2") @context.AmountRequiredUnit
+                    </span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Cant.Estimada" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-estimated-content">
+                    <span>
+                        @context.EstimatedAmount.ToString("N2") @context.EstimatedAmountUnit
+                    </span>
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Cant.Consumida" Class="recipe-table-cell">
+                <div class="recipe-cell-content recipe-consumed-content">
+                    <span>
+                        @context.TotalAmountConsumed.ToString("N2") @context.EstimatedAmountUnit
+                    </span>
+                </div>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</div>
+
+<style>
+    .recipe-toolbar-content {
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .recipe-toolbar-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .recipe-toolbar-chip {
+        background: #f8fafb !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 20px !important;
+        padding: 8px 16px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        color: #374151 !important;
+        transition: all 0.2s ease !important;
+        white-space: nowrap !important;
+        min-height: 36px !important;
+        flex-shrink: 0 !important;
+        height: auto !important;
+    }
+
+        .recipe-toolbar-chip:hover {
+            background: #f1f5f9 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .recipe-toolbar-chip .mud-icon {
+            font-size: 18px !important;
+            width: 18px !important;
+            height: 18px !important;
+            margin-right: 8px !important;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .recipe-toolbar-chips {
+            gap: 10px;
+        }
+
+        .recipe-toolbar-chip {
+            padding: 7px 14px !important;
+            font-size: 13px !important;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .recipe-toolbar-content {
+            padding: 12px 16px;
+        }
+
+        .recipe-toolbar-chips {
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .recipe-toolbar-chip {
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+            min-height: 32px !important;
+        }
+
+            .recipe-toolbar-chip .mud-icon {
+                font-size: 16px !important;
+                width: 16px !important;
+                height: 16px !important;
+            }
+    }
+
+    @@media (max-width: 480px) {
+        .recipe-toolbar-chips {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px;
+        }
+
+        .recipe-toolbar-chip {
+            justify-content: center;
+            flex-shrink: 1 !important;
+            min-width: 0;
+            text-align: center;
+        }
+    }
+    .recipe-table-wrapper {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .recipe-mud-table {
+        background: transparent !important;
+    }
+
+    /* Recipe Header Styles */
+    .recipe-table-header {
+        background: #00796B !important;
+        color: white !important;
+        font-weight: 600 !important;
+        padding: 1rem 1.25rem !important;
+        border: none !important;
+        position: relative;
+    }
+
+        .recipe-table-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+    .recipe-header-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: white;
+    }
+
+    .recipe-header-icon {
+        font-size: 18px !important;
+        opacity: 0.9;
+    }
+
+    /* Recipe Cell Styles */
+    .recipe-table-cell {
+        padding: 1rem 1.25rem !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+        vertical-align: middle !important;
+        background: white;
+        transition: background-color 0.2s ease;
+    }
+
+    .recipe-mud-table tbody tr:hover .recipe-table-cell {
+        background: #f8fafb !important;
+    }
+
+    .recipe-cell-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .recipe-cell-icon {
+        color: #2F2F2E;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    /* Recipe Product Content */
+    .recipe-product-content {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .recipe-product-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .recipe-product-name {
+        font-weight: 500;
+        color: #374151;
+    }
+
+    /* Recipe Brand Content */
+    .recipe-brand-content {
+        justify-content: flex-start;
+    }
+
+    .recipe-brand-text {
+        font-weight: 500;
+        color: #374151;
+    }
+
+    /* Recipe Category Chip */
+    .recipe-category-chip {
+        background: #E3F2FD !important;
+        color: #1565C0 !important;
+        font-weight: 500;
+    }
+
+    /* Recipe Dose Content */
+    .recipe-dose-content {
+        justify-content: flex-start;
+    }
+
+    .recipe-dose-chip {
+        font-weight: 600;
+        font-family: monospace;
+        background: #FFF3E0 !important;
+        color: #E65100 !important;
+    }
+
+    /* Recipe Estimated Content */
+    .recipe-estimated-content {
+        justify-content: flex-start;
+    }
+
+    .recipe-estimated-chip {
+        font-weight: 600;
+        font-family: monospace;
+        background: #F3E5F5 !important;
+        color: #7B1FA2 !important;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    /* Recipe Consumed Content */
+    .recipe-consumed-content {
+        justify-content: flex-start;
+    }
+
+    .recipe-consumed-chip {
+        font-weight: 600;
+        font-family: monospace;
+        background: #E8F5E8 !important;
+        color: #2E7D32 !important;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    /* Recipe Responsive Design */
+    @@media (max-width: 768px) {
+        .recipe-table-wrapper {
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .recipe-table-header,
+        .recipe-table-cell {
+            padding: 0.75rem 1rem !important;
+        }
+
+        .recipe-header-content {
+            flex-direction: column;
+            gap: 0.25rem;
+            text-align: center;
+        }
+
+        .recipe-header-icon {
+            font-size: 16px !important;
+        }
+
+        .recipe-product-name {
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .recipe-cell-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .recipe-estimated-chip,
+        .recipe-consumed-chip {
+            min-width: 70px;
+        }
+    }
+
+    /* Recipe Animations */
+    @@keyframes recipeTableFadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .recipe-mud-table tbody tr {
+        animation: recipeTableFadeInUp 0.3s ease-out;
+    }
+
+        .recipe-mud-table tbody tr:nth-child(odd) {
+            animation-delay: 0.05s;
+        }
+
+        .recipe-mud-table tbody tr:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+    /* Recipe Color variations for chips */
+    .recipe-mud-table .mud-chip {
+        transition: all 0.2s ease;
+    }
+
+        .recipe-mud-table .mud-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+</style>
+

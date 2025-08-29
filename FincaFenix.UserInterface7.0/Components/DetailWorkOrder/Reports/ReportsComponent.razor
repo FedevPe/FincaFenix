@@ -1,0 +1,95 @@
+﻿<div class="d-flex justify-content-center align-items-center w-100">
+    @foreach (var sector in SectorList)
+    {
+        <WorkedSectorCard SectorFarmDTO="@sector" OnSectorSelectedChanged="HandleSectorSelected" SectorSelectedId="@sectorSelectedId" />
+    }
+</div>
+<div>
+    <div>
+        @if(sectorSelectedId != 0)
+        {
+            <div class="my-3">
+                <RecipeConsumption DetailWorkOrderList="_detailWorkOrderFilteredList" Recipe="Recipe" TotalAreaWorked="SectorSelected.Area.Value"/>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state-card">
+                <div class="empty-state-content">
+                    <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                    <MudText Typo="Typo.h6" Class="empty-state-title">Debe seleccionar un cuadro de trabajo.</MudText>
+                    <MudText Typo="Typo.body1" Class="empty-state-description">
+                        Aún no se pueden mostrar los datos relacionados. No se ha seleccionado el cuadro de trabajo.
+                    </MudText>
+                </div>
+            </div>
+        }
+    </div>
+    <div>
+
+    </div>
+</div>
+@code {
+    [Parameter] public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
+    [Parameter] public IEnumerable<DetailWorkOrderDTO> DetailWorkOrderDTO { get; set; }
+    [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
+
+    private int sectorSelectedId = 0;
+    private DetailSectorFarmDTO SectorSelected;
+    private IEnumerable<DetailWorkOrderDTO> _detailWorkOrderFilteredList;
+
+    protected override void OnInitialized()
+    {
+        // Inicializa _sortedSectorList para evitar múltiples ordenamientos.
+        SectorList = SectorList.OrderBy(s => s.FruitName);
+    }
+
+    private void HandleSectorSelected(int id)
+    {
+        sectorSelectedId = id;
+        // Aplica la lógica de filtrado en el componente padre.
+        if (sectorSelectedId != 0)
+        {
+            _detailWorkOrderFilteredList = DetailWorkOrderDTO.Where(ds => ds.Sector.Id == id);
+            SectorSelected = SectorList.FirstOrDefault(ds => ds.Id == id);
+        }
+        StateHasChanged();
+    }
+}
+<style>
+    .empty-state-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        border: 1px solid #e2e8f0;
+        margin: 1rem 0;
+    }
+
+    .empty-state-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 48px !important;
+        color: #94a3b8;
+        opacity: 0.7;
+    }
+
+    .empty-state-title {
+        color: #475569 !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+    }
+
+    .empty-state-description {
+        color: #64748b !important;
+        max-width: 400px !important;
+        line-height: 1.6 !important;
+        margin: 0 !important;
+    }
+</style>
+
