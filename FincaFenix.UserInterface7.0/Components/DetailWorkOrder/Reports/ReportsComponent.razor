@@ -6,11 +6,26 @@
 </div>
 <div>
     <div>
-        @if(sectorSelectedId != 0)
+        @if (sectorSelectedId != 0)
         {
-            <div class="my-3">
-                <RecipeConsumption DetailWorkOrderList="_detailWorkOrderFilteredList" Recipe="Recipe" TotalAreaWorked="SectorSelected.Area.Value"/>
-            </div>
+            @if (_detailWorkOrderFilteredList.Any())
+            {
+                <div class="my-3">
+                    <RecipeConsumption @key="sectorSelectedId" DetailWorkOrderList="_detailWorkOrderFilteredList" Recipe="_recipe" TotalAreaWorked="SectorSelected.Area.Value" />
+                </div>
+            }
+            else
+            {
+                <div class="empty-state-card">
+                    <div class="empty-state-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                        <MudText Typo="Typo.h6" Class="empty-state-title">Cuadro sin actividades registradas.</MudText>
+                        <MudText Typo="Typo.body1" Class="empty-state-description">
+                            Aún no se pueden mostrar los datos relacionados. Porque no se han registrados actividades en el cuadro seleccionado.
+                        </MudText>
+                    </div>
+                </div>
+            }
         }
         else
         {
@@ -36,11 +51,13 @@
 
     private int sectorSelectedId = 0;
     private DetailSectorFarmDTO SectorSelected;
-    private IEnumerable<DetailWorkOrderDTO> _detailWorkOrderFilteredList;
+    private List<DetailWorkOrderDTO> _detailWorkOrderFilteredList;
+    private RecipeWorkOrderDTO _recipe;
 
     protected override void OnInitialized()
     {
         // Inicializa _sortedSectorList para evitar múltiples ordenamientos.
+        _recipe = Recipe;
         SectorList = SectorList.OrderBy(s => s.FruitName);
     }
 
@@ -50,7 +67,7 @@
         // Aplica la lógica de filtrado en el componente padre.
         if (sectorSelectedId != 0)
         {
-            _detailWorkOrderFilteredList = DetailWorkOrderDTO.Where(ds => ds.Sector.Id == id);
+            _detailWorkOrderFilteredList = DetailWorkOrderDTO.Where(ds => ds.Sector.Id == id).ToList();
             SectorSelected = SectorList.FirstOrDefault(ds => ds.Id == id);
         }
         StateHasChanged();

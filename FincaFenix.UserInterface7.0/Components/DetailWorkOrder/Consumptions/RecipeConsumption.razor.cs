@@ -14,16 +14,18 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder.Consumptions
         [Parameter] public decimal TotalAreaWorked { get; set; }
 
         private decimal _totalPerformance;
-        private decimal _areaSector;
-        private RecipeWorkOrderDTO _recipe { get; set; }
-        private IEnumerable<DetailWorkOrderDTO> _detailWorkOrderList { get; set; }
+        private RecipeWorkOrderDTO _calculatedRecipe; // Almacenará la receta con los valores calculados
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
-            _recipe = Recipe;
-            _areaSector = TotalAreaWorked;
-            _detailWorkOrderList = DetailWorkOrderList;
-            await ViewModel.CalculateEstimatedAndConsumedAmounts(_recipe, _detailWorkOrderList, _areaSector);
+            // Llamamos al ViewModel para calcular los valores
+            // y asignamos el resultado a la variable local.
+            // Usamos el mismo ViewModel para todos los cálculos.
+            _calculatedRecipe = await ViewModel.CalculateEstimatedAndConsumedAmounts(
+                Recipe,
+                DetailWorkOrderList,
+                TotalAreaWorked
+            );
             _totalPerformance = ViewModel.TotalPerfomance;
         }
 

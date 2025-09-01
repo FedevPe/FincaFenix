@@ -7,20 +7,46 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
     {
         public decimal TotalPerfomance { get; private set; }
 
-        public async Task CalculateEstimatedAndConsumedAmounts(RecipeWorkOrderDTO recipe, IEnumerable<DetailWorkOrderDTO> workOrderList, decimal sectorArea)
+        public async Task<RecipeWorkOrderDTO> CalculateEstimatedAndConsumedAmounts(RecipeWorkOrderDTO recipe, IEnumerable<DetailWorkOrderDTO> workOrderList, decimal sectorArea)
         {
-            // Calcula el rendimiento total una sola vez.
             TotalPerfomance = workOrderList.Sum(d => d.Performance);
+
+            // Creamos una nueva lista de detalles para no modificar la original
+            var newDetails = new List<DetailRecipeDTO>();
 
             foreach (var detail in recipe.Details)
             {
-                // Calcula y asigna la cantidad estimada usando el parámetro sectorArea.
-                detail.EstimatedAmount = CalculateAmountForSector(detail, recipe.TRV, sectorArea);
+                // Creamos una copia del objeto DetailRecipeDTO
+                var newDetail = new DetailRecipeDTO
+                {
+                    Material = detail.Material,
+                    Brand = detail.Brand,
+                    AmountRequired = detail.AmountRequired,
+                    AmountRequiredUnit = detail.AmountRequiredUnit
+                };
 
-                // Calcula y asigna la cantidad consumida.
-                detail.TotalAmountConsumed = CalculateAmount(detail, TotalPerfomance, recipe.TRV);
+                // Realizamos los cálculos y los asignamos a la nueva copia
+                newDetail.EstimatedAmount = CalculateAmountEstimatedForSector(detail, recipe.TRV, sectorArea);
+                newDetail.EstimatedAmountUnit = GetAmountUnit(detail.AmountRequiredUnit);
+                newDetail.TotalAmountConsumed = CalculateAmountConsumption(detail, TotalPerfomance, recipe.TRV);
+
+                newDetails.Add(newDetail);
             }
+
+            // Creamos una copia de la receta con los nuevos detalles
+            var newRecipe = new RecipeWorkOrderDTO
+            {
+                Id = recipe.Id,
+                NumRecipe = recipe.NumRecipe,
+                Machine = recipe.Machine,
+                VolumeMachine = recipe.VolumeMachine,
+                VolumeMachineUnit = recipe.VolumeMachineUnit,
+                TRV = recipe.TRV,
+                Details = newDetails
+            };
+
             await Task.CompletedTask;
+            return newRecipe; // Devolvemos el nuevo objeto
         }
 
         // Extrae la lógica de conversión de unidades para reutilizarla.
@@ -31,16 +57,27 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
                 : detail.AmountRequired;
         }
 
-        private decimal CalculateAmount(DetailRecipeDTO detail, decimal totalPerformance, decimal trv)
+        private decimal CalculateAmountConsumption(DetailRecipeDTO detail, decimal totalPerformance, decimal trv)
         {
             var amountRequired = GetAmountInLitersOrKilos(detail);
             return (totalPerformance * amountRequired) / trv;
         }
 
-        private decimal CalculateAmountForSector(DetailRecipeDTO detail, decimal trv, decimal areaSector)
+        private decimal CalculateAmountEstimatedForSector(DetailRecipeDTO detail, decimal trv, decimal areaSector)
         {
             var amountRequired = GetAmountInLitersOrKilos(detail);
             return ((trv * amountRequired) / 1000) * areaSector;
+        }
+        private string GetAmountUnit(string unit)
+        {
+            if (unit == "cc" || unit == "lts")
+            {
+                return "lts"; // Convertir a litros o kilos
+            }
+            else
+            {
+                return "kg";
+            }
         }
     }
 }

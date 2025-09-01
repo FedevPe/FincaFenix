@@ -1,16 +1,16 @@
 ﻿<div class="recipe-toolbar-content">
     <div class="recipe-toolbar-chips">
         <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Numbers" Size="Size.Medium">
-            Receta N° #@Recipe.NumRecipe
+            Receta N° #@_calculatedRecipe.NumRecipe
         </MudChip>
         <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">
-            Maquina: @Recipe.Machine.Name
+            Maquina: @_calculatedRecipe.Machine.Name
         </MudChip>
         <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">
-            Capacidad: @Recipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
+            Capacidad: @_calculatedRecipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
         </MudChip>
         <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">
-            TRV: @Recipe.TRV.ToString("N2") lts/ha
+            TRV: @_calculatedRecipe.TRV.ToString("N2") lts/ha
         </MudChip>
         <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">
             Rendimiento total: @_totalPerformance.ToString("N2")
@@ -19,7 +19,7 @@
 </div>
 <div class="recipe-table-wrapper mt-4">
     <MudTable T="DetailRecipeDTO"
-              Items="@Recipe.Details"
+              Items="@_calculatedRecipe.Details"
               Dense="true"
               Hover="true"
               Bordered="true"
