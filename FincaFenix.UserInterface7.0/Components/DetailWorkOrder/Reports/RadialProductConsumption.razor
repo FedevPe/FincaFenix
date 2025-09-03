@@ -1,62 +1,54 @@
-﻿<div class="products-grid my-5">
-    @if (DetailRecipeList != null)
-    {
-        @foreach (var product in DetailRecipeList)
+﻿<MudGrid Justify="Justify.FlexStart" class="my-5">
+    <MudItem lg="8" xs="12">
+        @if (DetailRecipeList != null)
         {
-            <div class="product-card mud-elevation-3">
-                <div class="product-header">
-                    <div class="product-name">@product.Material.ArticleName</div>
-                    <div class="product-brand">@product.Brand.ToUpper()</div>
-                </div>
-                <div class="consumption-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Cant. consumida</span>
-                        <span class="detail-value">@product.TotalAmountConsumed.ToString("F2") @product.EstimatedAmountUnit</span>                        
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Consumo estimado</span>
-                        <span class="detail-value">@product.EstimatedAmount.ToString("N2") @product.EstimatedAmountUnit</span>
-                    </div>                
-                </div>
-            </div>
+            <MudGrid Justify="Justify.FlexStart">
+                @foreach (var product in DetailRecipeList)
+                {
+                    <MudItem lg="6" xs="6">
+                        <div class="product-card mud-elevation-3">
+                            <div class="product-header">
+                                <div class="product-name">@product.Material.ArticleName</div>
+                                <div class="product-brand">@product.Brand.ToUpper()</div>
+                            </div>
+                            <div class="consumption-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Cant. consumida</span>
+                                    <span class="detail-value">@product.TotalAmountConsumed.ToString("F2") @product.EstimatedAmountUnit</span>                        
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Consumo estimado</span>
+                                    <span class="detail-value">@product.EstimatedAmount.ToString("N2") @product.EstimatedAmountUnit</span>
+                                </div>
+                                @if (product.TotalAmountConsumed > product.EstimatedAmount)
+                                {
+                                    <div class="detail-item">
+                                        <span class="detail-label">Exceso</span>
+                                        <span class="detail-value detail-exceso">@((product.TotalAmountConsumed - product.EstimatedAmount).ToString("F2")) @product.EstimatedAmountUnit</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="detail-item">
+                                        <span class="detail-label">Diferencia</span>
+                                        <span class="detail-value detail-teorico">@((product.EstimatedAmount - product.TotalAmountConsumed).ToString("F2")) @product.EstimatedAmountUnit</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </MudItem>
+                }
+            </MudGrid>
         }
-    }
-</div>
-<div class="mud-elevation-3">
-
-</div>
-@* @if (hasExcess)
-{
-    <div class="detail-item">
-        <span class="detail-label">Exceso</span>
-        <span class="detail-value detail-exceso">@((product.Product.TotalAmountConsumed - product.Product.EstimatedAmount).ToString("F2")) @product.Product.EstimatedAmountUnit</span>
-    </div>
-}
-else if (product.Product.TotalAmountConsumed < product.Product.EstimatedAmount)
-{
-    <div class="detail-item">
-        <span class="detail-label">Diferencia</span>
-        <span class="detail-value detail-teorico">@((product.Product.EstimatedAmount - product.Product.TotalAmountConsumed).ToString("F2")) @product.Product.EstimatedAmountUnit</span>
-    </div>
-} *@
+    </MudItem>
+    <MudItem lg="4" xs="12">
+        <div class="mud-elevation-3">
+            
+        </div>
+    </MudItem>
+</MudGrid>
 @code {
     [Parameter] public IEnumerable<DetailRecipeDTO> DetailRecipeList { get; set; }
-
-    private decimal CalculatePercentagePerformance(DetailRecipeDTO producto)
-    {
-        if (producto.EstimatedAmount == 0) return 0;
-
-        // Forzar conversión explícita para evitar problemas de precisión
-        var consumed = Convert.ToDecimal(producto.TotalAmountConsumed);
-        var estimated = Convert.ToDecimal(producto.EstimatedAmount);
-
-        var result = (consumed / estimated) * 100m;
-
-        // Log adicional para debug
-        Console.WriteLine($"Producto: {producto.Material?.ArticleName} | Consumido: {consumed} | Estimado: {estimated} | Resultado: {result}");
-
-        return result;
-    }
 }
 
 <style>
