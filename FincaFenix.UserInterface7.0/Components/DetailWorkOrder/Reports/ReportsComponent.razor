@@ -1,4 +1,4 @@
-﻿<div class="d-flex justify-content-center align-items-center w-100">
+﻿<div class="d-flex justify-content-start align-items-center w-100">
     @foreach (var sector in SectorList)
     {
         <WorkedSectorCard SectorFarmDTO="@sector" OnSectorSelectedChanged="HandleSectorSelected" SectorSelectedId="@sectorSelectedId" />
@@ -8,11 +8,20 @@
     <div>
         @if (sectorSelectedId != 0)
         {
-            @if (_detailWorkOrderFilteredList.Any())
+            @if (_detailWorkOrderFilteredList.Any() && _recipe != null)
             {
                 <div class="my-3">
-                    <RecipeConsumption @key="sectorSelectedId" DetailWorkOrderList="_detailWorkOrderFilteredList" Recipe="_recipe" TotalAreaWorked="SectorSelected.Area.Value" />
+                    <RecipeConsumption @key="sectorSelectedId"
+                                       DetailWorkOrderList="_detailWorkOrderFilteredList"
+                                       Recipe="_recipe"
+                                       TotalAreaWorked="SectorSelected.Area.Value"
+                                       ShowDetailProduct="false"
+                                       ShowToolBar="false"/>
                 </div>
+            }
+            else if ((_detailWorkOrderFilteredList.Any() && _recipe == null))
+            {
+                <h6>Componente para calcular rendimiento de ordenes que no tienen receta.</h6>
             }
             else
             {

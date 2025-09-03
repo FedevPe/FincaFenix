@@ -12,6 +12,8 @@ namespace FincaFenix.UserInterface7._0.Components.DetailWorkOrder.Consumptions
         [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
         [Parameter] public IEnumerable<DetailWorkOrderDTO> DetailWorkOrderList { get; set; }
         [Parameter] public decimal TotalAreaWorked { get; set; }
+        [Parameter] public bool ShowToolBar { get; set; } = true;
+        [Parameter] public bool ShowDetailProduct { get; set; } = true;
 
         private decimal _totalPerformance;
         private RecipeWorkOrderDTO _calculatedRecipe; // Almacenará la receta con los valores calculados

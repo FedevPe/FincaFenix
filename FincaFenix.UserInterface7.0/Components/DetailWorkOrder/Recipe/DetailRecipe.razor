@@ -115,11 +115,11 @@
                 <div class="recipe-cell-content">
                     @if (!string.IsNullOrEmpty(context.Brand))
                     {
-                        <span>@context.Brand</span>
+                        <span class="recipe-brand">@context.Brand</span>
                     }
                     else
                     {
-                        <span>Sin marca</span>
+                        <span class="recipe-no-brand">Sin marca</span>
                     }
                 </div>
             </MudTd>
@@ -339,6 +339,8 @@
 
     /* Recipe Product Content */
     .recipe-product-content {
+        font-weight: 500;
+        color: #374151;
         max-width: 200px;
     }
 
@@ -350,17 +352,16 @@
     }
 
     /* Recipe Brand Styles */
-    .recipe-brand-chip {
-        font-weight: 600;
-        font-family: monospace;
+    .recipe-brand {
+        font-weight: 500;
+        color: #374151;
         min-width: 60px;
         text-align: center;
     }
 
     .recipe-no-brand {
-        color: #2F2F2E;
-        font-style: italic;
-        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
     }
 
     /* Recipe Category Styles */

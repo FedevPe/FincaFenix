@@ -1,22 +1,25 @@
-﻿<div class="recipe-toolbar-content">
-    <div class="recipe-toolbar-chips">
-        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Numbers" Size="Size.Medium">
-            Receta N° #@_calculatedRecipe.NumRecipe
-        </MudChip>
-        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">
-            Maquina: @_calculatedRecipe.Machine.Name
-        </MudChip>
-        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">
-            Capacidad: @_calculatedRecipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
-        </MudChip>
-        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">
-            TRV: @_calculatedRecipe.TRV.ToString("N2") lts/ha
-        </MudChip>
-        <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">
-            Rendimiento total: @_totalPerformance.ToString("N2")
-        </MudChip>
+﻿@if (ShowToolBar)
+{
+    <div class="recipe-toolbar-content">
+        <div class="recipe-toolbar-chips">
+            <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Numbers" Size="Size.Medium">
+                Receta N° #@_calculatedRecipe.NumRecipe
+            </MudChip>
+            <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Build" Size="Size.Medium">
+                Maquina: @_calculatedRecipe.Machine.Name
+            </MudChip>
+            <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.WaterDrop" Size="Size.Medium">
+                Capacidad: @_calculatedRecipe.VolumeMachine.ToString("N2") @Recipe.VolumeMachineUnit
+            </MudChip>
+            <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Speed" Size="Size.Medium">
+                TRV: @_calculatedRecipe.TRV.ToString("N2") lts/ha
+            </MudChip>
+            <MudChip T="string" Class="recipe-toolbar-chip" Label="true" Icon="@Icons.Material.Filled.Straighten" Size="Size.Medium">
+                Rendimiento total: @_totalPerformance.ToString("N2")
+            </MudChip>
+        </div>
     </div>
-</div>
+}
 <div class="recipe-table-wrapper mt-4">
     <MudTable T="DetailRecipeDTO"
               Items="@_calculatedRecipe.Details"
@@ -39,18 +42,21 @@
                     <span>Marca</span>
                 </div>
             </MudTh>
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Category" Class="recipe-header-icon" />
-                    <span>Categoría</span>
-                </div>
-            </MudTh>
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-header-icon" />
-                    <span>Dosis</span>
-                </div>
-            </MudTh>
+            @if (ShowDetailProduct)
+            {
+                <MudTh Class="recipe-table-header">
+                    <div class="recipe-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Category" Class="recipe-header-icon" />
+                        <span>Categoría</span>
+                    </div>
+                </MudTh>
+                <MudTh Class="recipe-table-header">
+                    <div class="recipe-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-header-icon" />
+                        <span>Dosis</span>
+                    </div>
+                </MudTh>
+            }
             <MudTh Class="recipe-table-header">
                 <div class="recipe-header-content">
                     <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="recipe-header-icon" />
@@ -77,20 +83,23 @@
                     <span class="recipe-brand-text">@context.Brand</span>
                 </div>
             </MudTd>
-            <MudTd DataLabel="Categoría" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-category-content">
-                    <span>
-                        @context.Material.Category.Description.ToUpper()
-                    </span>
-                </div>
-            </MudTd>
-            <MudTd DataLabel="Dosis" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-dose-content">
-                    <span>
-                        @context.AmountRequired.ToString("N2") @context.AmountRequiredUnit
-                    </span>
-                </div>
-            </MudTd>
+            @if (ShowDetailProduct)
+            {
+                <MudTd DataLabel="Categoría" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-category-content">
+                        <span>
+                            @context.Material.Category.Description.ToUpper()
+                        </span>
+                    </div>
+                </MudTd>
+                <MudTd DataLabel="Dosis" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-dose-content">
+                        <span>
+                            @context.AmountRequired.ToString("N2") @context.AmountRequiredUnit
+                        </span>
+                    </div>
+                </MudTd>                
+            }
             <MudTd DataLabel="Cant.Estimada" Class="recipe-table-cell">
                 <div class="recipe-cell-content recipe-estimated-content">
                     <span>
@@ -108,7 +117,9 @@
         </RowTemplate>
     </MudTable>
 </div>
-
+<div>
+    <RadialProductConsumption DetailRecipeList="@_calculatedRecipe.Details"/>
+</div>
 <style>
     .recipe-toolbar-content {
         width: 100%;
@@ -183,11 +194,11 @@
             min-height: 32px !important;
         }
 
-            .recipe-toolbar-chip .mud-icon {
-                font-size: 16px !important;
-                width: 16px !important;
-                height: 16px !important;
-            }
+        .recipe-toolbar-chip .mud-icon {
+            font-size: 16px !important;
+            width: 16px !important;
+            height: 16px !important;
+        }
     }
 
     @@media (max-width: 480px) {

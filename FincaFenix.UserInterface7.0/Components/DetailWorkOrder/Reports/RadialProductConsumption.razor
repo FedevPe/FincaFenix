@@ -1,0 +1,221 @@
+﻿<div class="products-grid my-5">
+    @if (DetailRecipeList != null)
+    {
+        @foreach (var product in DetailRecipeList)
+        {
+            <div class="product-card mud-elevation-3">
+                <div class="product-header">
+                    <div class="product-name">@product.Material.ArticleName</div>
+                    <div class="product-brand">@product.Brand.ToUpper()</div>
+                </div>
+                <div class="consumption-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Cant. consumida</span>
+                        <span class="detail-value">@product.TotalAmountConsumed.ToString("F2") @product.EstimatedAmountUnit</span>                        
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Consumo estimado</span>
+                        <span class="detail-value">@product.EstimatedAmount.ToString("N2") @product.EstimatedAmountUnit</span>
+                    </div>                
+                </div>
+            </div>
+        }
+    }
+</div>
+<div class="mud-elevation-3">
+
+</div>
+@* @if (hasExcess)
+{
+    <div class="detail-item">
+        <span class="detail-label">Exceso</span>
+        <span class="detail-value detail-exceso">@((product.Product.TotalAmountConsumed - product.Product.EstimatedAmount).ToString("F2")) @product.Product.EstimatedAmountUnit</span>
+    </div>
+}
+else if (product.Product.TotalAmountConsumed < product.Product.EstimatedAmount)
+{
+    <div class="detail-item">
+        <span class="detail-label">Diferencia</span>
+        <span class="detail-value detail-teorico">@((product.Product.EstimatedAmount - product.Product.TotalAmountConsumed).ToString("F2")) @product.Product.EstimatedAmountUnit</span>
+    </div>
+} *@
+@code {
+    [Parameter] public IEnumerable<DetailRecipeDTO> DetailRecipeList { get; set; }
+
+    private decimal CalculatePercentagePerformance(DetailRecipeDTO producto)
+    {
+        if (producto.EstimatedAmount == 0) return 0;
+
+        // Forzar conversión explícita para evitar problemas de precisión
+        var consumed = Convert.ToDecimal(producto.TotalAmountConsumed);
+        var estimated = Convert.ToDecimal(producto.EstimatedAmount);
+
+        var result = (consumed / estimated) * 100m;
+
+        // Log adicional para debug
+        Console.WriteLine($"Producto: {producto.Material?.ArticleName} | Consumido: {consumed} | Estimado: {estimated} | Resultado: {result}");
+
+        return result;
+    }
+}
+
+<style>
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .product-card {
+        background: #fafbfb;
+        border: 1px solid #e8ecec;
+        border-radius: 8px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+
+    .product-name {
+        color: #2d5a5a;
+        font-size: 14px;
+        font-weight: 500;
+        flex: 1;
+        margin-right: 12px;
+    }
+
+    .product-brand {
+        background: #e8f4f2;
+        color: #4a9b8e;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .progress-section {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px 0;
+        flex-direction: column;
+    }
+
+    .consumption-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d5a5a;
+        display: block;
+    }
+
+    .consumption-details {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 16px;
+        font-size: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .detail-label {
+        color: #6b7d7d;
+        margin-bottom: 4px;
+        font-size: 11px;
+    }
+
+    .detail-value {
+        color: #2d5a5a;
+        font-weight: 500;
+    }
+
+    .detail-teorico {
+        color: #4a9b8e;
+    }
+
+    .detail-exceso {
+        color: #e74c3c;
+    }
+
+    .linear-progress {
+        width: 100%;
+        height: 8px;
+        background: #e8ecec;
+        border-radius: 4px;
+        overflow: visible;
+        margin: 16px 0;
+        position: relative;
+    }
+
+    .linear-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #4a9b8e 0%, #6bb6a8 100%);
+        border-radius: 4px;
+        transition: width 0.8s ease;
+        max-width: 100%;
+    }
+
+    .linear-progress-excess {
+        height: 100%;
+        background: linear-gradient(90deg, #e74c3c 0%, #ec7063 100%);
+        border-radius: 4px;
+        transition: width 0.8s ease;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        max-width: 100%;
+    }
+</style>
+
+
+@* var percentage = CalculatePercentagePerformance(product);
+            var circumference = 2 * Math.PI * 52;
+
+            // Calcula el offset para el círculo de progreso (siempre limitado al 100%)
+            var offset = circumference - ((double)Math.Min(percentage, 100) / 100) * circumference;
+
+            // Calcula el offset para el círculo de exceso.
+            // Si hay exceso, se dibuja un segmento rojo. Si no, el offset es igual a la circunferencia
+            // para que el círculo rojo quede completamente invisible.
+            var excessOffset = percentage > 100 ? circumference - ((double)(percentage - 100) / 100) * circumference : circumference;
+
+                <div class="product-header">
+                    <div class="product-name">@product.Material.ArticleName</div>
+                    <div class="product-brand">@product.Brand.ToUpper()</div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="circular-progress">
+                        <svg width="120" height="120" class="progress-ring">
+                            <circle class="progress-ring-background" cx="60" cy="60" r="52"></circle>
+                            <circle class="progress-ring-fill" cx="60" cy="60" r="52"
+                                    stroke-dasharray="@circumference"
+                                    stroke-dashoffset="@offset"></circle>
+
+                            @if (percentage > 100)
+                            {
+                                <circle class="progress-ring-excess" cx="60" cy="60" r="52"
+                                        stroke-dasharray="@circumference"
+                                        stroke-dashoffset="@excessOffset"></circle>
+                            }
+                        </svg>
+                        <div class="progress-center">
+                            <span class="consumption-value">@product.TotalAmountConsumed.ToString("N2")</span>
+                            <span class="consumption-unit">lts</span>
+                        </div>
+                    </div>
+                </div> *@

@@ -96,9 +96,11 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
                 detail.EstimatedAmount = ViewModel.CalculateEstimateAmount(
                     ViewModel.Machine.TRV,
                     detail.AmountRequired,
+                    ViewModel.Machine.Capacity,
                     TotalAreaSectorService.TotalAreaSectors,
                     detail.AmountRequiredUnit
                 );
+
                 if (detail.AmountRequiredUnit == "lts" || detail.AmountRequiredUnit == "cc")
                 {
                     detail.EstimatedAmountUnit = "lts";
@@ -107,6 +109,7 @@ namespace FincaFenix.UserInterface7._0.Components.NewOrderForm
                 {
                     detail.EstimatedAmountUnit = "kg";
                 }
+
                 StateHasChanged();
             }
             catch (Exception ex)

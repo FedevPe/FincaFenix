@@ -26,9 +26,9 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
                 };
 
                 // Realizamos los cálculos y los asignamos a la nueva copia
-                newDetail.EstimatedAmount = CalculateAmountEstimatedForSector(detail, recipe.TRV, sectorArea);
+                newDetail.EstimatedAmount = CalculateAmountEstimatedForSector(detail, recipe.VolumeMachine ,recipe.TRV, sectorArea);
                 newDetail.EstimatedAmountUnit = GetAmountUnit(detail.AmountRequiredUnit);
-                newDetail.TotalAmountConsumed = CalculateAmountConsumption(detail, TotalPerfomance, recipe.TRV);
+                newDetail.TotalAmountConsumed = CalculateAmountConsumption(detail, recipe.VolumeMachine, TotalPerfomance);
 
                 newDetails.Add(newDetail);
             }
@@ -57,16 +57,18 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
                 : detail.AmountRequired;
         }
 
-        private decimal CalculateAmountConsumption(DetailRecipeDTO detail, decimal totalPerformance, decimal trv)
+        private decimal CalculateAmountConsumption(DetailRecipeDTO detail, decimal machineCapacity, decimal totalPerformance)
         {
             var amountRequired = GetAmountInLitersOrKilos(detail);
-            return (totalPerformance * amountRequired) / trv;
+            return (totalPerformance * amountRequired) / machineCapacity;
         }
 
-        private decimal CalculateAmountEstimatedForSector(DetailRecipeDTO detail, decimal trv, decimal areaSector)
+        private decimal CalculateAmountEstimatedForSector(DetailRecipeDTO detail, decimal machineCapacity, decimal trv, decimal areaSector)
         {
             var amountRequired = GetAmountInLitersOrKilos(detail);
-            return ((trv * amountRequired) / 1000) * areaSector;
+            decimal totalAplicationVolume = trv * areaSector;
+            decimal estimatedAmount = (totalAplicationVolume * amountRequired) / machineCapacity;
+            return estimatedAmount;
         }
         private string GetAmountUnit(string unit)
         {

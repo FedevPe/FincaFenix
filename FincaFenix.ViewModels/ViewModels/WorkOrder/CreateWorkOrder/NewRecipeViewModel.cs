@@ -64,16 +64,18 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
         {
             Machine = new MachineRecipeDTO();
         }
-        public decimal CalculateEstimateAmount(decimal TRV, decimal amountRequired, decimal? totalSurface, string measureUnit)
+        public decimal CalculateEstimateAmount(decimal TRV, decimal amountRequired, decimal machineCapacity, decimal? totalSurface, string measureUnit)
         {
             if (measureUnit != "lts" && measureUnit != "kg" )
             {
-                decimal estimatedAmount = amountRequired * TRV / 1000M * totalSurface.Value/1000;
+                decimal totalAplicationVolume = TRV * totalSurface.Value;
+                decimal estimatedAmount = (totalAplicationVolume * (amountRequired/1000))/ TRV;
                 return estimatedAmount;
             }
             else 
             {
-                decimal estimatedAmount = amountRequired * TRV / 1000M * totalSurface.Value;
+                decimal totalAplicationVolume = TRV * totalSurface.Value;
+                decimal estimatedAmount = (totalAplicationVolume * amountRequired) / machineCapacity;
                 return estimatedAmount;
             }    
         }

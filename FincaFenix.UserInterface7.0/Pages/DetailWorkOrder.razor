@@ -47,19 +47,21 @@
                     <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="tab-icon" />
                     <span class="tab-label">Registro de Actividades</span>
                 </button>                
-                
-                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Recipe)" 
-                        @onclick="() => SetActiveTab(WorkOrderTab.Recipe)">
-                    <MudIcon Icon="@Icons.Material.Filled.Science" Class="tab-icon" />
-                    <span class="tab-label">Receta</span>
-                </button>
+                @if(ViewModel.WOInfo.Recipe != null)
+                {
+                    <button class="tab-button @GetTabActiveClass(WorkOrderTab.Recipe)" 
+                            @onclick="() => SetActiveTab(WorkOrderTab.Recipe)">
+                        <MudIcon Icon="@Icons.Material.Filled.Science" Class="tab-icon" />
+                        <span class="tab-label">Receta</span>
+                    </button>
 
-                <!-- Pestañas futuras (deshabilitadas por ahora) -->
-                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Consumption)"
-                        @onclick="() => SetActiveTab(WorkOrderTab.Consumption)">
-                    <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="tab-icon" />
-                    <span class="tab-label">Consumos</span>
-                </button>
+                    <!-- Pestañas futuras (deshabilitadas por ahora) -->
+                    <button class="tab-button @GetTabActiveClass(WorkOrderTab.Consumption)"
+                            @onclick="() => SetActiveTab(WorkOrderTab.Consumption)">
+                        <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="tab-icon" />
+                        <span class="tab-label">Consumos</span>
+                    </button>
+                }
 
                 <button class="tab-button @GetTabActiveClass(WorkOrderTab.Graphics)"
                         @onclick="() => SetActiveTab(WorkOrderTab.Graphics)">
@@ -70,7 +72,7 @@
                 <!-- Pestañas futuras (deshabilitadas por ahora) -->
                 <button class="tab-button tab-button-disabled" disabled>
                     <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="tab-icon" />
-                    <span class="tab-label">Consumos</span>
+                    <span class="tab-label">Informes</span>
                 </button>
             </div>
 

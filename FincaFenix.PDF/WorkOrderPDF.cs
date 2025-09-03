@@ -346,7 +346,7 @@ namespace FincaFenix.PDF
                             table.Cell().Padding(3).AlignLeft().Text($"{activity.Employee.Name} {activity.Employee.LastName}");
                             table.Cell().Padding(3).AlignRight().Text($"{activity.Sector.SectorName}");
                             table.Cell().Padding(3).AlignRight().Text($"{activity.WorkedHours}");
-                            table.Cell().Padding(3).AlignRight().Text($"{activity.Performance}");
+                            table.Cell().Padding(3).AlignRight().Text($"{activity.Performance.ToString("N2")}");
                             table.Cell().Padding(3).AlignLeft().Text($"{activity.Description}");
                         }
                     });
