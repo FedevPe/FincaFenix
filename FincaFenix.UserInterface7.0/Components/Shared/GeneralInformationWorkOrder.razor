@@ -5,7 +5,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="badge-icon" />
                 <span class="order-number">Orden de trabajo N° @InfoWO.OrderNum</span>
             </div>
-            <div class="status-indicator">
+            <div class="status-indicator-wo">
                 <MudChip T="string"
                          Class="@GetStatusChipClass(InfoWO.Status)"
                          Size="Size.Medium"
@@ -21,7 +21,7 @@
 
     <MudCollapse Expanded=_expanded>
         <div class="card-body-wo">
-            <div class="info-grid">
+            <div class="info-grid-wo">
                 <div class="info-item farm-item">
                     <div class="info-icon-wrapper farm-icon">
                         <MudIcon Icon="@Icons.Material.Filled.LocationOn" Class="info-icon" />
@@ -176,7 +176,7 @@
         white-space: nowrap; /* AÑADIDO: evita salto de línea */
     }
 
-    .status-indicator {
+    .status-indicator-wo {
         display: flex;
         align-items: center;
         flex-shrink: 0; /* AÑADIDO: no se encoge */
@@ -202,7 +202,7 @@
         flex-direction: column;
     }
 
-    .info-grid {
+    .info-grid-wo {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;

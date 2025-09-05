@@ -20,106 +20,109 @@
         </div>
     </div>
 }
-<div class="recipe-table-wrapper mt-4">
-    <MudTable T="DetailRecipeDTO"
-              Items="@_calculatedRecipe.Details"
-              Dense="true"
-              Hover="true"
-              Bordered="true"
-              Class="recipe-mud-table"
-              Elevation="3"
-              Breakpoint="Breakpoint.Sm">
-        <HeaderContent>
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Inventory" Class="recipe-header-icon" />
-                    <span>Producto</span>
-                </div>
-            </MudTh>
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Circle" Class="recipe-header-icon" />
-                    <span>Marca</span>
-                </div>
-            </MudTh>
-            @if (ShowDetailProduct)
-            {
+@if (ShowTableConsumption)
+{
+    <div class="recipe-table-wrapper mt-4">
+        <MudTable T="DetailRecipeDTO"
+                  Items="@_calculatedRecipe.Details"
+                  Dense="true"
+                  Hover="true"
+                  Bordered="true"
+                  Class="recipe-mud-table"
+                  Elevation="3"
+                  Breakpoint="Breakpoint.Sm">
+            <HeaderContent>
                 <MudTh Class="recipe-table-header">
                     <div class="recipe-header-content">
-                        <MudIcon Icon="@Icons.Material.Filled.Category" Class="recipe-header-icon" />
-                        <span>Categoría</span>
+                        <MudIcon Icon="@Icons.Material.Filled.Inventory" Class="recipe-header-icon" />
+                        <span>Producto</span>
                     </div>
                 </MudTh>
                 <MudTh Class="recipe-table-header">
                     <div class="recipe-header-content">
-                        <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-header-icon" />
-                        <span>Dosis</span>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Class="recipe-header-icon" />
+                        <span>Marca</span>
                     </div>
                 </MudTh>
-            }
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="recipe-header-icon" />
-                    <span>Cant.Estimada</span>
-                </div>
-            </MudTh>
-            <MudTh Class="recipe-table-header">
-                <div class="recipe-header-content">
-                    <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="recipe-header-icon" />
-                    <span>Cant.Consumida</span>
-                </div>
-            </MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Producto" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-product-content">
-                    <div class="recipe-product-info">
-                        <span class="recipe-product-name">@context.Material.ArticleName</span>
+                @if (ShowDetailProduct)
+                {
+                    <MudTh Class="recipe-table-header">
+                        <div class="recipe-header-content">
+                            <MudIcon Icon="@Icons.Material.Filled.Category" Class="recipe-header-icon" />
+                            <span>Categoría</span>
+                        </div>
+                    </MudTh>
+                    <MudTh Class="recipe-table-header">
+                        <div class="recipe-header-content">
+                            <MudIcon Icon="@Icons.Material.Filled.Scale" Class="recipe-header-icon" />
+                            <span>Dosis</span>
+                        </div>
+                    </MudTh>
+                }
+                <MudTh Class="recipe-table-header">
+                    <div class="recipe-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Calculate" Class="recipe-header-icon" />
+                        <span>Cant.Estimada</span>
                     </div>
-                </div>
-            </MudTd>
-            <MudTd DataLabel="Marca" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-brand-content">
-                    <span class="recipe-brand-text">@context.Brand</span>
-                </div>
-            </MudTd>
-            @if (ShowDetailProduct)
-            {
-                <MudTd DataLabel="Categoría" Class="recipe-table-cell">
-                    <div class="recipe-cell-content recipe-category-content">
+                </MudTh>
+                <MudTh Class="recipe-table-header">
+                    <div class="recipe-header-content">
+                        <MudIcon Icon="@Icons.Material.Filled.ShowChart" Class="recipe-header-icon" />
+                        <span>Cant.Consumida</span>
+                    </div>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Producto" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-product-content">
+                        <div class="recipe-product-info">
+                            <span class="recipe-product-name">@context.Material.ArticleName</span>
+                        </div>
+                    </div>
+                </MudTd>
+                <MudTd DataLabel="Marca" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-brand-content">
+                        <span class="recipe-brand-text">@context.Brand</span>
+                    </div>
+                </MudTd>
+                @if (ShowDetailProduct)
+                {
+                    <MudTd DataLabel="Categoría" Class="recipe-table-cell">
+                        <div class="recipe-cell-content recipe-category-content">
+                            <span>
+                                @context.Material.Category.Description.ToUpper()
+                            </span>
+                        </div>
+                    </MudTd>
+                    <MudTd DataLabel="Dosis" Class="recipe-table-cell">
+                        <div class="recipe-cell-content recipe-dose-content">
+                            <span>
+                                @context.AmountRequired.ToString("N2") @context.AmountRequiredUnit
+                            </span>
+                        </div>
+                    </MudTd>
+                }
+                <MudTd DataLabel="Cant.Estimada" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-estimated-content">
                         <span>
-                            @context.Material.Category.Description.ToUpper()
+                            @context.EstimatedAmount.ToString("N2") @context.EstimatedAmountUnit
                         </span>
                     </div>
                 </MudTd>
-                <MudTd DataLabel="Dosis" Class="recipe-table-cell">
-                    <div class="recipe-cell-content recipe-dose-content">
+                <MudTd DataLabel="Cant.Consumida" Class="recipe-table-cell">
+                    <div class="recipe-cell-content recipe-consumed-content">
                         <span>
-                            @context.AmountRequired.ToString("N2") @context.AmountRequiredUnit
+                            @context.TotalAmountConsumed.ToString("N2") @context.EstimatedAmountUnit
                         </span>
                     </div>
-                </MudTd>                
-            }
-            <MudTd DataLabel="Cant.Estimada" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-estimated-content">
-                    <span>
-                        @context.EstimatedAmount.ToString("N2") @context.EstimatedAmountUnit
-                    </span>
-                </div>
-            </MudTd>
-            <MudTd DataLabel="Cant.Consumida" Class="recipe-table-cell">
-                <div class="recipe-cell-content recipe-consumed-content">
-                    <span>
-                        @context.TotalAmountConsumed.ToString("N2") @context.EstimatedAmountUnit
-                    </span>
-                </div>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-</div>
-<div>
-    <RadialProductConsumption DetailRecipeList="@_calculatedRecipe.Details"/>
-</div>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </div>
+}
+@* <div>
+    <RadialProductConsumption DetailRecipeList="@_calculatedRecipe.Details" TotalPerformance="_totalPerformance" TotalApplication="_totalApplication"/>
+</div> *@
 <style>
     .recipe-toolbar-content {
         width: 100%;

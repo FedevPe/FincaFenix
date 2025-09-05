@@ -5,23 +5,30 @@
     }
 </div>
 <div>
-    <div>
+    <div class="container-fluid">
         @if (sectorSelectedId != 0)
         {
             @if (_detailWorkOrderFilteredList.Any() && _recipe != null)
             {
                 <div class="my-3">
-                    <RecipeConsumption @key="sectorSelectedId"
+                    <RadialProductConsumption @key="sectorSelectedId"
                                        DetailWorkOrderList="_detailWorkOrderFilteredList"
                                        Recipe="_recipe"
-                                       TotalAreaWorked="SectorSelected.Area.Value"
-                                       ShowDetailProduct="false"
-                                       ShowToolBar="false"/>
+                                       TotalAreaWorkedForSector="SectorSelected.Area.Value"
+                                       TotalApplicationForSector="_totalApplicationForSector"/>
                 </div>
             }
             else if ((_detailWorkOrderFilteredList.Any() && _recipe == null))
             {
-                <h6>Componente para calcular rendimiento de ordenes que no tienen receta.</h6>
+                <div class="empty-state-card">
+                    <div class="empty-state-content">
+                        <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                        <MudText Typo="Typo.h6" Class="empty-state-title">Cuadro sin actividades registradas.</MudText>
+                        <MudText Typo="Typo.body1" Class="empty-state-description">
+                            Aún no se pueden mostrar los datos relacionados. Porque no se han registrados actividades en el cuadro seleccionado.
+                        </MudText>
+                    </div>
+                </div>
             }
             else
             {
@@ -62,22 +69,29 @@
     private DetailSectorFarmDTO SectorSelected;
     private List<DetailWorkOrderDTO> _detailWorkOrderFilteredList;
     private RecipeWorkOrderDTO _recipe;
+    private decimal _totalApplicationForSector;
+    private decimal _totalApplicationAllSector;
+    private decimal _totalAreaWorkedAllSector;
 
     protected override void OnInitialized()
     {
         // Inicializa _sortedSectorList para evitar múltiples ordenamientos.
         _recipe = Recipe;
         SectorList = SectorList.OrderBy(s => s.FruitName);
+        _totalAreaWorkedAllSector = SectorList.Sum(x => x.Area.Value);
+        _totalApplicationAllSector = SectorList.Sum(x => x.Area.Value) * _recipe.TRV;
     }
 
     private void HandleSectorSelected(int id)
     {
         sectorSelectedId = id;
+        _totalApplicationForSector = SectorList.Sum(x => x.Area.Value) * _recipe.TRV;
         // Aplica la lógica de filtrado en el componente padre.
         if (sectorSelectedId != 0)
         {
             _detailWorkOrderFilteredList = DetailWorkOrderDTO.Where(ds => ds.Sector.Id == id).ToList();
             SectorSelected = SectorList.FirstOrDefault(ds => ds.Id == id);
+            _totalApplicationForSector = (SectorSelected.Area.Value * _totalApplicationAllSector) / _totalAreaWorkedAllSector;
         }
         StateHasChanged();
     }

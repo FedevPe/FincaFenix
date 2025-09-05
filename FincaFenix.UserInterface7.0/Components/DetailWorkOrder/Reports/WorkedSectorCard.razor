@@ -1,17 +1,17 @@
 ﻿<div class="mx-3">
-    <div class="stats-card stats-card-active @(SectorFarmDTO.Id == SectorSelectedId ? "active" : "")" @onclick="() => SetSectorSelected(SectorFarmDTO.Id)">
-        <MudPaper Elevation="2" Class="stats-paper">
-            <div class="stats-content">
-                <div class="stats-icon-wrapper stats-icon-created">
-                    <MudIcon Icon="@Icons.Material.Filled.Fullscreen" Class="stats-icon" />
+    <div class="statsSector-card statsSector-card-active @(SectorFarmDTO.Id == SectorSelectedId ? "active" : "")" @onclick="() => SetSectorSelected(SectorFarmDTO.Id)">
+        <MudPaper Elevation="2" Class="statsSector-paper">
+            <div class="statsSector-content">
+                <div class="statsSector-icon-wrapper statsSector-icon-created">
+                    <MudIcon Icon="@Icons.Material.Filled.Fullscreen" Class="statsSector-icon" />
                 </div>
-                <div class="stats-info">
-                    <MudText Class="stats-title" Typo="Typo.subtitle2">Cuadro</MudText>
-                    <MudText Class="stats-number stats-number-active" Typo="Typo.h4">@SectorFarmDTO.SectorName</MudText>
+                <div class="statsSector-info">
+                    <MudText Class="statsSector-title" Typo="Typo.subtitle2">Cuadro</MudText>
+                    <MudText Class="statsSector-number statsSector-number-active" Typo="Typo.h4">@SectorFarmDTO.SectorName</MudText>
                     <MudText Class="trend-text" Typo="Typo.h4">@SectorFarmDTO.Area ha</MudText>
                 </div>
             </div>
-            <div class="stats-trend">
+            <div class="statsSector-trend">
                 <MudIcon Icon="@Icons.Material.Filled.Info" Class="trend-icon trend-created" />
                 <span class="trend-text">@SectorFarmDTO.FruitName - @SectorFarmDTO.VarietyName</span>
             </div>
@@ -20,7 +20,7 @@
 </div>
 
 <style>
-    .stats-card {
+    .statsSector-card {
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border-radius: 16px;
@@ -28,20 +28,20 @@
         position: relative;
     }
 
-    .stats-paper {
-        padding: 1.5rem !important;
-        border-radius: 16px !important;
-        background: white !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    .statsSector-paper {
+        padding: 1.5rem ;
+        border-radius: 16px ;
+        background: white ;
+        border: 1px solid rgba(0, 0, 0, 0.06) ;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) ;
     }
 
-    .stats-card:hover .stats-paper {
+    .statsSector-card:hover .statsSector-paper {
         transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) ;
     }
 
-    .stats-card::before {
+    .statsSector-card::before {
         content: '';
         position: absolute;
         top: 0;
@@ -54,27 +54,27 @@
         z-index: 1;
     }
 
-    .stats-card:hover::before {
+    .statsSector-card:hover::before {
         opacity: 1;
     }
 
-    .stats-card.active::before {
+    .statsSector-card.active::before {
         opacity: 1;
     }
 
-    .stats-card.active .stats-paper {
+    .statsSector-card.active .statsSector-paper {
         transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) ;
     }
 
-    .stats-content {
+    .statsSector-content {
         display: flex;
         align-items: center;
         gap: 1rem;
         margin-bottom: 1rem;
     }
 
-    .stats-icon-wrapper {
+    .statsSector-icon-wrapper {
         width: 60px;
         height: 60px;
         border-radius: 16px;
@@ -85,7 +85,7 @@
         overflow: hidden;
     }
 
-        .stats-icon-wrapper::before {
+        .statsSector-icon-wrapper::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -93,31 +93,31 @@
             opacity: 0.1;
         }
 
-    .stats-icon {
-        font-size: 28px !important;
-        color: var(--icon-color) !important;
+    .statsSector-icon {
+        font-size: 28px ;
+        color: var(--icon-color) ;
         z-index: 1;
         position: relative;
     }
 
-    .stats-info {
+    .statsSector-info {
         flex: 1;
     }
 
-    .stats-title {
-        color: #64748b !important;
-        font-weight: 500 !important;
-        margin-bottom: 0.25rem !important;
-        font-size: 0.875rem !important;
+    .statsSector-title {
+        color: #64748b ;
+        font-weight: 500 ;
+        margin-bottom: 0.25rem ;
+        font-size: 0.875rem ;
     }
 
-    .stats-number {
-        font-weight: 700 !important;
-        margin: 0 !important;
-        line-height: 1.2 !important;
+    .statsSector-number {
+        font-weight: 700 ;
+        margin: 0 ;
+        line-height: 1.2 ;
     }
 
-    .stats-trend {
+    .statsSector-trend {
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -126,7 +126,7 @@
     }
 
     .trend-icon {
-        font-size: 16px !important;
+        font-size: 16px ;
     }
 
     .trend-text {
@@ -136,7 +136,7 @@
     }
 
     /* Colores específicos para cada tipo de tarjeta */
-    .stats-card-created {
+    .statsSector-card-created {
         --card-gradient-start: #3b82f6;
         --card-gradient-end: #1d4ed8;
         --icon-bg-start: #3b82f6;
@@ -144,11 +144,11 @@
         --icon-color: #3b82f6;
     }
 
-    .stats-number-created {
-        color: #3b82f6 !important;
+    .statsSector-number-created {
+        color: #3b82f6 ;
     }
 
-    .stats-card-active {
+    .statsSector-card-active {
         --card-gradient-start: #10b981;
         --card-gradient-end: #059669;
         --icon-bg-start: #10b981;
@@ -156,11 +156,11 @@
         --icon-color: #10b981;
     }
 
-    .stats-number-active {
-        color: #10b981 !important;
+    .statsSector-number-active {
+        color: #10b981 ;
     }
 
-    .stats-card-pending {
+    .statsSector-card-pending {
         --card-gradient-start: #f59e0b;
         --card-gradient-end: #d97706;
         --icon-bg-start: #f59e0b;
@@ -168,11 +168,11 @@
         --icon-color: #f59e0b;
     }
 
-    .stats-number-pending {
-        color: #f59e0b !important;
+    .statsSector-number-pending {
+        color: #f59e0b ;
     }
 
-    .stats-card-closed {
+    .statsSector-card-closed {
         --card-gradient-start: #ef4444;
         --card-gradient-end: #dc2626;
         --icon-bg-start: #ef4444;
@@ -180,43 +180,43 @@
         --icon-color: #ef4444;
     }
 
-    .stats-number-closed {
-        color: #ef4444 !important;
+    .statsSector-number-closed {
+        color: #ef4444 ;
     }
 
     .trend-created {
-        color: #3b82f6 !important;
+        color: #3b82f6 ;
     }
 
     .trend-up {
-        color: #10b981 !important;
+        color: #10b981 ;
     }
 
     .trend-down {
-        color: #f59e0b !important;
+        color: #f59e0b ;
     }
 
     .trend-completed {
-        color: #ef4444 !important;
+        color: #ef4444 ;
     }
 
     /* Responsive adjustments */
     @@media (max-width: 960px) {
-        .stats-paper {
-            padding: 1.25rem !important;
+        .statsSector-paper {
+            padding: 1.25rem ;
         }
 
-        .stats-content {
+        .statsSector-content {
             gap: 0.75rem;
         }
 
-        .stats-icon-wrapper {
+        .statsSector-icon-wrapper {
             width: 50px;
             height: 50px;
         }
 
-        .stats-icon {
-            font-size: 24px !important;
+        .statsSector-icon {
+            font-size: 24px ;
         }
     }
 
@@ -233,23 +233,23 @@
         }
     }
 
-    .stats-card {
+    .statsSector-card {
         animation: slideUp 0.6s ease-out;
     }
 
-        .stats-card:nth-child(1) {
+        .statsSector-card:nth-child(1) {
             animation-delay: 0.1s;
         }
 
-        .stats-card:nth-child(2) {
+        .statsSector-card:nth-child(2) {
             animation-delay: 0.2s;
         }
 
-        .stats-card:nth-child(3) {
+        .statsSector-card:nth-child(3) {
             animation-delay: 0.3s;
         }
 
-        .stats-card:nth-child(4) {
+        .statsSector-card:nth-child(4) {
             animation-delay: 0.4s;
         }
 </style>
