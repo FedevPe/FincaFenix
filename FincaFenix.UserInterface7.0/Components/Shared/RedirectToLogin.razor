@@ -1,0 +1,16 @@
+﻿@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        // URL actual (relativa) para volver después de loguear
+        var relative = Nav.ToBaseRelativePath(Nav.Uri);
+        if (!relative.StartsWith("/"))
+            relative = "/" + relative;
+
+        var target = $"/login";
+
+        // forceLoad: rompe el circuito de SignalR y hace request HTTP normal
+        Nav.NavigateTo(target, forceLoad: true);
+    }
+}

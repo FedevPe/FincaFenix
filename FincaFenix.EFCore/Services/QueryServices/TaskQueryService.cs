@@ -5,21 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class TaskQueryService : FincaFenixContext, ITaskQueryService
+    public class TaskQueryService(
+        FincaFenixContext context) : ITaskQueryService
     {
         public async Task<bool> Exists(int id)
         {
-            return await Tasks.AnyAsync(t => t.Id == id);
+            return await context.Tasks.AnyAsync(t => t.Id == id);
         }
 
         public async Task<TaskEntity> GetTaskById(int taskId)
         {
-            return await Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new KeyNotFoundException($"Task with ID {taskId} not found.");
+            return await context.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new KeyNotFoundException($"Task with ID {taskId} not found.");
         }
 
         public async Task<IEnumerable<TaskEntity>> GetTaskList()
         {
-            return await Tasks.OrderBy(t => t.Description).ToListAsync();
+            return await context.Tasks.OrderBy(t => t.Description).ToListAsync();
         }
     }
 }

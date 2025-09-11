@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using FincaFenix.Entities.POCOEntities
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Rendering
+@inherits LayoutComponentBase
 
 <PageTitle>FincaFenix.UserInterface7.0</PageTitle>
 
@@ -18,7 +21,7 @@
         <MudText Typo="Typo.h6" Class="ml-2">@TextAppBar.PageTitle</MudText>
         <MudSpacer/>
     </MudAppBar>
-    <MudDrawer Class="mud-height-full" MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3" Height="100vh"
+    <MudDrawer MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3"
                ClipMode="_clipMode" Variant="@DrawerVariant.Responsive">
                <NavMenu/>
     </MudDrawer>
@@ -30,6 +33,7 @@
 </MudLayout>
 @((RenderFragment)(builder => base.BuildRenderTree(builder)))
 @code{
+    [Inject] public UserManager<ApplicationUser> UserManager { get; set; }
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
     bool _drawerOpen = false;
     [Inject] public TextAppBarStateService TextAppBar { get; set; }

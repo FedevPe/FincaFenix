@@ -123,6 +123,32 @@
 @* <div>
     <RadialProductConsumption DetailRecipeList="@_calculatedRecipe.Details" TotalPerformance="_totalPerformance" TotalApplication="_totalApplication"/>
 </div> *@
+@code{
+    [Inject] private CalculateMaterialConsumedViewModel ViewModel { get; set; }
+
+    [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
+    [Parameter] public IEnumerable<DetailWorkOrderDTO> DetailWorkOrderList { get; set; }
+    [Parameter] public decimal TotalAreaWorked { get; set; }
+    [Parameter] public decimal TotalApplication { get; set; }
+    [Parameter] public bool ShowToolBar { get; set; } = true;
+    [Parameter] public bool ShowDetailProduct { get; set; } = true;
+    [Parameter] public bool ShowTableConsumption { get; set; } = true;
+
+    private decimal _totalPerformance;
+    private decimal _totalApplication;
+    private RecipeWorkOrderDTO _calculatedRecipe; // Almacenará la receta con los valores calculados
+
+    protected override async Task OnInitializedAsync()
+    {
+        _calculatedRecipe = await ViewModel.CalculateEstimatedAndConsumedAmounts(
+             Recipe,
+             DetailWorkOrderList,
+             TotalAreaWorked
+         );
+        _totalPerformance = ViewModel.TotalPerfomance;
+        _totalApplication = TotalApplication;
+    }
+}
 <style>
     .recipe-toolbar-content {
         width: 100%;

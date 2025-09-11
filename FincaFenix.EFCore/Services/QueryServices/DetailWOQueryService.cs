@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class DetailWOQueryService : FincaFenixContext, IDetailWOQueryService
+    public class DetailWOQueryService (
+        FincaFenixContext context) : IDetailWOQueryService
     {
         public async Task<IEnumerable<DetailWorkOrderEntity>> GetActivityLogByOrderId(int orderId)
         {
-            var listDetails = await DetailWorkOrders
+            var listDetails = await context.DetailWorkOrders
                 .Where(dwo => dwo.WorkOrderId == orderId)
                 .Include(dwo => dwo.SectorWorked)
                 .Include(dwo => dwo.Employee)

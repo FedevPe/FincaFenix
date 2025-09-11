@@ -5,16 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class MaterialCategoryQueryService : FincaFenixContext, IMaterialCategoryQueryService
+    public class MaterialCategoryQueryService (
+        FincaFenixContext context) : IMaterialCategoryQueryService
     {
         public async Task<bool> Exists(int id)
         {
-            return await MaterialCategories.AnyAsync(c => c.Id == id);
+            return await context.MaterialCategories.AnyAsync(c => c.Id == id);
         }
 
         public async Task<IEnumerable<MaterialCategoryEntity>> GetCategoriesList()
         {
-            return await MaterialCategories.ToListAsync();
+            return await context.MaterialCategories.ToListAsync();
         }
     }
 }

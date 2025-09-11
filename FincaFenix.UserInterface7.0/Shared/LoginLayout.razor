@@ -1,0 +1,92 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Inicio de sesión</PageTitle>
+<MudThemeProvider Theme="CustomTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudMainContent Class="page">
+        <div class="page">
+            <main class="main-content">
+                <article class="content-container">
+                    @Body
+                </article>
+            </main>
+        </div>
+    </MudMainContent>
+</MudLayout>
+@((RenderFragment)(builder => base.BuildRenderTree(builder)))
+@code{
+    MudTheme CustomTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = Colors.Teal.Darken4,
+            AppbarBackground = Colors.Teal.Darken4,
+            Secondary = Colors.Teal.Darken3,
+            Tertiary = Colors.Gray.Lighten5,
+            Info = Colors.BlueGray.Default,
+            Error = Colors.Red.Lighten1,
+            Warning = Colors.Amber.Darken1,
+            Success = Colors.Green.Darken1,
+            Surface = Colors.Shades.White,
+        }
+    };
+}
+<style>
+    body {
+        overflow: hidden;
+    }
+    .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: transparent;
+        position: relative;
+        overflow-x: hidden;
+        color: white;
+    }
+
+    .main-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .content-container {
+        width: 100%;
+        max-width: 450px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 70vh;
+    }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+        .main-content
+        {
+            padding: 15px;
+        }
+
+        .content-container {
+            min-height: 60vh;
+            max-width: 100%;
+        }
+    }
+    
+
+    @@media (max-width: 480px) {
+        .content-container .login-card-login {
+            padding: 35px 25px;
+            margin: 0 5px;
+        }
+
+    }
+</style>

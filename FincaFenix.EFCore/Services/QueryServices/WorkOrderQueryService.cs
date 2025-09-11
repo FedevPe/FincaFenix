@@ -7,15 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class WorkOrderQueryService : FincaFenixContext, IWorkOrderQueryService
+    public class WorkOrderQueryService(
+        FincaFenixContext context)  : IWorkOrderQueryService
     {
         public async Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status)
         {
-            var query = WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
+            var query = context.WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
 
             var totalCount = await query.CountAsync(); //Cuenta la cantidad de registros que cumplen la condición
 
-            var workOrders = await WorkOrders
+            var workOrders = await context.WorkOrders
                 .Where(wo => !wo.IsDeleted && wo.Status != status)
                 // Ordena por OrderNum para mantener un orden consistente, para que la paginación funcione correctamente
                 // si no se ordena, la paginación puede devolver resultados repetidos o saltarse algunos registros en cada pagina
@@ -56,7 +57,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
         }
         public async Task<InfoWorkOrderDTO> GetWorkOrderInfoById(int id)
         {
-            return await WorkOrders
+            return await context.WorkOrders
                 .Where(wo => wo.Id == id && !wo.IsDeleted)
                 .Select(wo => new InfoWorkOrderDTO
                 {
@@ -90,7 +91,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
         }
         public async Task<WorkOrderEntity> GetWorkOrderAndRecipeByIdWorkorder(int id)
         {
-            return await WorkOrders.Where(wo => wo.Id == id)
+            return await context.WorkOrders.Where(wo => wo.Id == id)
                 .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
                     .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
                 .Include(wo => wo.DetailWorkOrderList)
@@ -115,7 +116,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList()
         {
-            return await WorkOrders.Where(wo => !wo.IsDeleted)
+            return await context.WorkOrders.Where(wo => !wo.IsDeleted)
                 .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
                     .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
                 .Include(wo => wo.DetailWorkOrderList)

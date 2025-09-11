@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
 {
-    public class UpdateWorkOrderCommand : FincaFenixContext, IUpdateWorkOrderCommand
+    public class UpdateWorkOrderCommand(
+        FincaFenixContext context) : IUpdateWorkOrderCommand
     {
         public Task<bool> UpdateWorkOrder()
         {
@@ -16,7 +17,7 @@ namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
             try
             {
                 // 1. Buscar la orden de trabajo en la base de datos por su ID
-                var workOrder = await WorkOrders.FirstOrDefaultAsync(wo => wo.Id == workOrderId);
+                var workOrder = await context.WorkOrders.FirstOrDefaultAsync(wo => wo.Id == workOrderId);
 
                 // Si la orden de trabajo no se encuentra, retornamos false
                 if (workOrder == null)
@@ -36,7 +37,7 @@ namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
                 }
 
                 // 3. Guardar los cambios en la base de datos de forma asíncrona
-                int changesSaved = await SaveChangesAsync();
+                int changesSaved = await context.SaveChangesAsync();
 
                 // 4. Retornar true si se guardó al menos 1 cambio, de lo contrario false
                 return changesSaved > 0;

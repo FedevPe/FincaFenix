@@ -4,34 +4,34 @@ using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 
 namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
 {
-    public class CreateWorkOrderCommand : FincaFenixContext, ICreateWorkOrderCommand
+    public class CreateWorkOrderCommand(FincaFenixContext context) : ICreateWorkOrderCommand
     {
         public async Task<int> AddNewWorkOrder(WorkOrderEntity workOrder)
         {
-            var transaction = await Database.BeginTransactionAsync();
-            var woNumber = CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "OrdenTrabajo");
-            var reNumber = CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "Receta");
+            var transaction = await context.Database.BeginTransactionAsync();
+            var woNumber = context.CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "OrdenTrabajo");
+            var reNumber = context.CorrelativeNumber.FirstOrDefault(c => c.TypeDoc == "Receta");
 
             try
             {
                 if (workOrder.Recipe != null)
                 {
                     workOrder.Recipe.NumRecipe = reNumber.LastNumber.ToString();
-                    Recipes.Add(workOrder.Recipe);
-                    await SaveChangesAsync();
+                    context.Recipes.Add(workOrder.Recipe);
+                    await context.SaveChangesAsync();
 
                     workOrder.RecipeId = workOrder.Recipe.Id;
                     reNumber.LastNumber++;
-                    await SaveChangesAsync();
+                    await context.SaveChangesAsync();
                 }
 
                 // Guardar orden de trabajo
                 workOrder.OrderNum = woNumber.LastNumber.ToString();
-                WorkOrders.Add(workOrder);
-                await SaveChangesAsync();
+                context.WorkOrders.Add(workOrder);
+                await context.SaveChangesAsync();
 
                 woNumber.LastNumber++;
-                await SaveChangesAsync();
+                await context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
                 return workOrder.Id;

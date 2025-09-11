@@ -1,0 +1,180 @@
+﻿@using FincaFenix.Entities.DTOs.Login
+@layout LoginLayout
+
+<div class="container-fluid mt-3">
+    <div class="login-page-login">
+        <div class="login-card-login">
+            <!-- Logo Section -->
+            <div class="logo-section-login">
+                <div class="logo-circle-login">
+                    <MudImage Src="logo.png" Elevation="25" Class="img-logo-login mb-6" />
+                </div>
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="welcome-section-login">
+                <MudText Typo="Typo.h5" Class="welcome-title-login">Inicio de sesión</MudText>
+                <MudText Typo="Typo.body2" Class="welcome-subtitle-login">Ingrese sus credenciales para acceder al sistema</MudText>
+            </div>
+
+            <EditForm OnValidSubmit="HandleLogin" Model="login">
+                <div class="form-section-login">
+                    <MudTextField Label="Usuario"
+                                  @bind-Value="login.UserName"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  FullWidth="true"
+                                  Class="login-field-login" />
+                    <MudTextField Label="Contraseña"
+                                  @bind-Value="login.Password"
+                                  InputType="InputType.Password"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  FullWidth="true"
+                                  Class="login-field-login" />
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Size="Size.Large"
+                               FullWidth="true"
+                               Class="login-button-login">
+                        Iniciar sesión
+                    </MudButton>
+                </div>
+            </EditForm>
+
+            @if (error)
+            {
+                <MudAlert Severity="MudBlazor.Severity.Error" Class="error-alert-login">
+                    Usuario o contraseña incorrectos.
+                </MudAlert>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] public LoginViewModel ViewModel { get; set; }
+    [Inject] public NavigationManager Nav { get; set; }
+    private LoginDTO login = new LoginDTO();
+    private bool error = false;
+
+    private async Task HandleLogin()
+    {
+        var result = await ViewModel.Login(login);
+        if (result.IsSuccess)
+        {
+            Nav.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            error = true;
+        }
+    }
+}
+<style>
+    .login-page-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        padding: 20px;
+    }
+
+    .login-card-login {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+    }
+
+    .logo-section-login {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        position: relative;
+        top: -20px;
+    }
+
+    .logo-circle-login {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    .img-logo-login{
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+    }
+
+    .welcome-section-login {
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 50px;
+    }
+
+    .welcome-title-login {
+        color: #333;
+        font-weight: 600;
+        font-size: 30px;
+    }
+
+    .welcome-subtitle-login {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .form-section-login {
+        margin-bottom: 20px;
+    }
+
+    .login-field-login {
+        margin-bottom: 20px;
+        color: black;
+    }
+
+    .login-button-login {
+        margin-top: 10px;
+        height: 50px;
+        border-radius: 8px;
+        background-color: #00695c !important;
+        font-weight: 500;
+        text-transform: none;
+    }
+
+    .login-button:hover {
+        background-color: #004d40 !important;
+    }
+
+    .error-alert-login {
+        margin-top: 20px;
+        border-radius: 8px;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 480px) {
+            .login-card-login {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+            .logo-circle-login {
+            width: 80px;
+            height: 80px;
+        }
+
+            .logo-text-login {
+            font-size: 1.2rem;
+        }
+
+    }
+</style>

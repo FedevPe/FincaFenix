@@ -18,7 +18,16 @@
         </MudPaper>
     </div>
 </div>
+@code{
+    [Parameter] public DetailSectorFarmDTO SectorFarmDTO { get; set; }
+    [Parameter] public int SectorSelectedId { get; set; }
+    [Parameter] public EventCallback<int> OnSectorSelectedChanged { get; set; }
 
+    private async Task SetSectorSelected(int id)
+    {
+        await OnSectorSelectedChanged.InvokeAsync(id);
+    }
+}
 <style>
     .statsSector-card {
         cursor: pointer;

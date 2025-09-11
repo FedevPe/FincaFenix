@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class EmployeeQueryService : FincaFenixContext, IEmployeeQueryService
+    public class EmployeeQueryService (
+        FincaFenixContext context) : IEmployeeQueryService
     {
         public async Task<IEnumerable<EmployeeEntity>> GetAllEmployeesAsync(int farmId)
         {
-            return await Employee_Farms
+            return await context.Employee_Farms
                 .Where(ef => ef.FarmId == farmId && !ef.Employee.IsDeleted)
                 .Select(ef => ef.Employee)
                 .ToListAsync();

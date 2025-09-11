@@ -1,4 +1,9 @@
+using FincaFenix.EFCore.Context;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.InversionOfControl;
+using FincaFenix.ViewModels.ViewModels.Login;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MudBlazor;
 using MudBlazor.Services;
 using System.Globalization;
@@ -18,7 +23,7 @@ namespace FincaFenix.UserInterface7._0
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorPages(); 
+            builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
             {
                 // Solo habilita errores detallados en el entorno de desarrollo
@@ -36,6 +41,28 @@ namespace FincaFenix.UserInterface7._0
                 config.SnackbarConfiguration.HideTransitionDuration = 500;
             });
 
+            var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+            // Agregar el DbContext de Entity Framework Core para Identity
+            builder.Services.AddDbContext<FincaFenixContext>(conf => conf.UseSqlServer(conn));
+
+            //Agregar Identity y su configuraci�n.
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                options =>
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireLowercase = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequiredLength = 8;
+
+                    options.SignIn.RequireConfirmedEmail = false;
+
+                    options.Lockout.AllowedForNewUsers = true;
+                })
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<FincaFenixContext>()
+                .AddRoles<IdentityRole>(); 
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -51,6 +78,11 @@ namespace FincaFenix.UserInterface7._0
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapRazorPages();
 
             app.MapControllers();
 

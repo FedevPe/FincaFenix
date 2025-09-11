@@ -1,4 +1,5 @@
-﻿@page "/menuPrincipal"
+﻿@page "/"
+@attribute [Authorize]
 
 <PageTitle>Menu Principal</PageTitle>
 
@@ -8,9 +9,21 @@ Welcome to your new app.
 
 @code {
     [Inject] public TextAppBarStateService AppBarState { get; set; }
+    [Inject] public AuthenticationStateProvider AuthenticationState { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         AppBarState.PageTitle = "Menú Principal";
+
+        var authState = await AuthenticationState.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        // Comprueba si el usuario NO está autenticado
+        if (!user.Identity.IsAuthenticated)
+        {
+            // Redirige a la página de login
+            NavigationManager.NavigateTo("/login");
+        }
     }
 }

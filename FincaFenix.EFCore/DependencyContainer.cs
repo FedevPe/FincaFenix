@@ -13,28 +13,28 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddEFCoreServices(this IServiceCollection services)
         {
-            services.AddScoped<ITaskQueryService, TaskQueryService>()
-                    .AddScoped<IFarmQueryService, FarmQueryService>()
-                    .AddScoped<IDetailSectorQueryService, DetailSectorQueryService>()
-                    .AddScoped<IMaterialQueryService, MaterialQueryService>()
-                    .AddScoped<IWorkOrderQueryService, WorkOrderQueryService>()
-                    .AddScoped<IMaterialCategoryQueryService, MaterialCategoryQueryService>()
-                    .AddScoped<IMachineQueryService, MachineQueryServices>()
-                    .AddScoped<IEmployeeQueryService, EmployeeQueryService>()
-                    .AddScoped<IDetailWOQueryService, DetailWOQueryService>();
+            services.AddTransient<ITaskQueryService, TaskQueryService>()
+                    .AddTransient<IFarmQueryService, FarmQueryService>()
+                    .AddTransient<IDetailSectorQueryService, DetailSectorQueryService>()
+                    .AddTransient<IMaterialQueryService, MaterialQueryService>()
+                    .AddTransient<IWorkOrderQueryService, WorkOrderQueryService>()
+                    .AddTransient<IMaterialCategoryQueryService, MaterialCategoryQueryService>()
+                    .AddTransient<IMachineQueryService, MachineQueryServices>()
+                    .AddTransient<IEmployeeQueryService, EmployeeQueryService>()
+                    .AddTransient<IDetailWOQueryService, DetailWOQueryService>();
 
             //QUERIES
             #region WorkOrder
-            services.AddScoped<IGetWorkOrderInformationQuery, GetWorkOrderInformationQuery>();
+            services.AddTransient<IGetWorkOrderInformationQuery, GetWorkOrderInformationQuery>();
             #endregion
             //COMMANDS
             #region WorkOrder
-            services.AddScoped<ICreateWorkOrderCommand, CreateWorkOrderCommand>();
-            services.AddScoped<IUpdateWorkOrderCommand, UpdateWorkOrderCommand>();
+            services.AddTransient<ICreateWorkOrderCommand, CreateWorkOrderCommand>();
+            services.AddTransient<IUpdateWorkOrderCommand, UpdateWorkOrderCommand>();
             #endregion
 
-            services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>()
-                    .AddScoped<IDetailWOCommandService, DetailWOCommandService>();
+            services.AddTransient<IWorkOrderCommandService, WorkOrderCommandService>()
+                    .AddTransient<IDetailWOCommandService, DetailWOCommandService>();
 
             return services;
         }

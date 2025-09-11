@@ -5,16 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FincaFenix.EFCore.Services.QueryServices
 {
-    public class DetailSectorQueryService : FincaFenixContext, IDetailSectorQueryService
+    public class DetailSectorQueryService(
+        FincaFenixContext context) : IDetailSectorQueryService
     {
         public async Task<bool> Exists(int id)
         {
-            return await DetailSectors.AnyAsync(s => s.Id == id);
+            return await context.DetailSectors.AnyAsync(s => s.Id == id);
         }
 
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByFarmId(int farmId)
         {
-            return await DetailSectors.Where(ds => ds.FarmId == farmId)
+            return await context.DetailSectors.Where(ds => ds.FarmId == farmId)
                 .Include(ds => ds.Variety)
                 .ThenInclude(v => v.Fruit)
                 .OrderBy(ds => ds.Variety.Fruit.Description)
@@ -23,7 +24,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByOrderId(int orderId)
         {
-            return await WorkOrderWorkedSectors.Where(x => x.WorkOrderId == orderId)
+            return await context.WorkOrderWorkedSectors.Where(x => x.WorkOrderId == orderId)
                 .Select(x => x.SectorFarm)
                 .OrderBy(x => x.SectorName)
                 .ToListAsync();

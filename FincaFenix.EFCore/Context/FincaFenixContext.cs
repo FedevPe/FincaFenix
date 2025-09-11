@@ -1,16 +1,16 @@
 ﻿using FincaFenix.Entities.POCOEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace FincaFenix.EFCore.Context
 {
-    public class FincaFenixContext : DbContext
+    public class FincaFenixContext : IdentityDbContext<ApplicationUser>
     {
+        public FincaFenixContext(DbContextOptions<FincaFenixContext> options) : base(options)
+        {
+        }
 
-        // DB PRODUCCION "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDB;User ID=sa;Password=********;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
-        // DB TEST "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDBTest;User ID=sa;Password=********;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
-        // DB REMOTE "Data Source=FEDEPC\\SQLEXPRESS;Initial Catalog=FincaFenixDB;User ID=sa;Password=Axoft2016;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"
-        private readonly string localServer = "Data Source=SISTEMAS-SERVER\\SQLEXPRESS;Initial Catalog=FincaFenixDBTest;User ID=sa;Password=Axoft2016;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }
         public DbSet<DetailWorkOrderEntity> DetailWorkOrders { get; set; }
@@ -25,22 +25,14 @@ namespace FincaFenix.EFCore.Context
         public DbSet<MaterialCategoryEntity> MaterialCategories { get; set; }
         public DbSet<MaterialEntity> Materials { get; set; }
         public DbSet<RecipeEntity> Recipes { get; set; }
-        public DbSet<RolEntity> Roles { get; set; }
         public DbSet<TaskEntity> Tasks { get; set; }
-        public DbSet<UserEntity> Users { get; set; }
         public DbSet<WorkOrderEntity> WorkOrders { get; set; }
         public DbSet<WorkOrderWorkedSectorEntity> WorkOrderWorkedSectors { get; set; }
         public DbSet<CorrelativeNumberEntity> CorrelativeNumber { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(localServer);
-            }
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }

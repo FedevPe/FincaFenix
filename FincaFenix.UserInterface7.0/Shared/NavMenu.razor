@@ -1,27 +1,162 @@
-﻿<MudNavMenu Class="bg-color-primary mud-width-full" Color="Color.Tertiary">
-    <MudNavLink Href="/menuPrincipal"
-                Icon="fa-solid fa-house"
-                Match="NavLinkMatch.All"
-                IconColor="Color.Tertiary"
-                Disabled="true"
-                Class="btn-hover">Menú Principal</MudNavLink>
-    <MudNavLink Href="/"
-                Icon="fa-solid fa-clipboard-list"
-                Match="NavLinkMatch.All"
-                Class="btn-hover"
-                IconColor="Color.Tertiary">Ordenes de trabajo</MudNavLink>
-    <MudNavLink Href="/informes"
-                Icon="fa-solid fa-chart-line"
-                Match="NavLinkMatch.All"
-                IconColor="Color.Tertiary"
-                Disabled="true"
-                Class="btn-hover">Informes</MudNavLink>
-</MudNavMenu>
+﻿@inject NavigationManager Nav
+
+<div class="navigation-container">
+    <MudNavMenu Margin="Margin.Dense" Class="custom-nav-menu" Color="Color.Tertiary" Rounded="true">
+        <!-- Sección superior con enlaces principales -->
+        <div class="nav-links-section">
+            <MudNavLink Href="/"
+                        Icon="fa-solid fa-house"
+                        IconColor="Color.Tertiary"
+                        Class="custom-nav-link"
+                        Match="NavLinkMatch.All">
+                Menú Principal
+            </MudNavLink>
+            <MudNavLink Href="/ordenestrabajo"
+                        Icon="fa-solid fa-clipboard-list"
+                        IconColor="Color.Tertiary"
+                        Class="custom-nav-link"
+                        Match="NavLinkMatch.All">
+                Ordenes de trabajo
+            </MudNavLink>
+
+            <MudNavLink Href="/informes"
+                        Icon="fa-solid fa-chart-line"
+                        IconColor="Color.Tertiary"
+                        Class="custom-nav-link" 
+                        Match="NavLinkMatch.All">
+                Informes
+            </MudNavLink>
+        </div>
+            
+        <!-- Sección inferior con botón cerrar sesión -->
+        <div class="nav-bottom-section">
+            <MudButton Variant="Variant.Text"
+                       StartIcon="fa-solid fa-arrow-right-from-bracket"
+                       Class="btn-sign-out"
+                       FullWidth="true"
+                       Size="Size.Medium"
+                       OnClick="HandleLogout">
+                Cerrar Sesión
+            </MudButton>
+        </div>
+    </MudNavMenu>
+</div>
+
 <style>
-    .btn-hover{
-        color: white;
+    .navigation-container {
+        height: 100vh;
+        background-color: #00695c;
+        width: 100%;
     }
-    .btn-hover:hover{
-            color: white;
+
+    .custom-nav-menu {
+        background-color: #00695c !important;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 16px 12px;
+        width: 100%;
+        border-radius: 0 !important;
     }
+
+    .nav-links-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        padding-top: 8px;
+    }
+
+    .nav-bottom-section {
+        margin-top: auto;
+        padding-bottom: 16px;
+    }
+
+    /* Estilos para los enlaces de navegación */
+    .custom-nav-link {
+        border-radius: 8px !important;
+        margin-bottom: 4px !important;
+        transition: all 0.2s ease-in-out !important;
+        color: white !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+        .custom-nav-link:hover {
+            transform: translateX(4px);
+        }
+
+        /* Estilos para el ícono de los enlaces */
+        .custom-nav-link .mud-icon {
+            color: #b2dfdb !important;
+            margin-right: 12px !important;
+            font-size: 1.2rem !important;
+        }
+
+    /* Estilos para el botón de cerrar sesión */
+    .btn-sign-out{
+        border-radius: 8px !important;
+        margin-bottom: 4px !important;
+        transition: all 0.2s ease-in-out !important;
+        color: white !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+        .btn-sign-out:hover {
+            background-color: #e53935 !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-sign-out .mud-icon {
+            color: white !important;
+            margin-right: 8px !important;
+        }
+
+    /* Responsive design */
+    @@media (max-width: 768px) {
+    .navigation-container
+    {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .custom-nav-menu {
+        height: auto;
+        min-height: 100vh;
+        padding: 12px 8px;
+    }
+
+    .custom-nav-link {
+        padding: 10px 12px !important;
+        min-height: 44px !important;
+    }
+
+    .btn-sign-out {
+        height: 44px !important;
+    }
+
+    }
+
+    /* Estados adicionales para mejor UX */
+    .custom-nav-link:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+        .custom-nav-link:disabled:hover {
+            background-color: transparent !important;
+            transform: none !important;
+        }
 </style>
+
+@code {
+    private void HandleLogout()
+    {
+        // Aquí puedes agregar tu lógica de logout
+        // Por ejemplo: limpiar sesión, navegar al login, etc.
+        Nav.NavigateTo("/login");
+    }
+}
