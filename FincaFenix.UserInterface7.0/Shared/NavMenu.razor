@@ -30,14 +30,7 @@
             
         <!-- Sección inferior con botón cerrar sesión -->
         <div class="nav-bottom-section">
-            <MudButton Variant="Variant.Text"
-                       StartIcon="fa-solid fa-arrow-right-from-bracket"
-                       Class="btn-sign-out"
-                       FullWidth="true"
-                       Size="Size.Medium"
-                       OnClick="HandleLogout">
-                Cerrar Sesión
-            </MudButton>
+            <LogoutComponent />
         </div>
     </MudNavMenu>
 </div>
@@ -92,27 +85,6 @@
             color: #b2dfdb !important;
             margin-right: 12px !important;
             font-size: 1.2rem !important;
-        }
-
-    /* Estilos para el botón de cerrar sesión */
-    .btn-sign-out{
-        border-radius: 8px !important;
-        margin-bottom: 4px !important;
-        transition: all 0.2s ease-in-out !important;
-        color: white !important;
-        min-height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-
-        .btn-sign-out:hover {
-            background-color: #e53935 !important;
-            transform: translateY(-2px);
-        }
-
-        .btn-sign-out .mud-icon {
-            color: white !important;
-            margin-right: 8px !important;
         }
 
     /* Responsive design */

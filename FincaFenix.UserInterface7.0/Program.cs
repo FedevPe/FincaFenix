@@ -61,7 +61,16 @@ namespace FincaFenix.UserInterface7._0
                 })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<FincaFenixContext>()
-                .AddRoles<IdentityRole>(); 
+                .AddRoles<IdentityRole>();
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/login";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+                options.SlidingExpiration = true;
+            });
 
             var app = builder.Build();
 

@@ -1,21 +1,27 @@
-﻿@page
-@model LogoutModel
+﻿@page "/Account/Logout"
+@inject SignInManager<ApplicationUser> SignInManager
+
+<head>
+    <title>Cerrar Sesion</title>
+    <meta http-equiv="refresh" content="2;url=/">
+</head>
+<body>
+    <div class="d-flex flex-column justify-content-center align-items-center" style="text-align: center; margin-top: 50px;">
+        <div class="spinner-border text-success" style="width: 3rem; height: 3rem; color:#198754" role="status">
+        </div>
+        <span>Cerrando sesión...</span>
+        <script>
+            setTimeout(function() {
+                window.location.href = '/';
+            }, 4000);
+        </script>
+    </div>
+</body>
+
 @{
-    ViewData["Title"] = "Log out";
+    if (SignInManager.IsSignedIn(User))
+    {
+        await SignInManager.SignOutAsync();
+    }
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity?.IsAuthenticated ?? false)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>

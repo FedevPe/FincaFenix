@@ -1,0 +1,60 @@
+﻿@using FincaFenix.Entities.POCOEntities
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<MudButton Variant="Variant.Text"
+           StartIcon="fa-solid fa-arrow-right-from-bracket"
+           Class="btn-sign-out"
+           FullWidth="true"
+           Size="Size.Medium"
+           OnClick="Logout">
+    Cerrar Sesión
+</MudButton>
+
+@code {
+    private async Task Logout()
+    {
+        // Confirmar antes de cerrar sesión
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "¿Estás seguro que deseas cerrar sesión?");
+
+        if (confirmed)
+        {
+            try
+            {
+                NavigationManager.NavigateTo("/Account/Logout", forceLoad: true);
+            }
+            catch (Exception ex)
+            {
+                // Manejar errores
+                await JSRuntime.InvokeVoidAsync("alert", $"Error al cerrar sesión: {ex.Message}");
+            }
+        }
+    }
+}
+<style>
+    /* Estilos para el botón de cerrar sesión */
+    .btn-sign-out {
+        border-radius: 8px !important;
+        margin-bottom: 4px !important;
+        transition: all 0.2s ease-in-out !important;
+        color: white !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .btn-sign-out:hover {
+        background-color: #e53935 !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-sign-out .mud-icon {
+        color: white !important;
+        margin-right: 8px !important;
+    }
+
+</style>
