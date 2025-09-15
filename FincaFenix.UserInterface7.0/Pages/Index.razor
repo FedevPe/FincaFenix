@@ -1,29 +1,225 @@
 ﻿@page "/"
-@attribute [Authorize]
 
 <PageTitle>Menu Principal</PageTitle>
 
-<h1>Hello, world!</h1>
+<!-- Tarjeta de Bienvenida -->
+<MudCard Class="mb-6" Style="background: linear-gradient(135deg, #00796B 0%, #004d40 100%); color: white; border-radius: 16px;">
+    <MudCardContent Class="pa-6">
+        <MudGrid Justify="Justify.Center">
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.h3" Class="mb-2" Style="font-weight: 600;">
+                    ¡Bienvenido!
+                </MudText>
+                <MudText Typo="Typo.h5" Class="mb-2" Style="opacity: 0.9;">
+                    @UserName
+                </MudText>
+                <MudText Typo="Typo.body1" Style="opacity: 0.8;">
+                    Gestiona tus órdenes de trabajo e informes desde aquí
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="text-center">
+                <MudImage Src="logoMainMenu.png" Alt="logoFenix" Elevation="0" Class="rounded-lg" Style="height:180px; width:290px"/>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
 
-Welcome to your new app.
+<!-- Módulos del Sistema -->
+<MudText Typo="Typo.h4" Class="mb-4" Style="color: #00796B; font-weight: 500;">
+        Módulos del Sistema
+</MudText>
 
-@code {
-    [Inject] public TextAppBarStateService AppBarState { get; set; }
-    [Inject] public AuthenticationStateProvider AuthenticationState { get; set; }
-    [Inject] public NavigationManager NavigationManager { get; set; }
+<MudGrid Spacing="4">
+    <!-- Módulo Órdenes de Trabajo -->
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Class="module-card" Style="height: 200px; border-radius: 16px; cursor: pointer; transition: all 0.3s ease;"
+                 @onclick="@(() => NavigateToModule("/ordenestrabajo"))"
+                 Elevation="2">
+            <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.Assignment" 
+                         Style="font-size: 64px; color: #26a69a; margin-bottom: 16px;" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 500; color: #00796B;">
+                    Órdenes de Trabajo
+                </MudText>
+                <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #666; margin-top: 8px;">
+                    Gestiona las órdenes creadas, activas y pendientes
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
 
-    protected override async Task OnInitializedAsync()
-    {
-        AppBarState.PageTitle = "Menú Principal";
+    <!-- Módulo Informes -->
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Class="module-card" Style="height: 200px; border-radius: 16px; cursor: pointer; transition: all 0.3s ease;"
+                 @onclick="@(() => NavigateToModule("/informes"))"
+                 Elevation="2">
+            <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.Assessment" 
+                         Style="font-size: 64px; color: #26a69a; margin-bottom: 16px;" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 500; color: #00796B;">
+                    Informes
+                </MudText>
+                <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #666; margin-top: 8px;">
+                    Consulta reportes y estadísticas del sistema
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
 
-        var authState = await AuthenticationState.GetAuthenticationStateAsync();
-        var user = authState.User;
+    <!-- Módulo para futuras expansiones -->
+    <MudItem xs="12" sm="6" md="4">
+        <MudCard Class="module-card-disabled" Style="height: 200px; border-radius: 16px; border: 2px dashed #ddd;"
+                 Elevation="0">
+            <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
+                <MudIcon Icon="@Icons.Material.Filled.Add" 
+                         Style="font-size: 64px; color: #ccc; margin-bottom: 16px;" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 500; color: #999;">
+                    Próximamente
+                </MudText>
+                <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #999; margin-top: 8px;">
+                    Más módulos en desarrollo
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
 
-        // Comprueba si el usuario NO está autenticado
-        if (!user.Identity.IsAuthenticated)
-        {
-            // Redirige a la página de login
-            NavigationManager.NavigateTo("/login");
-        }
+<style>
+    .module-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15) !important;
     }
-}
+
+    .module-card:hover .mud-icon {
+        color: #00796B !important;
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-item {
+        padding: 12px;
+        border-radius: 8px;
+        background: rgba(46, 125, 50, 0.05);
+        margin-bottom: 8px;
+    }
+
+    .finca-item:hover {
+        background: #e8f5e8 !important;
+        transition: background 0.3s ease;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+
+<script>
+    window.initializeCharts = () => {
+        // Gráfico de Tendencia Mensual
+        const monthlyChart = echarts.init(document.getElementById('monthly-chart'));
+        const monthlyOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                textStyle: { color: '#333' }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                axisLine: { lineStyle: { color: '#ddd' } },
+                axisLabel: { color: '#666' }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: { lineStyle: { color: '#ddd' } },
+                axisLabel: { color: '#666' },
+                splitLine: { lineStyle: { color: '#f0f0f0' } }
+            },
+            series: [{
+                data: [12, 15, 18, 22, 16, 25],
+                type: 'line',
+                smooth: true,
+                lineStyle: { color: '#26a69a', width: 3 },
+                itemStyle: { color: '#26a69a' },
+                areaStyle: {
+                    color: {
+                        type: 'linear',
+                        x: 0, y: 0, x2: 0, y2: 1,
+                        colorStops: [
+                            { offset: 0, color: 'rgba(38, 166, 154, 0.3)' },
+                            { offset: 1, color: 'rgba(38, 166, 154, 0.05)' }
+                        ]
+                    }
+                }
+            }]
+        };
+        monthlyChart.setOption(monthlyOption);
+
+        // Gráfico de Actividades Semanales
+        const weeklyChart = echarts.init(document.getElementById('weekly-activities-chart'));
+        const weeklyOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                textStyle: { color: '#333' }
+            },
+            legend: {
+                data: ['Juan Pérez', 'María García', 'Carlos López', 'Ana Martín'],
+                bottom: 0,
+                textStyle: { color: '#666' }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                axisLine: { lineStyle: { color: '#ddd' } },
+                axisLabel: { color: '#666' }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: { lineStyle: { color: '#ddd' } },
+                axisLabel: { color: '#666' },
+                splitLine: { lineStyle: { color: '#f0f0f0' } }
+            },
+            series: [
+                {
+                    name: 'Juan Pérez',
+                    type: 'bar',
+                    data: [5, 7, 6, 8, 5, 3, 2],
+                    itemStyle: { color: '#26a69a' }
+                },
+                {
+                    name: 'María García',
+                    type: 'bar',
+                    data: [4, 6, 8, 7, 6, 2, 1],
+                    itemStyle: { color: '#4caf50' }
+                },
+                {
+                    name: 'Carlos López',
+                    type: 'bar',
+                    data: [6, 5, 7, 6, 7, 4, 3],
+                    itemStyle: { color: '#66bb6a' }
+                },
+                {
+                    name: 'Ana Martín',
+                    type: 'bar',
+                    data: [3, 8, 5, 9, 4, 2, 1],
+                    itemStyle: { color: '#81c784' }
+                }
+            ]
+        };
+        weeklyChart.setOption(weeklyOption);
+
+        // Hacer los gráficos responsivos
+        window.addEventListener('resize', () => {
+            monthlyChart.resize();
+            weeklyChart.resize();
+        });
+    };
+
+    // Inicializar después de que la página se cargue
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            window.initializeCharts();
+        }, 500);
+    });
+</script>
+
+

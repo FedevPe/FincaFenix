@@ -23,7 +23,7 @@
     </MudAppBar>
     <MudDrawer MiniWidth="70px" Color="Color.Secondary" @bind-Open="_drawerOpen" Elevation="3"
                ClipMode="_clipMode" Variant="@DrawerVariant.Responsive">
-               <NavMenu/>
+               <NavMenu />
     </MudDrawer>
     <MudMainContent>
         <div class="p-5">
@@ -33,7 +33,7 @@
 </MudLayout>
 @((RenderFragment)(builder => base.BuildRenderTree(builder)))
 @code{
-    [Inject] public UserManager<ApplicationUser> UserManager { get; set; }
+    private string _userName;
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
     bool _drawerOpen = false;
     [Inject] public TextAppBarStateService TextAppBar { get; set; }
@@ -41,7 +41,7 @@
     protected override void OnInitialized()
     {
         TextAppBar.ConfigureDispatcher(InvokeAsync);
-        TextAppBar.OnChange += StateHasChanged;
+        TextAppBar.OnChange += StateHasChanged;        
     }
     public void Dispose()
     {

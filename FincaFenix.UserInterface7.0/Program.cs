@@ -91,11 +91,11 @@ namespace FincaFenix.UserInterface7._0
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapRazorPages();
+            app.MapRazorPages().RequireAuthorization();
 
             app.MapControllers();
 
-            app.MapBlazorHub();
+            app.MapBlazorHub().RequireAuthorization();
             app.MapFallbackToPage("/_Host");
 
             app.Run();

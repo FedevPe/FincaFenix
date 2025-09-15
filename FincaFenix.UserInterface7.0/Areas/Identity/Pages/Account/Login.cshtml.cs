@@ -5,6 +5,7 @@
 using FincaFenix.Entities.DTOs.Login;
 using FincaFenix.Entities.POCOEntities;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,6 +13,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FincaFenix.UserInterface7._0.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
