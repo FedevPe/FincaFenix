@@ -50,22 +50,27 @@
                     </MudChip>
                 </MudItem>  
                 <MudItem>
-                    <MudChip T="string"
-                             Color="ColorText"
-                             Variant="Variant.Text"
-                             Size="Size.Small"
-                             Class="sector-chip"
-                             Label="true"
-                             Style="color: black">
+                    <div class="cell-content sectors-content">
                         @if (InfoWO.SectorList != null && InfoWO.SectorList.Any())
                         {
-                            @string.Join(" - ", InfoWO.SectorList.OrderBy(s => s.SectorName).Select(s => s.SectorName))
+                            @foreach (var sector in InfoWO.SectorList.Take(3))
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Info" Class="sector-chip">
+                                    @sector.SectorName
+                                </MudChip>
+                            }
+                            @if (InfoWO.SectorList.Count() > 5)
+                            {
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="Color.Default" Class="sector-chip">
+                                    +@(InfoWO.SectorList.Count() - 3)
+                                </MudChip>
+                            }
                         }
                         else
                         {
-                            @("No hay cuadros relacionados")
+                            <span class="no-sectors">Sin cuadros</span>
                         }
-                    </MudChip>
+                    </div>
                 </MudItem>
             </MudGrid>
         </div>
@@ -127,72 +132,84 @@
 }
 
 <style>
-.info-card {
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-}
-.info-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-}
-.card-header {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px 12px 0 0;
-}
-.card-title {
-    font-weight: 600;
-    color: #2c3e50;
-    letter-spacing: -0.5px;
-}
-.card-subtitle {
-    color: #6c757d;
-    font-weight: 500;
-}
-.header-icon {
-    color: #28a745;
-    opacity: 0.8;
-}
-.custom-divider {
-    height: 5px;
-    background: linear-gradient(90deg, transparent, #dee2e6, transparent);
-}
-.card-body {
-    padding: 1.5rem !important;
-    height: 100%;
-}
-.content-icon {
-    color: #17a2b8;
-}
-.content-text {
-    color: #495057;
-    font-weight: 500;
-}
-.card-actions {
-    background-color: #f8f9fa;
-    border-radius: 0 0 12px 12px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    width: 100%;
-}
-.action-button {
-    color: #004D40;
-    font-weight: 500;
-    text-transform: none;
-}
-.action-button:hover {
-    background-color: rgba(0, 123, 255, 0.04);
-}
-.info-card:focus-within {
-    outline: 2px solid #004D40;
-    outline-offset: 2px;
-}
-.status-chip {
-    border: 1px solid;
-    color: white !important;
-}
-.sector-chip{
-    border: 1px solid;
-}
+    .cell-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .sectors-content {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    .info-card {
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    }
+    .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 12px 12px 0 0;
+    }
+    .card-title {
+        font-weight: 600;
+        color: #2c3e50;
+        letter-spacing: -0.5px;
+    }
+    .card-subtitle {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    .header-icon {
+        color: #28a745;
+        opacity: 0.8;
+    }
+    .custom-divider {
+        height: 5px;
+        background: linear-gradient(90deg, transparent, #dee2e6, transparent);
+    }
+    .card-body {
+        padding: 1.5rem !important;
+        height: 100%;
+    }
+    .content-icon {
+        color: #17a2b8;
+    }
+    .content-text {
+        color: #495057;
+        font-weight: 500;
+    }
+    .card-actions {
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        width: 100%;
+    }
+    .action-button {
+        color: #004D40;
+        font-weight: 500;
+        text-transform: none;
+    }
+    .action-button:hover {
+        background-color: rgba(0, 123, 255, 0.04);
+    }
+    .info-card:focus-within {
+        outline: 2px solid #004D40;
+        outline-offset: 2px;
+    }
+    .status-chip {
+        border: 1px solid;
+        color: white !important;
+    }
+
+    .sector-chip {
+        margin: 0.125rem;
+        font-size: 0.75rem;
+        height: 24px;
+    }
 </style>
 

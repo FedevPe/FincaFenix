@@ -4,6 +4,7 @@ using FincaFenix.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FincaFenix.EFCore.Migrations
 {
     [DbContext(typeof(FincaFenixContext))]
-    partial class FincaFenixContextModelSnapshot : ModelSnapshot
+    [Migration("20250919144057_VariedadesOrganicas")]
+    partial class VariedadesOrganicas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,12 +193,6 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnName("Id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(2025)
-                        .HasColumnName("Edad");
 
                     b.Property<decimal?>("Area")
                         .HasColumnType("decimal(5,2)")

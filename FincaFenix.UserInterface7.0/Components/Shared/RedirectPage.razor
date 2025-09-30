@@ -1,0 +1,24 @@
+﻿@page "/accesodenegado"
+@inject NavigationManager Nav
+
+<MudContainer Style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center;">
+    <MudPaper Class="d-flex flex-column align-items-center" Elevation="0" Style="background-color: transparent;">
+        <MudIcon Icon="@Icons.Material.Filled.Lock" Color="Color.Default" Size="Size.Large" Style="font-size: 6rem; opacity: 0.5;" />
+        <MudText Typo="Typo.h5" Class="mt-4" Style="color: rgba(0, 0, 0, 0.87);">
+            Acceso denegado.
+        </MudText>
+        <MudText Typo="Typo.body1" Class="mt-2" Style="color: rgba(0, 0, 0, 0.6);">
+            No tiene los permisos necesarios para acceder a esta página.
+        </MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="GoBack">
+            Volver al menú principal
+        </MudButton>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private void GoBack()
+    {
+        Nav.NavigateTo(Nav.ToAbsoluteUri(".").ToString());
+    }
+}

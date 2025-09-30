@@ -1,9 +1,8 @@
 ﻿@using FincaFenix.Entities.POCOEntities
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authorization
-@inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IDialogService Dialog
 @attribute [Authorize]
 
 <MudButton Variant="Variant.Text"
@@ -11,32 +10,18 @@
            Class="btn-sign-out"
            FullWidth="true"
            Size="Size.Medium"
-           OnClick="Logout">
+           OnClick="ShowLogoutDialog">
     Cerrar Sesión
 </MudButton>
 
 @code {
-    private async Task Logout()
+    private Task ShowLogoutDialog()
     {
-        // Confirmar antes de cerrar sesión
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "¿Estás seguro que deseas cerrar sesión?");
-
-        if (confirmed)
-        {
-            try
-            {
-                NavigationManager.NavigateTo("/Account/Logout", forceLoad: true);
-            }
-            catch (Exception ex)
-            {
-                // Manejar errores
-                await JSRuntime.InvokeVoidAsync("alert", $"Error al cerrar sesión: {ex.Message}");
-            }
-        }
+        var options = new DialogOptions { BackgroundClass = "custom-dialog" };
+        return Dialog.ShowAsync<LogoutDialog>("", options);
     }
 }
 <style>
-    /* Estilos para el botón de cerrar sesión */
     .btn-sign-out {
         border-radius: 8px !important;
         margin-bottom: 4px !important;
@@ -56,5 +41,7 @@
         color: white !important;
         margin-right: 8px !important;
     }
-
+    .custom-dialog{
+        backdrop-filter: blur(10px);
+    }
 </style>

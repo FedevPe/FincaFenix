@@ -1,33 +1,43 @@
 ﻿@page "/ordenestrabajo"
-@using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [Authorize]
 
-<div class="mt-3 mb-3">
-    <MudGrid Justify="Justify.FlexEnd" Class="mb-2 g-3">
-        <MudItem>
-            <MudButton Href="/createOrder" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add">Nueva Orden</MudButton>
-        </MudItem>
-    </MudGrid>
-</div>
+<AuthorizeView Roles="admin, desarrollador">
+    <div class="mt-3 mb-3">
+        <MudGrid Justify="Justify.FlexEnd" Class="mb-2 g-3">
+            <MudItem>
+                <MudButton Href="/createOrder" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Filled.Add">Nueva Orden</MudButton>
+            </MudItem>
+        </MudGrid>
+    </div>
+</AuthorizeView>
 <div class="container-fluid shadow p-3 border rounded mt-3 mb-3 bg-color-white">
-    <StatsCard WorkOrderList="@ViewModel.AllWorkOrderList" OnFilterSelectedChanged="HandleFilterSelected" />
+    <AuthorizeView Roles="admin, desarrollador, supervisor">
+        <StatsCard WorkOrderList="@ViewModel.AllWorkOrderList" OnFilterSelectedChanged="HandleFilterSelected" />
+    </AuthorizeView>
     <MudGrid Justify="Justify.FlexStart" Spacing="1">
         <MudItem>
             <MudText Typo="Typo.h5"><b>Ordenes de Trabajo</b></MudText>
         </MudItem>
         <MudSpacer />
-        <MudToggleGroup T="bool" Value="renderWorkOrderCard" ValueChanged="HandleToggleChanged">
-            <MudToggleItem Value="true" Disabled="true">
-                <MudIcon Icon="@Icons.Material.Filled.ViewModule"
-                         style="@($"color : {(renderWorkOrderCard ? Colors.Shades.White : Colors.Teal.Darken4)};")"
-                         Size="Size.Small" />
-            </MudToggleItem>
-            <MudToggleItem Value="false">
-                <MudIcon Icon="@Icons.Material.Filled.ViewList"
-                         style="@($"color : {(renderWorkOrderCard ? Colors.Teal.Darken4 : Colors.Shades.White)};")"
-                         Size="Size.Small" />
-            </MudToggleItem>
-        </MudToggleGroup>
+        <AuthorizeView Roles="desarrollador">
+            <MudToggleGroup T="bool" Value="renderWorkOrderCard" ValueChanged="HandleToggleChanged">
+                <MudToggleItem Value="true">
+                    <ChildContent Context="iconContent">
+                        <MudIcon Icon="@Icons.Material.Filled.ViewModule"
+                                 Style="@($"color: {(renderWorkOrderCard ? Colors.Shades.White : Colors.Teal.Darken4)};")"
+                                 Size="MudBlazor.Size.Small" />
+                    </ChildContent>
+                </MudToggleItem>
+                <MudToggleItem Value="false">
+                    <ChildContent Context="iconContent">
+                        <MudIcon Icon="@Icons.Material.Filled.ViewList"
+                                 Style="@($"color: {(renderWorkOrderCard ? Colors.Teal.Darken4 : Colors.Shades.White)};")"
+                                 Size="MudBlazor.Size.Small" />
+                    </ChildContent>
+                </MudToggleItem>
+            </MudToggleGroup>
+        </AuthorizeView>
     </MudGrid>
 
     <MudDivider Class="my-2" Style="border-color: black;" />
@@ -39,7 +49,7 @@
             <MudText Typo="Typo.h6" Style="margin-top:30px">Cargando órdenes de trabajo...</MudText>
         </div>
     }
-    else if ((_filteredWorkOrderList is null || !_filteredWorkOrderList.Any()) && (ViewModel.WorkOrderPaginatedList is null || !ViewModel.WorkOrderPaginatedList.Any()))
+    else if ((_workOrderList is null || !_workOrderList.Any()))
     {
         <MudItem xs="12">
             <div class="empty-state-card">
@@ -55,47 +65,72 @@
     }
     else
     {
-        if (renderWorkOrderCard)
+        @if (renderWorkOrderCard)
         {
-            <MudGrid spacing="3" justify="Justify.FlexStart" class="mt-1">
-                @foreach (var workorder in _filteredWorkOrderList)
+            <AuthorizeView Roles="operario, desarrollador">
+                @if (_filteredWorkOrderList.Any())
                 {
-                    <MudItem xs="12" sm="12" md="6" lg="3">
-                        <WorkOrderCard InfoWO="workorder" />
+                    <MudGrid Spacing="3" Justify="Justify.FlexStart" class="mt-1">
+                        @foreach (var workorder in _filteredWorkOrderList.Skip((ViewModel.CurrentPage - 1) * ViewModel.PageSize).Take(ViewModel.PageSize))
+                        {
+                            <MudItem xs="12" sm="12" md="6" lg="3">
+                                <WorkOrderCard InfoWO="workorder" />
+                            </MudItem>
+                        }
+                    </MudGrid>
+                    @if (_filteredWorkOrderList.Count() > ViewModel.PageSize)
+                    {
+                        <div class="w-100 d-flex flex-column align-items-center mt-4">
+                            <MudPagination Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Count="@((int)Math.Ceiling((double)_filteredWorkOrderList.Count() / ViewModel.PageSize))"
+                                           Selected="@ViewModel.CurrentPage"
+                                           SelectedChanged="ViewModel.OnPageChanged" />
+                        </div>
+                    }
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <div class="empty-state-card">
+                            <div class="empty-state-content">
+                                <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                                <MudText Typo="Typo.h6" Class="empty-state-title">No se han encontrado ordenes.</MudText>
+                                <MudText Typo="Typo.body1" Class="empty-state-description">
+                                    No hay ordenes de trabajo activas.
+                                </MudText>
+                            </div>
+                        </div>
                     </MudItem>
                 }
-                @if (ViewModel.TotalItems > ViewModel.PageSize)
-                {
-                    <div class="w-100 d-flex flex-column align-items-center mt-4">
-                        <MudPagination variant="Variant.Filled"
-                                       color="Color.Primary"
-                                       count="@((int)Math.Ceiling((double)ViewModel.TotalItems / ViewModel.PageSize))"
-                                       selected="@ViewModel.CurrentPage"
-                                       selectedchanged="ViewModel.OnPageChanged" />
-                    </div>
-                }
-            </MudGrid>
+            </AuthorizeView>
         }
         else
         {
-            <MudItem xs="12" lg="12">
-                <WorkOrderTable WorkOrderList="@_filteredWorkOrderList" />
-            </MudItem>
-        }
+            <AuthorizeView Roles="admin, desarrollador, supervisor">
+                <MudItem xs="12" lg="12">
+                    <WorkOrderTable WorkOrderList="@_workOrderList" />
+                </MudItem>
+            </AuthorizeView>            
+        }   
     }
 </div>
 @code{
     [Inject] public LoadWorkOrdersViewModel ViewModel { get; set; }
     [Inject] public TextAppBarStateService TextApp { get; set; }
 
-    private bool renderWorkOrderCard = false;
+    private bool renderWorkOrderCard = true;
     private bool _isLoading = true;
-    private List<ShowWorkOrderDTO> _filteredWorkOrderList;
+    private IEnumerable<ShowWorkOrderDTO> _workOrderList;
+    private IEnumerable<ShowWorkOrderDTO> _filteredWorkOrderList = new List<ShowWorkOrderDTO>();
+
     protected override async Task OnInitializedAsync()
     {
         TextApp.PageTitle = "Ordenes de Trabajo";
+
         await LoadDataAsync();
-        _filteredWorkOrderList = ViewModel.AllWorkOrderList;
+        _workOrderList = ViewModel.AllWorkOrderList;
+        await GetFilteredWorkOrdersForOperario();
     }
 
     private async Task HandleToggleChanged(bool value)
@@ -103,24 +138,43 @@
         renderWorkOrderCard = value;
         await LoadDataAsync();
     }
-
-    private async Task LoadDataAsync()
+    private async Task GetFilteredWorkOrdersForOperario()
     {
-        _isLoading = true;
-        // Llama a StateHasChanged para mostrar el indicador de carga
-        StateHasChanged();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
-        if (renderWorkOrderCard)
+        // Si el usuario es un operario, aplicar el filtro
+        if (user.IsInRole("operario"))
         {
-            await ViewModel.LoadWorkOrderListPaginated();
+            renderWorkOrderCard = true;
+            if(user.Identity.Name == "fsancarlos")
+            {
+                _filteredWorkOrderList = _workOrderList.Where(x => x.Status == "Activo" && x.Farm.Id == 1);
+            }
+            else if(user.Identity.Name == "fgoudge")
+            {
+                _filteredWorkOrderList = _workOrderList.Where(x => x.Status == "Activo" && x.Farm.Id == 2);
+            }
+            else
+            {
+                _filteredWorkOrderList = _workOrderList.Where(x => x.Status == "Activo" && x.Farm.Id == 3);
+            }
+        }
+        else if (user.IsInRole("desarrollador"))
+        {
+            renderWorkOrderCard = true;
+            _filteredWorkOrderList = _workOrderList;
         }
         else
         {
-            await ViewModel.LoadWorkOrderList();
+            renderWorkOrderCard = false;
         }
-
+        StateHasChanged(); // Forzar la actualización del componente
+    }
+    private async Task LoadDataAsync()
+    {        
+        await ViewModel.LoadWorkOrderList();
         _isLoading = false;
-        // Llama a StateHasChanged para renderizar los datos
         StateHasChanged();
     }
     private void HandleFilterSelected(StatsCard.FilterWorkOrder filter)
@@ -129,16 +183,20 @@
         switch (filter)
         {
             case StatsCard.FilterWorkOrder.Active:
+                _workOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Activo").ToList();
                 _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Activo").ToList();
                 break;
             case StatsCard.FilterWorkOrder.Pending:
+                _workOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Pendiente").ToList();
                 _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Pendiente").ToList();
                 break;
             case StatsCard.FilterWorkOrder.Closed:
+                _workOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Cerrado").ToList();
                 _filteredWorkOrderList = ViewModel.AllWorkOrderList.Where(wo => wo.Status == "Cerrado").ToList();
                 break;
             case StatsCard.FilterWorkOrder.None:
             default:
+                _workOrderList = ViewModel.AllWorkOrderList;
                 _filteredWorkOrderList = ViewModel.AllWorkOrderList;
                 break;
         }

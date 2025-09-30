@@ -1,0 +1,247 @@
+﻿<MudDialog>
+    <TitleContent>
+        <div class="modal-title-container">
+            <MudIcon Icon="@Icons.Material.Filled.Logout" Class="modal-title-icon" />
+            <MudText Typo="Typo.h6">Cerrar Sesión</MudText>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <div class="modal-body-content">
+            <!-- Mensaje de confirmación -->
+            <div class="confirmation-section">
+                <div class="confirmation-icon-container">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="user-icon" />
+                </div>
+                <div class="confirmation-content">
+                    <MudText Typo="Typo.body1" Class="confirmation-title">
+                        ¿Estás seguro de que deseas cerrar sesión?
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="confirmation-description">
+                        Se cerrará tu sesión actual y tendrás que volver a iniciar sesión para acceder al sistema.
+                    </MudText>
+                </div>
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CancelLogout" Class="cancel-button">
+            Cancelar
+        </MudButton>
+        <MudButton Color="Color.Error"
+                   OnClick="ConfirmLogout"
+                   Disabled="@isProcessing"
+                   Class="logout-button">
+            @if (isProcessing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Cerrando sesión...</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Filled.Logout" Class="me-2" />
+                <span>Cerrar Sesión</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
+
+    [Inject] private ISnackbar Snackbar { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
+    // [Inject] private IAuthService AuthService { get; set; } // Descomenta según tu servicio de autenticación
+
+    private bool isProcessing = false;
+
+    private void CancelLogout()
+    {
+        MudDialog.Cancel();
+    }
+
+    private async Task ConfirmLogout()
+    {
+        isProcessing = true;
+        StateHasChanged();
+
+        try
+        {
+            await Task.Delay(2000);
+            NavigationManager.NavigateTo("/Account/Logout", forceLoad: true);
+
+            Snackbar.Add("Sesión cerrada correctamente", MudBlazor.Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+
+            // Redirigir a la página de login
+            // NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cerrar sesión: {ex.Message}", MudBlazor.Severity.Error);
+            MudDialog.Close(DialogResult.Cancel());
+        }
+        finally
+        {
+            isProcessing = false;
+            StateHasChanged();
+        }
+    }
+}
+
+<style>
+    .modal-title-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .modal-title-icon {
+        color: black !important;
+        font-size: 24px !important;
+    }
+
+    .modal-body-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 8px 0;
+        min-height: 120px;
+    }
+
+    .confirmation-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: white;
+    }
+
+    .confirmation-icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        flex-shrink: 0;
+    }
+
+    .user-icon {
+        color: #ef4444 !important;
+        font-size: 28px !important;
+    }
+
+    .confirmation-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 4px;
+    }
+
+    .confirmation-title {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        font-size: 1.1rem !important;
+    }
+
+    .confirmation-description {
+        color: #64748b !important;
+        font-size: 0.9rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Info Alert */
+    .logout-info-alert {
+        margin: 0 !important;
+        border-radius: 12px !important;
+        border: 2px solid #3b82f6 !important;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    }
+
+    .info-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px;
+    }
+
+    .info-icon {
+        color: #3b82f6 !important;
+        font-size: 20px !important;
+        flex-shrink: 0;
+    }
+
+    .info-text span {
+        color: #1e40af;
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    /* Botones personalizados */
+    .cancel-button {
+        color: #64748b !important;
+        border: 2px solid #e2e8f0 !important;
+        background: white !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+        .cancel-button:hover {
+            border-color: #cbd5e1 !important;
+            background: #f8fafc !important;
+            transform: translateY(-1px) !important;
+        }
+
+    .logout-button {
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+        .logout-button:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 3px rgba(239, 68, 68, 0.3) !important;
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .confirmation-section
+
+    {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .confirmation-icon-container {
+        width: 44px;
+        height: 44px;
+    }
+
+    .user-icon {
+        font-size: 24px !important;
+    }
+
+    .confirmation-title {
+        font-size: 1rem !important;
+    }
+
+    .confirmation-description {
+        font-size: 0.85rem !important;
+    }
+
+    .info-content {
+        gap: 8px;
+    }
+
+    .info-icon {
+        font-size: 18px !important;
+    }
+
+    }
+</style>

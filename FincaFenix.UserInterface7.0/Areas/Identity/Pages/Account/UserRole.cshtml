@@ -1,0 +1,34 @@
+﻿@page "/rolassign"
+@model FincaFenix.UserInterface7._0.Areas.Identity.Pages.Account.UserRoleModel
+@{
+
+}
+
+<h3>Asignar rol a usuario</h3>
+
+<form method="post">
+    <div class="form-group">
+        <label for="UserId">Selecciona un usuario:</label>
+        <select asp-for="UserId" class="form-control" id="UserId">
+            <option value="">-- Selecciona un usuario --</option>
+            @foreach (var user in Model.Users)
+            {
+                <option value="@user.Id">@user.UserName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="RoleName">Selecciona un rol:</label>
+        <select asp-for="Role.Name" class="form-control" id="RoleName">
+            <option value="">-- Selecciona un rol --</option>
+            @foreach (var role in (List<IdentityRole>)ViewData["roles"])
+            {
+                <option value="@role.Name">@role.Name</option>
+            }
+        </select>
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Asignar Rol</button>
+</form>

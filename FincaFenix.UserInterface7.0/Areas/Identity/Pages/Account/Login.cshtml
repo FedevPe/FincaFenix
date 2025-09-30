@@ -15,8 +15,7 @@
         <!-- Logo Section -->
         <div class="logo-section-login">
             <div class="logo-circle-login">
-                <!-- Considera usar una imagen HTML en lugar de MudImage -->
-                <img src="logo.png" alt="Logo de FincaFenix" class="img-logo-login mb-4" />
+                <img src="logo.png" alt="Logo de FincaFenix" class="img-logo-login"/>
             </div>
         </div>
 
@@ -31,13 +30,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
             <div class="form-floating mb-3">
-                <input asp-for="Login.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Login.UserName" class="form-control" aria-required="true" placeholder="Usuario" />
                 <label asp-for="Login.UserName" class="form-label">Usuario</label>
                 <span asp-validation-for="Login.UserName" class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input asp-for="Login.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <input asp-for="Login.Password" class="form-control" aria-required="true" placeholder="password" />
                 <label asp-for="Login.Password" class="form-label">Contraseña</label>
                 <span asp-validation-for="Login.Password" class="text-danger"></span>
             </div>
@@ -85,7 +84,7 @@
         background: white;
         border-radius: 20px;
         padding: 40px 30px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.17);
         width: 100%;
         max-width: 400px;
         position: relative;
@@ -94,7 +93,7 @@
     .logo-section-login {
         display: flex;
         justify-content: center;
-        margin-bottom: 30px;
+        margin-bottom: 10px;
         position: relative;
         top: -20px;
     }
@@ -104,7 +103,7 @@
         height: 100px;
         border-radius: 50%;
         background: white;
-        border: 2px solid #e0e0e0;
+        border: 1px solid #e0e0e0;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -112,9 +111,11 @@
     }
 
     .img-logo-login {
-        width: 200px;
-        height: 200px;
+        width: 250px;
+        height: 250px;
         border-radius: 50%;
+        margin-bottom: 20px;
+        box-shadow: 0 0px 15px rgba(0, 0, 0, 0.15);
     }
 
     .welcome-section-login {

@@ -1,7 +1,6 @@
 ﻿using FincaFenix.UsesCases.Controllers;
 using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenixControllers.Implementations;
-using FincaFenixControllers.Implementations.Login;
 using FincaFenixControllers.Implementations.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -20,8 +19,7 @@ public static class DependencyContainer
                 .AddTransient<IMachineController, MachineController>()
                 .AddTransient<IEmployeeController, EmployeeController>()
                 .AddTransient<IDetailWorkOrderController, DetailWorkOrderController>()
-                .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>()
-                .AddTransient<LoginController>();
+                .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>();
 
         return services;
     }

@@ -1,8 +1,6 @@
 ﻿using FincaFenix.Gateways.Implementations;
-using FincaFenix.Gateways.Implementations.Login;
 using FincaFenix.Gateways.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Repository;
-using FincaFenix.UsesCases.Repository.Login;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection

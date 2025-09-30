@@ -34,9 +34,11 @@
                 <div class="main-info-section">
                     <GeneralInformationWorkOrder InfoWO="@ViewModel.WOInfo"/>
                 </div>
-                <div class="actions-section">
-                    <DetailWorkOrderActions InfoWO="@ViewModel.WOInfo" OnStateChanged="HandleStateChange" />
-                </div>
+                <AuthorizeView Roles="admin, desarrollador, supervisor">
+                    <div class="actions-section">
+                        <DetailWorkOrderActions InfoWO="@ViewModel.WOInfo" OnStateChanged="HandleStateChange" />
+                    </div>
+                </AuthorizeView>
             </div>
         </div>
 
@@ -57,25 +59,31 @@
                         <span class="tab-label">Receta</span>
                     </button>
 
-                    <!-- Pestañas futuras (deshabilitadas por ahora) -->
-                    <button class="tab-button @GetTabActiveClass(WorkOrderTab.Consumption)"
-                            @onclick="() => SetActiveTab(WorkOrderTab.Consumption)">
-                        <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="tab-icon" />
-                        <span class="tab-label">Consumos</span>
-                    </button>
+                    <AuthorizeView Roles="admin, desarrollador, supervisor">
+                        <!-- Pestañas futuras (deshabilitadas por ahora) -->
+                        <button class="tab-button @GetTabActiveClass(WorkOrderTab.Consumption)"
+                                @onclick="() => SetActiveTab(WorkOrderTab.Consumption)">
+                            <MudIcon Icon="@Icons.Material.Filled.BarChart" Class="tab-icon" />
+                            <span class="tab-label">Consumos</span>
+                        </button>
+                    </AuthorizeView>
                 }
 
-                <button class="tab-button @GetTabActiveClass(WorkOrderTab.Graphics)"
-                        @onclick="() => SetActiveTab(WorkOrderTab.Graphics)">
-                    <MudIcon Icon="@Icons.Material.Filled.Fullscreen" Class="tab-icon" />
-                    <span class="tab-label">Cuadros trabajados</span>
-                </button>
+                <AuthorizeView Roles="admin, desarrollador, supervisor">
+                    <button class="tab-button @GetTabActiveClass(WorkOrderTab.CosumptionSector)"
+                            @onclick="() => SetActiveTab(WorkOrderTab.CosumptionSector)">
+                        <MudIcon Icon="@Icons.Material.Filled.Fullscreen" Class="tab-icon" />
+                        <span class="tab-label">Cuadros trabajados</span>
+                    </button>
+                </AuthorizeView>
 
-                <!-- Pestañas futuras (deshabilitadas por ahora) -->
-                <button class="tab-button tab-button-disabled" disabled>
-                    <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="tab-icon" />
-                    <span class="tab-label">Informes</span>
-                </button>
+                <AuthorizeView Roles="desarrollador">
+                    <!-- Pestañas futuras (deshabilitadas por ahora) -->
+                    <button class="tab-button tab-button-disabled" disabled>
+                        <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="tab-icon" />
+                        <span class="tab-label">Informes</span>
+                    </button>
+                </AuthorizeView>
             </div>
 
             <!-- Tab Content -->
@@ -129,49 +137,53 @@
                 }
                 else if (activeTab == WorkOrderTab.Consumption)
                 {
-                    <div class="tab-panel">
-                        <div class="tab-panel-content">
-                            @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any() && ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
-                            {
-                                <RecipeConsumption DetailWorkOrderList="ViewModel.WOInfo.DetailsWorkOrder" Recipe="ViewModel.WOInfo.Recipe" TotalAreaWorked="ViewModel.WOInfo.TotalAreaWorked"/>
-                            }
-                            else
-                            {
-                                <div class="empty-state-card">
-                                    <div class="empty-state-content">
-                                        <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="empty-state-icon" />
-                                        <MudText Typo="Typo.h6" Class="empty-state-title">Sin datos asociados</MudText>
-                                        <MudText Typo="Typo.body1" Class="empty-state-description">
-                                            Aún no es posible visualizar los datos por falta de registros.
-                                        </MudText>
+                    <AuthorizeView Roles="admin, desarrollador, supervisor">
+                        <div class="tab-panel">
+                            <div class="tab-panel-content">
+                                @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any() && ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
+                                {
+                                    <RecipeConsumption DetailWorkOrderList="ViewModel.WOInfo.DetailsWorkOrder" Recipe="ViewModel.WOInfo.Recipe" TotalAreaWorked="ViewModel.WOInfo.TotalAreaWorked"/>
+                                }
+                                else
+                                {
+                                    <div class="empty-state-card">
+                                        <div class="empty-state-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Analytics" Class="empty-state-icon" />
+                                            <MudText Typo="Typo.h6" Class="empty-state-title">Sin datos asociados</MudText>
+                                            <MudText Typo="Typo.body1" Class="empty-state-description">
+                                                Aún no es posible visualizar los datos por falta de registros.
+                                            </MudText>
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
-                    </div>
+                    </AuthorizeView>
                 }
-                else if (activeTab == WorkOrderTab.Graphics)
+                else if (activeTab == WorkOrderTab.CosumptionSector)
                 {
-                    <div class="tab-panel">
-                        <div class="tab-panel-content">
-                            @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any() && ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
-                            {
-                                <ReportsComponent SectorList="ViewModel.WOInfo.SectorList" DetailWorkOrderDTO="ViewModel.WOInfo.DetailsWorkOrder" Recipe="ViewModel.WOInfo.Recipe" />
-                            }
-                            else
-                            {
-                                <div class="empty-state-card">
-                                    <div class="empty-state-content">
-                                        <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
-                                        <MudText Typo="Typo.h6" Class="empty-state-title">Sin datos asociados</MudText>
-                                        <MudText Typo="Typo.body1" Class="empty-state-description">
-                                            Aún no se pueden mostrar gráficas. No se han registrado actividades.
-                                        </MudText>
+                    <AuthorizeView Roles="admin, desarrollador, supervisor">
+                        <div class="tab-panel">
+                            <div class="tab-panel-content">
+                                @if (ViewModel.WOInfo.Recipe != null && ViewModel.WOInfo.Recipe.Details != null && ViewModel.WOInfo.Recipe.Details.Any() && ViewModel.WOInfo.DetailsWorkOrder != null && ViewModel.WOInfo.DetailsWorkOrder.Any())
+                                {
+                                    <ReportsComponent SectorList="ViewModel.WOInfo.SectorList" DetailWorkOrderDTO="ViewModel.WOInfo.DetailsWorkOrder" Recipe="ViewModel.WOInfo.Recipe" />
+                                }
+                                else
+                                {
+                                    <div class="empty-state-card">
+                                        <div class="empty-state-content">
+                                            <MudIcon Icon="@Icons.Material.Filled.Assignment" Class="empty-state-icon" />
+                                            <MudText Typo="Typo.h6" Class="empty-state-title">Sin datos asociados</MudText>
+                                            <MudText Typo="Typo.body1" Class="empty-state-description">
+                                                Aún no se pueden mostrar gráficas. No se han registrado actividades.
+                                            </MudText>
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
-                    </div>
+                    </AuthorizeView>
                 }
             </div>
         </div>
@@ -205,7 +217,7 @@
         Activities,
         Recipe,
         Consumption,
-        Graphics
+        CosumptionSector
     }
 
     private WorkOrderTab activeTab = WorkOrderTab.Activities;
@@ -285,12 +297,13 @@
     /* Header Section (sin cambios) */
     .page-header {
         margin-bottom: 2rem;
+        width: 100%;
     }
 
     .header-grid {
         display: grid;
         grid-template-columns: 1fr auto;
-        gap: 2rem;
+        gap: 1rem;
         align-items: start;
     }
 

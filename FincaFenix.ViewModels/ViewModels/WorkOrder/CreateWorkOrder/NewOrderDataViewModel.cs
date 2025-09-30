@@ -22,7 +22,8 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
 
         public async Task LoadInitializeAsync()
         {
-            await Task.WhenAll(LoadFarmsAsync(), LoadTasksAsync());
+            await LoadFarmsAsync();
+            await LoadTasksAsync();
         }
         public async Task LoadFarmsAsync()
         {

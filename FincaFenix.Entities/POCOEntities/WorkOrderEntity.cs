@@ -5,7 +5,6 @@
         public int Id { get; set; }
         public string OrderNum { get; set; }
         public int? UserId { get; set; }
-        public UserEntity? User { get; set; }
         public int? RecipeId { get; set; }
         public RecipeEntity? Recipe { get; set; }
         public int TaskId { get; set; }

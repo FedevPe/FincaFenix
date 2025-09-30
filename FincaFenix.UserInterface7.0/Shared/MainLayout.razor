@@ -33,10 +33,9 @@
 </MudLayout>
 @((RenderFragment)(builder => base.BuildRenderTree(builder)))
 @code{
-    private string _userName;
+    [Inject] public TextAppBarStateService TextAppBar { get; set; }
     private DrawerClipMode _clipMode = DrawerClipMode.Never;
     bool _drawerOpen = false;
-    [Inject] public TextAppBarStateService TextAppBar { get; set; }
 
     protected override void OnInitialized()
     {

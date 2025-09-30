@@ -27,7 +27,9 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
         public async Task LoadInitializeAsync()
         {
             Details = new List<DetailRecipeDTO>();
-            await Task.WhenAll(LoadCategoryList(), LoadMaterialList(), LoadMachineList());
+            await LoadCategoryList();
+            await LoadMaterialList();
+            await LoadMachineList();
         }
         public async Task LoadMaterialList()
         {

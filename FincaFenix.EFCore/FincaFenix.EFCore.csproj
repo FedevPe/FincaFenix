@@ -29,8 +29,4 @@
     <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\QueryServices\Login\" />
-  </ItemGroup>
-
 </Project>

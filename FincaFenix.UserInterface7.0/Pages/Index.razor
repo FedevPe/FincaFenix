@@ -2,6 +2,17 @@
 
 <PageTitle>Menu Principal</PageTitle>
 
+<AuthorizeView Roles="desarrollador">
+    <div class="d-flex">
+        <a href="/rolassign" class="nav-link">
+            <span class="oi oi-person" aria-hidden="true"></span> Asignar Roles
+        </a>
+        <a href="/register" class="nav-link ms-4">
+            <span class="oi oi-person" aria-hidden="true"></span> Registar usuario
+        </a>
+    </div>
+</AuthorizeView>
+
 <!-- Tarjeta de Bienvenida -->
 <MudCard Class="mb-6" Style="background: linear-gradient(135deg, #00796B 0%, #004d40 100%); color: white; border-radius: 16px;">
     <MudCardContent Class="pa-6">
@@ -14,7 +25,7 @@
                     @UserName
                 </MudText>
                 <MudText Typo="Typo.body1" Style="opacity: 0.8;">
-                    Gestiona tus órdenes de trabajo e informes desde aquí
+                    Sistema de gestión de ordenes de trabajo para fincas.
                 </MudText>
             </MudItem>
             <MudItem xs="12" md="4" Class="text-center">
@@ -42,7 +53,7 @@
                     Órdenes de Trabajo
                 </MudText>
                 <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #666; margin-top: 8px;">
-                    Gestiona las órdenes creadas, activas y pendientes
+                    Gestiona las órdenes de trabajo
                 </MudText>
             </MudCardContent>
         </MudCard>
@@ -50,25 +61,24 @@
 
     <!-- Módulo Informes -->
     <MudItem xs="12" sm="6" md="4">
-        <MudCard Class="module-card" Style="height: 200px; border-radius: 16px; cursor: pointer; transition: all 0.3s ease;"
-                 @onclick="@(() => NavigateToModule("/informes"))"
-                 Elevation="2">
+        <MudCard Class="module-card-disabled" Style="height: 200px; border-radius: 16px; border: 2px solid #ddd;"
+                 Elevation="0">
             <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
-                <MudIcon Icon="@Icons.Material.Filled.Assessment" 
-                         Style="font-size: 64px; color: #26a69a; margin-bottom: 16px;" />
-                <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 500; color: #00796B;">
+                <MudIcon Icon="@Icons.Material.Filled.Assessment"
+                         Style="font-size: 64px; color: #ccc; margin-bottom: 16px;" />
+                <MudText Typo="Typo.h6" Align="Align.Center" Style="font-weight: 500; color: #999;">
                     Informes
                 </MudText>
-                <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #666; margin-top: 8px;">
-                    Consulta reportes y estadísticas del sistema
+                <MudText Typo="Typo.body2" Align="Align.Center" Style="color: #999; margin-top: 8px;">
+                    Consulta reportes y estadísticas
                 </MudText>
             </MudCardContent>
         </MudCard>
     </MudItem>
-
+    
     <!-- Módulo para futuras expansiones -->
     <MudItem xs="12" sm="6" md="4">
-        <MudCard Class="module-card-disabled" Style="height: 200px; border-radius: 16px; border: 2px dashed #ddd;"
+        <MudCard Class="module-card-disabled" Style="height: 200px; border-radius: 16px; border: 2px solid #ddd;"
                  Elevation="0">
             <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
                 <MudIcon Icon="@Icons.Material.Filled.Add" 
@@ -108,118 +118,3 @@
         transition: background 0.3s ease;
     }
 </style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
-
-<script>
-    window.initializeCharts = () => {
-        // Gráfico de Tendencia Mensual
-        const monthlyChart = echarts.init(document.getElementById('monthly-chart'));
-        const monthlyOption = {
-            tooltip: {
-                trigger: 'axis',
-                backgroundColor: 'rgba(255,255,255,0.9)',
-                textStyle: { color: '#333' }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                axisLine: { lineStyle: { color: '#ddd' } },
-                axisLabel: { color: '#666' }
-            },
-            yAxis: {
-                type: 'value',
-                axisLine: { lineStyle: { color: '#ddd' } },
-                axisLabel: { color: '#666' },
-                splitLine: { lineStyle: { color: '#f0f0f0' } }
-            },
-            series: [{
-                data: [12, 15, 18, 22, 16, 25],
-                type: 'line',
-                smooth: true,
-                lineStyle: { color: '#26a69a', width: 3 },
-                itemStyle: { color: '#26a69a' },
-                areaStyle: {
-                    color: {
-                        type: 'linear',
-                        x: 0, y: 0, x2: 0, y2: 1,
-                        colorStops: [
-                            { offset: 0, color: 'rgba(38, 166, 154, 0.3)' },
-                            { offset: 1, color: 'rgba(38, 166, 154, 0.05)' }
-                        ]
-                    }
-                }
-            }]
-        };
-        monthlyChart.setOption(monthlyOption);
-
-        // Gráfico de Actividades Semanales
-        const weeklyChart = echarts.init(document.getElementById('weekly-activities-chart'));
-        const weeklyOption = {
-            tooltip: {
-                trigger: 'axis',
-                backgroundColor: 'rgba(255,255,255,0.9)',
-                textStyle: { color: '#333' }
-            },
-            legend: {
-                data: ['Juan Pérez', 'María García', 'Carlos López', 'Ana Martín'],
-                bottom: 0,
-                textStyle: { color: '#666' }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                axisLine: { lineStyle: { color: '#ddd' } },
-                axisLabel: { color: '#666' }
-            },
-            yAxis: {
-                type: 'value',
-                axisLine: { lineStyle: { color: '#ddd' } },
-                axisLabel: { color: '#666' },
-                splitLine: { lineStyle: { color: '#f0f0f0' } }
-            },
-            series: [
-                {
-                    name: 'Juan Pérez',
-                    type: 'bar',
-                    data: [5, 7, 6, 8, 5, 3, 2],
-                    itemStyle: { color: '#26a69a' }
-                },
-                {
-                    name: 'María García',
-                    type: 'bar',
-                    data: [4, 6, 8, 7, 6, 2, 1],
-                    itemStyle: { color: '#4caf50' }
-                },
-                {
-                    name: 'Carlos López',
-                    type: 'bar',
-                    data: [6, 5, 7, 6, 7, 4, 3],
-                    itemStyle: { color: '#66bb6a' }
-                },
-                {
-                    name: 'Ana Martín',
-                    type: 'bar',
-                    data: [3, 8, 5, 9, 4, 2, 1],
-                    itemStyle: { color: '#81c784' }
-                }
-            ]
-        };
-        weeklyChart.setOption(weeklyOption);
-
-        // Hacer los gráficos responsivos
-        window.addEventListener('resize', () => {
-            monthlyChart.resize();
-            weeklyChart.resize();
-        });
-    };
-
-    // Inicializar después de que la página se cargue
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            window.initializeCharts();
-        }, 500);
-    });
-</script>
-
-

@@ -4,13 +4,15 @@
     <MudNavMenu Margin="Margin.Dense" Class="custom-nav-menu" Color="Color.Tertiary" Rounded="true">
         <!-- Sección superior con enlaces principales -->
         <div class="nav-links-section">
-            <MudNavLink Href="/"
-                        Icon="fa-solid fa-house"
-                        IconColor="Color.Tertiary"
-                        Class="custom-nav-link"
-                        Match="NavLinkMatch.All">
-                Menú Principal
-            </MudNavLink>
+            <AuthorizeView Roles="admin, desarrollador, supervisor">
+                <MudNavLink Href="/"
+                            Icon="fa-solid fa-house"
+                            IconColor="Color.Tertiary"
+                            Class="custom-nav-link"
+                            Match="NavLinkMatch.All">
+                    Menú Principal
+                </MudNavLink>
+            </AuthorizeView>
             <MudNavLink Href="/ordenestrabajo"
                         Icon="fa-solid fa-clipboard-list"
                         IconColor="Color.Tertiary"
@@ -18,14 +20,16 @@
                         Match="NavLinkMatch.All">
                 Ordenes de trabajo
             </MudNavLink>
+            <AuthorizeView Roles="admin, desarrollador, supervisor">
+                <MudNavLink Href="/informes"
+                            Icon="fa-solid fa-chart-line"
+                            IconColor="Color.Tertiary"
+                            Class="custom-nav-link" 
+                            Match="NavLinkMatch.All">
+                    Informes
+                </MudNavLink>
+            </AuthorizeView>
 
-            <MudNavLink Href="/informes"
-                        Icon="fa-solid fa-chart-line"
-                        IconColor="Color.Tertiary"
-                        Class="custom-nav-link" 
-                        Match="NavLinkMatch.All">
-                Informes
-            </MudNavLink>
         </div>
             
         <!-- Sección inferior con botón cerrar sesión -->

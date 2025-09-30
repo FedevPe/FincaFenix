@@ -13,6 +13,7 @@ namespace FincaFenix.EFCore.Configurations.SecondaryTable
             builder.Property(v => v.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(v => v.Description).HasColumnName("VariedadFruta").IsRequired().HasMaxLength(100);
             builder.Property(v => v.FruitId).HasColumnName("IdFruta").IsRequired();
+            builder.Property(v => v.IsOrganic).HasColumnName("Organico").IsRequired().HasDefaultValue(false);
         }
     }
 }

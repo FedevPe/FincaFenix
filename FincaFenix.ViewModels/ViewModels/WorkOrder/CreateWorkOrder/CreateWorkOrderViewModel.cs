@@ -1,7 +1,6 @@
 ﻿using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
-using System;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
 {

@@ -1,0 +1,424 @@
+﻿@page "/prueba"
+@using MudBlazor
+@inject IJSRuntime JSRuntime
+
+<style>
+    .work-order-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+    }
+
+    .work-order-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 150, 136, 0.15);
+        border-color: var(--mud-palette-primary);
+    }
+
+    .work-order-card.selected {
+        border-color: var(--mud-palette-primary);
+        background: linear-gradient(135deg, rgba(0, 150, 136, 0.05) 0%, rgba(0, 150, 136, 0.02) 100%);
+    }
+
+    .status-chip {
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 4px 12px;
+    }
+
+    .status-active {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .header-section {
+        background: linear-gradient(135deg, #00695C 0%, #00796B 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .work-order-grid {
+        gap: 1.5rem;
+    }
+
+    .work-order-number {
+        font-weight: 700;
+        color: #00695C;
+        font-size: 1.1rem;
+    }
+
+    .farm-location {
+        color: #666;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .task-description {
+        color: #333;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .date-info {
+        color: #999;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .select-button {
+        margin-top: 1rem;
+        border-radius: 8px;
+        text-transform: none;
+        font-weight: 600;
+    }
+</style>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+    <!-- Header Section -->
+    <div class="header-section">
+        <MudGrid AlignItems="Center">
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.h4" Class="mb-2">
+                    <MudIcon Icon="Icons.Material.Filled.Assignment" Class="mr-3" />
+                    Seleccionar Orden de Trabajo
+                </MudText>
+                <MudText Typo="Typo.body1" Style="opacity: 0.9;">
+                    Elige la orden de trabajo en la que registrarás tus actividades
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="text-right">
+                <MudChip T="string" Color="Color.Success" Size="Size.Large" Class="pa-3">
+                    @WorkOrders.Count(w => w.Estado == "Activo") órdenes disponibles
+                </MudChip>
+            </MudItem>
+        </MudGrid>
+    </div>
+
+    <!-- Search and Filters -->
+    <MudPaper Elevation="2" Class="pa-4 mb-4" Style="border-radius: 12px;">
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="searchText"
+                              Placeholder="Buscar por número de orden o finca..."
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="Icons.Material.Filled.Search"
+                              Immediate="true"
+                              DebounceInterval="300"
+                              OnDebounceIntervalElapsed="FilterWorkOrders"
+                              Variant="Variant.Outlined"
+                              Class="mb-2" />
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudSelect @bind-Value="selectedFarm"
+                           Placeholder="Filtrar por finca"
+                           Variant="Variant.Outlined"
+                           T="string"
+                           Class="mb-2">
+                    <MudSelectItem Value="@("")">Todas las fincas</MudSelectItem>
+                    @foreach (var farm in GetUniqueFarms())
+                    {
+                        <MudSelectItem Value="@farm">@farm</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudButton Variant="Variant.Outlined"
+                           StartIcon="Icons.Material.Filled.Refresh"
+                           OnClick="RefreshWorkOrders"
+                           FullWidth="true"
+                           Class="mb-2">
+                    Actualizar
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <!-- Work Orders Grid -->
+    @if (filteredWorkOrders.Any())
+    {
+        <MudGrid Class="work-order-grid">
+            @foreach (var workOrder in filteredWorkOrders)
+            {
+                <MudItem xs="12" md="6" lg="4">
+                    <MudPaper Class="work-order-card"
+                              Elevation="@(selectedWorkOrder?.OrdenId == workOrder.OrdenId ? 4 : 2)"
+                              @onclick="() => SelectWorkOrder(workOrder)">
+                        <div class="pa-4">
+                            <!-- Header with Order Number and Status -->
+                            <MudGrid AlignItems="Center" Class="mb-3">
+                                <MudItem xs="8">
+                                    <MudText Class="work-order-number">
+                                        #@workOrder.OrdenNumero
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="4" Class="text-right">
+                                    <MudChip T="string" Size="Size.Small" 
+                                             Class="status-chip status-active">
+                                        @workOrder.Estado
+                                    </MudChip>
+                                </MudItem>
+                            </MudGrid>
+
+                            <!-- Farm Location -->
+                            <div class="farm-location mb-2">
+                                <MudIcon Icon="Icons.Material.Filled.LocationOn" Size="Size.Small" />
+                                <span>@workOrder.Finca</span>
+                            </div>
+
+                            <!-- Task Description -->
+                            <MudText Class="task-description mb-3">
+                                @workOrder.Tarea
+                            </MudText>
+
+                            <!-- Date and Additional Info -->
+                            <MudGrid AlignItems="Center" Class="mb-3">
+                                <MudItem xs="6">
+                                    <div class="date-info">
+                                        <MudIcon Icon="Icons.Material.Filled.CalendarToday" Size="Size.Small" />
+                                        <span>@workOrder.FechaInicio.ToString("dd/MM/yyyy")</span>
+                                    </div>
+                                </MudItem>
+                                <MudItem xs="6" Class="text-right">
+                                    @if (workOrder.Cuadros.Any())
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Text">
+                                            @workOrder.Cuadros.Count cuadros
+                                        </MudChip>
+                                    }
+                                </MudItem>
+                            </MudGrid>
+
+                            <!-- Select Button -->
+                            @if (selectedWorkOrder?.OrdenId == workOrder.OrdenId)
+                            {
+                                <MudButton Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="Icons.Material.Filled.CheckCircle"
+                                           FullWidth="true"
+                                           Class="select-button">
+                                    Seleccionada
+                                </MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Variant="Variant.Outlined"
+                                           Color="Color.Primary"
+                                           StartIcon="Icons.Material.Filled.PlayArrow"
+                                           FullWidth="true"
+                                           Class="select-button"
+                                           OnClick="() => SelectWorkOrder(workOrder)">
+                                    Seleccionar
+                                </MudButton>
+                            }
+                        </div>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+
+        <!-- Confirmation Section -->
+        @if (selectedWorkOrder != null)
+        {
+            <MudPaper Elevation="4" Class="pa-4 mt-4" Style="border-radius: 12px; border-left: 4px solid var(--mud-palette-primary);">
+                <MudGrid AlignItems="Center">
+                    <MudItem xs="12" md="8">
+                        <MudText Typo="Typo.h6" Class="mb-2">
+                            <MudIcon Icon="Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-2" />
+                            Orden Seleccionada: #@selectedWorkOrder.OrdenNumero
+                        </MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">
+                            @selectedWorkOrder.Finca - @selectedWorkOrder.Tarea
+                        </MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="4" Class="text-right">
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Size="Size.Large"
+                                   StartIcon="Icons.Material.Filled.Start"
+                                   OnClick="ConfirmSelection"
+                                   Class="pa-3">
+                            Comenzar Trabajo
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        }
+    }
+    else
+    {
+        <!-- Empty State -->
+        <MudPaper Class="pa-8 text-center" Style="border-radius: 12px;">
+            <MudIcon Icon="Icons.Material.Filled.Search" Size="Size.Large" Color="Color.Secondary" Class="mb-4" />
+            <MudText Typo="Typo.h6" Color="Color.Secondary" Class="mb-2">
+                No se encontraron órdenes de trabajo
+            </MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">
+                @(string.IsNullOrEmpty(searchText) && string.IsNullOrEmpty(selectedFarm) 
+                    ? "No hay órdenes de trabajo disponibles en este momento."
+                    : "Intenta ajustar los filtros de búsqueda.")
+            </MudText>
+            @if (!string.IsNullOrEmpty(searchText) || !string.IsNullOrEmpty(selectedFarm))
+            {
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           StartIcon="Icons.Material.Filled.Clear"
+                           OnClick="ClearFilters"
+                           Class="mt-3">
+                    Limpiar Filtros
+                </MudButton>
+            }
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    // Models
+    public class WorkOrder
+    {
+        public int OrdenId { get; set; }
+        public string OrdenNumero { get; set; } = "";
+        public DateTime FechaInicio { get; set; }
+        public string Estado { get; set; } = "";
+        public string Finca { get; set; } = "";
+        public string Tarea { get; set; } = "";
+        public List<string> Cuadros { get; set; } = new();
+    }
+
+    // Parameters and Events
+    [Parameter] public EventCallback<WorkOrder> OnWorkOrderSelected { get; set; }
+    [Parameter] public List<WorkOrder> WorkOrders { get; set; } = new();
+
+    // Private fields
+    private WorkOrder? selectedWorkOrder;
+    private List<WorkOrder> filteredWorkOrders = new();
+    private string searchText = "";
+    private string selectedFarm = "";
+
+    protected override void OnInitialized()
+    {
+        // Sample data - Replace with your actual data source
+        if (!WorkOrders.Any())
+        {
+            WorkOrders = GenerateSampleWorkOrders();
+        }
+        
+        FilterWorkOrders();
+    }
+
+    private List<WorkOrder> GenerateSampleWorkOrders()
+    {
+        return new List<WorkOrder>
+        {
+            new() {
+                OrdenId = 1,
+                OrdenNumero = "001",
+                FechaInicio = DateTime.Parse("19/08/2025"),
+                Estado = "Activo",
+                Finca = "San Carlos",
+                Tarea = "Cura tratamiento fitosanitario",
+                Cuadros = new() { "8", "9" }
+            },
+            new() {
+                OrdenId = 2,
+                OrdenNumero = "002",
+                FechaInicio = DateTime.Parse("21/08/2025"),
+                Estado = "Activo",
+                Finca = "San Carlos",
+                Tarea = "Cura tratamiento fitosanitario",
+                Cuadros = new() { "13A", "13B", "13C" }
+            },
+            new() {
+                OrdenId = 3,
+                OrdenNumero = "003",
+                FechaInicio = DateTime.Parse("25/08/2025"),
+                Estado = "Activo",
+                Finca = "San Carlos",
+                Tarea = "Cura tratamiento fitosanitario",
+                Cuadros = new() { "5A", "2", "1A", "+2" }
+            },
+            new() {
+                OrdenId = 4,
+                OrdenNumero = "004",
+                FechaInicio = DateTime.Parse("26/08/2025"),
+                Estado = "Activo",
+                Finca = "San Carlos",
+                Tarea = "Cura tratamiento fitosanitario",
+                Cuadros = new() { "12", "8B" }
+            },
+            new() {
+                OrdenId = 5,
+                OrdenNumero = "005",
+                FechaInicio = DateTime.Parse("01/09/2025"),
+                Estado = "Activo",
+                Finca = "La Esperanza",
+                Tarea = "Aplicación de herbicida matayuyos",
+                Cuadros = new() { "6B", "3", "9" }
+            }
+        };
+    }
+
+    private void FilterWorkOrders()
+    {
+        filteredWorkOrders = WorkOrders.Where(wo =>
+        {
+            var matchesSearch = string.IsNullOrEmpty(searchText) ||
+                               wo.OrdenNumero.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                               wo.Finca.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                               wo.Tarea.Contains(searchText, StringComparison.OrdinalIgnoreCase);
+
+            var matchesFarm = string.IsNullOrEmpty(selectedFarm) || wo.Finca == selectedFarm;
+
+            return matchesSearch && matchesFarm && wo.Estado == "Activo";
+        }).OrderBy(wo => wo.FechaInicio).ToList();
+
+        StateHasChanged();
+    }
+
+    private List<string> GetUniqueFarms()
+    {
+        return WorkOrders.Where(wo => wo.Estado == "Activo")
+                        .Select(wo => wo.Finca)
+                        .Distinct()
+                        .OrderBy(f => f)
+                        .ToList();
+    }
+
+    private async Task SelectWorkOrder(WorkOrder workOrder)
+    {
+        selectedWorkOrder = workOrder;
+        await OnWorkOrderSelected.InvokeAsync(workOrder);
+        StateHasChanged();
+    }
+
+    private async Task ConfirmSelection()
+    {
+        if (selectedWorkOrder != null)
+        {
+            // Here you would typically save the selection to your backend
+            // and navigate to the work registration page
+            await JSRuntime.InvokeVoidAsync("alert", $"Comenzando trabajo en orden #{selectedWorkOrder.OrdenNumero}");
+        }
+    }
+
+    private async Task RefreshWorkOrders()
+    {
+        // Implement refresh logic here
+        await Task.Delay(500); // Simulate API call
+        FilterWorkOrders();
+    }
+
+    private void ClearFilters()
+    {
+        searchText = "";
+        selectedFarm = "";
+        FilterWorkOrders();
+    }
+}

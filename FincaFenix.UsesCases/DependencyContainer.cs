@@ -1,8 +1,6 @@
 ﻿using FincaFenix.UsesCases.Interactors;
-using FincaFenix.UsesCases.Interactors.Login;
 using FincaFenix.UsesCases.Interactors.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort;
-using FincaFenix.UsesCases.Interfaces.InputPort.Login;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrderDetail;
 using FincaFenix.UsesCases.Interfaces.Machine;

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,7 +31,7 @@ namespace FincaFenix.UserInterface7._0.Areas.Identity.Pages.Account
 
         [BindProperty]
         [Display(Name = "Recordarme")]
-        public bool RememberUser { get; set; } = true;
+        public bool RememberUser { get; set; } = false;
 
         [TempData]
         public string ErrorMessage { get; set; }
@@ -39,6 +40,13 @@ namespace FincaFenix.UserInterface7._0.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            // 🔹 Si el usuario ya está autenticado, redirigir al menú principal
+            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("/");
+                return;
+            }
+
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);

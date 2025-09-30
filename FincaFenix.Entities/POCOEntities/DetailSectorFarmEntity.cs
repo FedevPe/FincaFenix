@@ -10,6 +10,7 @@
         public FruitVarietyEntity Variety { get; set; }
         public int? NumberPlants { get; set; }
         public decimal? Area { get; set; }
+        public int Age {  get; set; }
 
     }
 }

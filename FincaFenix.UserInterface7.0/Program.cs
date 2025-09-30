@@ -1,7 +1,6 @@
 using FincaFenix.EFCore.Context;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.InversionOfControl;
-using FincaFenix.ViewModels.ViewModels.Login;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
@@ -52,12 +51,12 @@ namespace FincaFenix.UserInterface7._0
                     options.Password.RequireDigit = true;
                     options.Password.RequireLowercase = true;
                     options.Password.RequireUppercase = true;
-                    options.Password.RequireNonAlphanumeric = true;
-                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 6;
 
                     options.SignIn.RequireConfirmedEmail = false;
 
-                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.AllowedForNewUsers = false;
                 })
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<FincaFenixContext>()
@@ -67,7 +66,7 @@ namespace FincaFenix.UserInterface7._0
             {
                 options.LoginPath = "/login";
                 options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.AccessDeniedPath = "/accesodenegado";
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
                 options.SlidingExpiration = true;
             });
