@@ -6,6 +6,8 @@ using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrderDetail;
 using FincaFenix.UsesCases.Interfaces.Machine;
 using FincaFenix.UsesCases.Interfaces.Material;
 using FincaFenix.UsesCases.Interfaces.Sectors;
+using FincaFenix.Validators.Validators.Recipe;
+using FincaFenix.Validators.Validators.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -27,7 +29,13 @@ public static class DependencyContainer
                 //Work Order Interactors
                 .AddTransient<ICreateWorkOrderInputPort, CreateWorkOrderInteractor>()
                 .AddTransient<IGetWorkOrderInformationInputPort, GetWorkOrderInformationInteractor>()
-                .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>();
+                .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>()
+
+                //Validators
+                .AddTransient<WorkOrderValidator>()
+                .AddTransient<RecipeValidator>()
+                .AddTransient<DetailRecipeValidator>()
+                .AddTransient<DetailSectorFarmValidator>();
 
         return services;
     }

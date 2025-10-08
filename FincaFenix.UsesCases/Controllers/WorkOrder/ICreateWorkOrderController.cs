@@ -1,9 +1,10 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+﻿using FincaFenix.Entities.DTOs.Common;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 
 namespace FincaFenix.UsesCases.Controllers.WorkOrder
 {
     public interface ICreateWorkOrderController
     {
-        Task<bool> CreateWorkOrder(WorkOrderDTO workOrder);
+        Task<OperationResultDTO> CreateWorkOrder(WorkOrderDTO workOrder);
     }
 }

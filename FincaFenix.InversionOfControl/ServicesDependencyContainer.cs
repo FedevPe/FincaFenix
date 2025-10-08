@@ -12,8 +12,7 @@ namespace FincaFenix.InversionOfControl
                     .AddGatewaysServices()
                     .AddPresenterServices()
                     .AddViewModelServices()
-                    .AddEFCoreServices()
-                    .AddValidatorServices();
+                    .AddEFCoreServices();
 
             return services;
         }

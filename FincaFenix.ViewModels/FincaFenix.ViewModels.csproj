@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FincaFenix.Controllers\FincaFenixControllers.csproj" />
-    <ProjectReference Include="..\FincaFenix.Validators\FincaFenix.Validators.csproj" />
   </ItemGroup>
 
 </Project>

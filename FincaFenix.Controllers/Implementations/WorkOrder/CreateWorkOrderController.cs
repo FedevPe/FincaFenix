@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+﻿using FincaFenix.Entities.DTOs.Common;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
@@ -13,10 +14,10 @@ namespace FincaFenixControllers.Implementations.WorkOrder
         ICreateWorkOrderOutputPort presenter): ICreateWorkOrderController
     {
         [HttpPost("createworkorder")]
-        public async Task<bool> CreateWorkOrder(WorkOrderDTO workOrder)
+        public async Task<OperationResultDTO> CreateWorkOrder(WorkOrderDTO workOrder)
         {
             await interactor.CreateWorkOrder(workOrder);
-            return presenter.IsSaved;
+            return presenter.Result;
         }
     }
 }

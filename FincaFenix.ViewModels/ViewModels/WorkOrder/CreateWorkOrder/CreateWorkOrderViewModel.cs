@@ -49,7 +49,16 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
                 WorkOrder.Recipe = null;
             }
 
-            await woController.CreateWorkOrder(WorkOrder);
+            var result = await woController.CreateWorkOrder(WorkOrder);
+
+            if (!result.Success)
+            {
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"{error.PropertyName}: {error.ErrorMessage}");
+                }
+                return;
+            }
         }
         private string GetEstimatedAmounUnit(string unit)
         {

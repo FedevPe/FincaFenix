@@ -1,5 +1,4 @@
-﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO;
-using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
@@ -38,6 +37,8 @@ namespace FincaFenix.UsesCases.Aggregates
 
         private static RecipeEntity MapRecipe(RecipeWorkOrderDTO recipeDTO)
         {
+            var groupedDetails = GroupItems(recipeDTO.Details ?? new List<DetailRecipeDTO>());
+
             return new RecipeEntity
             {
                 VolumeMachine = recipeDTO.VolumeMachine,
@@ -46,10 +47,9 @@ namespace FincaFenix.UsesCases.Aggregates
                 State = recipeDTO.Status,
                 TRV = recipeDTO.TRV,
                 IsDeleted = false,
-                DetailRecipeList = recipeDTO.Details?.Select(dr => MapDetailRecipe(dr)).ToList() ?? []
+                DetailRecipeList = groupedDetails?.Select(dr => MapDetailRecipe(dr)).ToList() ?? []
             };
-        }
-
+        }        
         private static DetailRecipeEntity MapDetailRecipe(DetailRecipeDTO drDTO)
         {
             return new DetailRecipeEntity
@@ -63,13 +63,35 @@ namespace FincaFenix.UsesCases.Aggregates
                 DiseasePlague = drDTO.PestDisease
             };
         }
-
         private static List<WorkOrderWorkedSectorEntity> MapWorkedSectors(List<DetailSectorFarmDTO> sectorListDTO)
         {
             return sectorListDTO.Select(s => new WorkOrderWorkedSectorEntity
             {
                 SectorFarmId = s.Id
             }).ToList();
+        }
+        private static List<DetailRecipeDTO> GroupItems(List<DetailRecipeDTO> materialList)
+        {
+            return materialList
+                .GroupBy(d => new { d.CategoryId, d.MaterialId, d.Brand, d.AmountRequiredUnit, d.EstimatedAmountUnit })
+                .Select(g => new DetailRecipeDTO
+                {
+                    CategoryId = g.Key.CategoryId,
+                    MaterialId = g.Key.MaterialId,
+                    Brand = g.Key.Brand,
+                    AmountRequiredUnit = g.Key.AmountRequiredUnit,
+                    EstimatedAmountUnit = g.Key.EstimatedAmountUnit,
+
+                    Material = g.First().Material,
+
+                    // Sumamos las cantidades
+                    AmountRequired = g.Sum(x => x.AmountRequired),
+                    EstimatedAmount = g.Sum(x => x.EstimatedAmount),
+                    TotalAmountConsumed = g.Sum(x => x.TotalAmountConsumed),
+
+                    PestDisease = string.Join(", ", g.Select(x => x.PestDisease).Distinct())
+                })
+                .ToList();
         }
         public static ShowWorkOrderDTO EntityToDTO(WorkOrderEntity workOrderEntity)
         {
