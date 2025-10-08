@@ -67,8 +67,17 @@ namespace FincaFenix.UserInterface7._0
                 options.LoginPath = "/login";
                 options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/accesodenegado";
-                options.ExpireTimeSpan = TimeSpan.FromDays(30);
+
+                // Expira la sesion tras 1 hora de inactividad
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+
+                // SlidingExpiration = false ⇒ no se renueva automáticamente
                 options.SlidingExpiration = true;
+
+                // (opcional) Evita que la cookie se mantenga tras cerrar el navegador
+                options.Cookie.IsEssential = true;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
             });
 
             var app = builder.Build();

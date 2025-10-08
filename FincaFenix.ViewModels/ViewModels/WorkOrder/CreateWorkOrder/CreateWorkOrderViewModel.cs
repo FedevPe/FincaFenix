@@ -1,11 +1,11 @@
 ﻿using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.WorkOrder;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
 {
     public class CreateWorkOrderViewModel(
-        IWorkOrderController woController,
+        ICreateWorkOrderController woController,
         NewOrderDataViewModel orderData,
         NewRecipeViewModel recipeData)
     {

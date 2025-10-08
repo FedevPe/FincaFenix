@@ -1,10 +1,10 @@
 ﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
-using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.WorkOrder;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
 {
     public class GeneralInfoWorkOrderViewModel(
-        IWorkOrderController workOrder)
+        IGetWorkOrderInformationController workOrder)
     {
         public ShowWorkOrderDTO WOInfo { get; private set; } = new ShowWorkOrderDTO();
 

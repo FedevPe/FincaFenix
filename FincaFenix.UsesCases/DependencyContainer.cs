@@ -17,14 +17,17 @@ public static class DependencyContainer
         services.AddTransient<IFarmInputPort, FarmInteractor>()
                 .AddTransient<IDetailSectorInputPort, DetailSectorInteractor>()
                 .AddTransient<ITaskInputPort, TaskInteractor>()
-                .AddTransient<IWorkOrderInputPort, WorkOrderInteractor>()
                 .AddTransient<IMaterialInputPort, MaterialInteractor>()
                 .AddTransient<IMaterialCategoryInputPort, MaterialCategoryInteractor>()
                 .AddTransient<IMachineInputPort, MachineInteractor>()
                 .AddTransient<IEmployeeInputPort, EmployeeInteractor>()
                 .AddTransient<IAddDetailWorkOrderInputPort, DetailWorkOrderInteractor>()
-                .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>();
+                .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>()
 
+                //Work Order Interactors
+                .AddTransient<ICreateWorkOrderInputPort, CreateWorkOrderInteractor>()
+                .AddTransient<IGetWorkOrderInformationInputPort, GetWorkOrderInformationInteractor>()
+                .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>();
 
         return services;
     }

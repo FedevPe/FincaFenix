@@ -22,6 +22,12 @@ public static class DependencyContainer
                 .AddScoped<IMachineOutputPort, MachinePresenter>()
                 .AddScoped<IEmployeeOutputPort, EmployeePresenter>()
                 .AddScoped<IDetailWorkOrderOutputPort, DetailWorkOrderPresenter>()
+
+
+
+                //Work Order Presenter
+                .AddScoped<ICreateWorkOrderOutputPort, CreateWorkOrderPresenter>()
+                .AddScoped<IGetWorkOrderInformationOutputPort, GetWorkOrderInformationPresenter>()
                 .AddScoped<IUpdateWorkOrderOutputPort, UpdateWorkOrderPresenter>();
 
         return services;

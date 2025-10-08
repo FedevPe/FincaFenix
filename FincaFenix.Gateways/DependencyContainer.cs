@@ -13,11 +13,16 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IMaterialRepository, MaterialRepository>()
                     .AddScoped<IDetailSectorRepository, DetailSectorRepository>()
                     .AddScoped<ITaskRepository, TaskRepository>()
-                    .AddScoped<IWorkOrderRepository, WorkOrderRepository>()
                     .AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>()
                     .AddScoped<IMachineRepository, MachineRepository>()
                     .AddScoped<IEmployeeRepository, EmployeeRepository>()
                     .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>()
+
+
+
+                    //Work Order Repository
+                    .AddScoped<ICreateWorkOrderRepository, CreateWorkOrderRepository>()
+                    .AddScoped<IGetWorkOrderInformationRepository, GetWorkOrderInformationRepository>()
                     .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepositor>();
 
             return services;

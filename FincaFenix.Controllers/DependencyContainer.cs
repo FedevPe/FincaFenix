@@ -14,11 +14,14 @@ public static class DependencyContainer
                 .AddTransient<IDetailSectorController, DetailSectorController>()
                 .AddTransient<IMaterialController, MaterialController>()
                 .AddTransient<ITaskController, TaskController>()
-                .AddTransient<IWorkOrderController, WorkOrderController>()
                 .AddTransient<IMaterialCategoryController, MaterialCategoryController>()
                 .AddTransient<IMachineController, MachineController>()
                 .AddTransient<IEmployeeController, EmployeeController>()
                 .AddTransient<IDetailWorkOrderController, DetailWorkOrderController>()
+
+                //WorkOrder
+                .AddTransient<ICreateWorkOrderController, CreateWorkOrderController>()
+                .AddTransient<IGetWorkOrderInformationController, GetWorkOrderInformationController>()
                 .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>();
 
         return services;

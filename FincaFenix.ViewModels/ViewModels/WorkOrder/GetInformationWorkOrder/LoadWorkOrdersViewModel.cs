@@ -1,10 +1,11 @@
 ﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.WorkOrder;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
 {
     public class LoadWorkOrdersViewModel(
-        IWorkOrderController wo)
+        IGetWorkOrderInformationController wo)
     {
         public int CurrentPage { get; set; } = 1;
         public int PageSize { get; set; } = 4;
