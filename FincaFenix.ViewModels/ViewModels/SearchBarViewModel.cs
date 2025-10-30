@@ -28,7 +28,7 @@ namespace FincaFenix.ViewModels.ViewModels
         }
         public async Task LoadTasksAsync()
         {
-            Tasks = await task.DisplayTaskList();
+            Tasks = await task.GetTaskList();
         }
     }
 }

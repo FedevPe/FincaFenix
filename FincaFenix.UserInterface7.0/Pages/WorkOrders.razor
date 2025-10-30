@@ -111,7 +111,7 @@
                 <MudItem xs="12" lg="12">
                     <WorkOrderTable WorkOrderList="@_workOrderList" />
                 </MudItem>
-            </AuthorizeView>            
+            </AuthorizeView>
         }   
     }
 </div>
@@ -179,6 +179,7 @@
     }
     private void HandleFilterSelected(StatsCard.FilterWorkOrder filter)
     {
+        ViewModel.CurrentPage = 1;
         // Aplica la lógica de filtrado en el componente padre.
         switch (filter)
         {

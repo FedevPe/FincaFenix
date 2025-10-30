@@ -5,7 +5,6 @@ using FincaFenix.UsesCases.Interfaces.OutputPort;
 using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.Sectors;
 using FincaFenix.UsesCases.Interfaces.Tasks;
-using FincaFenix.UsesCases.Interfaces.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +16,6 @@ public static class DependencyContainer
                 .AddScoped<IMaterialOutputPort, MaterialPresenter>()
                 .AddScoped<IDetailSectorOutputPort, SectorPresenter>()
                 .AddScoped<ITaskOutputPort, TaskPresenter>()
-                .AddScoped<IWorkOrderOutputPort, WorkOrderPresenter>()
                 .AddScoped<IMaterialCategoryOutputPort, MaterialCategoryPresenter>()
                 .AddScoped<IMachineOutputPort, MachinePresenter>()
                 .AddScoped<IEmployeeOutputPort, EmployeePresenter>()

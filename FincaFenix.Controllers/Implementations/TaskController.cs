@@ -20,7 +20,7 @@ namespace FincaFenixControllers.Implementations
         }
 
         [HttpGet("GetTaskList")]
-        public async Task<IEnumerable<TaskDTO>> DisplayTaskList()
+        public async Task<IEnumerable<TaskDTO>> GetTaskList()
         {
             await interactor.GetListTask();
             return presenter.TaskList;

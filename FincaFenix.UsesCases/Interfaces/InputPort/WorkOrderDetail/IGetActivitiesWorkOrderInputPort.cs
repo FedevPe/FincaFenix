@@ -2,5 +2,6 @@
 {
     public interface IGetActivitiesWorkOrderInputPort
     {
+        Task GetActivitiesByOrderId(int orderId);
     }
 }

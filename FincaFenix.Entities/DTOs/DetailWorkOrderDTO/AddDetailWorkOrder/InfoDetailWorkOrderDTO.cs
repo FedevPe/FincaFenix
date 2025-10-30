@@ -5,6 +5,6 @@
         public int SectorWorkedId { get; set; }
         public decimal Performance { get; set; }
         public decimal WorkedHours { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

@@ -59,7 +59,7 @@ else
                             </MudSelect>
                         </div>
 
-                        <!-- Date Selection -->
+                        @*
                         <div class="form-section date-section">
                             <div class="section-header">
                                 <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="section-icon" />
@@ -76,7 +76,7 @@ else
                                            TransformOrigin="Origin.TopRight"
                                            AdditionalDateClassesFunc="@((DateTime dt)=> ((int)dt.DayOfWeek == 0 ? "red-text text-accent-4" : ""))"
                                            For="@(() => ViewModel.ActivityDate)" />
-                        </div>
+                        </div> *@
                     </div>
 
                     <!-- Sectors Section -->
@@ -220,10 +220,18 @@ else
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
                            Size="Size.Large"
-                           StartIcon="@Icons.Material.Filled.Save"
                            Class="save-btn"
                            OnClick="HandleSave">
-                    Guardar
+                    @if (isProcessing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" style="color: white;" />
+                        <MudText Class="ms-2">Guardando...</MudText>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.Save" Class="me-2" />
+                        <span>Guardar</span>
+                    }
                 </MudButton>
             </div>
         </div>
@@ -239,6 +247,7 @@ else
 
     [Parameter] public int WorkOrderId { get; set; }
 
+    private bool isProcessing = false;
     private MudForm form;
     private bool IsAddButtonDisabled =>
         ViewModel.ActivityDetails.Count >= (InfoVM.WOInfo?.SectorList.Count() ?? 0);
@@ -273,36 +282,50 @@ else
         ViewModel.ActivityDetails.Remove(detail);
     }
     private async Task HandleSave()
-    {
-        // 1. Validar el formulario de la UI
-        await form.Validate();
-        if (!form.IsValid)
+    {   
+        try
         {
-            Snackbar.Add("Por favor, completá todos los campos requeridos.", MudBlazor.Severity.Error);
-            return;
-        }
+            // 1. Validar el formulario de la UI
+            await form.Validate();
+            if (!form.IsValid)
+            {
+                Snackbar.Add("Por favor, completá todos los campos requeridos.", MudBlazor.Severity.Error);
+                return;
+            }
 
-        // ---
+            // ---
 
-        // 2. Validar las horas trabajadas
-        var totalHours = SumWorkHours();
-        if (totalHours <= 0 || totalHours > 9)
-        {
-            Snackbar.Add("El total de horas trabajadas debe ser mayor a 0 y menor o igual a 9.", MudBlazor.Severity.Error);
-            return;
-        }
+            // 2. Validar las horas trabajadas
+            var totalHours = SumWorkHours();
+            if (totalHours <= 0 || totalHours > 9)
+            {
+                Snackbar.Add("El total de horas trabajadas debe ser mayor a 0 y menor o igual a 9.", MudBlazor.Severity.Error);
+                return;
+            }
 
-        // 3. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
-        // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada
-        if (await ViewModel.SaveDetailWorkOrderAsync(ViewModel))
-        {
-            Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
-            NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
+            // 3. Aquí es donde llamamos al Caso de Uso de la Capa de Aplicación
+            // Le pasamos el ViewModel del formulario, que contiene todos los datos de entrada
+            isProcessing = true;
+            if (await ViewModel.SaveDetailWorkOrderAsync(ViewModel))
+            {
+                await Task.Delay(2000);
+                isProcessing = false;
+                Snackbar.Add("Actividad registrada con éxito.", MudBlazor.Severity.Success);
+                NavigationManager.NavigateTo($"/ordenestrabajo"); // Redirige después de guardar
+            }
+            else
+            {
+                await Task.Delay(2000);
+                isProcessing = false;
+                Snackbar.Add("Error al registrar la actividad.", MudBlazor.Severity.Error);
+            }
         }
-        else
+        catch (Exception)
         {
-            Snackbar.Add("Error al registrar la actividad.", MudBlazor.Severity.Error);
+            
+            throw;
         }
+        
 
     }
     private decimal SumWorkHours()

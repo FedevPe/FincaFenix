@@ -18,7 +18,7 @@ namespace FincaFenix.UsesCases.Mappers
                 SectorWorkedId = dto.Info.SectorWorkedId,
                 Performance = dto.Info.Performance,
                 WorkedHours = dto.Info.WorkedHours,
-                Description = dto.Info.Description.ToUpper().Trim() ?? string.Empty,
+                Description = dto.Info.Description.ToUpper() ?? string.Empty,
                 ActivityDate = (DateTime)dto.ActivityDate
             };
         }

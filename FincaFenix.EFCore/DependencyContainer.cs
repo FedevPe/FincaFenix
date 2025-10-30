@@ -17,7 +17,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<IFarmQueryService, FarmQueryService>()
                     .AddTransient<IDetailSectorQueryService, DetailSectorQueryService>()
                     .AddTransient<IMaterialQueryService, MaterialQueryService>()
-                    .AddTransient<IWorkOrderQueryService, WorkOrderQueryService>()
                     .AddTransient<IMaterialCategoryQueryService, MaterialCategoryQueryService>()
                     .AddTransient<IMachineQueryService, MachineQueryServices>()
                     .AddTransient<IEmployeeQueryService, EmployeeQueryService>()
@@ -33,8 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IUpdateWorkOrderCommand, UpdateWorkOrderCommand>();
             #endregion
 
-            services.AddTransient<IWorkOrderCommandService, WorkOrderCommandService>()
-                    .AddTransient<IDetailWOCommandService, DetailWOCommandService>();
+            services.AddTransient<IDetailWOCommandService, DetailWOCommandService>();
 
             return services;
         }

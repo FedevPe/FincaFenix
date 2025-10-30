@@ -10,7 +10,7 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
     {
         public int WorkOrderId { get; set; }
         public int EmployeeId { get; set; }
-        public DateTime? ActivityDate { get; set; }
+        public DateTime? ActivityDate { get; set; } = DateTime.Now;
         public IEnumerable<EmployeeDTO> Employees { get; set; } = new List<EmployeeDTO>();
         public List<AddDetailWorkOrderDTO> ActivityDetails { get; set; } = new List<AddDetailWorkOrderDTO>();
 
