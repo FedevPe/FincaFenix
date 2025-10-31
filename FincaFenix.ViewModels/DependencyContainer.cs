@@ -17,9 +17,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<NewRecipeViewModel>()
                     .AddTransient<CreateWorkOrderViewModel>()
                     .AddTransient<GeneralInfoWorkOrderViewModel>()
-                    .AddTransient<RegistryActivityViewModel>()
+                    .AddTransient<AddDetailWorkOrderViewModel>()
                     .AddTransient<LoadWorkOrdersViewModel>()
-                    .AddTransient<LoadDetailsWorkOrderViewModel>()
+                    .AddTransient<GetActivitiesWorkOrderViewModel>()
                     .AddTransient<UpdateWorkOrderViewModel>()
                     .AddTransient<CalculateMaterialConsumedViewModel>();
 

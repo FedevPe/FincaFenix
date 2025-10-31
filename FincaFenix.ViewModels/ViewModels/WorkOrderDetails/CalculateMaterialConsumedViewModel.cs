@@ -7,7 +7,7 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
     {
         public decimal TotalPerfomance { get; private set; }
 
-        public async Task<RecipeWorkOrderDTO> CalculateEstimatedAndConsumedAmounts(RecipeWorkOrderDTO recipe, IEnumerable<DetailWorkOrderDTO> workOrderList, decimal sectorArea)
+        public async Task<RecipeWorkOrderDTO> CalculateEstimatedAndConsumedAmounts(RecipeWorkOrderDTO recipe, IEnumerable<ActivityWorkOrderDTO> workOrderList, decimal sectorArea)
         {
             TotalPerfomance = workOrderList.Sum(d => d.Performance);
 

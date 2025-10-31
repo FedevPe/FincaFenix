@@ -1,6 +1,6 @@
 ﻿namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrderDetail
 {
-    public interface IAddWorkOrderDetailOutputPort
+    public interface IAddDetailWorkOrderOutputPort
     {
         public bool IsSuccess { get; }
         Task Handle(int detailWOId);

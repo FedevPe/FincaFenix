@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace FincaFenix.UserInterface7._0.Validators.DetailWorkOrder
 {
-    public class RegistryActivityViewModelValidator : AbstractValidator<RegistryActivityViewModel>
+    public class RegistryActivityViewModelValidator : AbstractValidator<AddDetailWorkOrderViewModel>
     {
         public RegistryActivityViewModelValidator()
         {
@@ -18,7 +18,7 @@ namespace FincaFenix.UserInterface7._0.Validators.DetailWorkOrder
         }
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
         {
-            var result = await ValidateAsync(ValidationContext<RegistryActivityViewModel>.CreateWithOptions((RegistryActivityViewModel)model, x => x.IncludeProperties(propertyName)));
+            var result = await ValidateAsync(ValidationContext<AddDetailWorkOrderViewModel>.CreateWithOptions((AddDetailWorkOrderViewModel)model, x => x.IncludeProperties(propertyName)));
             if (result.IsValid)
                 return Array.Empty<string>();
             return result.Errors.Select(e => e.ErrorMessage);

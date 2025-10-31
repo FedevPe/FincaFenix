@@ -62,12 +62,12 @@
 </div>
 @code {
     [Parameter] public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
-    [Parameter] public IEnumerable<DetailWorkOrderDTO> DetailWorkOrderDTO { get; set; }
+    [Parameter] public IEnumerable<ActivityWorkOrderDTO> DetailWorkOrderDTO { get; set; }
     [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
 
     private int sectorSelectedId = 0;
     private DetailSectorFarmDTO SectorSelected;
-    private List<DetailWorkOrderDTO> _detailWorkOrderFilteredList;
+    private List<ActivityWorkOrderDTO> _detailWorkOrderFilteredList;
     private RecipeWorkOrderDTO _recipe;
     private decimal _totalApplicationForSector;
     private decimal _totalApplicationAllSector;

@@ -1,5 +1,6 @@
 ﻿using FincaFenix.UsesCases.Controllers;
 using FincaFenix.UsesCases.Controllers.WorkOrder;
+using FincaFenix.UsesCases.Controllers.WorkOrderDetail;
 using FincaFenixControllers.Implementations;
 using FincaFenixControllers.Implementations.WorkOrder;
 
@@ -17,12 +18,15 @@ public static class DependencyContainer
                 .AddTransient<IMaterialCategoryController, MaterialCategoryController>()
                 .AddTransient<IMachineController, MachineController>()
                 .AddTransient<IEmployeeController, EmployeeController>()
-                .AddTransient<IDetailWorkOrderController, DetailWorkOrderController>()
 
                 //WorkOrder
                 .AddTransient<ICreateWorkOrderController, CreateWorkOrderController>()
                 .AddTransient<IGetWorkOrderInformationController, GetWorkOrderInformationController>()
-                .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>();
+                .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>()
+
+                //DetailWorkOrder
+                .AddTransient<IAddDetailWorkOrderController, IAddDetailWorkOrderController>()
+                .AddTransient<IGetActivitiesWorkOrderController, IGetActivitiesWorkOrderController>();
 
         return services;
     }

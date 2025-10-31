@@ -17,13 +17,13 @@
               Dense="true"
               Hover="true"
               Bordered="true"
-              Filter="new Func<DetailWorkOrderDTO, bool>(_quickFilter)"
+              Filter="new Func<ActivityWorkOrderDTO, bool>(_quickFilter)"
               Class="activity-mud-table"
               Elevation="3"
               Breakpoint="Breakpoint.Sm">
         <HeaderContent>
             <MudTh Class="activity-table-header">
-                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.ActivityDate)">
+                <MudTableSortLabel SortBy="new Func<ActivityWorkOrderDTO, object>(x => x.ActivityDate)">
                     <div class="activity-header-content">
                         <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Class="activity-header-icon" />
                         <span>Fecha</span>
@@ -31,7 +31,7 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh Class="activity-table-header">
-                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.Employee.Name)">
+                <MudTableSortLabel SortBy="new Func<ActivityWorkOrderDTO, object>(x => x.Employee.Name)">
                     <div class="activity-header-content">
                         <MudIcon Icon="@Icons.Material.Filled.Person" Class="activity-header-icon" />
                         <span>Nombre operario</span>
@@ -45,7 +45,7 @@
                 </div>
             </MudTh>
             <MudTh Class="activity-table-header">
-                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.WorkedHours)">
+                <MudTableSortLabel SortBy="new Func<ActivityWorkOrderDTO, object>(x => x.WorkedHours)">
                     <div class="activity-header-content">
                         <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="activity-header-icon" />
                         <span>Horas trabajadas</span>
@@ -53,7 +53,7 @@
                 </MudTableSortLabel>
             </MudTh>
             <MudTh Class="activity-table-header">
-                <MudTableSortLabel SortBy="new Func<DetailWorkOrderDTO, object>(x => x.Performance)">
+                <MudTableSortLabel SortBy="new Func<ActivityWorkOrderDTO, object>(x => x.Performance)">
                     <div class="activity-header-content">
                         <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Class="activity-header-icon" />
                         <span>Rendimiento</span>
@@ -123,11 +123,11 @@
 @code{
     private string _searchString;
 
-    [Parameter] public IEnumerable<DetailWorkOrderDTO> ActivityList { get; set; }
+    [Parameter] public IEnumerable<ActivityWorkOrderDTO> ActivityList { get; set; }
 
     // Filt
     // Filtro rápido para buscar por nombre de operario
-    private Func<DetailWorkOrderDTO, bool> _quickFilter => activity =>
+    private Func<ActivityWorkOrderDTO, bool> _quickFilter => activity =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;

@@ -127,7 +127,7 @@
     [Inject] private CalculateMaterialConsumedViewModel ViewModel { get; set; }
 
     [Parameter] public RecipeWorkOrderDTO Recipe { get; set; }
-    [Parameter] public IEnumerable<DetailWorkOrderDTO> DetailWorkOrderList { get; set; }
+    [Parameter] public IEnumerable<ActivityWorkOrderDTO> DetailWorkOrderList { get; set; }
     [Parameter] public decimal TotalAreaWorked { get; set; }
     [Parameter] public decimal TotalApplication { get; set; }
     [Parameter] public bool ShowToolBar { get; set; } = true;

@@ -1,20 +1,15 @@
 ﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrderDetail;
-using FincaFenix.UsesCases.Interfaces.OutputPort;
+using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrderDetail;
 using FincaFenix.UsesCases.Mappers;
-using FincaFenix.UsesCases.Repository;
+using FincaFenix.UsesCases.Repository.DetailWorkOrder;
 
-namespace FincaFenix.UsesCases.Interactors
+namespace FincaFenix.UsesCases.Interactors.WorkOrderDetail
 {
-    public class DetailWorkOrderInteractor(
-        IDetailWorkOrderOutputPort presenter,
-        IDetailWorkOrderRepository repository) : IAddDetailWorkOrderInputPort
+    public class AddWorkOrderDetailInteractor (
+        IAddDetailWorkOrderRepository repository,
+        IAddDetailWorkOrderOutputPort presenter): IAddDetailWorkOrderInputPort
     {
-        public async Task GetActivitiesByOrderId(int orderId)
-        {
-            await presenter.HandleList(await repository.GetActivityLogByOrderId(orderId));
-        }
-
         public async Task AddDetailWorkOrder(AddDetailWorkOrderDTO dto)
         {
             try

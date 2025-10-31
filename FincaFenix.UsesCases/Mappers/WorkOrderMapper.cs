@@ -164,11 +164,11 @@ namespace FincaFenix.UsesCases.Aggregates
                 DetailsWorkOrder = AddDetailWorkOrder(workOrderEntity.DetailWorkOrderList)
             };
         }
-        private static IEnumerable<DetailWorkOrderDTO> AddDetailWorkOrder(IEnumerable<DetailWorkOrderEntity> details)
+        private static IEnumerable<ActivityWorkOrderDTO> AddDetailWorkOrder(IEnumerable<DetailWorkOrderEntity> details)
         {
             if (details != null && details.Any())
             {
-                IEnumerable<DetailWorkOrderDTO> detailsWorkOrderDTO = details.Select(detail => new DetailWorkOrderDTO
+                IEnumerable<ActivityWorkOrderDTO> detailsWorkOrderDTO = details.Select(detail => new ActivityWorkOrderDTO
                 {
                     Employee = new EmployeeDTO
                     {

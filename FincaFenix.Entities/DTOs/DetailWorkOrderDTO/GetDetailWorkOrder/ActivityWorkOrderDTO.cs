@@ -2,7 +2,7 @@
 
 namespace FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder
 {
-    public class DetailWorkOrderDTO
+    public class ActivityWorkOrderDTO
     {
         public int Id { get; set; }
         public WorkOrderDTO WorkOrder { get; set; }

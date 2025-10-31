@@ -1,12 +1,12 @@
 ﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
-using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.WorkOrderDetail;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
 {
-    public class LoadDetailsWorkOrderViewModel(
-        IDetailWorkOrderController detail)
+    public class GetActivitiesWorkOrderViewModel(
+        IGetActivitiesWorkOrderController detail)
     {
-        public IEnumerable<DetailWorkOrderDTO>? ActivityWorkOrderDTOs { get; set; }
+        public IEnumerable<ActivityWorkOrderDTO>? ActivityWorkOrderDTOs { get; set; }
 
         public async Task LoadActivityLog(int orderId)
         {

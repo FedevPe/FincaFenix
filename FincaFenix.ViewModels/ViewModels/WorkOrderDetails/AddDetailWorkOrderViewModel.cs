@@ -1,11 +1,12 @@
 ﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.WorkOrderDetail;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
 {
-    public class RegistryActivityViewModel(
-        IDetailWorkOrderController detailWO,
+    public class AddDetailWorkOrderViewModel(
+        IAddDetailWorkOrderController addDetailWO,
         IEmployeeController emController)
     {
         public int WorkOrderId { get; set; }
@@ -19,7 +20,7 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
             Employees = await emController.GetAllEmployeesAsync(idFarm);
         }
 
-        public async Task<bool> SaveDetailWorkOrderAsync(RegistryActivityViewModel viewModel)
+        public async Task<bool> SaveDetailWorkOrderAsync(AddDetailWorkOrderViewModel viewModel)
         {
             try
             {
@@ -36,7 +37,7 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrderDetails
                     detailDto.OrderId = WorkOrderId;
                     detailDto.EmployeeId = EmployeeId;
                     detailDto.ActivityDate = ActivityDate;
-                    await detailWO.CreateDetailWorkOrder(detailDto);
+                    await addDetailWO.CreateDetailWorkOrder(detailDto);
                 }
                 return true;
             }

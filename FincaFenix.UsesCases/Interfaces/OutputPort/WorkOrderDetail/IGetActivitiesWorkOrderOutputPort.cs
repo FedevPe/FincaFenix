@@ -5,7 +5,7 @@ namespace FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrderDetail
 {
     public interface IGetActivitiesWorkOrderOutputPort
     {
-        public IEnumerable<DetailWorkOrderDTO> ActivityLog { get; }
+        public IEnumerable<ActivityWorkOrderDTO> ActivityLog { get; }
         Task HandleList(IEnumerable<DetailWorkOrderEntity> entities);
     }
 }
