@@ -1,8 +1,10 @@
 ﻿using FincaFenix.Presenters.Implementations;
+using FincaFenix.Presenters.Implementations.DetailWorkOrder;
 using FincaFenix.Presenters.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.Machine;
 using FincaFenix.UsesCases.Interfaces.OutputPort;
 using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrder;
+using FincaFenix.UsesCases.Interfaces.OutputPort.WorkOrderDetail;
 using FincaFenix.UsesCases.Interfaces.Sectors;
 using FincaFenix.UsesCases.Interfaces.Tasks;
 
@@ -21,12 +23,14 @@ public static class DependencyContainer
                 .AddScoped<IEmployeeOutputPort, EmployeePresenter>()
                 .AddScoped<IDetailWorkOrderOutputPort, DetailWorkOrderPresenter>()
 
-
-
                 //Work Order Presenter
                 .AddScoped<ICreateWorkOrderOutputPort, CreateWorkOrderPresenter>()
                 .AddScoped<IGetWorkOrderInformationOutputPort, GetWorkOrderInformationPresenter>()
-                .AddScoped<IUpdateWorkOrderOutputPort, UpdateWorkOrderPresenter>();
+                .AddScoped<IUpdateWorkOrderOutputPort, UpdateWorkOrderPresenter>()
+
+                //Detail Work Order Presenter
+                .AddScoped<IAddDetailWorkOrderOutputPort, AddDetailWorkOrderPresenter>()
+                .AddScoped<IGetActivitiesWorkOrderOutputPort, GetActivitiesWorkOrderPresenter>();
 
         return services;
     }

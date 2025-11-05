@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.DTOs.RecipeDTO;
+﻿using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
+using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 
 namespace FincaFenix.Entities.DTOs.ShowWorkOrder
@@ -15,7 +16,7 @@ namespace FincaFenix.Entities.DTOs.ShowWorkOrder
         public DateTime? EndDate { get; set; }
         public TaskDTO Task { get; set; }
         public FarmDTO Farm { get; set; }
-        public IEnumerable<DetailWorkOrderDTO.GetDetailWorkOrder.ActivityWorkOrderDTO> DetailsWorkOrder { get; set; }
+        public IEnumerable<ActivityWorkOrderDTO> DetailsWorkOrder { get; set; }
         public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
         public RecipeWorkOrderDTO Recipe { get; set; }
         public bool IsDeleted { get; set; }

@@ -1,6 +1,8 @@
 ﻿using FincaFenix.Gateways.Implementations;
+using FincaFenix.Gateways.Implementations.DetailWorkOrder;
 using FincaFenix.Gateways.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Repository;
+using FincaFenix.UsesCases.Repository.DetailWorkOrder;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -18,12 +20,14 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IEmployeeRepository, EmployeeRepository>()
                     .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>()
 
-
-
                     //Work Order Repository
                     .AddScoped<ICreateWorkOrderRepository, CreateWorkOrderRepository>()
                     .AddScoped<IGetWorkOrderInformationRepository, GetWorkOrderInformationRepository>()
-                    .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepositor>();
+                    .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepositor>()
+
+                    //Detail Work Order Repository
+                    .AddScoped<IAddDetailWorkOrderRepository, AddDetailWorkOrderRepository>()
+                    .AddScoped<IGetActivitiesWorkOrderRepository, GetActivitiesWorkOrderRepository>();
 
             return services;
         }

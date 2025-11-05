@@ -2,6 +2,7 @@
 using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenix.UsesCases.Controllers.WorkOrderDetail;
 using FincaFenixControllers.Implementations;
+using FincaFenixControllers.Implementations.DetailWorkOrder;
 using FincaFenixControllers.Implementations.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -25,8 +26,8 @@ public static class DependencyContainer
                 .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>()
 
                 //DetailWorkOrder
-                .AddTransient<IAddDetailWorkOrderController, IAddDetailWorkOrderController>()
-                .AddTransient<IGetActivitiesWorkOrderController, IGetActivitiesWorkOrderController>();
+                .AddTransient<IAddDetailWorkOrderController, AddDetailWorkOrderController>()
+                .AddTransient<IGetActivitiesWorkOrderController, GetActivitiesWorkOrderController>();
 
         return services;
     }

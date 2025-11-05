@@ -22,7 +22,7 @@ namespace FincaFenixControllers.Implementations
         [HttpGet("order/{orderId}/getDetail")]
         public async Task<IEnumerable<ActivityWorkOrderDTO>> GetActivitiesByOrderId(int orderId)
         {
-            await interactor.GetActivitiesByOrderId(orderId);
+            //await interactor.GetActivitiesByOrderId(orderId);
             return presenter.ActivityLog;
         }
     }

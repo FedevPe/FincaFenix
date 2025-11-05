@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Repository.DetailWorkOrder;
 
 namespace FincaFenix.UsesCases.Interactors.DetailWorkOrder
 {
-    public class IGetActivitiesWorkOrderInteractor(
+    public class GetActivitiesWorkOrderInteractor(
         IGetActivitiesWorkOrderOutputPort presenter,
         IGetActivitiesWorkOrderRepository repository) : IGetActivitiesWorkOrderInputPort
     {

@@ -1,5 +1,7 @@
 ﻿using FincaFenix.UsesCases.Interactors;
+using FincaFenix.UsesCases.Interactors.DetailWorkOrder;
 using FincaFenix.UsesCases.Interactors.WorkOrder;
+using FincaFenix.UsesCases.Interactors.WorkOrderDetail;
 using FincaFenix.UsesCases.Interfaces.InputPort;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrder;
 using FincaFenix.UsesCases.Interfaces.InputPort.WorkOrderDetail;
@@ -31,6 +33,10 @@ public static class DependencyContainer
                 .AddTransient<IGetWorkOrderInformationInputPort, GetWorkOrderInformationInteractor>()
                 .AddTransient<IUpdateWorkOrderInputPort, UpdateWorkOrderInteractor>()
 
+                //Detail Work Order Interactors
+                .AddTransient<IAddDetailWorkOrderInputPort, AddDetailWorkOrderInteractor>()
+                .AddTransient<IGetActivitiesWorkOrderInputPort, GetActivitiesWorkOrderInteractor>()
+
                 //Validators
                 .AddTransient<WorkOrderValidator>()
                 .AddTransient<RecipeValidator>()
@@ -40,4 +46,3 @@ public static class DependencyContainer
         return services;
     }
 }
-

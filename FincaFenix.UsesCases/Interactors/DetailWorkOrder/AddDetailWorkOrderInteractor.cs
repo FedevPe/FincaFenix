@@ -6,7 +6,7 @@ using FincaFenix.UsesCases.Repository.DetailWorkOrder;
 
 namespace FincaFenix.UsesCases.Interactors.WorkOrderDetail
 {
-    public class AddWorkOrderDetailInteractor (
+    public class AddDetailWorkOrderInteractor (
         IAddDetailWorkOrderRepository repository,
         IAddDetailWorkOrderOutputPort presenter): IAddDetailWorkOrderInputPort
     {
