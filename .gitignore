@@ -405,3 +405,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 FincaFenix.UserInterface7.0/appsettings.json
+
+# Local secrets (JWT) — see AGENTS.md
+appsettings.Development.json
+
+# OpenCode agent config
+.opencode/
