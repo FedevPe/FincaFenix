@@ -16,9 +16,28 @@ namespace FincaFenix.EFCore.Services.QueryServices
         public async Task<IEnumerable<DetailSectorFarmEntity>> GetSectorListByFarmId(int farmId)
         {
             return await context.DetailSectors.Where(ds => ds.FarmId == farmId)
-                .Include(ds => ds.Variety)
-                .ThenInclude(v => v.Fruit)
+                .Select(ds => new DetailSectorFarmEntity
+                {
+                    Id = ds.Id,
+                    FarmId = ds.FarmId,
+                    SectorName = ds.SectorName,
+                    VarietyId = ds.VarietyId,
+                    NumberPlants = ds.NumberPlants,
+                    Area = ds.Area,
+                    Age = ds.Age,
+                    Variety = ds.Variety != null ? new FruitVarietyEntity
+                    {
+                        Id = ds.Variety.Id,
+                        Description = ds.Variety.Description,
+                        Fruit = ds.Variety.Fruit != null ? new FruitEntity
+                        {
+                            Id = ds.Variety.Fruit.Id,
+                            Description = ds.Variety.Fruit.Description
+                        } : null
+                    } : null
+                })
                 .OrderBy(ds => ds.Variety.Fruit.Description)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -27,6 +46,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
             return await context.WorkOrderWorkedSectors.Where(x => x.WorkOrderId == orderId)
                 .Select(x => x.SectorFarm)
                 .OrderBy(x => x.SectorName)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }

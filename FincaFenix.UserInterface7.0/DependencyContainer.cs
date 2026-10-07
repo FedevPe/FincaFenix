@@ -1,6 +1,7 @@
 ﻿using FincaFenix.UserInterface7._0.Services;
 using FincaFenix.UserInterface7._0.Validators.DetailWorkOrder;
 using FincaFenix.UserInterface7._0.Validators.RegisterActivity;
+using FincaFenix.UserInterface7._0.Validators.Users;
 using FincaFenix.UserInterface7._0.Validators.WorkOrder;
 using Microsoft.JSInterop;
 
@@ -23,7 +24,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<NewDetailSectorUIValidator>()
                     .AddScoped<DetailActivityUIValidator>()
                     .AddScoped<RegistryActivityViewModelValidator>()
-                    .AddScoped<RecipeMachineUIValidator>();
+                    .AddScoped<RecipeMachineUIValidator>()
+                    .AddScoped<EditUserValidator>();
 
             return services;
         }

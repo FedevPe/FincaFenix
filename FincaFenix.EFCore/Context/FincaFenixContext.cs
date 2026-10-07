@@ -7,9 +7,8 @@ namespace FincaFenix.EFCore.Context
 {
     public class FincaFenixContext : IdentityDbContext<ApplicationUser>
     {
-        public FincaFenixContext(DbContextOptions<FincaFenixContext> options) : base(options)
-        {
-        }
+        public FincaFenixContext(){}
+        public FincaFenixContext(DbContextOptions<FincaFenixContext> options) : base(options){}
 
         public DbSet<DetailRecipeEntity> DetailRecipes { get; set; }
         public DbSet<DetailSectorFarmEntity> DetailSectors { get; set; }

@@ -1,6 +1,7 @@
+using FincaFenix.EFCore;
 using FincaFenix.EFCore.Context;
 using FincaFenix.Entities.POCOEntities;
-using FincaFenix.InversionOfControl;
+using FincaFenixControllers.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor;
@@ -29,7 +30,7 @@ namespace FincaFenix.UserInterface7._0
                 options.DetailedErrors = builder.Environment.IsDevelopment();
             });
             builder.Services.AddControllers();
-            builder.Services.AddServicesContainer();
+            builder.Services.AddServicesContainer(builder.Configuration);
             builder.Services.AddUIServices();
             builder.Services.AddMudServices(config =>
             {
@@ -42,9 +43,12 @@ namespace FincaFenix.UserInterface7._0
 
             var conn = builder.Configuration.GetConnectionString("DefaultConnection");
             // Agregar el DbContext de Entity Framework Core para Identity
-            builder.Services.AddDbContext<FincaFenixContext>(conf => conf.UseSqlServer(conn));
+            builder.Services.AddDbContext<FincaFenixContext>(conf =>
+            {
+                conf.UseSqlServer(conn);
+                PolicyContainer.ConfigureSeeding(conf);
+            });
 
-            //Agregar Identity y su configuraci�n.
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
                 options =>
                 {
@@ -62,24 +66,6 @@ namespace FincaFenix.UserInterface7._0
                 .AddEntityFrameworkStores<FincaFenixContext>()
                 .AddRoles<IdentityRole>();
 
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/login";
-                options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/accesodenegado";
-
-                // Expira la sesion tras 1 hora de inactividad
-                options.ExpireTimeSpan = TimeSpan.FromHours(1);
-
-                // SlidingExpiration = false ⇒ no se renueva automáticamente
-                options.SlidingExpiration = true;
-
-                // (opcional) Evita que la cookie se mantenga tras cerrar el navegador
-                options.Cookie.IsEssential = true;
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SameSite = SameSiteMode.Strict;
-            });
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -95,6 +81,8 @@ namespace FincaFenix.UserInterface7._0
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

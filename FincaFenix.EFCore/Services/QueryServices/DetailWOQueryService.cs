@@ -10,14 +10,33 @@ namespace FincaFenix.EFCore.Services.QueryServices
     {
         public async Task<IEnumerable<DetailWorkOrderEntity>> GetActivityLogByOrderId(int orderId)
         {
-            var listDetails = await context.DetailWorkOrders
+            return await context.DetailWorkOrders
                 .Where(dwo => dwo.WorkOrderId == orderId)
-                .Include(dwo => dwo.SectorWorked)
-                .Include(dwo => dwo.Employee)
+                .Select(dwo => new DetailWorkOrderEntity
+                {
+                    Id = dwo.Id,
+                    WorkOrderId = dwo.WorkOrderId,
+                    EmployeeId = dwo.EmployeeId,
+                    SectorWorkedId = dwo.SectorWorkedId,
+                    Performance = dwo.Performance,
+                    WorkedHours = dwo.WorkedHours,
+                    Description = dwo.Description,
+                    ActivityDate = dwo.ActivityDate,
+                    Employee = dwo.Employee != null ? new EmployeeEntity
+                    {
+                        Id = dwo.Employee.Id,
+                        Name = dwo.Employee.Name,
+                        LastName = dwo.Employee.LastName
+                    } : null,
+                    SectorWorked = dwo.SectorWorked != null ? new DetailSectorFarmEntity
+                    {
+                        Id = dwo.SectorWorked.Id,
+                        SectorName = dwo.SectorWorked.SectorName
+                    } : null
+                })
                 .OrderBy(dwo => dwo.ActivityDate)
+                .AsNoTracking()
                 .ToListAsync();
-
-            return listDetails;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.DTOs.ShowWorkOrder;
+﻿using FincaFenix.Entities.DTOs.Common;
+using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.UsesCases.Controllers.WorkOrder;
 
 namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
@@ -10,8 +11,8 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
         public int PageSize { get; set; } = 4;
         public int TotalItems { get; set; } = 0;
         public string? StatusWorkOrderIsDistinct { get; set; } = "Cerrado";
-        public List<ShowWorkOrderDTO> AllWorkOrderList { get; set; } = new List<ShowWorkOrderDTO>();
-        public List<ShowWorkOrderDTO> WorkOrderPaginatedList { get; set; } = new List<ShowWorkOrderDTO>();
+        public IEnumerable<ShowWorkOrderDTO> AllWorkOrderList { get; set; } = new List<ShowWorkOrderDTO>();
+        public IEnumerable<ShowWorkOrderDTO> WorkOrderPaginatedList { get; set; } = new List<ShowWorkOrderDTO>();
 
         public async Task LoadWorkOrderList()
         {
@@ -19,10 +20,10 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
         }
         public async Task LoadWorkOrderListPaginated()
         {
-            var (workOrders, totalCount) = await wo.GetWorkOrderListPaginated(CurrentPage, PageSize, StatusWorkOrderIsDistinct);
+            var result = await wo.GetWorkOrderListPaginated(CurrentPage, PageSize, StatusWorkOrderIsDistinct);
 
-            WorkOrderPaginatedList = workOrders.ToList();
-            TotalItems = totalCount;
+            WorkOrderPaginatedList = result.Items.ToList();
+            TotalItems = result.TotalCount;
         }
         public async Task OnPageChanged(int pageNumber)
         {

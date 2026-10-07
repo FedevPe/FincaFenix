@@ -1,6 +1,7 @@
 ﻿using FincaFenix.ViewModels.ViewModels;
 using FincaFenix.ViewModels.ViewModels.Login;
 using FincaFenix.ViewModels.ViewModels.UpdateWorkOrder;
+using FincaFenix.ViewModels.ViewModels.User;
 using FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder;
 using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder;
 using FincaFenix.ViewModels.ViewModels.WorkOrderDetails;
@@ -21,7 +22,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<LoadWorkOrdersViewModel>()
                     .AddTransient<GetActivitiesWorkOrderViewModel>()
                     .AddTransient<UpdateWorkOrderViewModel>()
-                    .AddTransient<CalculateMaterialConsumedViewModel>();
+                    .AddTransient<CalculateMaterialConsumedViewModel>()
+                    .AddTransient<EditUserViewModel>();
 
             return services;
         }

@@ -5,7 +5,7 @@ namespace FincaFenix.UserInterface7._0.Components.Shared
 {
     public partial class StatsCard
     {
-        [Parameter] public List<ShowWorkOrderDTO> WorkOrderList { get; set; }
+        [Parameter] public IEnumerable<ShowWorkOrderDTO> WorkOrderList { get; set; }
         [Parameter] public EventCallback<FilterWorkOrder> OnFilterSelectedChanged { get; set; }
 
         private FilterWorkOrder filterWorkOrder = FilterWorkOrder.None;

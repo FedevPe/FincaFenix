@@ -1,4 +1,4 @@
-ï»¿@using FincaFenix.UserInterface7._0.Validators.WorkOrder
+@using FincaFenix.UserInterface7._0.Validators.WorkOrder
 @using FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
 <MudForm @ref="_form" Model="ViewModel" Validation="@(Validator.ValidateValue)">
     <div class="modern-form-container">
@@ -10,7 +10,7 @@
                 </div>
                 <div class="header-text">
                     <MudText Class="header-title" Typo="Typo.h4">Nueva Orden de Trabajo</MudText>
-                    <MudText Class="header-subtitle" Typo="Typo.subtitle1">Complete la informaciÃ³n necesaria para crear la orden</MudText>
+                    <MudText Class="header-subtitle" Typo="Typo.subtitle1">Complete la información necesaria para crear la orden</MudText>
                 </div>
             </div>
             <div class="header-divider"></div>
@@ -106,7 +106,7 @@
                                             Cuadros de la Finca @ViewModel.Farms.FirstOrDefault(f => f.Id == ViewModel.SelectedFarmId).Name
                                         </MudText>
                                         <MudText Class="section-subtitle" Typo="Typo.body2">
-                                            Seleccione los cuadros donde se realizarÃ¡ la tarea
+                                            Seleccione los cuadros donde se realizará la tarea
                                         </MudText>
                                     </div>
                                 </div>
@@ -158,7 +158,7 @@
                                             <MudTh Class="sectors-table-header">
                                                 <div class="header-content">
                                                     <MudIcon Icon="@Icons.Material.Filled.Settings" Class="header-icon" />
-                                                    <span>AcciÃ³n</span>
+                                                    <span>Acción</span>
                                                 </div>
                                             </MudTh>
                                         </HeaderContent>
@@ -176,7 +176,7 @@
                                                                For="@(() => context.Id)"
                                                                Class="sector-select">
                                                         <MudSelectItem T="int" Value="0" Disabled="true">Seleccione un cuadro</MudSelectItem>
-                                                        @foreach (var sector in GetAvailableSectors(context.Id)) // ðŸ‘ˆ CÃ“DIGO REFACTORIZADO
+                                                        @foreach (var sector in GetAvailableSectors(context.Id)) // ?? CÓDIGO REFACTORIZADO
                                                         {
                                                             <MudSelectItem T="int" Value="@sector.Id">@sector.SectorName</MudSelectItem>
                                                         }
@@ -249,7 +249,7 @@
     private MudForm _form;
     public decimal? TotalArea { get; set; } = 0;
 
-    // MÃ©todo auxiliar para filtrar la lista de cuadros
+    // Método auxiliar para filtrar la lista de cuadros
     private IEnumerable<DetailSectorFarmDTO> GetAvailableSectors(int currentSectorId)
     {
         var selectedIds = ViewModel.SelectedSectors
@@ -267,15 +267,15 @@
 
         if (ViewModel.SelectedFarmId != 0)
         {
-            await ViewModel.LoadSectorsForFarmIdAsync(ViewModel.SelectedFarmId);
-            AddSectorToSelection(); // Agregamos la primera fila despuÃ©s de cargar los sectores
+            await ViewModel.LoadSectorsForFarmIdAsync(ViewModel.SelectedFarmId, CancellationToken.None);
+            AddSectorToSelection(); // Agregamos la primera fila después de cargar los sectores
         }
         StateHasChanged();
     }
 
     private void OnSectorSelected(DetailSectorFarmDTO currentSector, int selectedId)
     {
-        // Resta el Ã¡rea del sector previamente seleccionado (si existe)
+        // Resta el área del sector previamente seleccionado (si existe)
         if (currentSector.Selected)
         {
             TotalArea -= currentSector.Area;
@@ -294,12 +294,12 @@
             currentSector.VarietyName = fullSelectedSector.VarietyName;
             currentSector.Selected = true;
 
-            // Suma el Ã¡rea del nuevo sector
+            // Suma el área del nuevo sector
             TotalArea += fullSelectedSector.Area;
         }
         else
         {
-            // Si se deselecciona o se selecciona la opciÃ³n "Seleccione un cuadro"
+            // Si se deselecciona o se selecciona la opción "Seleccione un cuadro"
             // Restablece los valores
             currentSector.Id = 0;
             currentSector.NumberPlants = 0;
@@ -325,7 +325,7 @@
     {
         if (ViewModel.SelectedSectors.Contains(sector))
         {
-            // Resta el Ã¡rea solo si la fila tenÃ­a un sector seleccionado
+            // Resta el área solo si la fila tenía un sector seleccionado
             if (sector.Selected)
             {
                 TotalArea -= sector.Area;
@@ -748,7 +748,7 @@
                 <MudText Typo="Typo.h4">Nueva Orden de Trabajo</MudText>
             </MudItem>
             <MudItem lg="12">
-                <MudText Typo="Typo.subtitle1">Complete la informaciÃ³n necesaria para crear la orden</MudText>
+                <MudText Typo="Typo.subtitle1">Complete la información necesaria para crear la orden</MudText>
             </MudItem>
         </MudGrid>
 

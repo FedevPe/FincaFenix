@@ -92,50 +92,54 @@ namespace FincaFenix.EFCore.Services.QueryServices.WorkOrder
         public async Task<WorkOrderEntity> GetWorkOrderAndRecipeByIdWorkorder(int id)
         {
             return await context.WorkOrders.Where(wo => wo.Id == id)
-                .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
-                    .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
                 .Include(wo => wo.DetailWorkOrderList)
-                    .ThenInclude(dwo => dwo.SectorWorked) // Incluye el Sector Trabajado para cada Detalle de Orden de Trabajo
+                    .ThenInclude(dwo => dwo.Employee)
+                .Include(wo => wo.DetailWorkOrderList)
+                    .ThenInclude(dwo => dwo.SectorWorked)
                 .Include(wo => wo.Task)
                 .Include(wo => wo.Farm)
-                .Include(wo => wo.Recipe) // Incluye la Receta
-                    .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
-                        .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
-                            .ThenInclude(m => m.Category) // Incluye el Categorua para cada Material
                 .Include(wo => wo.Recipe)
-                    .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
-                .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
-                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
-                        .ThenInclude(sf => sf.Variety)// Incluye la Finca para cada SectorFarm
-                            .ThenInclude(v => v.Fruit) // Incluye la Fruta para cada Variedad
-                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
-                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                    .ThenInclude(r => r.DetailRecipeList)
+                        .ThenInclude(dr => dr.Material)
+                            .ThenInclude(m => m.Category)
+                .Include(wo => wo.Recipe)
+                    .ThenInclude(r => r.Machine)
+                .Include(wo => wo.WorkedSectors)
+                    .ThenInclude(ws => ws.SectorFarm)
+                        .ThenInclude(sf => sf.Variety)
+                            .ThenInclude(v => v.Fruit)
+                 .Include(wo => wo.WorkedSectors)
+                    .ThenInclude(ws => ws.SectorFarm)
                         .ThenInclude(sf => sf.Farm)
+                .AsSplitQuery()
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList()
         {
             return await context.WorkOrders.Where(wo => !wo.IsDeleted)
-                .Include(wo => wo.DetailWorkOrderList) // Incluye la colección de Detalles de Orden de Trabajo
-                    .ThenInclude(dwo => dwo.Employee)// Incluye el Material para cada Detalle de Orden de Trabajo
                 .Include(wo => wo.DetailWorkOrderList)
-                    .ThenInclude(dwo => dwo.SectorWorked) // Incluye el Sector Trabajado para cada Detalle de Orden de Trabajo
+                    .ThenInclude(dwo => dwo.Employee)
+                .Include(wo => wo.DetailWorkOrderList)
+                    .ThenInclude(dwo => dwo.SectorWorked)
                 .Include(wo => wo.Task)
                 .Include(wo => wo.Farm)
-                .Include(wo => wo.Recipe) // Incluye la Receta
-                    .ThenInclude(r => r.DetailRecipeList) // Incluye la colección de Detalles de Receta
-                        .ThenInclude(dr => dr.Material) // Incluye el Material para cada Detalle de Receta
-                            .ThenInclude(m => m.Category) // Incluye la Categoría para cada Material
                 .Include(wo => wo.Recipe)
-                    .ThenInclude(r => r.Machine) // Incluye la Maquinaria para la Receta
-                .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
-                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
-                        .ThenInclude(sf => sf.Variety)// Incluye la Finca para cada SectorFarm
-                            .ThenInclude(v => v.Fruit) // Incluye la Fruta para cada Variedad
-                 .Include(wo => wo.WorkedSectors) // Incluye la colección de Sectores Trabajados
-                    .ThenInclude(ws => ws.SectorFarm) // Incluye SectorFarm para cada Sector Trabajado
+                    .ThenInclude(r => r.DetailRecipeList)
+                        .ThenInclude(dr => dr.Material)
+                            .ThenInclude(m => m.Category)
+                .Include(wo => wo.Recipe)
+                    .ThenInclude(r => r.Machine)
+                .Include(wo => wo.WorkedSectors)
+                    .ThenInclude(ws => ws.SectorFarm)
+                        .ThenInclude(sf => sf.Variety)
+                            .ThenInclude(v => v.Fruit)
+                 .Include(wo => wo.WorkedSectors)
+                    .ThenInclude(ws => ws.SectorFarm)
                         .ThenInclude(sf => sf.Farm)
+                 .AsSplitQuery()
+                 .AsNoTracking()
                  .ToListAsync();
         }
     }

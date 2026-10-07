@@ -1,27 +1,31 @@
-﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+﻿using System.ComponentModel;
+using System.Net;
+using FincaFenix.Entities;
+using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
-using FincaFenix.UsesCases.Interfaces.Sectors;
+using FincaFenix.UsesCases.UseCases.DetailSector;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FincaFenixControllers.Implementations
 {
+    [Authorize(Policy = PolicyMaster.SECTOR_FARM_READ)]
     [ApiController]
     [Route("api/[controller]")]
-    public class DetailSectorController(
-        IDetailSectorInputPort interactor,
-        IDetailSectorOutputPort presenter) : IDetailSectorController
+    public class DetailSectorController(ISender mediator) : ControllerBase, IDetailSectorController
     {
         [HttpGet("farm/{farmId}/sectors")]
-        public async Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByFarmId(int farmId)
+        [ProducesResponseType(typeof(IEnumerable<DetailSectorFarmDTO>),(int)HttpStatusCode.OK)]
+        public async Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByFarmId(int farmId, CancellationToken cancellationToken)
         {
-            await interactor.GetListSectorsByIdFarm(farmId);
-            return presenter.SectorList;
+            return await mediator.Send(new GetSectorListByFarmQuery(farmId), cancellationToken);
         }
         [HttpGet("order/{orderId}/sectors")]
-        public async Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByOrderId(int orderId)
+        [ProducesResponseType(typeof(IEnumerable<DetailSectorFarmDTO>),(int)HttpStatusCode.OK)]
+        public async Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByOrderId(int orderId, CancellationToken cancellationToken)
         {
-            await interactor.GetSectorsByOrderId(orderId);
-            return presenter.SectorList;
+            return await mediator.Send(new GetSectorListByOrderQuery(orderId), cancellationToken);
         }
     }
 }

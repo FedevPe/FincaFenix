@@ -33,9 +33,10 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
         {
             Tasks = await task.GetTaskList();
         }
-        public async Task LoadSectorsForFarmIdAsync(int farmId)
+        public async Task LoadSectorsForFarmIdAsync(int farmId, 
+            CancellationToken cancellationToken)
         {
-            Sectors = await sector.GetListSectorByFarmId(farmId);
+            Sectors = await sector.GetListSectorByFarmId(farmId, cancellationToken);
         }
     }
 }

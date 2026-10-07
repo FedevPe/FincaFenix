@@ -1,6 +1,6 @@
 ﻿@page "/ordentrabajo/{IdWorkOrder:int}/detalle/"
 @using FincaFenix.ViewModels.ViewModels.WorkOrder.GetInformationWorkOrder
-@attribute [Authorize]
+@attribute [Authorize(Roles = "administrador, desarrollador, supervisor")]
 
 <div class="work-order-detail-page">
     @if (ViewModel.IsLoading)

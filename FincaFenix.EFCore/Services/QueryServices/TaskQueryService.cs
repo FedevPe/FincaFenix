@@ -1,4 +1,5 @@
 ﻿using FincaFenix.EFCore.Context;
+using FincaFenix.Entities.Exceptions;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.QueryServices;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<TaskEntity> GetTaskById(int taskId)
         {
-            return await context.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new KeyNotFoundException($"Task with ID {taskId} not found.");
+            return await context.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new NotFoundException($"Task with ID {taskId} not found.");
         }
 
         public async Task<IEnumerable<TaskEntity>> GetTaskList()

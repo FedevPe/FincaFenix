@@ -21,13 +21,13 @@ public static class DependencyContainer
                 .AddTransient<IEmployeeController, EmployeeController>()
 
                 //WorkOrder
-                .AddTransient<ICreateWorkOrderController, CreateWorkOrderController>()
-                .AddTransient<IGetWorkOrderInformationController, GetWorkOrderInformationController>()
-                .AddTransient<IUpdateWorkOrderController, UpdateWorkOrderController>()
+                .AddTransient<ICreateWorkOrderController, WorkOrderController>()
+                .AddTransient<IGetWorkOrderInformationController, WorkOrderController>()
+                .AddTransient<IUpdateWorkOrderController, WorkOrderController>()
 
                 //DetailWorkOrder
-                .AddTransient<IAddDetailWorkOrderController, AddDetailWorkOrderController>()
-                .AddTransient<IGetActivitiesWorkOrderController, GetActivitiesWorkOrderController>();
+                .AddTransient<IAddDetailWorkOrderController, DetailWorkOrderController>()
+                .AddTransient<IGetActivitiesWorkOrderController, DetailWorkOrderController>();
 
         return services;
     }

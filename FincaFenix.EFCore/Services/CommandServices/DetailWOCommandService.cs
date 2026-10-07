@@ -9,16 +9,9 @@ namespace FincaFenix.EFCore.Services.CommandServices
     {
         public async Task<int> SaveDetailWorkOrderAsync(DetailWorkOrderEntity detailWorkOrder)
         {
-            try
-            {
-                await context.DetailWorkOrders.AddAsync(detailWorkOrder);
-                await context.SaveChangesAsync();
-                return detailWorkOrder.Id;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await context.DetailWorkOrders.AddAsync(detailWorkOrder);
+            await context.SaveChangesAsync();
+            return detailWorkOrder.Id;
         }
     }
 }

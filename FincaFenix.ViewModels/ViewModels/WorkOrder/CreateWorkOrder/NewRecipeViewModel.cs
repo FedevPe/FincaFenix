@@ -70,13 +70,13 @@ namespace FincaFenix.ViewModels.ViewModels.WorkOrder.CreateWorkOrder
         {
             if (measureUnit != "lts" && measureUnit != "kg" )
             {
-                decimal totalAplicationVolume = TRV * totalSurface.Value;
+                decimal totalAplicationVolume = TRV * totalSurface!.Value;
                 decimal estimatedAmount = (totalAplicationVolume * (amountRequired/1000))/ TRV;
                 return estimatedAmount;
             }
             else 
             {
-                decimal totalAplicationVolume = TRV * totalSurface.Value;
+                decimal totalAplicationVolume = TRV * totalSurface!.Value;
                 decimal estimatedAmount = (totalAplicationVolume * amountRequired) / machineCapacity;
                 return estimatedAmount;
             }    

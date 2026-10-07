@@ -1,20 +1,33 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using FincaFenix.EFCore;
+using FincaFenix.UsesCases.Mappings;
+using Microsoft.Extensions.Configuration;
 
-namespace FincaFenix.InversionOfControl
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class ServicesDependencyContainer
 {
-    public static class ServicesDependencyContainer
+    public static IServiceCollection AddServicesContainer(
+        this IServiceCollection services,
+        IConfiguration configuration = null)
     {
-        public static IServiceCollection AddServicesContainer(
-            this IServiceCollection services)
+        var mapperConfig = new MapperConfiguration(cfg =>
         {
-            services.AddUseCasesServices()
-                    .AddControllersServices()
-                    .AddGatewaysServices()
-                    .AddPresenterServices()
-                    .AddViewModelServices()
-                    .AddEFCoreServices();
+            cfg.AddProfile<MappingProfile>();
+        });
+        mapperConfig.AssertConfigurationIsValid();
+        services.AddSingleton(mapperConfig.CreateMapper());
 
-            return services;
-        }
+        services.AddUseCasesServices()
+                .AddControllersServices()
+                .AddGatewaysServices()
+                .AddViewModelServices()
+                .AddEFCoreServices()
+                .AddPDFServices();
+
+        if (configuration is not null)
+            services.AddAuthServices(configuration);
+
+        return services;
     }
 }

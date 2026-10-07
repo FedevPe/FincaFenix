@@ -5,7 +5,7 @@ namespace FincaFenix.UsesCases.Controllers
 {
     public interface IDetailSectorController
     {
-        Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByFarmId(int farmId);
-        Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByOrderId(int orderId);
+        Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByFarmId(int farmId, CancellationToken cancellationToken);
+        Task<IEnumerable<DetailSectorFarmDTO>> GetListSectorByOrderId(int orderId, CancellationToken cancellationToken);
     }
 }

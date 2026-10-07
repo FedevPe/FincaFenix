@@ -78,15 +78,17 @@
     
     <MudCardActions Class="card-actions pa-3 d-flex justify-content-center align-items-center">
         <MudGrid Justify="Justify.Center" Spacing="3">
-            <MudItem>
-                <MudButton Variant="Variant.Text"
-                           Size="Size.Small"
-                           StartIcon="@Icons.Material.Filled.Visibility"
-                           Class="action-button"
-                           Color="Color.Info"
-                           IconColor="Color.Info"
-                           OnClick="OpenWorkOrderDetails">Ver Detalles</MudButton>
-            </MudItem>
+            <AuthorizeView Roles="desarrollador, administrador, supervisor">
+                <MudItem>
+                    <MudButton Variant="Variant.Text"
+                               Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Visibility"
+                               Class="action-button"
+                               Color="Color.Info"
+                               IconColor="Color.Info"
+                               OnClick="OpenWorkOrderDetails">Ver Detalles</MudButton>
+                </MudItem>
+            </AuthorizeView>
             <MudItem>
                 <MudButton Variant="Variant.Text"
                            Size="Size.Small"

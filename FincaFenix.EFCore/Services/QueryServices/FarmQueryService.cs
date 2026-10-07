@@ -1,4 +1,5 @@
 ﻿using FincaFenix.EFCore.Context;
+using FincaFenix.Entities.Exceptions;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.QueryServices;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
         {
             return context.Farms
                 .Where(f => f.Id == farmId)
-                .FirstOrDefaultAsync() ?? throw new KeyNotFoundException($"Task with ID {farmId} not found.");
+                .FirstOrDefaultAsync() ?? throw new NotFoundException($"Farm with ID {farmId} not found.");
         }
 
         public async Task<IEnumerable<FarmEntity>> GetFarmList()

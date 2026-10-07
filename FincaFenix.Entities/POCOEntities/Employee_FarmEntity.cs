@@ -4,9 +4,9 @@
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
-        public EmployeeEntity Employee { get; set; }
+        public EmployeeEntity? Employee { get; set; }
         public int FarmId { get; set; }
-        public FarmEntity Farm { get; set; }
+        public FarmEntity? Farm { get; set; }
 
     }
 }
