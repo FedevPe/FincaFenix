@@ -1,0 +1,122 @@
+﻿<MudItem xs="12" sm="6" md="4">
+    <MudCard Class="@moduleClass"
+             @onclick="@(() => NavigateToModule($"/{Link}"))"
+             Elevation="@elevation">
+        <MudCardContent Class="d-flex flex-column justify-center align-center h-100 pa-6">
+            <MudIcon Class="mud-icon" Icon="@Icon"/>
+            <MudText Class="mud-title" Typo="Typo.h6" Align="Align.Center">
+                @Title
+            </MudText>
+            <MudText Class="mud-subtitle" Typo="Typo.body2" Align="Align.Center">
+                @SubTitle
+            </MudText>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+<style>
+    .module-card {
+        height: 200px;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .module-card .mud-icon {
+        font-size: 64px;
+        color: #26a69a;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+    }
+    .module-card .mud-title {
+        font-weight: 500;
+        color: #00796B;
+    }
+    .module-card .mud-subtitle {
+        color: #666;
+        margin-top: 8px;
+    }
+    .module-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15) !important;
+    }
+    .module-card:hover .mud-icon {
+        color: #00796B !important;
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+    }
+    .stat-item {
+        padding: 12px;
+        border-radius: 8px;
+        background: rgba(46, 125, 50, 0.05);
+        margin-bottom: 8px;
+    }
+    .finca-item:hover {
+        background: #e8f5e8 !important;
+        transition: background 0.3s ease;
+    }
+    .module-card-disabled {
+        height: 200px;
+        border-radius: 16px;
+        border: 2px solid #ddd;
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+    }
+    .module-card-disabled .mud-icon {
+        font-size: 64px;
+        color: #ccc;
+        margin-bottom: 16px;
+    }
+    .module-card-disabled .mud-title {
+        color: #999;
+    }
+    .module-card-disabled .mud-subtitle {
+        color: #999;
+        margin-top: 8px;
+    }
+</style>
+@code {
+    private string moduleClass = "module-card";
+    private int elevation = 2;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    public ISnackbar Snackbar { get; set; }
+
+    [Parameter]
+    public string Link { get; set; }
+    [Parameter]
+    public string Icon { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string SubTitle { get; set; }
+    [Parameter]
+    public bool ModuleDisabled { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ModuleDisabled)
+        {
+            moduleClass = "module-card-disabled";
+            elevation = 0;
+        }
+    }
+
+    private void NavigateToModule(string route)
+    {
+        try
+        {
+            if (ModuleDisabled)
+            {
+                Snackbar.Add("Módulo deshabilitado temporalmente.", MudBlazor.Severity.Info);
+                return;
+            }
+            NavigationManager.NavigateTo(route);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al navegar: {ex.Message}", MudBlazor.Severity.Error);
+        }
+    }
+}
