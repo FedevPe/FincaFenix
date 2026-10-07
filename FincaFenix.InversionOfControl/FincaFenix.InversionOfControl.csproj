@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <LangVersion>12.0</LangVersion>
@@ -13,9 +13,13 @@
     <ProjectReference Include="..\FincaFenix.Entities\FincaFenix.Entities.csproj" />
     <ProjectReference Include="..\FincaFenix.Gateways\FincaFenix.Gateways.csproj" />
     <ProjectReference Include="..\FincaFenix.PDF\FincaFenix.PDF.csproj" />
-    <ProjectReference Include="..\FincaFenix.Presenters\FincaFenix.Presenters.csproj" />
     <ProjectReference Include="..\FincaFenix.UsesCases\FincaFenix.UsesCases.csproj" />
     <ProjectReference Include="..\FincaFenix.ViewModels\FincaFenix.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
   </ItemGroup>
 
 </Project>
