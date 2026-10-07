@@ -18,7 +18,7 @@ namespace FincaFenix.ViewModels.ViewModels.Login
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<LoginResult>();
+                await response.Content.ReadFromJsonAsync<LoginResult>();
             }
 
             // Maneja el caso de error.
