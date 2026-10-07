@@ -1,0 +1,336 @@
+﻿@using FincaFenix.ViewModels.ViewModels.User
+@using Microsoft.AspNetCore.Identity
+
+<MudDialog Class="modern-dialog" Options="dialogOptions">
+    <TitleContent>
+        <div class="dialog-header">
+            <div class="header-content-dialog">
+                <MudIcon Icon="@Icons.Material.Filled.Edit" Class="header-icon-dialog" />
+                <MudText Typo="Typo.h5" Class="header-title">Editar Usuario</MudText>
+            </div>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <div class="dialog-body">
+            <MudGrid Spacing="3">
+                <MudItem xs="12">
+                    <div class="user-info-card">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" Class="info-icon" />
+                        <div class="user-details">
+                            <MudText Typo="Typo.subtitle1" Class="user-name-display">
+                                @User.Name @User.LastName
+                            </MudText>
+                            <MudText Typo="Typo.body2" Class="user-username-display">
+                                @User.UserName
+                            </MudText>
+                        </div>
+                    </div>
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudForm @ref="form" Model="model">
+                        <MudTextField @bind-Value="model.NewPassword"
+                                      Label="Nueva contraseña"
+                                      Variant="Variant.Outlined"
+                                      InputType="InputType.Password"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Lock"
+                                      HelperText="Dejar en blanco para mantener la contraseña actual"
+                                      Class="modern-input" />
+
+                        <MudTextField @bind-Value="model.ConfirmPassword"
+                                      Label="Confirmar contraseña"
+                                      Variant="Variant.Outlined"
+                                      InputType="InputType.Password"
+                                      Adornment="Adornment.Start"
+                                      AdornmentIcon="@Icons.Material.Filled.Lock"
+                                      Class="modern-input" />
+                    </MudForm>
+                </MudItem>
+
+                <MudItem xs="12">
+                    <MudSelect @bind-Value="selectedRole"
+                               Label="Rol del Usuario"
+                               Variant="Variant.Outlined"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Adornment="Adornment.Start"
+                               AdornmentIcon="@Icons.Material.Filled.Flag"
+                               Class="modern-select">
+                        @foreach (var r in Roles)
+                        {
+                            <MudSelectItem Value="@r.Name">@r.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <div class="dialog-actions">
+            <MudButton Color="Color.Default"
+                       Variant="Variant.Outlined"
+                       StartIcon="@Icons.Material.Filled.Close"
+                       Class="cancel-btn"
+                       OnClick="Cancel">
+                Cancelar
+            </MudButton>
+            <MudButton Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Save"
+                       Class="save-btn"
+                       OnClick="Save"
+                       Disabled="!HasChanges">
+                Guardar Cambios
+            </MudButton>
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public ApplicationUser User { get; set; }
+    [Parameter] public List<IdentityRole> Roles { get; set; }
+
+    [Parameter] public UserManager<ApplicationUser> UserManager { get; set; }
+    [Parameter] public SignInManager<ApplicationUser> SignInManager { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+
+    private string selectedRole;
+    private string password;
+    private MudForm form;
+    private EditUserViewModel model = new();
+
+    private DialogOptions dialogOptions = new()
+    {
+        MaxWidth = MaxWidth.Medium,
+        FullWidth = true,
+        CloseButton = true,
+        CloseOnEscapeKey = true
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var roles = await UserManager.GetRolesAsync(User);
+        selectedRole = roles.FirstOrDefault();
+    }
+
+    bool HasChanges =>
+    !string.IsNullOrWhiteSpace(model.NewPassword) ||
+    selectedRole != (UserManager.GetRolesAsync(User).Result.FirstOrDefault());
+
+    private async Task Save()
+    {
+        await form.Validate();
+
+        if (!form.IsValid)
+            return; // corta si la validación falla
+
+        password = model.NewPassword; // usamos el valor validado
+
+        var user = await UserManager.FindByIdAsync(User.Id);
+        if (user == null)
+            return;
+
+        /* -------------------------
+           CAMBIAR ROL
+        ------------------------- */
+
+        var oldRoles = await UserManager.GetRolesAsync(user);
+        await UserManager.RemoveFromRolesAsync(user, oldRoles);
+        await UserManager.AddToRoleAsync(user, selectedRole);
+
+        /* -------------------------
+           CAMBIAR CONTRASEÑA
+        ------------------------- */
+
+        if (!string.IsNullOrWhiteSpace(password))
+        {
+            var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+            var resultPass = await UserManager.ResetPasswordAsync(user, token, password);
+
+            if (!resultPass.Succeeded)
+            {
+                // opcional: mostrar errores
+                return;
+            }
+        }
+
+        /* -------------------------
+           INVALIDAR SESIÓN
+        ------------------------- */
+        await UserManager.UpdateSecurityStampAsync(user);
+
+        var currentUser = await UserManager.GetUserAsync(SignInManager.Context.User);
+
+        if (currentUser?.Id == user.Id)
+        {
+            await SignInManager.SignOutAsync();
+            NavigationManager.NavigateTo("/login", true);
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}
+
+<style>
+    /* Diálogo moderno */
+    .modern-dialog {
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+
+    /* Header con color primario */
+    .dialog-header {
+        background: linear-gradient(135deg, #00796B 0%, #00695C 100%);
+        padding: 1.5rem 2rem;
+        margin: -1.5rem -1.5rem 0 -1.5rem;
+        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .header-content-dialog {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .header-icon-dialog {
+        color: white !important;
+        font-size: 32px !important;
+    }
+
+    .header-title {
+        color: white !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+        letter-spacing: 0.5px;
+    }
+
+    /* Cuerpo del diálogo */
+    .dialog-body {
+        padding: 2rem 0.5rem;
+        background: white;
+    }
+
+    /* Tarjeta de información del usuario */
+    .user-info-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #f8fafb 0%, #f0f9ff 100%);
+        border-radius: 12px;
+        border: 2px solid #00796B;
+        margin-bottom: 1rem;
+    }
+
+    .info-icon {
+        color: #00796B !important;
+        font-size: 40px !important;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .user-name-display {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .user-username-display {
+        color: #64748b !important;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9rem !important;
+    }
+
+    /* Inputs modernos */
+    .modern-input,
+    .modern-select {
+        margin-top: 0.5rem;
+    }
+
+    /* Acciones del diálogo */
+    .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        background: #f8fafb;
+        margin: 1rem -1.5rem -1.5rem -1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .cancel-btn {
+        transition: all 0.3s ease !important;
+    }
+
+        .cancel-btn:hover {
+            background: rgba(0, 0, 0, 0.04) !important;
+            transform: translateY(-1px);
+        }
+
+    .save-btn {
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 8px rgba(0, 121, 107, 0.3) !important;
+    }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 121, 107, 0.4) !important;
+        }
+
+    /* Animación de entrada */
+    @@keyframes dialogFadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .modern-dialog {
+        animation: dialogFadeIn 0.3s ease-out;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .dialog-header {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .header-icon-dialog {
+            font-size: 28px !important;
+        }
+
+        .header-title {
+            font-size: 1.25rem !important;
+        }
+
+        .dialog-body {
+            padding: 1.5rem 0.5rem;
+        }
+
+        .dialog-actions {
+            flex-direction: column;
+            padding: 1rem 1.5rem;
+        }
+
+        .cancel-btn,
+        .save-btn {
+            width: 100%;
+        }
+    }
+</style>
