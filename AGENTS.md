@@ -103,7 +103,9 @@ Fixed bugs + removed dead `DetailWorkOrderController`, cleaned duplicate DI regi
 
 ## Completed — Phase 3 (MediatR + AutoMapper)
 
-MediatR 14.1.0 + AutoMapper 13.0.1 replaces old Interactor/Presenter pattern.
+MediatR 14.1.0 + AutoMapper 15.1.1 replaces old Interactor/Presenter pattern.
+
+> **AutoMapper 15 (security upgrade, GHSA-rvv3-g6hj-g44x / CVE-2026-32933):** 15.1.1 is the minimum patched version (13.x is vulnerable). It requires `ILoggerFactory` in the `MapperConfiguration` ctor (see `ServicesDependencyContainer.AddServicesContainer`) and **requires a license key for production** (free dev/test use without one; set `cfg.LicenseKey` via `AddAutoMapper`/config when licensed — https://luckypennysoftware.com).
 
 ### Files created
 
@@ -151,6 +153,8 @@ POST /api/auth/login { "userName": "...", "password": "..." }
 | MudBlazor | 7.16.0 |
 | FluentValidation | 11.11.0 |
 | QuestPDF | 2025.7.0 |
+| MediatR | 14.1.0 |
+| AutoMapper | 15.1.1 |
 | EF Core + SqlServer | 9.0.0 |
 | ASP.NET Identity + UI | 9.0.0 |
 
