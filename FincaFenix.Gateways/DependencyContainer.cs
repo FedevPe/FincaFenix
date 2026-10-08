@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     //Work Order Repository
                     .AddScoped<ICreateWorkOrderRepository, CreateWorkOrderRepository>()
                     .AddScoped<IGetWorkOrderInformationRepository, GetWorkOrderInformationRepository>()
-                    .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepositor>()
+                    .AddScoped<IUpdateWorkOrderRepository, UpdateWorkOrderRepository>()
 
                     //Detail Work Order Repository
                     .AddScoped<IAddDetailWorkOrderRepository, AddDetailWorkOrderRepository>()

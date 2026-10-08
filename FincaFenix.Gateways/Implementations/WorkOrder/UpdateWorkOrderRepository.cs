@@ -4,7 +4,7 @@ using FincaFenix.UsesCases.Repository.WorkOrder;
 
 namespace FincaFenix.Gateways.Implementations.WorkOrder
 {
-    public class UpdateWorkOrderRepositor(
+    public class UpdateWorkOrderRepository(
         IUpdateWorkOrderCommand command) : IUpdateWorkOrderRepository
     {
         public Task<bool> UpdateWorkOrder()
