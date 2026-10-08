@@ -1,7 +1,9 @@
-﻿using FincaFenix.EFCore.Services.CommandServices;
+﻿using FincaFenix.EFCore.Services;
+using FincaFenix.EFCore.Services.CommandServices;
 using FincaFenix.EFCore.Services.CommandServices.WorkOrder;
 using FincaFenix.EFCore.Services.QueryServices;
 using FincaFenix.EFCore.Services.QueryServices.WorkOrder;
+using FincaFenix.Gateways.Interfaces;
 using FincaFenix.Gateways.Interfaces.CommandServices;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 using FincaFenix.Gateways.Interfaces.QueryServices;
@@ -28,11 +30,16 @@ namespace Microsoft.Extensions.DependencyInjection
             #endregion
             //COMMANDS
             #region WorkOrder
-            services.AddTransient<ICreateWorkOrderCommand, CreateWorkOrderCommand>();
+            services.AddTransient<ICorrelativeNumberService, CorrelativeNumberService>();
+            services.AddTransient<IWorkOrderCommand, WorkOrderCommand>();
             services.AddTransient<IUpdateWorkOrderCommand, UpdateWorkOrderCommand>();
             #endregion
 
+            services.AddTransient<IRecipeCommand, RecipeCommand>();
             services.AddTransient<IDetailWOCommandService, DetailWOCommandService>();
+
+            //Unit of Work comparte el DbContext Scoped, por lo que debe registrarse como Scoped
+            services.AddScoped<IUnitOfWork, EfCoreUnitOfWork>();
 
             return services;
         }
