@@ -100,7 +100,7 @@
 
 - [x] `GetAllWorkOrderList()` — se agregó `.AsSplitQuery()` (evita explosión cartesiana de 11+ JOINs) + `.AsNoTracking()` (evita cambio de tracking). Los comentarios inline se eliminaron para claridad.
 - [x] `GetWorkOrderAndRecipeByIdWorkorder()` — mismo tratamiento: `.AsSplitQuery()` + `.AsNoTracking()`.
-- [ ] `GetWorkOrderListPaged`: unificar COUNT + SELECT (difiere a Fase futura — consulta ya usa `.Select()`)
+- [x] `GetWorkOrderListPaged`: unificado el `Where` en una sola variable `baseQuery` compartida por COUNT y SELECT (evita desincronización de criterios). Se decidió mantener 2 round-trips: unificar en 1 query con SQL crudo no compensa contra la proyección anidada de `SectorList`.
 - [x] Eliminados comentarios inline redundantes en las cadenas de Include
 
 #### 2.4 Optimizar CreateWorkOrderCommand
@@ -149,8 +149,8 @@ FincaFenix.UsesCases/
 Agregar behaviors cross-cutting:
 
 1. **ValidationBehavior** — ejecuta FluentValidation automáticamente antes del handler
-2. **LoggingBehavior** — log de request/response
-3. **ExceptionBehavior** — catch y transformación de excepciones
+2. **LoggingBehavior** — log de request/response (incluye log de excepciones + rethrow)
+3. **ExceptionBehavior** — **cerrado como redundante (Oct 2026)**: LoggingBehavior ya loguea excepciones con contexto del request, y `ExceptionMiddleware` (FincaFenix.Controllers/Middleware) ya transforma `NotFoundException`→404, `ValidationException`→422, `UnauthorizedAccessException`→403, resto→500 con ProblemDetails. No se implementa.
 
 #### 3.3 AutoMapper
 
@@ -299,7 +299,7 @@ Siguientes requests:
 #### 7.2 Logging
 
 - [x] Log de requests/respuestas vía MediatR `LoggingBehavior` (ILogger<T>)
-- [ ] Configurar EF Core interceptor para log de queries lentas (>500ms) — *diferido*
+- [x] Configurar EF Core interceptor para log de queries lentas (>500ms) — `FincaFenix.EFCore/Interceptors/SlowQueryLogInterceptor.cs`, registrado en WebAPI (`DatabaseConfiguration.cs`). Umbral configurable: `EfCore:SlowQueryThresholdMs`. La UI Blazor no lo tiene (proyecto deprecado).
 
 #### 7.3 Validación
 

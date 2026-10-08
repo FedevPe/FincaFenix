@@ -144,6 +144,14 @@ POST /api/auth/login { "userName": "...", "password": "..." }
 | `supervisor` | READ de todas las entidades + DETAIL_WORKORDER_CREATE |
 | `operario` | WORKORDER_READ, RECIPE_READ, DETAIL_WORKORDER_CREATE, DETAIL_WORKORDER_READ |
 
+## Completed — Debt Cleanup (Fases 2/3/7 — Oct 2026)
+
+1. **Fase 2** — `GetWorkOrderListPaged` (`GetWorkOrderInformationQuery.cs`): el `Where` duplicado se unificó en `baseQuery` compartido por COUNT y SELECT. Decidido: se mantienen 2 round-trips (SQL crudo no compensa con la proyección anidada de `SectorList`).
+2. **Fase 3** — `ExceptionBehavior` **cerrado como redundante**: `LoggingBehavior` ya loguea excepciones con contexto y `ExceptionMiddleware` ya mapea a ProblemDetails (404/422/403/500).
+3. **Fase 7.2** — `FincaFenix.EFCore/Interceptors/SlowQueryLogInterceptor.cs`: loguea queries que superan `EfCore:SlowQueryThresholdMs` (default 500ms, en `appsettings.json` de WebAPI). Registrado solo en WebAPI — la UI Blazor no lo tiene (proyecto deprecado).
+
+Próxima etapa planificada: **Fase 4 — orquestación de Gateways** (hoy son proxies pass-through 1:1).
+
 ## No Tests
 
 ## NuGet Versions (key)
