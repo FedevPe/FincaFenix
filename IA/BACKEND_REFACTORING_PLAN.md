@@ -154,16 +154,21 @@ Agregar behaviors cross-cutting:
 
 #### 3.3 AutoMapper
 
-- [ ] Instalar `AutoMapper` + `AutoMapper.Extensions.Microsoft.DependencyInjection`
-- [ ] Crear perfiles de mapeo (`MappingProfile.cs`) por módulo:
-  - `WorkOrderMappingProfile`
-  - `FarmMappingProfile`
-  - `MaterialMappingProfile`
-  - etc.
-- [ ] Eliminar `WorkOrderMapper.cs` (198 líneas) y `DetailWorkOrderMapper.cs`
-- [ ] Reemplazar mapeo manual en Presenters por inyección de `IMapper`
+- [x] Instalar `AutoMapper` (15.1.1 — ya instalado en Fase 3 con MediatR; ver notas de licencia en AGENTS.md)
+- [x] Mapeos centralizados en **un único `MappingProfile.cs`** (`FincaFenix.UsesCases/Mappings/`) — decisión: seguir el patrón de la casa (un solo perfil registrado con `cfg.AddProfile<MappingProfile>()`) en vez de un perfil por módulo
+- [x] Eliminar `WorkOrderMapper.cs` (198 líneas) y `DetailWorkOrderMapper.cs` — carpeta `FincaFenix.UsesCases/Mappers/` eliminada
+- [x] Reemplazar mapeo manual en los 4 handlers por inyección de `IMapper`:
+  - `GetAllWorkOrdersHandler` / `GetWorkOrderByIdHandler` → `mapper.Map<ShowWorkOrderDTO>`
+  - `CreateWorkOrderHandler` → `mapper.Map<WorkOrderEntity>` (incluye `GroupItems` + `MapRecipeToEntity` como helpers privados del perfil)
+  - `AddDetailWorkOrderHandler` → `mapper.Map<DetailWorkOrderEntity>`
+  - `GetActivitiesByOrderIdHandler` → `mapper.Map<List<ActivityWorkOrderDTO>>` (eliminó el mapping inline del handler)
 
-**⚠️ Alternativa:** Evaluar **Mapperly** (source generator) si la performance del mapping es crítica. Cero reflection, genera código en tiempo de compilación.
+**Notas de implementación (Oct 2026):**
+- `mapperConfig.AssertConfigurationIsValid()` (ya existente en `ServicesDependencyContainer`) exige que **todos** los miembros de destino de cada mapa nuevos estén mapeados o ignorados explícitamente — se cubrieron los 7 mapas nuevos (navs `Task`/`Farm`/`Recipe`/`Material`/`RowVersion`/`EndDate`/`Status`/`TotalAplications` etc. con `Ignore()` para preservar el comportamiento 1:1 del mapper manual).
+- AutoMapper 15: la sobrecarga con `ResolutionContext` es de **4 parámetros** `(source, dest, member, context)` — la de 3 compila con el 3er parámetro como `object` y falla.
+- Verificado end-to-end contra API: login, `getallworkorderinfo`, `getCompleteInfoWorkOrder/54 y /56`, `createworkorder` con/sin receta (correlativos 28→29 y 18→19, `GroupItems` fusionó 10+3 → 13 en material 60), `addDetailWO` (Description en mayúsculas), `material/recipe/32/material`, paginada. Build 0 errores.
+
+**⚠️ Alternativa (descartada):** Mapperly (source generator) — no hace falta, la performance no es crítica y AutoMapper ya era dependencia.
 
 ---
 
@@ -264,20 +269,23 @@ Siguientes requests:
 
 ---
 
-### Fase 6 — Limpiar Capa Blazor
+### Fase 6 — Limpiar Capa Blazor ✅ COMPLETADA (Oct 2026)
 
 **Objetivo:** Eliminar todo lo específico de Blazor Server que no se usará con React.
 
-- [ ] Eliminar `FincaFenix.ViewModels/` — son específicos de Blazor
-- [ ] Eliminar Pages `.razor`, Components, `_Imports.razor`, `_Host.cshtml`
-- [ ] Eliminar `Shared/MainLayout.razor`, `Shared/NavMenu.razor`
-- [ ] Limpiar `DependencyContainer.cs` de UI (servicios y validadores específicos)
-- [ ] Limpiar `Program.cs`:
-  - Quitar `AddServerSideBlazor()`
-  - Quitar `AddRazorPages()` si ya no se usan
-  - Quitar `MapBlazorHub()`
-  - Quitar `MapFallbackToPage("/_Host")`
-- [ ] Verificar que los Controllers de API sigan funcionando sin Blazor
+Decisión final: en vez de limpiar el proyecto, se **eliminaron por completo** `FincaFenix.UserInterface7.0/` (31 archivos `.razor` + `Program.cs` + `appsettings`) y `FincaFenix.ViewModels/` (13 ViewModels + `DependencyContainer`).
+
+- [x] Eliminar `FincaFenix.ViewModels/` — carpeta completa + ProjectReference desde `FincaFenix.InversionOfControl` + `.AddViewModelServices()` de `ServicesDependencyContainer.cs`
+- [x] Eliminar Pages `.razor`, Components, `_Imports.razor`, `_Host.cshtml` → **carpeta `FincaFenix.UserInterface7.0/` eliminada entera**
+- [x] Eliminar `Shared/MainLayout.razor`, `Shared/NavMenu.razor` → idem
+- [x] Limpiar `DependencyContainer.cs` de UI → idem (proyecto no existe)
+- [x] Limpiar `Program.cs` (Blazor/RazorPages/Hub) → idem (proyecto no existe; el `Program.cs` que vive es el de `FincaFenix.WebAPI`)
+- [x] Mover tool manifest `dotnet-ef` de `FincaFenix.UserInterface7.0/.config/dotnet-tools.json` a **`/.config/dotnet-tools.json`** (raíz del repo) — `dotnet tool restore` verificado
+- [x] `FincaFenixContextFactory` (design-time de EFCore) re-apuntado de la UI a **`FincaFenix.WebAPI/appsettings.json`** — `dotnet ef migrations list` verificado
+- [x] `FincaFenix.sln`: sacados ambos proyectos + carpetas de solución `UserInterface` y `ViewModels` (quedan 9 proyectos)
+- [x] Verificar que los Controllers de API sigan funcionando sin Blazor — **verificación manual completa (login + todos los endpoints Fase 3.3/4) OK, build 0 errores**
+
+> `FincaFenix.UIValidators` **no** se tocó (no estaba confirmado para eliminar y nadie lo referencia).
 
 ---
 

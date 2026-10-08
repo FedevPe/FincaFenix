@@ -4,13 +4,14 @@
 
 ```powershell
 dotnet build FincaFenix.sln
-dotnet run --project FincaFenix.UserInterface7.0  # http://localhost:8080 | https://localhost:8060
 dotnet run --project FincaFenix.WebApi             # http://localhost:5000 | https://localhost:5001 (Swagger)
 ```
 
+> La UI Blazor (`FincaFenix.UserInterface7.0`) y `FincaFenix.ViewModels` fueron **eliminadas en Fase 6 (Oct 2026)** — la UI de front será React (migración pendiente).
+
 ## Local Secrets (gitignored)
 
-`appsettings.Development.json` (both `FincaFenix.WebAPI` and `FincaFenix.UserInterface7.0`) holds the JWT `JwtSettings` block including `SecretKey` and is **ignored by git** — never commit it. Fresh clones must create it locally:
+`appsettings.Development.json` (in `FincaFenix.WebAPI`) holds the JWT `JwtSettings` block including `SecretKey` and is **ignored by git** — never commit it. Fresh clones must create it locally:
 
 ```json
 {
@@ -27,7 +28,7 @@ Connection strings stay in the tracked `appsettings.json` (local dev DB).
 
 ## EF Core Migrations
 
-Tool manifest (`FincaFenix.UserInterface7.0/.config/dotnet-tools.json`) installs `dotnet-ef` v9.0.8. Run from repo root:
+Tool manifest (`/.config/dotnet-tools.json` en la raíz del repo — movido desde la UI en Fase 6) installs `dotnet-ef` v9.0.8. Run from repo root:
 
 ```powershell
 dotnet tool restore
@@ -35,19 +36,18 @@ dotnet ef migrations add <Name> --project FincaFenix.EFCore --startup-project Fi
 dotnet ef database update --project FincaFenix.EFCore --startup-project FincaFenix.WebAPI
 ```
 
-`FincaFenixContextFactory` in `FincaFenix.EFCore` reads connection string from the UI project's `appsettings.json` at design time.
+`FincaFenixContextFactory` in `FincaFenix.EFCore` reads connection string from `FincaFenix.WebAPI/appsettings.json` at design time (re-apuntado en Fase 6; antes usaba la UI).
 
 ## Architecture (Clean — strict layers)
 
 ```
-UI (Blazor Server) → InversionOfControl (DI orchestrator) → Controllers → UsesCases (MediatR Handlers) → Gateways (Repo interfaces) → EFCore
-                                                                                                                       ↕
-                                                                                                                  Entities
+Clients (React — futuro) → WebAPI/Controllers → InversionOfControl (DI orchestrator) → Controllers → UsesCases (MediatR Handlers) → Gateways (Repo interfaces) → EFCore
+                                                                                                                        ↕
+                                                                                                                   Entities
 ```
 
 - Every layer has a `DependencyContainer.cs` registering its services as `Add{Layer}Services()` extension methods.
-- `FincaFenix.InversionOfControl/ServicesDependencyContainer.cs` chains them all.
-- ViewModels are registered in `FincaFenix.ViewModels/DependencyContainer.cs` as `Transient`.
+- `FincaFenix.InversionOfControl/ServicesDependencyContainer.cs` chains them all (ya no encadena `.AddViewModelServices()` — proyecto eliminado).
 - **Interactors + Presenters pattern was removed in Phase 3** — replaced by MediatR handlers + AutoMapper.
 
 ## Key Conventions
@@ -55,9 +55,9 @@ UI (Blazor Server) → InversionOfControl (DI orchestrator) → Controllers → 
 - **`Nullable: disable`** in all `.csproj` — do not add null checks.
 - **`ImplicitUsings: enable`** + **C# 12** (`LangVersion`).
 - **Culture**: `es-AR` set globally in `Program.cs` — format dates/numbers for Argentina.
-- **Auth**: Global `RequireAuthorization()` on all Razor Pages, Blazor hub, and fallback. Roles: `admin`, `desarrollador`, `supervisor`, `operario`. API controllers use policy-based `[Authorize(Policy = PolicyMaster.XXX)]` via JWT with policy claims.
-- **DI scoping**: Controllers/Handlers/ViewModels → `Transient`. Gateways/Repositories → `Scoped`.
-- **Blazor pattern**: Pages inject ViewModels (`[Inject]`) that encapsulate state + orchestration. Razor code-behind is minimal.
+- **Auth**: API endpoints secured via JWT with policy-based `[Authorize(Policy = PolicyMaster.XXX)]`. Roles: `admin`, `desarrollador`, `supervisor`, `operario`.
+- **DI scoping**: Controllers/Handlers → `Transient`. Gateways/Repositories → `Scoped`.
+- ~~Blazor pattern~~ — **obsoleto desde Fase 6**: la UI Blazor fue eliminada; la UI nueva será React.
 
 ## Project Structure
 
@@ -67,23 +67,13 @@ UI (Blazor Server) → InversionOfControl (DI orchestrator) → Controllers → 
 | Application | `FincaFenix.UsesCases` | MediatR Handlers + AutoMapper profiles |
 | Interface Adapters | `FincaFenix.Controllers` | Controller implementations |
 | | `FincaFenix.Gateways` | Repository interfaces |
-| | `FincaFenix.ViewModels` | ViewModels for Blazor |
 | Infrastructure | `FincaFenix.EFCore` | DbContext, migrations, query/command services |
 | | `FincaFenix.InversionOfControl` | DI composition root |
-| | `FincaFenix.UserInterface7.0` | Blazor Server UI |
 | | `FincaFenix.WebApi` | Web API standalone (Swagger, testing) |
 | Libraries | `FincaFenix.PDF` | QuestPDF generation |
-| | `FincaFenix.UIValidators` | UI validation helpers |
+| | `FincaFenix.UIValidators` | UI validation helpers (hoy sin referencias — ver Legacy) |
 
-## Key Routes (Blazor)
-
-| Route | Page | Roles |
-|---|---|---|
-| `/` | Index — Menu | admin, desarrollador, supervisor |
-| `/ordenestrabajo` | WorkOrders | todos (operario ve solo cards) |
-| `/usuarios` | Users | admin, desarrollador |
-| `/login` | Login (Razor Page Identity UI) | — |
-| `/accesodenegado` | Access Denied | — |
+> Proyectos eliminados en Fase 6: `FincaFenix.UserInterface7.0` (Blazor) y `FincaFenix.ViewModels`. El sln quedó con 9 proyectos.
 
 ## API Controllers — Notable Quirks
 
@@ -164,6 +154,22 @@ Verificado: build 0 errores + pruebas manuales (login, crear orden con/sin recet
 
 Próxima etapa planificada: **Fase 8 — congelar contrato API** (postergada) / migración React.
 
+## Completed — Fase 3.3 + Fase 6 (AutoMapper + Borrado de UI — Oct 2026)
+
+**Fase 3.3 — Eliminación de mappers manuales:**
+1. `FincaFenix.UsesCases/Mappers/` (con `WorkOrderMapper.cs` y `DetailWorkOrderMapper.cs`) **eliminada**. Los 7 mapas resultantes viven en `FincaFenix.UsesCases/Mappings/MappingProfile.cs` (lectura: `WorkOrderEntity→ShowWorkOrderDTO`, `RecipeEntity→RecipeWorkOrderDTO`, `DetailRecipeEntity→DetailRecipeDTO`, `DetailWorkOrderEntity→ActivityWorkOrderDTO`; escritura: `WorkOrderDTO→WorkOrderEntity` (con helpers privados `GroupItems`/`MapRecipeToEntity`), `DetailRecipeDTO→DetailRecipeEntity`, `AddDetailWorkOrderDTO→DetailWorkOrderEntity`).
+2. Los 4 handlers usan `IMapper`: `GetAllWorkOrdersHandler`, `GetWorkOrderByIdHandler`, `CreateWorkOrderHandler`, `AddDetailWorkOrderHandler` + `GetActivitiesByOrderIdHandler` (mapping inline eliminado).
+3. `AssertConfigurationIsValid()` (ya existente) valida todo al startup — todos los miembros de destino mapeados o ignorados explícitamente preservan 1:1 el comportamiento del mapper manual (p.ej. `EndDate` ignorado → null, `Recipe.Status`/`TotalAplications` ignorados → defaults).
+4. **AutoMapper 15**: la sobrecarga con `ResolutionContext` en `ForMember().MapFrom(...)` requiere **4 parámetros** `(source, dest, member, context)`.
+
+**Fase 6 — Borrado definitivo de la UI Blazor:**
+1. Carpetas eliminadas: `FincaFenix.UserInterface7.0/` (31 `.razor` + Program.cs + appsettings) y `FincaFenix.ViewModels/`.
+2. `FincaFenix.InversionOfControl`: sin ProjectReference a ViewModels y sin `.AddViewModelServices()`.
+3. Tool manifest `dotnet-ef` movido a `/.config/dotnet-tools.json` (raíz); `FincaFenixContextFactory` re-apuntado a `FincaFenix.WebAPI/appsettings.json`.
+4. `FincaFenix.sln`: 11 → 9 proyectos (fuera UI + ViewModels y sus carpetas de solución).
+
+Verificado: build 0 errores; `dotnet tool restore` + `dotnet ef migrations list`; prueba manual WebAPI completa (login, getall, getCompleteInfo con/sin receta, create sin receta → orden 28, create con receta → orden 29 + receta 19 con `GroupItems` fusionando 10+3→13, addDetailWO con `Description.ToUpper()` persistida, material/recipe/{id}, paginada). **Sin commits aún (pendiente de indicación).**
+
 ## No Tests
 
 ## NuGet Versions (key)
@@ -180,7 +186,8 @@ Próxima etapa planificada: **Fase 8 — congelar contrato API** (postergada) / 
 
 ## Legacy / Dead Projects (do not touch)
 
-- `FincaFenix.UserInterface/` — only build artifacts, replaced by `UserInterface7.0`
+- `FincaFenix.UserInterface/` — only build artifacts; la UI Blazor viva (`UserInterface7.0`) fue **eliminada en Fase 6** — la UI nueva será React
+- `FincaFenix.UIValidators/` — no referenciado por ningún proyecto; **se conservó** (no estaba confirmado para borrar)
 - `FincaFenix.Validators/` — redundant with `FincaFenix.Validations/` (keep Validations)
 - `FincaFenix.Repositories/UniversitarySystem.EFCore` — .NET 8, references missing project, unrelated
 
