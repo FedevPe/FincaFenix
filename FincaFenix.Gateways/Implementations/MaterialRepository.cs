@@ -16,6 +16,11 @@ namespace FincaFenix.Gateways.Implementations
             return await queryService.GetMaterialListByCategoryId(categoryId);
         }
 
+        public async Task<IEnumerable<MaterialEntity>> GetAllMaterialByRecipeId(int recipeId)
+        {
+            return await queryService.GetMaterialListByRecipeId(recipeId);
+        }
+
         public Task<IEnumerable<MaterialEntity>> GetMaterialByOrderIdAsync(int id)
         {
             throw new NotImplementedException();

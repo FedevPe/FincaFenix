@@ -27,10 +27,11 @@ public class GetMaterialListByCategoryHandler(IMaterialRepository repository, IM
     }
 }
 
-public class GetMaterialListByRecipeHandler : IRequestHandler<GetMaterialListByRecipeQuery, IEnumerable<MaterialRecipeDTO>>
+public class GetMaterialListByRecipeHandler(IMaterialRepository repository, IMapper mapper) : IRequestHandler<GetMaterialListByRecipeQuery, IEnumerable<MaterialRecipeDTO>>
 {
-    public Task<IEnumerable<MaterialRecipeDTO>> Handle(GetMaterialListByRecipeQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<MaterialRecipeDTO>> Handle(GetMaterialListByRecipeQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var materials = await repository.GetAllMaterialByRecipeId(request.RecipeId);
+        return mapper.Map<IEnumerable<MaterialRecipeDTO>>(materials);
     }
 }

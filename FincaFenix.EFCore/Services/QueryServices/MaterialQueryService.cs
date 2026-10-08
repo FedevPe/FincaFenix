@@ -13,6 +13,21 @@ namespace FincaFenix.EFCore.Services.QueryServices
             return await context.Materials.AnyAsync(m => m.Id == id);   
         }
 
+        public async Task<IEnumerable<MaterialEntity>> GetMaterialListByRecipeId(int recipeId)
+        {
+            var materialIds = await context.DetailRecipes
+                .Where(dr => dr.RecipeId == recipeId)
+                .Select(dr => dr.MaterialId)
+                .Distinct()
+                .ToListAsync();
+
+            return await context.Materials
+                .AsNoTracking()
+                .Include(m => m.Category)
+                .Where(m => materialIds.Contains(m.Id))
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<MaterialEntity>> GetMaterialList()
         {
             return await context.Materials.AsNoTracking().ToListAsync();
