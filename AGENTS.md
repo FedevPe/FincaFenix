@@ -91,7 +91,7 @@ UI (Blazor Server) → InversionOfControl (DI orchestrator) → Controllers → 
 - `MachineController` route fixed from `api/(controller)` to `api/[controller]`.
 - `WorkOrderController` unifies all WorkOrder endpoints (create, queries, state update) in a single controller.
 - `DetailWorkOrderController` unifies both add and get-activities endpoints.
-- `GetMaterialListByRecipeId` still throws `NotImplementedException` (no repository method exists yet).
+- `GetMaterialListByRecipeId` fue implementado en Fase 4 (consulta `DetalleReceta → Material`); ya no lanza `NotImplementedException`.
 
 ## Known Fixes — Phase 0 (May 2026)
 
@@ -150,7 +150,19 @@ POST /api/auth/login { "userName": "...", "password": "..." }
 2. **Fase 3** — `ExceptionBehavior` **cerrado como redundante**: `LoggingBehavior` ya loguea excepciones con contexto y `ExceptionMiddleware` ya mapea a ProblemDetails (404/422/403/500).
 3. **Fase 7.2** — `FincaFenix.EFCore/Interceptors/SlowQueryLogInterceptor.cs`: loguea queries que superan `EfCore:SlowQueryThresholdMs` (default 500ms, en `appsettings.json` de WebAPI). Registrado solo en WebAPI — la UI Blazor no lo tiene (proyecto deprecado).
 
-Próxima etapa planificada: **Fase 4 — orquestación de Gateways** (hoy son proxies pass-through 1:1).
+## Completed — Phase 4 (Gateways Orchestration — Oct 2026)
+
+1. **`IUnitOfWork`** (`FincaFenix.Gateways/Interfaces/IUnitOfWork.cs`): `Begin/SaveChanges/Commit/Rollback`. Impl `EfCoreUnitOfWork` (`FincaFenix.EFCore/Services/EfCoreUnitOfWork.cs`) sobre `Database.BeginTransactionAsync`, registrado **Scoped** (comparte el `DbContext`).
+2. **`ICreateWorkOrderCommand` eliminado y dividido en primitivas sin transacción propia**: `ICorrelativeNumberService.GetByTypeDoc` (entidad **tracked** — sin `AsNoTracking` para que el `LastNumber++` en memoria se persista), `IRecipeCommand.AddRecipe`, `IWorkOrderCommand.AddWorkOrder` (solo `context.Add`).
+3. **`CreateWorkOrderRepository` (Gateway) orquesta**: Begin → leer correlativos → receta (`NumRecipe`, Add, +1, SaveChanges) → orden (`OrderNum`, Add, +1, SaveChanges) → Commit; catch → Rollback. Los correlativos +1 solo persisten si todo sale bien. El handler de MediatR no cambia.
+4. **Fix** `GET api/material/recipe/{recipeId}/material` (antes 500 por `NotImplementedException`): `MaterialQueryService.GetMaterialListByRecipeId` + repo + handler.
+5. **Rename** `UpdateWorkOrderRepositor` → `UpdateWorkOrderRepository`. **`UpdateWorkOrder()` queda sin implementar a propósito** (futuro caso de edición de órdenes).
+6. Los 14 proxies pass-through simples se **mantienen** como abstracción de repositorio de los handlers (decisión explícita).
+7. **4.1 Presenters** del plan: aclarado que la estructura Interactor/Presenter fue reemplazada por Handlers de MediatR en Fase 3.
+
+Verificado: build 0 errores + pruebas manuales (login, crear orden con/sin receta con incremento correcto de correlativos, FK inválida → rollback total, endpoint materiales por receta, query paginada, updatestate).
+
+Próxima etapa planificada: **Fase 8 — congelar contrato API** (postergada) / migración React.
 
 ## No Tests
 

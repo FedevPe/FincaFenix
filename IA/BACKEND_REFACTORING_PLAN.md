@@ -175,6 +175,8 @@ Agregar behaviors cross-cutting:
 
 #### 4.1 Presenters — Nuevo Rol
 
+> **⚠️ Reemplazado en Fase 3 (Oct 2026):** la estructura Interactor/Presenter fue eliminada al implementar los Handlers de MediatR + AutoMapper. Los Presenters ya no existen en el código; esta sección queda documentada solo como contexto histórico. El "presentar" hoy lo hacen los handlers (`FincaFenix.UsesCases/UseCases/**`) que componen `PagedResult`/DTOs, y los controllers devuelven ese resultado directamente.
+
 Ya no mapean entidades a DTOs (eso lo hace AutoMapper + las proyecciones). Ahora:
 
 - Transforman resultados de handlers de MediatR para consumo del controller/API
@@ -207,22 +209,19 @@ Ya no son proxies de un solo query/command service. Ahora:
 - Combinan resultados de múltiples queries
 - Son el punto de entrada para operaciones complejas que involucran varias entidades
 
-```csharp
-// Ejemplo de nuevo rol
-public class WorkOrderGateway(
-    IWorkOrderQueryService queryService,
-    IRecipeQueryService recipeQueryService,
-    ICorrelativeNumberService correlativeService)
-{
-    public async Task<WorkOrderDetailDTO> GetWorkOrderWithRecipeDetailAsync(int workOrderId)
-    {
-        var workOrder = await queryService.GetByIdAsync(workOrderId);
-        var recipe = await recipeQueryService.GetByWorkOrderIdAsync(workOrderId);
-        var correlative = await correlativeService.GetCurrentNumberAsync("OrdenTrabajo");
-        return new WorkOrderDetailDTO { WorkOrder = workOrder, Recipe = recipe, CorrelativeNumber = correlative.LastNumber };
-    }
-}
-```
+**Estado: COMPLETADA (Oct 2026)**
+
+- [x] **`IUnitOfWork`** (`FincaFenix.Gateways/Interfaces/IUnitOfWork.cs`): `BeginAsync / SaveChangesAsync / CommitAsync / RollbackAsync`. Implementación `EfCoreUnitOfWork` (`FincaFenix.EFCore/Services/EfCoreUnitOfWork.cs`) sobre `context.Database.BeginTransactionAsync`, registrado como **Scoped** para compartir el mismo `DbContext`.
+- [x] **`ICreateWorkOrderCommand` dividido en primitivas atómicas sin transacción propia:**
+  - `ICorrelativeNumberService.GetByTypeDoc(typeDoc)` — devuelve la entidad **tracked** (sin `AsNoTracking`) para que el `LastNumber++` en memoria se persista en el `SaveChanges` del UnitOfWork.
+  - `IRecipeCommand.AddRecipe(entity)` / `IWorkOrderCommand.AddWorkOrder(entity)` — solo `context.Add`, sin `SaveChanges`.
+- [x] **`CreateWorkOrderRepository` (Gateway) orquesta el flujo completo**: Begin → leer correlativos → (si hay receta) asignar `NumRecipe`, Add, `LastNumber++`, SaveChanges → asignar `OrderNum`, Add WO, `LastNumber++`, SaveChanges → Commit. Cualquier excepción → Rollback (los correlativos +1 **solo persisten si todo salió bien**). Eliminados `ICreateWorkOrderCommand` y su implementación EFCore.
+- [x] Los 14 proxies pass-through simples se **mantienen** como abstracción de repositorio de los handlers (decisión explícita).
+- [x] Fix endpoint `GET api/material/recipe/{recipeId}/material` (antes `NotImplementedException` → 500): query `DetalleReceta → Material` + handler implementados.
+- [x] Rename typo `UpdateWorkOrderRepositor` → `UpdateWorkOrderRepository`.
+- [x] `UpdateWorkOrder()` **no se toca** — queda pendiente para el futuro caso de uso de edición de órdenes de trabajo.
+
+**Verificación (Oct 2026):** build 0 errores + pruebas manuales con la API corriendo: login, crear orden sin receta (correlativo OrdenTrabajo 26→27), crear orden con receta (27→28 y Receta 18→19, `NumReceta` correcto), FK inválida → 500 con **rollback total** (correlativos y tablas intactos), endpoint de materiales por receta → 200, query paginada y `updatestateworkorder` OK.
 
 ---
 
