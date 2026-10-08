@@ -12,13 +12,12 @@ namespace FincaFenix.EFCore.Services.QueryServices.WorkOrder
     {
         public async Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status)
         {
-            var query = context.WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
+            var baseQuery = context.WorkOrders.Where(wo => !wo.IsDeleted && wo.Status != status);
 
-            var totalCount = await query.CountAsync(); //Cuenta la cantidad de registros que cumplen la condición
+            var totalCount = await baseQuery.CountAsync();
 
-            var workOrders = await context.WorkOrders
-                .Where(wo => !wo.IsDeleted && wo.Status != status)
-                // Ordena por OrderNum para mantener un orden consistente, para que la paginación funcione correctamente
+            var workOrders = await baseQuery
+                // Ordena por Id para mantener un orden consistente, para que la paginación funcione correctamente
                 // si no se ordena, la paginación puede devolver resultados repetidos o saltarse algunos registros en cada pagina
                 .OrderBy(wo => wo.Id)
                 // Salta los registros de las páginas anteriores, calculando el desplazamiento, define el dice de inicio para la paginación
