@@ -7,7 +7,7 @@ public class FincaFenixContextFactory : IDesignTimeDbContextFactory<FincaFenixCo
 {
     public FincaFenixContext CreateDbContext(string[] args)
     {
-        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "FincaFenix.UserInterface7.0");
+        var projectPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "FincaFenix.WebAPI");
         // 1. Opcional: Cargar la configuración de appsettings.json si es necesario.
         var configuration = new ConfigurationBuilder()
             .SetBasePath(projectPath)
