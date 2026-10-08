@@ -24,7 +24,6 @@ public static class ServicesDependencyContainer
         services.AddUseCasesServices()
                 .AddControllersServices()
                 .AddGatewaysServices()
-                .AddViewModelServices()
                 .AddEFCoreServices()
                 .AddPDFServices();
 
