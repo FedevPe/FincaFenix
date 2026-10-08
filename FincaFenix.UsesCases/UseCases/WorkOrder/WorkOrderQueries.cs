@@ -1,7 +1,7 @@
+using AutoMapper;
 using FincaFenix.Entities.DTOs.Common;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
-using FincaFenix.UsesCases.Aggregates;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 using MediatR;
 
@@ -12,21 +12,21 @@ public record GetWorkOrderByIdQuery(int Id) : IRequest<ShowWorkOrderDTO>;
 public record GetWorkOrderInfoByIdQuery(int Id) : IRequest<InfoWorkOrderDTO>;
 public record GetWorkOrderListPaginatedQuery(int PageNumber, int PageSize, string Status) : IRequest<PagedResult<ShowWorkOrderDTO>>;
 
-public class GetAllWorkOrdersHandler(IGetWorkOrderInformationRepository repository) : IRequestHandler<GetAllWorkOrdersQuery, List<ShowWorkOrderDTO>>
+public class GetAllWorkOrdersHandler(IGetWorkOrderInformationRepository repository, IMapper mapper) : IRequestHandler<GetAllWorkOrdersQuery, List<ShowWorkOrderDTO>>
 {
     public async Task<List<ShowWorkOrderDTO>> Handle(GetAllWorkOrdersQuery request, CancellationToken cancellationToken)
     {
         var entities = await repository.GetAllWorkOrderList();
-        return entities.Select(WorkOrderMapper.EntityToDTO).ToList();
+        return mapper.Map<List<ShowWorkOrderDTO>>(entities);
     }
 }
 
-public class GetWorkOrderByIdHandler(IGetWorkOrderInformationRepository repository) : IRequestHandler<GetWorkOrderByIdQuery, ShowWorkOrderDTO>
+public class GetWorkOrderByIdHandler(IGetWorkOrderInformationRepository repository, IMapper mapper) : IRequestHandler<GetWorkOrderByIdQuery, ShowWorkOrderDTO>
 {
     public async Task<ShowWorkOrderDTO> Handle(GetWorkOrderByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await repository.GetWorkOrderAndRecipeByIdWorkorder(request.Id);
-        return WorkOrderMapper.EntityToDTO(entity);
+        return mapper.Map<ShowWorkOrderDTO>(entity);
     }
 }
 
