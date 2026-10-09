@@ -1,6 +1,7 @@
 using AutoMapper;
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
+using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
@@ -41,7 +42,40 @@ public class MappingProfile : Profile
                 Id = s.Category.Id,
                 Description = s.Category.Description
             } : null))
+            .ForMember(d => d.UnitOfMeasure, o => o.MapFrom(s => s.UnitOfMeasure != null ? s.UnitOfMeasure.Description : null))
             .ForMember(d => d.DiseasePlague, o => o.Ignore());
+
+        #region CRUD Materiales / Categorías / Unidades de medida
+
+        CreateMap<MaterialEntity, MaterialDTO>()
+            .ForMember(d => d.UnitOfMeasure, o => o.MapFrom(s => s.UnitOfMeasure != null ? s.UnitOfMeasure.Description : null))
+            .ForMember(d => d.CurrencyCode, o => o.MapFrom(s => s.Currency != null ? s.Currency.Code : null));
+
+        CreateMap<CreateMaterialDTO, MaterialEntity>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.Category, o => o.Ignore())
+            .ForMember(d => d.UnitOfMeasure, o => o.Ignore())
+            .ForMember(d => d.Currency, o => o.Ignore())
+            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false))
+            .ForMember(d => d.DiseasePlagueMaterialList, o => o.Ignore());
+
+        CreateMap<UpdateMaterialDTO, MaterialEntity>()
+            .ForMember(d => d.Category, o => o.Ignore())
+            .ForMember(d => d.UnitOfMeasure, o => o.Ignore())
+            .ForMember(d => d.Currency, o => o.Ignore())
+            .ForMember(d => d.IsDeleted, o => o.Ignore())
+            .ForMember(d => d.DiseasePlagueMaterialList, o => o.Ignore());
+
+        CreateMap<UnitOfMeasureEntity, UnitOfMeasureDTO>();
+
+        CreateMap<SaveUnitOfMeasureDTO, UnitOfMeasureEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.IsDeleted, o => o.Ignore());
+
+        CreateMap<SaveMaterialCategoryDTO, MaterialCategoryEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0));
+
+        #endregion
 
         CreateMap<DetailSectorFarmEntity, DetailSectorFarmDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
@@ -109,6 +143,17 @@ public class MappingProfile : Profile
             .ForMember(d => d.Material, o => o.Ignore())
             .ForMember(d => d.DiseasePlague, o => o.MapFrom(s => s.PestDisease))
             .ForMember(d => d.RowVersion, o => o.Ignore());
+
+        CreateMap<RecipeWorkOrderDTO, RecipeEntity>()
+            .ForMember(d => d.Id, o => o.Ignore())
+            .ForMember(d => d.NumRecipe, o => o.Ignore())
+            .ForMember(d => d.Machine, o => o.Ignore())
+            .ForMember(d => d.State, o => o.MapFrom(s => s.Status))
+            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => false))
+            .ForMember(d => d.RowVersion, o => o.Ignore())
+            .ForMember(d => d.DetailRecipeList, o => o.MapFrom((s, d, member, ctx) =>
+                GroupItems(s.Details ?? new List<DetailRecipeDTO>())
+                    .Select(dr => ctx.Mapper.Map<DetailRecipeEntity>(dr)).ToList()));
 
         CreateMap<AddDetailWorkOrderDTO, DetailWorkOrderEntity>()
             .ForMember(d => d.Id, o => o.Ignore())

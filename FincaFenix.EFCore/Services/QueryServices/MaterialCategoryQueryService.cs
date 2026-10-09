@@ -15,7 +15,14 @@ namespace FincaFenix.EFCore.Services.QueryServices
 
         public async Task<IEnumerable<MaterialCategoryEntity>> GetCategoriesList()
         {
-            return await context.MaterialCategories.ToListAsync();
+            return await context.MaterialCategories.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<MaterialCategoryEntity> GetById(int id)
+        {
+            return await context.MaterialCategories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }
