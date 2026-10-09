@@ -19,8 +19,12 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(m => m.CodeSap).HasColumnName("CodigoSAP").IsRequired(false).HasMaxLength(30);
             builder.Property(m => m.DescriptionSap).HasColumnName("DescripcionSAP").IsRequired(false).HasMaxLength(100);
             builder.Property(m => m.Description).HasColumnName("Descripcion").IsRequired(false).HasMaxLength(30);
+            builder.Property(m => m.UnitOfMeasureId).HasColumnName("IdUnidadMedida").IsRequired();
+            builder.Property(m => m.ReferenceCost).HasColumnName("CostoReferencia").HasPrecision(18, 4).IsRequired(false);
+            builder.Property(m => m.CurrencyId).HasColumnName("IdDivisa").IsRequired().HasDefaultValue(1);
 
-
+            builder.HasOne(m => m.UnitOfMeasure).WithMany().HasForeignKey(m => m.UnitOfMeasureId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(m => m.Currency).WithMany().HasForeignKey(m => m.CurrencyId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

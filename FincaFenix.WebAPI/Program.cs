@@ -35,6 +35,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<FincaFenixContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     await SeedDataBase.SeedAddPoliciesAsync(context, logger);
+    await SeedDataBase.SeedInventoryUnitsAsync(context, logger);
 }
 
 if (app.Environment.IsDevelopment())

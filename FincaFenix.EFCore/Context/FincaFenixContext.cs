@@ -29,6 +29,14 @@ namespace FincaFenix.EFCore.Context
         public DbSet<WorkOrderWorkedSectorEntity> WorkOrderWorkedSectors { get; set; }
         public DbSet<CorrelativeNumberEntity> CorrelativeNumber { get; set; }
 
+        public DbSet<UnitOfMeasureEntity> UnitOfMeasures { get; set; }
+        public DbSet<StockByFarmEntity> StockByFarms { get; set; }
+        public DbSet<MaterialReservationEntity> MaterialReservations { get; set; }
+        public DbSet<InventoryMovementEntity> InventoryMovements { get; set; }
+        public DbSet<WorkOrderCostEntity> WorkOrderCosts { get; set; }
+        public DbSet<ConsumptionEntity> Consumptions { get; set; }
+        public DbSet<CurrencyEntity> Currencies { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

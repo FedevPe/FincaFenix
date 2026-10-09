@@ -4,6 +4,7 @@ using FincaFenix.EFCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FincaFenix.EFCore.Migrations
 {
     [DbContext(typeof(FincaFenixContext))]
-    partial class FincaFenixContextModelSnapshot : ModelSnapshot
+    [Migration("20261009010827_AddInventoryModule")]
+    partial class AddInventoryModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -832,7 +835,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("decimal(18,4)")
                         .HasColumnName("CostoReferencia");
 
-                    b.Property<int>("UnitOfMeasureId")
+                    b.Property<int?>("UnitOfMeasureId")
                         .HasColumnType("int")
                         .HasColumnName("IdUnidadMedida");
 
@@ -1076,56 +1079,6 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UnidadMedida", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Kilogramo",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Litro",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Unidad",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Metro",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Description = "Bolsa",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Description = "Caja",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "Gramo",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Description = "Centímetro cúbico",
-                            IsDeleted = false
-                        });
                 });
 
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.WorkOrderCostEntity", b =>
@@ -1614,8 +1567,7 @@ namespace FincaFenix.EFCore.Migrations
                     b.HasOne("FincaFenix.Entities.POCOEntities.UnitOfMeasureEntity", "UnitOfMeasure")
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Category");
 
