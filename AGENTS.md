@@ -258,6 +258,26 @@ Alcance: CRUD de **Material + Categoría de material + Unidad de medida**. Divis
 
 Verificado (build 0 errores + smoke real): creación/edición/baja de material, categoría y unidad; paginado y filtros (`categoryId`, `search`, `includeDeleted`); `422` en validación de negocio (unidad 0, borrar categoría con materiales), `404` en referencias/material inexistente; baja lógica visible en `getmateriallist` (excluido) vs `GET {id}`/`recipe/{id}/material` (incluido); regresión OK (`getmateriallist`, `recipe/{id}/material`, `stock/consolidated`, `costs/current`, `currencies`, `workorderlistpaginated`). **Sin commits aún.**
 
+## Completed — Rendimiento de OT (actividades + operarios — Oct 2026)
+
+Plan: `IA/PLAN_EJECUCION_RENDIMIENTO_OT.md`.
+
+1. **Modelo / migración** `20261009154605_AddWorkOrderRendimiento` (aplicada, datos preservados):
+   - `DetailWorkOrderEntity.Performance` → **`MachinePasses`** (columna `DetalleOrdenTrabajo.Rendimiento` → `Maquinadas`, `decimal(18,5)`). Ya no es un rendimiento, es la **cantidad de maquinadas** (cargas de tanque), usada solo en la fórmula de consumo.
+   - `DetailWorkOrderEntity.ProducedAmount` (`decimal?`, col `CantidadProducida`): kg cosechados.
+   - `TaskEntity.RendimientoMode` (`RendimientoModeEnum`, col `Tarea.ModoRendimiento`, int, default 0).
+2. **`RendimientoModeEnum`** (`FincaFenix.Entities/Enum`): `ManHours=0`, `MaterialEfficiency=1`, `AreaPerManHour=2`, `OutputPerManHour=3`. **El tipo de tarea manda sobre la presencia de receta.**
+3. **El rendimiento se calcula en tiempo de consulta (NO se persiste)** vía `RendimientoCalculator` (`FincaFenix.Entities/Rendimiento`), expuesto por actividad y agregado por OT:
+   - `MaterialEfficiency`: `TheoreticalMachinePasses = AreaTotal × TRV / VolumeMachine`; `RealMachinePasses = Σ MachinePasses`; `% Eficiencia = teóricas / reales × 100` (>100% = se usó menos, mejor). Por material: `theoreticalRaw = TheoreticalMachinePasses × AmountRequired` → **`UnitConverter` a la unidad base** del material; `EfficiencyFromAmounts(theoreticalBase, TotalAmountConsumed)`. `AreaTotal` = `Σ SectorFarm.Area`. División indeterminada (TRV/Volumen ≤ 0) → `null`.
+   - `AreaPerManHour`: `ΣÁrea / ΣHoras` (ha/h). `OutputPerManHour`: `ΣProducedAmount / ΣHoras` (kg/h). `ManHours` (default): horas (h).
+4. **Seed idempotente** `SeedDataBase.SeedTaskRendimientoModesAsync` (arranque WebAPI + `UseAsyncSeeding`, con `NormalizeTaskName` sin acentos): tareas **1/2/6/19 → `MaterialEfficiency`**, **3 (Cosecha) → `OutputPerManHour`**, resto `ManHours`. `TaskController` es read-only → los modos se setean por seed.
+5. **Validación condicional por modo:** `WorkOrderValidator` (receta obligatoria para `MaterialEfficiency`) y `AddDetailWorkOrderCommandValidator` (inyecta `IGetWorkOrderInformationRepository`; `MachinePasses>0` para `MaterialEfficiency`, `ProducedAmount>0` para `OutputPerManHour`). Fallas → **422** vía `ValidationBehavior` + `ExceptionMiddleware`.
+6. **DTOs/mapas:** `ActivityWorkOrderDTO` (+`MachinePasses`,`ProducedAmount`,`AreaWorked`,`Rendimiento`,`RendimientoUnit`,`RendimientoMode`), `RecipeWorkOrderDTO` (+`TheoreticalVolume`,`RealVolume`,`TheoreticalMachinePasses`,`RealMachinePasses`,`Rendimiento`), `DetailRecipeDTO` (+`TheoreticalAmount`,`Rendimiento`), `ShowWorkOrderDTO` (+`TotalManHours`,`TotalProducedAmount`,`Rendimiento`,`RendimientoUnit`,`RendimientoMode`), `TaskDTO.RendimientoMode` (string). `WorkOrderPDF` columna "Rendimiento" → **"Maquinadas"**. `DetailWOQueryService` proyecta `MachinePasses`/`ProducedAmount`/`Area`/`RendimientoMode`.
+
+Verificado (build 0 errores + smoke real): OT 62 (`MaterialEfficiency`, receta Vol100/TRV1, área 2.6) → `theoreticalMP=0.026`, `realMP=1`, `rend=2.6%`; mat 9 `500cc→0.013 lts`, `0.013/1.5=0.87%`; crear OT de `MaterialEfficiency` sin receta → **422**; addDetailWO sin `machinePasses`/sin `producedAmount` → **422**; OT 68 (Cosecha, sin receta) `prod=500, h=5` → `mode=OutputPerManHour`, `rend=100 kg/h` (por OT y por actividad); PDF OT 62 → `application/pdf` (62299 bytes). **OT 68 se dejó como dato de prueba. Sin commits aún.**
+
+Próxima etapa planificada (futuro): módulo de compras a proveedores y módulo dedicado de cosecha.
+
 ## No Tests
 
 ## NuGet Versions (key)
@@ -287,3 +307,4 @@ Verificado (build 0 errores + smoke real): creación/edición/baja de material, 
 | `IA/BACKEND_REFACTORING_PLAN.md` | Phased refactoring plan (.NET 9, MediatR, AutoMapper, JWT, React migration) |
 | `IA/WebAPI_IMPLEMENTATION.md` | Web API standalone + Swagger implementation plan |
 | `IA/ADD_POLICIES.md` | Policy-based authorization implementation plan |
+| `IA/PLAN_EJECUCION_RENDIMIENTO_OT.md` | Rendimiento de OT (maquinadas + modos de tarea) plan |

@@ -1,7 +1,10 @@
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
+using System.Text.RegularExpressions;
 using FincaFenix.EFCore.Context;
 using FincaFenix.Entities;
+using FincaFenix.Entities.Enum;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Entities.Units;
 using Microsoft.AspNetCore.Identity;
@@ -105,6 +108,68 @@ namespace FincaFenix.EFCore
             {
                 logger?.LogWarning(ex, "Error al asignar unidades de medida base a los materiales.");
             }
+        }
+
+        public static async Task SeedTaskRendimientoModesAsync(
+            FincaFenixContext context,
+            ILogger logger,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var mappings = new Dictionary<string, RendimientoModeEnum>
+                {
+                    ["aplicacion de herbicida mochila"] = RendimientoModeEnum.MaterialEfficiency,
+                    ["aplicacion de herbicida maquina"] = RendimientoModeEnum.MaterialEfficiency,
+                    ["fertirrigacion"] = RendimientoModeEnum.MaterialEfficiency,
+                    ["cura tratamiento fitosanitario"] = RendimientoModeEnum.MaterialEfficiency,
+                    ["cosecha"] = RendimientoModeEnum.OutputPerManHour
+                };
+
+                var tasks = await context.Tasks.ToListAsync(cancellationToken);
+                var changed = false;
+
+                foreach (var task in tasks)
+                {
+                    if (string.IsNullOrWhiteSpace(task.Description))
+                    {
+                        continue;
+                    }
+
+                    if (mappings.TryGetValue(NormalizeTaskName(task.Description), out var mode)
+                        && task.RendimientoMode != mode)
+                    {
+                        task.RendimientoMode = mode;
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger?.LogWarning(ex, "Error al asignar modos de rendimiento a las tareas.");
+            }
+        }
+
+        private static string NormalizeTaskName(string value)
+        {
+            var lowered = value.Trim().ToLowerInvariant().Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder();
+
+            foreach (var character in lowered)
+            {
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(character)
+                    != System.Globalization.UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(character);
+                }
+            }
+
+            return Regex.Replace(builder.ToString(), @"\s+", " ");
         }
 
         private static async Task BackfillMaterialUnitsAsync(

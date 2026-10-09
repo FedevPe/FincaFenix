@@ -14,5 +14,7 @@ namespace FincaFenix.Entities.DTOs.RecipeDTO
         public string Brand { get; set; }
         public string PestDisease { get; set; }
         public decimal TotalAmountConsumed { get; set; } = 0;
+        public decimal? TheoreticalAmount { get; set; }
+        public decimal? Rendimiento { get; set; }
     }
 }

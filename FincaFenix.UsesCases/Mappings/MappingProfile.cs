@@ -19,7 +19,8 @@ public class MappingProfile : Profile
 
         CreateMap<TaskEntity, TaskDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
-            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description));
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+            .ForMember(d => d.RendimientoMode, o => o.MapFrom(s => s.RendimientoMode.ToString()));
 
         CreateMap<MachineEntity, MachineRecipeDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
@@ -98,21 +99,37 @@ public class MappingProfile : Profile
             .ForMember(d => d.SectorList, o => o.MapFrom(s => s.WorkedSectors.Select(w => w.SectorFarm)))
             .ForMember(d => d.DetailsWorkOrder, o => o.MapFrom(s => s.DetailWorkOrderList != null && s.DetailWorkOrderList.Any()
                 ? s.DetailWorkOrderList
-                : null));
+                : null))
+            .ForMember(d => d.TotalManHours, o => o.Ignore())
+            .ForMember(d => d.TotalProducedAmount, o => o.Ignore())
+            .ForMember(d => d.Rendimiento, o => o.Ignore())
+            .ForMember(d => d.RendimientoUnit, o => o.Ignore())
+            .ForMember(d => d.RendimientoMode, o => o.Ignore());
 
         CreateMap<RecipeEntity, RecipeWorkOrderDTO>()
             .ForMember(d => d.Status, o => o.Ignore())
             .ForMember(d => d.TotalAplications, o => o.Ignore())
+            .ForMember(d => d.TheoreticalVolume, o => o.Ignore())
+            .ForMember(d => d.RealVolume, o => o.Ignore())
+            .ForMember(d => d.TheoreticalMachinePasses, o => o.Ignore())
+            .ForMember(d => d.RealMachinePasses, o => o.Ignore())
+            .ForMember(d => d.Rendimiento, o => o.Ignore())
             .ForMember(d => d.Details, o => o.MapFrom(s => s.DetailRecipeList));
 
         CreateMap<DetailRecipeEntity, DetailRecipeDTO>()
             .ForMember(d => d.CategoryId, o => o.Ignore())
             .ForMember(d => d.PestDisease, o => o.MapFrom(s => s.DiseasePlague))
-            .ForMember(d => d.TotalAmountConsumed, o => o.Ignore());
+            .ForMember(d => d.TotalAmountConsumed, o => o.Ignore())
+            .ForMember(d => d.TheoreticalAmount, o => o.Ignore())
+            .ForMember(d => d.Rendimiento, o => o.Ignore());
 
         CreateMap<DetailWorkOrderEntity, ActivityWorkOrderDTO>()
             .ForMember(d => d.WorkOrder, o => o.Ignore())
-            .ForMember(d => d.Sector, o => o.MapFrom(s => s.SectorWorked));
+            .ForMember(d => d.Sector, o => o.MapFrom(s => s.SectorWorked))
+            .ForMember(d => d.AreaWorked, o => o.MapFrom(s => s.SectorWorked != null ? s.SectorWorked.Area : null))
+            .ForMember(d => d.Rendimiento, o => o.Ignore())
+            .ForMember(d => d.RendimientoUnit, o => o.Ignore())
+            .ForMember(d => d.RendimientoMode, o => o.Ignore());
 
         #endregion
 
@@ -162,8 +179,9 @@ public class MappingProfile : Profile
             .ForMember(d => d.Employee, o => o.Ignore())
             .ForMember(d => d.SectorWorked, o => o.Ignore())
             .ForMember(d => d.SectorWorkedId, o => o.MapFrom(s => s.Info.SectorWorkedId))
-            .ForMember(d => d.Performance, o => o.MapFrom(s => s.Info.Performance))
+            .ForMember(d => d.MachinePasses, o => o.MapFrom(s => s.Info.MachinePasses))
             .ForMember(d => d.WorkedHours, o => o.MapFrom(s => s.Info.WorkedHours))
+            .ForMember(d => d.ProducedAmount, o => o.MapFrom(s => s.Info.ProducedAmount))
             .ForMember(d => d.Description, o => o.MapFrom(s => s.Info.Description.ToUpper()))
             .ForMember(d => d.ActivityDate, o => o.MapFrom(s => (DateTime)s.ActivityDate))
             .ForMember(d => d.RowVersion, o => o.Ignore());

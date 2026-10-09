@@ -1,4 +1,5 @@
 ﻿using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.Enum;
 using FincaFenix.UsesCases.Repository;
 using FluentValidation;
 
@@ -41,6 +42,25 @@ namespace FincaFenix.Validators.Validators.WorkOrder
 
             RuleForEach(wo => wo.SectorList).SetValidator(new DetailSectorFarmValidator(sectorRepo))
                 .WithMessage("Los sectores de la orden de trabajo no son válidos.");
+
+            RuleFor(wo => wo)
+                .MustAsync(async (wo, CancellationToken) =>
+                {
+                    if (!await taskRepo.Exists(wo.TaskId))
+                    {
+                        return true;
+                    }
+
+                    var task = await taskRepo.GetTaskById(wo.TaskId);
+
+                    if (task?.RendimientoMode == RendimientoModeEnum.MaterialEfficiency)
+                    {
+                        return wo.Recipe?.Details is { Count: > 0 };
+                    }
+
+                    return true;
+                })
+                .WithMessage("La tarea seleccionada requiere una receta con al menos un material.");
         }
     }
 }

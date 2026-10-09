@@ -325,7 +325,7 @@ namespace FincaFenix.PDF
                         table.Cell().Element(CellStyle).AlignCenter().Text("Nombre Operario").SemiBold();
                         table.Cell().Element(CellStyle).AlignCenter().Text("Cuadro trabajado").SemiBold();
                         table.Cell().Element(CellStyle).AlignCenter().Text("Horas trabajadas").SemiBold();
-                        table.Cell().Element(CellStyle).AlignCenter().Text("Rendimiento").SemiBold();
+                        table.Cell().Element(CellStyle).AlignCenter().Text("Maquinadas").SemiBold();
                         table.Cell().Element(CellStyle).AlignCenter().Text("Observaciones").SemiBold();
 
                     });
@@ -346,7 +346,7 @@ namespace FincaFenix.PDF
                             table.Cell().Padding(3).AlignLeft().Text($"{activity.Employee.Name} {activity.Employee.LastName}");
                             table.Cell().Padding(3).AlignRight().Text($"{activity.Sector.SectorName}");
                             table.Cell().Padding(3).AlignRight().Text($"{activity.WorkedHours}");
-                            table.Cell().Padding(3).AlignRight().Text($"{activity.Performance.ToString("N2")}");
+                            table.Cell().Padding(3).AlignRight().Text($"{activity.MachinePasses.ToString("N2")}");
                             table.Cell().Padding(3).AlignLeft().Text($"{activity.Description}");
                         }
                     });

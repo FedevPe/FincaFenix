@@ -36,6 +36,7 @@ using (var scope = app.Services.CreateScope())
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     await SeedDataBase.SeedAddPoliciesAsync(context, logger);
     await SeedDataBase.SeedInventoryUnitsAsync(context, logger);
+    await SeedDataBase.SeedTaskRendimientoModesAsync(context, logger);
 }
 
 if (app.Environment.IsDevelopment())

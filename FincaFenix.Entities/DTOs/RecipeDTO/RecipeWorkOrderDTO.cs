@@ -12,6 +12,11 @@
         public string Status { get; set; } = "Activo";
         public bool IsDeleted { get; set; } = false;
         public decimal TotalAplications { get; set; } = 0;
+        public decimal TheoreticalVolume { get; set; } = 0;
+        public decimal RealVolume { get; set; } = 0;
+        public decimal? TheoreticalMachinePasses { get; set; }
+        public decimal RealMachinePasses { get; set; } = 0;
+        public decimal? Rendimiento { get; set; }
         public List<DetailRecipeDTO> Details { get; set; } = new();
     }
 }

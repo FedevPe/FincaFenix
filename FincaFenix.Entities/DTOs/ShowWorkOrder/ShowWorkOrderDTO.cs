@@ -19,6 +19,11 @@ namespace FincaFenix.Entities.DTOs.ShowWorkOrder
         public IEnumerable<ActivityWorkOrderDTO> DetailsWorkOrder { get; set; }
         public IEnumerable<DetailSectorFarmDTO> SectorList { get; set; }
         public RecipeWorkOrderDTO Recipe { get; set; }
+        public decimal TotalManHours { get; set; }
+        public decimal? TotalProducedAmount { get; set; }
+        public decimal? Rendimiento { get; set; }
+        public string RendimientoUnit { get; set; }
+        public string RendimientoMode { get; set; }
         public bool IsDeleted { get; set; }
     }
 }

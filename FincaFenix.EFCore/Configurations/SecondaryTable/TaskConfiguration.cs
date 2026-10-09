@@ -1,4 +1,5 @@
 ﻿using FincaFenix.Entities.POCOEntities;
+using FincaFenix.Entities.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,7 @@ namespace FincaFenix.EFCore.Configurations.SecondaryTable
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Id).HasColumnName("Id").IsRequired().ValueGeneratedOnAdd();
             builder.Property(t => t.Description).HasColumnName("Nombre").IsRequired().HasMaxLength(100);
+            builder.Property(t => t.RendimientoMode).HasColumnName("ModoRendimiento").IsRequired().HasDefaultValue(RendimientoModeEnum.ManHours);
             builder.Property(t => t.IsDeleted).HasColumnName("Eliminado").IsRequired().HasDefaultValue(false);  
         }
     }

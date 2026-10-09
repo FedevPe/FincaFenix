@@ -18,10 +18,20 @@ namespace FincaFenix.EFCore.Services.QueryServices
                     WorkOrderId = dwo.WorkOrderId,
                     EmployeeId = dwo.EmployeeId,
                     SectorWorkedId = dwo.SectorWorkedId,
-                    Performance = dwo.Performance,
+                    MachinePasses = dwo.MachinePasses,
                     WorkedHours = dwo.WorkedHours,
+                    ProducedAmount = dwo.ProducedAmount,
                     Description = dwo.Description,
                     ActivityDate = dwo.ActivityDate,
+                    WorkOrder = new WorkOrderEntity
+                    {
+                        Id = dwo.WorkOrderId,
+                        Task = dwo.WorkOrder.Task != null ? new TaskEntity
+                        {
+                            Id = dwo.WorkOrder.Task.Id,
+                            RendimientoMode = dwo.WorkOrder.Task.RendimientoMode
+                        } : null
+                    },
                     Employee = dwo.Employee != null ? new EmployeeEntity
                     {
                         Id = dwo.Employee.Id,
@@ -31,7 +41,8 @@ namespace FincaFenix.EFCore.Services.QueryServices
                     SectorWorked = dwo.SectorWorked != null ? new DetailSectorFarmEntity
                     {
                         Id = dwo.SectorWorked.Id,
-                        SectorName = dwo.SectorWorked.SectorName
+                        SectorName = dwo.SectorWorked.SectorName,
+                        Area = dwo.SectorWorked.Area
                     } : null
                 })
                 .OrderBy(dwo => dwo.ActivityDate)

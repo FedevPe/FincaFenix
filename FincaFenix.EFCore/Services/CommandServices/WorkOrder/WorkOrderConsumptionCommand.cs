@@ -26,16 +26,16 @@ namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
                 return;
             }
 
-            var totalPerformance = await context.DetailWorkOrders
+            var totalMachinePasses = await context.DetailWorkOrders
                 .Where(d => d.WorkOrderId == workOrderId)
-                .SumAsync(d => (decimal?)d.Performance) ?? 0m;
+                .SumAsync(d => (decimal?)d.MachinePasses) ?? 0m;
 
             var stockRows = await LockStockRowsAsync(workOrder.FarmId);
 
             foreach (var detail in workOrder.Recipe.DetailRecipeList)
             {
                 var dose = detail.AmountRequired;
-                var target = totalPerformance * dose;
+                var target = totalMachinePasses * dose;
 
                 if (target <= 0)
                 {

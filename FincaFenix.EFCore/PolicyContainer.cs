@@ -17,6 +17,7 @@ namespace FincaFenix.EFCore
                 var logger = context.GetService<ILogger<FincaFenixContext>>();
                 await SeedDataBase.SeedAddPoliciesAsync(dbContext, logger, ct);
                 await SeedDataBase.SeedInventoryUnitsAsync(dbContext, logger, ct);
+                await SeedDataBase.SeedTaskRendimientoModesAsync(dbContext, logger, ct);
             });
         }
     }
