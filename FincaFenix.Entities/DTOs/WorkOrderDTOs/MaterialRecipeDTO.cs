@@ -11,5 +11,6 @@
         public string DiseasePlague { get; set; }
         public string CodeSAP { get; set; }
         public string DescriptionSAP { get; set; }
+        public string? UnitOfMeasure { get; set; }
     }
 }
