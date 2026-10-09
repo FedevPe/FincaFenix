@@ -1,8 +1,10 @@
 ﻿using FincaFenix.UsesCases.Controllers;
+using FincaFenix.UsesCases.Controllers.Inventory;
 using FincaFenix.UsesCases.Controllers.WorkOrder;
 using FincaFenix.UsesCases.Controllers.WorkOrderDetail;
 using FincaFenixControllers.Implementations;
 using FincaFenixControllers.Implementations.DetailWorkOrder;
+using FincaFenixControllers.Implementations.Inventory;
 using FincaFenixControllers.Implementations.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -17,8 +19,10 @@ public static class DependencyContainer
                 .AddTransient<IMaterialController, MaterialController>()
                 .AddTransient<ITaskController, TaskController>()
                 .AddTransient<IMaterialCategoryController, MaterialCategoryController>()
+                .AddTransient<IUnitOfMeasureController, UnitOfMeasureController>()
                 .AddTransient<IMachineController, MachineController>()
                 .AddTransient<IEmployeeController, EmployeeController>()
+                .AddTransient<IInventoryController, InventoryController>()
 
                 //WorkOrder
                 .AddTransient<ICreateWorkOrderController, WorkOrderController>()

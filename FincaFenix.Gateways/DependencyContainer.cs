@@ -1,8 +1,10 @@
 ﻿using FincaFenix.Gateways.Implementations;
 using FincaFenix.Gateways.Implementations.DetailWorkOrder;
+using FincaFenix.Gateways.Implementations.Inventory;
 using FincaFenix.Gateways.Implementations.WorkOrder;
 using FincaFenix.UsesCases.Repository;
 using FincaFenix.UsesCases.Repository.DetailWorkOrder;
+using FincaFenix.UsesCases.Repository.Inventory;
 using FincaFenix.UsesCases.Repository.WorkOrder;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -16,9 +18,11 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IDetailSectorRepository, DetailSectorRepository>()
                     .AddScoped<ITaskRepository, TaskRepository>()
                     .AddScoped<IMaterialCategoryRepository, MaterialCategoryRepository>()
+                    .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>()
                     .AddScoped<IMachineRepository, MachineRepository>()
                     .AddScoped<IEmployeeRepository, EmployeeRepository>()
                     .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>()
+                    .AddScoped<IInventoryRepository, InventoryRepository>()
 
                     //Work Order Repository
                     .AddScoped<ICreateWorkOrderRepository, CreateWorkOrderRepository>()

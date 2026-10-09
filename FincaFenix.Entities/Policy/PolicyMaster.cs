@@ -44,6 +44,11 @@ namespace FincaFenix.Entities
         public const string MATERIAL_CATEGORY_UPDATE = nameof(MATERIAL_CATEGORY_UPDATE);
         public const string MATERIAL_CATEGORY_DELETE = nameof(MATERIAL_CATEGORY_DELETE);
 
+        public const string UNIT_OF_MEASURE_CREATE = nameof(UNIT_OF_MEASURE_CREATE);
+        public const string UNIT_OF_MEASURE_READ = nameof(UNIT_OF_MEASURE_READ);
+        public const string UNIT_OF_MEASURE_UPDATE = nameof(UNIT_OF_MEASURE_UPDATE);
+        public const string UNIT_OF_MEASURE_DELETE = nameof(UNIT_OF_MEASURE_DELETE);
+
         public const string MACHINE_CREATE = nameof(MACHINE_CREATE);
         public const string MACHINE_READ = nameof(MACHINE_READ);
         public const string MACHINE_UPDATE = nameof(MACHINE_UPDATE);
@@ -68,5 +73,18 @@ namespace FincaFenix.Entities
         public const string USER_READ = nameof(USER_READ);
         public const string USER_UPDATE = nameof(USER_UPDATE);
         public const string USER_DELETE = nameof(USER_DELETE);
+
+        public const string STOCK_READ = nameof(STOCK_READ);
+        public const string STOCK_UPDATE = nameof(STOCK_UPDATE);
+
+        public const string MOVEMENT_CREATE = nameof(MOVEMENT_CREATE);
+        public const string MOVEMENT_READ = nameof(MOVEMENT_READ);
+
+        public const string RESERVATION_CREATE = nameof(RESERVATION_CREATE);
+        public const string RESERVATION_READ = nameof(RESERVATION_READ);
+        public const string RESERVATION_DELETE = nameof(RESERVATION_DELETE);
+
+        public const string CONSUMPTION_CREATE = nameof(CONSUMPTION_CREATE);
+        public const string CONSUMPTION_READ = nameof(CONSUMPTION_READ);
     }
 }

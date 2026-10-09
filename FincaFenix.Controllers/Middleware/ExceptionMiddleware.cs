@@ -23,6 +23,10 @@ namespace FincaFenixControllers.Middleware
             {
                 await HandleValidationExceptionAsync(context, ex);
             }
+            catch (BusinessRuleException ex)
+            {
+                await HandleExceptionAsync(context, ex, HttpStatusCode.UnprocessableEntity, ex.Message);
+            }
             catch (UnauthorizedAccessException)
             {
                 await HandleExceptionAsync(context, null, HttpStatusCode.Forbidden, "No tiene permisos para acceder a este recurso.");
@@ -75,6 +79,7 @@ namespace FincaFenixControllers.Middleware
         {
             HttpStatusCode.NotFound => "Recurso no encontrado",
             HttpStatusCode.Forbidden => "Acceso denegado",
+            HttpStatusCode.UnprocessableEntity => "Regla de negocio",
             HttpStatusCode.InternalServerError => "Error interno del servidor",
             _ => "Error"
         };
