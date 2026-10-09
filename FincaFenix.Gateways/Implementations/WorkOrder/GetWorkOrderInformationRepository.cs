@@ -28,5 +28,10 @@ namespace FincaFenix.Gateways.Implementations.WorkOrder
         {
             return await query.GetWorkOrderListPaged(pageNumber, pageSize, status);
         }
+
+        public async Task<Dictionary<int, decimal>> GetConsumedAmountsByWorkOrderAsync(int workOrderId)
+        {
+            return await query.GetConsumedAmountsByWorkOrderAsync(workOrderId);
+        }
     }
 }

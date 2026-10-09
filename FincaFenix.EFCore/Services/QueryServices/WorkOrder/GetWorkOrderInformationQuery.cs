@@ -115,6 +115,13 @@ namespace FincaFenix.EFCore.Services.QueryServices.WorkOrder
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Dictionary<int, decimal>> GetConsumedAmountsByWorkOrderAsync(int workOrderId)
+        {
+            return await context.Consumptions
+                .Where(c => c.WorkOrderId == workOrderId)
+                .ToDictionaryAsync(c => c.MaterialId, c => c.ConsumedAmount);
+        }
+
         public async Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList()
         {
             return await context.WorkOrders.Where(wo => !wo.IsDeleted)

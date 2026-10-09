@@ -10,5 +10,6 @@ namespace FincaFenix.Gateways.Interfaces.QueryServices.WorkOrder
         Task<WorkOrderEntity> GetWorkOrderAndRecipeByIdWorkorder(int id);
         Task<IEnumerable<WorkOrderEntity>> GetAllWorkOrderList();
         Task<(IEnumerable<ShowWorkOrderDTO> WorkOrders, int TotalCount)> GetWorkOrderListPaged(int pageNumber, int pageSize, string status);
+        Task<Dictionary<int, decimal>> GetConsumedAmountsByWorkOrderAsync(int workOrderId);
     }
 }

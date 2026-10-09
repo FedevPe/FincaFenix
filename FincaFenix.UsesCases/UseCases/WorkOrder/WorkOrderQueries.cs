@@ -26,7 +26,25 @@ public class GetWorkOrderByIdHandler(IGetWorkOrderInformationRepository reposito
     public async Task<ShowWorkOrderDTO> Handle(GetWorkOrderByIdQuery request, CancellationToken cancellationToken)
     {
         var entity = await repository.GetWorkOrderAndRecipeByIdWorkorder(request.Id);
-        return mapper.Map<ShowWorkOrderDTO>(entity);
+        var dto = mapper.Map<ShowWorkOrderDTO>(entity);
+
+        if (dto.Recipe?.Details is { Count: > 0 })
+        {
+            var consumedAmounts = await repository.GetConsumedAmountsByWorkOrderAsync(request.Id);
+
+            if (consumedAmounts.Count > 0)
+            {
+                foreach (var detail in dto.Recipe.Details)
+                {
+                    if (consumedAmounts.TryGetValue(detail.MaterialId, out var consumed))
+                    {
+                        detail.TotalAmountConsumed = consumed;
+                    }
+                }
+            }
+        }
+
+        return dto;
     }
 }
 
