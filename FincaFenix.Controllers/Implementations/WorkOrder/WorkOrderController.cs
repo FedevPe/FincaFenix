@@ -58,6 +58,13 @@ namespace FincaFenixControllers.Implementations.WorkOrder
             return await mediator.Send(new UpdateWorkOrderStateCommand(workOrderId, newStatus));
         }
 
+        [HttpPut("updateworkorder")]
+        [Authorize(Policy = PolicyMaster.WORKORDER_UPDATE)]
+        public async Task<bool> UpdateWorkOrder(UpdateWorkOrderDTO dto)
+        {
+            return await mediator.Send(new UpdateWorkOrderCommand(dto));
+        }
+
         [HttpGet("{id}/pdf")]
         [Authorize(Policy = PolicyMaster.WORKORDER_READ)]
         public async Task<IActionResult> GetWorkOrderPdf(int id)
