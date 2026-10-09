@@ -10,6 +10,7 @@ namespace FincaFenix.Gateways.Implementations.WorkOrder
         ICorrelativeNumberService correlativeNumberService,
         IRecipeCommand recipeCommand,
         IWorkOrderCommand workOrderCommand,
+        IWorkOrderInventoryCommand workOrderInventoryCommand,
         IUnitOfWork unitOfWork) : ICreateWorkOrderRepository
     {
         public async Task<int> CreateWorkOrder(WorkOrderEntity workOrder)
@@ -34,6 +35,11 @@ namespace FincaFenix.Gateways.Implementations.WorkOrder
                 await workOrderCommand.AddWorkOrder(workOrder);
                 workOrderCorrelative.LastNumber++;
                 await unitOfWork.SaveChangesAsync();
+
+                if (workOrder.Recipe?.DetailRecipeList is { Count: > 0 })
+                {
+                    await workOrderInventoryCommand.RegisterReservationsAndCostsAsync(workOrder, workOrder.Recipe.DetailRecipeList);
+                }
 
                 await unitOfWork.CommitAsync();
                 return workOrder.Id;
