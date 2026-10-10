@@ -278,6 +278,18 @@ Verificado (build 0 errores + smoke real): OT 62 (`MaterialEfficiency`, receta V
 
 Próxima etapa planificada (futuro): módulo de compras a proveedores y módulo dedicado de cosecha.
 
+## Completed — CRUD de Tareas (Tarea — Oct 2026)
+
+Alcance: CRUD completo de `TaskEntity` (tabla `Tarea`), incluyendo la edición del `RendimientoMode`. Plantilla: CRUD de MaterialCategory.
+
+1. **Endpoints** (`TaskController`, `api/task`): `GET getTaskById/{id}` y `GET GetTaskList?includeDeleted` (existían), nuevos **`POST`**, **`PUT`**, **`DELETE {id}`**. Clase pasó de `[Authorize(Policy=TASK_READ)]` a `[Authorize]` + policy por acción (`TASK_CREATE/READ/UPDATE/DELETE` ya existían en `PolicyMaster`; admin/desarrollador las reciben por reflexión, supervisor tiene `TASK_READ`) — **sin cambios de seed**.
+2. **Baja lógica** (`Eliminado=true`, igual que Material/Unidad): `GetTaskList` excluye eliminadas por defecto (`Where(includeDeleted || !IsDeleted)`); `includeDeleted=true` las incluye. `GET getTaskById/{id}` devuelve también eliminadas. **`TaskQueryService.Exists` filtra `!IsDeleted`** → crear una OT con tarea desactivada → **422** ("La tarea seleccionada no existe en la base de datos") vía `WorkOrderValidator`.
+3. **`SaveTaskDTO`** (`FincaFenix.Entities/DTOs/WorkOrderDTOs/`): `Id?`, `Description`, `RendimientoMode` (string). Validadores Create/Update: descripción obligatoria ≤ 100 y modo obligatorio parseable a `RendimientoModeEnum` → **422**. Mapa `SaveTaskDTO → TaskEntity` con parse tolerante (fallback `ManHours`).
+4. **Capas:** `ITaskCommandService`/`TaskCommandService` (`Gateways/Interfaces/CommandServices/Tasks` y `EFCore/Services/CommandServices/Tasks`, con `IUnitOfWork`; Create resetea `Id=0` + `IsDeleted=false`, Update toca Descripción/Modo, Delete soft con **404** si no existe). `ITaskRepository`/`TaskRepository` + `ITaskQueryService`/`TaskQueryService.GetTaskList(bool includeDeleted)`.
+5. **Gotcha de naming:** el namespace `...CommandServices.Task` provoca **CS0118** (`'Task' es espacio de nombres pero se usa como tipo`) en todos los interfaces hermanos del proyecto — se usa **`Tasks`** (plural).
+
+Verificado (build 0 errores + smoke real): listado 31 tareas; create → id 32 (`ManHours`); create modo inválido/descripción vacía → **422**; update → `MaterialEfficiency`; delete → `true` y `Eliminado=1` en DB; `GetTaskList` sin eliminadas (smoke ausente) vs `includeDeleted=true` (smoke presente); `getTaskById/32` (eliminada) → 200; delete/update inexistentes → **404**; regresión `getCompleteInfo/68` → `task(id=3 Cosecha)`; sin token → 401. **Task 32 quedó como dato de prueba (soft-deleted). Sin commits aún.**
+
 ## No Tests
 
 ## NuGet Versions (key)
@@ -308,3 +320,4 @@ Próxima etapa planificada (futuro): módulo de compras a proveedores y módulo 
 | `IA/WebAPI_IMPLEMENTATION.md` | Web API standalone + Swagger implementation plan |
 | `IA/ADD_POLICIES.md` | Policy-based authorization implementation plan |
 | `IA/PLAN_EJECUCION_RENDIMIENTO_OT.md` | Rendimiento de OT (maquinadas + modos de tarea) plan |
+| `IA/PLAN_EJECUCION_CRUD_TAREAS.md` | CRUD de Tareas (Tarea) plan |

@@ -5,14 +5,14 @@ using MediatR;
 
 namespace FincaFenix.UsesCases.UseCases.Task;
 
-public record GetTaskListQuery : IRequest<IEnumerable<TaskDTO>>;
+public record GetTaskListQuery(bool IncludeDeleted = false) : IRequest<IEnumerable<TaskDTO>>;
 public record GetTaskByIdQuery(int Id) : IRequest<TaskDTO>;
 
 public class GetTaskListHandler(ITaskRepository repository, IMapper mapper) : IRequestHandler<GetTaskListQuery, IEnumerable<TaskDTO>>
 {
     public async Task<IEnumerable<TaskDTO>> Handle(GetTaskListQuery request, CancellationToken cancellationToken)
     {
-        var tasks = await repository.GetAllTasks();
+        var tasks = await repository.GetAllTasks(request.IncludeDeleted);
         return mapper.Map<IEnumerable<TaskDTO>>(tasks);
     }
 }

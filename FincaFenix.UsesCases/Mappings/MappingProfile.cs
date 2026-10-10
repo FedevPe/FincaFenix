@@ -5,6 +5,7 @@ using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
+using FincaFenix.Entities.Enum;
 using FincaFenix.Entities.POCOEntities;
 
 namespace FincaFenix.UsesCases.Mappings;
@@ -21,6 +22,12 @@ public class MappingProfile : Profile
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
             .ForMember(d => d.RendimientoMode, o => o.MapFrom(s => s.RendimientoMode.ToString()));
+
+        CreateMap<SaveTaskDTO, TaskEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+            .ForMember(d => d.RendimientoMode, o => o.MapFrom(s => ParseRendimientoMode(s.RendimientoMode)))
+            .ForMember(d => d.IsDeleted, o => o.Ignore());
 
         CreateMap<MachineEntity, MachineRecipeDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
@@ -227,5 +234,12 @@ public class MappingProfile : Profile
                 PestDisease = string.Join(", ", g.Select(x => x.PestDisease).Distinct())
             })
             .ToList();
+    }
+
+    private static RendimientoModeEnum ParseRendimientoMode(string value)
+    {
+        return Enum.TryParse<RendimientoModeEnum>(value, true, out var mode)
+            ? mode
+            : RendimientoModeEnum.ManHours;
     }
 }

@@ -11,7 +11,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
     {
         public async Task<bool> Exists(int id)
         {
-            return await context.Tasks.AnyAsync(t => t.Id == id);
+            return await context.Tasks.AnyAsync(t => t.Id == id && !t.IsDeleted);
         }
 
         public async Task<TaskEntity> GetTaskById(int taskId)
@@ -19,9 +19,12 @@ namespace FincaFenix.EFCore.Services.QueryServices
             return await context.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync() ?? throw new NotFoundException($"Task with ID {taskId} not found.");
         }
 
-        public async Task<IEnumerable<TaskEntity>> GetTaskList()
+        public async Task<IEnumerable<TaskEntity>> GetTaskList(bool includeDeleted = false)
         {
-            return await context.Tasks.OrderBy(t => t.Description).ToListAsync();
+            return await context.Tasks
+                .Where(t => includeDeleted || !t.IsDeleted)
+                .OrderBy(t => t.Description)
+                .ToListAsync();
         }
     }
 }

@@ -5,6 +5,7 @@ using FincaFenix.UsesCases.UseCases.DetailWorkOrder;
 using FincaFenix.UsesCases.UseCases.Inventory;
 using FincaFenix.UsesCases.UseCases.Material;
 using FincaFenix.UsesCases.UseCases.MaterialCategory;
+using FincaFenix.UsesCases.UseCases.Task;
 using FincaFenix.UsesCases.UseCases.UnitOfMeasure;
 using FincaFenix.UsesCases.UseCases.WorkOrder;
 using FincaFenix.Validators.Validators.DetailWorkOrder;
@@ -12,6 +13,7 @@ using FincaFenix.Validators.Validators.Inventory;
 using FincaFenix.Validators.Validators.Login;
 using FincaFenix.Validators.Validators.Material;
 using FincaFenix.Validators.Validators.Recipe;
+using FincaFenix.Validators.Validators.Task;
 using FincaFenix.Validators.Validators.WorkOrder;
 using FluentValidation;
 using MediatR;
@@ -42,6 +44,8 @@ public static class DependencyContainer
                 .AddTransient<IValidator<UpdateMaterialCategoryCommand>, UpdateMaterialCategoryCommandValidator>()
                 .AddTransient<IValidator<CreateUnitOfMeasureCommand>, CreateUnitOfMeasureCommandValidator>()
                 .AddTransient<IValidator<UpdateUnitOfMeasureCommand>, UpdateUnitOfMeasureCommandValidator>()
+                .AddTransient<IValidator<CreateTaskCommand>, CreateTaskCommandValidator>()
+                .AddTransient<IValidator<UpdateTaskCommand>, UpdateTaskCommandValidator>()
                 .AddTransient<WorkOrderValidator>()
                 .AddTransient<RecipeValidator>()
                 .AddTransient<DetailRecipeValidator>()
