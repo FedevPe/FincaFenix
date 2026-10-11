@@ -34,6 +34,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
         {
             return await context.Materials
                 .AsNoTracking()
+                .Include(m => m.Category)
                 .Include(m => m.UnitOfMeasure)
                 .Where(m => !m.IsDeleted)
                 .ToListAsync();
