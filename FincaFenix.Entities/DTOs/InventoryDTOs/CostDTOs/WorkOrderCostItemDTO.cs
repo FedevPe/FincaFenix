@@ -9,6 +9,8 @@ namespace FincaFenix.Entities.DTOs.InventoryDTOs.CostDTOs
         public decimal PlannedAmount { get; set; }
         public decimal UnitCost { get; set; }
         public decimal TotalCost { get; set; }
+        public decimal ConsumedAmount { get; set; }
+        public decimal RealCost { get; set; }
         public string CurrencyCode { get; set; }
         public string CurrencySymbol { get; set; }
         public DateTime FrozenDate { get; set; }

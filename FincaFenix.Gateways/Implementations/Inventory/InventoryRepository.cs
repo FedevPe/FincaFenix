@@ -1,5 +1,8 @@
+using FincaFenix.Entities.DTOs.Common;
 using FincaFenix.Entities.DTOs.InventoryDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.CostDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.ReservationDTOs;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices.Inventory;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
@@ -31,11 +34,20 @@ namespace FincaFenix.Gateways.Implementations.Inventory
         public Task<IEnumerable<CurrentMaterialCostDTO>> GetCurrentMaterialCostsAsync()
             => queryService.GetCurrentMaterialCostsAsync();
 
+        public Task<PagedResult<CurrentMaterialCostDTO>> GetCurrentMaterialCostsPagedAsync(MaterialFilterDTO filter)
+            => queryService.GetCurrentMaterialCostsPagedAsync(filter);
+
         public Task<CostHistoryDTO> GetMaterialCostHistoryAsync(int materialId)
             => queryService.GetMaterialCostHistoryAsync(materialId);
 
         public Task<WorkOrderCostDTO> GetWorkOrderCostsAsync(int workOrderId)
             => queryService.GetWorkOrderCostsAsync(workOrderId);
+
+        public Task<MaterialReservationsDTO> GetMaterialReservationsAsync(int materialId)
+            => queryService.GetMaterialReservationsAsync(materialId);
+
+        public Task<IEnumerable<InventoryMovementDTO>> GetRecentMovementsAsync(int take)
+            => queryService.GetRecentMovementsAsync(take);
 
         public Task<MovementResultDTO> RegisterMovementAsync(InventoryMovementEntity movement, decimal? stockMinimum)
             => commandService.RegisterMovementAsync(movement, stockMinimum);

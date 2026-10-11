@@ -1,5 +1,8 @@
+using FincaFenix.Entities.DTOs.Common;
 using FincaFenix.Entities.DTOs.InventoryDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.CostDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.ReservationDTOs;
 using FincaFenix.UsesCases.Repository.Inventory;
 using MediatR;
 
@@ -11,8 +14,11 @@ public record GetLowStockQuery : IRequest<IEnumerable<StockDTO>>;
 public record GetZeroStockQuery : IRequest<IEnumerable<StockDTO>>;
 public record GetCurrenciesQuery : IRequest<IEnumerable<CurrencyDTO>>;
 public record GetCurrentMaterialCostsQuery : IRequest<IEnumerable<CurrentMaterialCostDTO>>;
+public record GetCurrentMaterialCostsPagedQuery(MaterialFilterDTO Filter) : IRequest<PagedResult<CurrentMaterialCostDTO>>;
+public record GetMaterialReservationsQuery(int MaterialId) : IRequest<MaterialReservationsDTO>;
 public record GetMaterialCostHistoryQuery(int MaterialId) : IRequest<CostHistoryDTO>;
 public record GetWorkOrderCostsQuery(int WorkOrderId) : IRequest<WorkOrderCostDTO>;
+public record GetRecentMovementsQuery(int Take) : IRequest<IEnumerable<InventoryMovementDTO>>;
 
 public class GetStockByFarmHandler(IInventoryRepository repository) : IRequestHandler<GetStockByFarmQuery, IEnumerable<StockDTO>>
 {
@@ -60,4 +66,22 @@ public class GetWorkOrderCostsHandler(IInventoryRepository repository) : IReques
 {
     public Task<WorkOrderCostDTO> Handle(GetWorkOrderCostsQuery request, CancellationToken cancellationToken)
         => repository.GetWorkOrderCostsAsync(request.WorkOrderId);
+}
+
+public class GetCurrentMaterialCostsPagedHandler(IInventoryRepository repository) : IRequestHandler<GetCurrentMaterialCostsPagedQuery, PagedResult<CurrentMaterialCostDTO>>
+{
+    public Task<PagedResult<CurrentMaterialCostDTO>> Handle(GetCurrentMaterialCostsPagedQuery request, CancellationToken cancellationToken)
+        => repository.GetCurrentMaterialCostsPagedAsync(request.Filter);
+}
+
+public class GetMaterialReservationsHandler(IInventoryRepository repository) : IRequestHandler<GetMaterialReservationsQuery, MaterialReservationsDTO>
+{
+    public Task<MaterialReservationsDTO> Handle(GetMaterialReservationsQuery request, CancellationToken cancellationToken)
+        => repository.GetMaterialReservationsAsync(request.MaterialId);
+}
+
+public class GetRecentMovementsHandler(IInventoryRepository repository) : IRequestHandler<GetRecentMovementsQuery, IEnumerable<InventoryMovementDTO>>
+{
+    public Task<IEnumerable<InventoryMovementDTO>> Handle(GetRecentMovementsQuery request, CancellationToken cancellationToken)
+        => repository.GetRecentMovementsAsync(request.Take);
 }

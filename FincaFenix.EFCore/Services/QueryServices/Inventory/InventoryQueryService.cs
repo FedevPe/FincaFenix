@@ -1,6 +1,9 @@
 using FincaFenix.EFCore.Context;
+using FincaFenix.Entities.DTOs.Common;
 using FincaFenix.Entities.DTOs.InventoryDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.CostDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.ReservationDTOs;
 using FincaFenix.Entities.Exceptions;
 using FincaFenix.Gateways.Interfaces.QueryServices.Inventory;
 using Microsoft.EntityFrameworkCore;
@@ -135,6 +138,8 @@ namespace FincaFenix.EFCore.Services.QueryServices.Inventory
                     ArticleName = m.ArticleName,
                     CommercialName = m.CommercialName,
                     UnitOfMeasure = m.UnitOfMeasure != null ? m.UnitOfMeasure.Description : null,
+                    CategoryId = m.CategoryId,
+                    CategoryName = m.Category != null ? m.Category.Description : null,
                     ReferenceCost = m.ReferenceCost,
                     CurrencyId = m.CurrencyId,
                     CurrencyCode = m.Currency.Code,
@@ -142,6 +147,57 @@ namespace FincaFenix.EFCore.Services.QueryServices.Inventory
                 })
                 .OrderBy(m => m.ArticleName)
                 .ToListAsync();
+        }
+
+        public async Task<PagedResult<CurrentMaterialCostDTO>> GetCurrentMaterialCostsPagedAsync(MaterialFilterDTO filter)
+        {
+            var pageNumber = filter.PageNumber < 1 ? 1 : filter.PageNumber;
+            var pageSize = filter.PageSize < 1 ? 10 : filter.PageSize;
+
+            var baseQuery = context.Materials
+                .AsNoTracking()
+                .Where(m => !m.IsDeleted);
+
+            if (filter.CategoryId.HasValue)
+                baseQuery = baseQuery.Where(m => m.CategoryId == filter.CategoryId.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                var search = filter.Search.Trim();
+                baseQuery = baseQuery.Where(m =>
+                    m.ArticleName.Contains(search) ||
+                    m.CommercialName.Contains(search) ||
+                    m.CodeSap.Contains(search));
+            }
+
+            var totalCount = await baseQuery.CountAsync();
+
+            var items = await baseQuery
+                .OrderBy(m => m.ArticleName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(m => new CurrentMaterialCostDTO
+                {
+                    MaterialId = m.Id,
+                    ArticleName = m.ArticleName,
+                    CommercialName = m.CommercialName,
+                    UnitOfMeasure = m.UnitOfMeasure != null ? m.UnitOfMeasure.Description : null,
+                    CategoryId = m.CategoryId,
+                    CategoryName = m.Category != null ? m.Category.Description : null,
+                    ReferenceCost = m.ReferenceCost,
+                    CurrencyId = m.CurrencyId,
+                    CurrencyCode = m.Currency.Code,
+                    CurrencySymbol = m.Currency.Symbol
+                })
+                .ToListAsync();
+
+            return new PagedResult<CurrentMaterialCostDTO>
+            {
+                Items = items,
+                TotalCount = totalCount,
+                Page = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<CostHistoryDTO> GetMaterialCostHistoryAsync(int materialId)
@@ -195,6 +251,11 @@ namespace FincaFenix.EFCore.Services.QueryServices.Inventory
             if (workOrder is null)
                 throw new NotFoundException($"No se encontró la orden de trabajo {workOrderId}.");
 
+            var consumedByMaterial = await context.Consumptions
+                .AsNoTracking()
+                .Where(c => c.WorkOrderId == workOrderId)
+                .ToDictionaryAsync(c => c.MaterialId, c => c.ConsumedAmount);
+
             var items = await context.WorkOrderCosts
                 .AsNoTracking()
                 .Where(c => c.WorkOrderId == workOrderId)
@@ -214,13 +275,97 @@ namespace FincaFenix.EFCore.Services.QueryServices.Inventory
                 .OrderBy(c => c.MaterialId)
                 .ToListAsync();
 
+            foreach (var item in items)
+            {
+                item.ConsumedAmount = consumedByMaterial.TryGetValue(item.MaterialId, out var consumed)
+                    ? consumed
+                    : 0m;
+                item.RealCost = item.ConsumedAmount * item.UnitCost;
+            }
+
             return new WorkOrderCostDTO
             {
                 WorkOrderId = workOrder.Id,
                 OrderNum = workOrder.OrderNum,
                 TotalCost = items.Sum(i => i.TotalCost),
+                TotalRealCost = items.Sum(i => i.RealCost),
                 Items = items
             };
+        }
+
+        public async Task<MaterialReservationsDTO> GetMaterialReservationsAsync(int materialId)
+        {
+            var material = await context.Materials
+                .AsNoTracking()
+                .Include(m => m.UnitOfMeasure)
+                .FirstOrDefaultAsync(m => m.Id == materialId && !m.IsDeleted);
+
+            if (material is null)
+                throw new NotFoundException($"No se encontró el material {materialId}.");
+
+            var items = await context.MaterialReservations
+                .AsNoTracking()
+                .Where(r => r.MaterialId == materialId)
+                .OrderByDescending(r => r.CreatedDate)
+                .Select(r => new ReservationItemDTO
+                {
+                    ReservationId = r.Id,
+                    WorkOrderId = r.WorkOrderId,
+                    OrderNum = r.WorkOrder.OrderNum,
+                    WorkOrderStatus = r.WorkOrder.Status,
+                    FarmId = r.FarmId,
+                    FarmName = r.Farm.Name,
+                    ReservedAmount = r.ReservedAmount,
+                    ConsumedAmount = r.ConsumedAmount,
+                    PendingAmount = r.ReservedAmount - r.ConsumedAmount,
+                    State = r.State,
+                    CreatedDate = r.CreatedDate,
+                    ReleasedDate = r.ReleasedDate
+                })
+                .ToListAsync();
+
+            return new MaterialReservationsDTO
+            {
+                MaterialId = material.Id,
+                ArticleName = material.ArticleName,
+                CommercialName = material.CommercialName,
+                UnitOfMeasure = material.UnitOfMeasure != null ? material.UnitOfMeasure.Description : null,
+                Items = items
+            };
+        }
+
+        public async Task<IEnumerable<InventoryMovementDTO>> GetRecentMovementsAsync(int take)
+        {
+            var limit = take < 1 ? 10 : take;
+
+            return await context.InventoryMovements
+                .AsNoTracking()
+                .OrderByDescending(mv => mv.Date)
+                .ThenByDescending(mv => mv.Id)
+                .Take(limit)
+                .Select(mv => new InventoryMovementDTO
+                {
+                    Id = mv.Id,
+                    MaterialId = mv.MaterialId,
+                    ArticleName = mv.Material.ArticleName,
+                    CommercialName = mv.Material.CommercialName,
+                    UnitOfMeasure = mv.Material.UnitOfMeasure != null ? mv.Material.UnitOfMeasure.Description : null,
+                    FarmId = mv.FarmId,
+                    FarmName = mv.Farm.Name,
+                    MovementType = mv.MovementType,
+                    Origin = mv.Origin,
+                    Amount = mv.Amount,
+                    UnitCost = mv.UnitCost,
+                    TotalCost = mv.TotalCost,
+                    CurrencyCode = mv.Currency != null ? mv.Currency.Code : null,
+                    CurrencySymbol = mv.Currency != null ? mv.Currency.Symbol : null,
+                    ResultingStock = mv.ResultingStock,
+                    Date = mv.Date,
+                    Observations = mv.Observations,
+                    WorkOrderId = mv.WorkOrderId,
+                    OrderNum = mv.WorkOrder != null ? mv.WorkOrder.OrderNum : null
+                })
+                .ToListAsync();
         }
     }
 }

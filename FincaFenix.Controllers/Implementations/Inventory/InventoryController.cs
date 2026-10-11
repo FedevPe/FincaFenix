@@ -1,7 +1,10 @@
 using System.Net;
 using FincaFenix.Entities;
+using FincaFenix.Entities.DTOs.Common;
 using FincaFenix.Entities.DTOs.InventoryDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.CostDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
+using FincaFenix.Entities.DTOs.InventoryDTOs.ReservationDTOs;
 using FincaFenix.UsesCases.Controllers.Inventory;
 using FincaFenix.UsesCases.UseCases.Inventory;
 using MediatR;
@@ -71,12 +74,36 @@ namespace FincaFenixControllers.Implementations.Inventory
             return await mediator.Send(new GetCurrenciesQuery());
         }
 
+        [HttpGet("movements/recent")]
+        [Authorize(Policy = PolicyMaster.STOCK_READ)]
+        [ProducesResponseType(typeof(IEnumerable<InventoryMovementDTO>), (int)HttpStatusCode.OK)]
+        public async Task<IEnumerable<InventoryMovementDTO>> GetRecentMovements([FromQuery] int take = 10)
+        {
+            return await mediator.Send(new GetRecentMovementsQuery(take));
+        }
+
         [HttpGet("costs/current")]
         [Authorize(Policy = PolicyMaster.STOCK_READ)]
         [ProducesResponseType(typeof(IEnumerable<CurrentMaterialCostDTO>), (int)HttpStatusCode.OK)]
         public async Task<IEnumerable<CurrentMaterialCostDTO>> GetCurrentMaterialCosts()
         {
             return await mediator.Send(new GetCurrentMaterialCostsQuery());
+        }
+
+        [HttpGet("costs/current/paged")]
+        [Authorize(Policy = PolicyMaster.STOCK_READ)]
+        [ProducesResponseType(typeof(PagedResult<CurrentMaterialCostDTO>), (int)HttpStatusCode.OK)]
+        public async Task<PagedResult<CurrentMaterialCostDTO>> GetCurrentMaterialCostsPaged([FromQuery] MaterialFilterDTO filter)
+        {
+            return await mediator.Send(new GetCurrentMaterialCostsPagedQuery(filter));
+        }
+
+        [HttpGet("reservations/material/{materialId}")]
+        [Authorize(Policy = PolicyMaster.STOCK_READ)]
+        [ProducesResponseType(typeof(MaterialReservationsDTO), (int)HttpStatusCode.OK)]
+        public async Task<MaterialReservationsDTO> GetMaterialReservations(int materialId)
+        {
+            return await mediator.Send(new GetMaterialReservationsQuery(materialId));
         }
 
         [HttpGet("costs/material/{materialId}/history")]

@@ -13,6 +13,7 @@ namespace FincaFenix.UsesCases.Controllers.Inventory
         Task<IEnumerable<CurrentMaterialCostDTO>> GetCurrentMaterialCosts();
         Task<CostHistoryDTO> GetMaterialCostHistory(int materialId);
         Task<WorkOrderCostDTO> GetWorkOrderCosts(int workOrderId);
+        Task<IEnumerable<InventoryMovementDTO>> GetRecentMovements(int take);
         Task<MovementResultDTO> RegisterMovement(RegisterMovementDTO dto);
         Task<ConsumptionResultDTO> RegisterConsumption(RegisterConsumptionDTO dto);
     }
