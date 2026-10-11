@@ -7,7 +7,15 @@ dotnet build FincaFenix.sln
 dotnet run --project FincaFenix.WebApi             # http://localhost:5000 | https://localhost:5001 (Swagger)
 ```
 
-> La UI Blazor (`FincaFenix.UserInterface7.0`) y `FincaFenix.ViewModels` fueron **eliminadas en Fase 6 (Oct 2026)** — la UI de front será React (migración pendiente).
+Frontend (Next.js) — en `FincaFenix.Frontend`:
+
+```powershell
+npm install
+npm run dev                                        # http://localhost:3000 (proxy /api → WebAPI)
+npm run build                                      # typecheck + build SSR
+```
+
+> La UI Blazor (`FincaFenix.UserInterface7.0`) y `FincaFenix.ViewModels` fueron **eliminadas en Fase 6 (Oct 2026)**. La UI de front es ahora **Next.js 15 (App Router) + TailwindCSS v4 + shadcn/ui** en `FincaFenix.Frontend` (migrada desde la SPA Vite, Oct 2026). Ver `IA/DOCUMENTACION_UI.md`.
 
 ## Local Secrets (gitignored)
 
@@ -290,6 +298,73 @@ Alcance: CRUD completo de `TaskEntity` (tabla `Tarea`), incluyendo la edición d
 
 Verificado (build 0 errores + smoke real): listado 31 tareas; create → id 32 (`ManHours`); create modo inválido/descripción vacía → **422**; update → `MaterialEfficiency`; delete → `true` y `Eliminado=1` en DB; `GetTaskList` sin eliminadas (smoke ausente) vs `includeDeleted=true` (smoke presente); `getTaskById/32` (eliminada) → 200; delete/update inexistentes → **404**; regresión `getCompleteInfo/68` → `task(id=3 Cosecha)`; sin token → 401. **Task 32 quedó como dato de prueba (soft-deleted). Sin commits aún.**
 
+## Completed — Migración UI a Next.js + Tailwind + shadcn/ui (Oct 2026)
+
+Plan: `IA/PLAN_MIGRACION_NEXT_TAILWIND.md`. La SPA Vite + CSS Modules se reescribió **in-place** en `FincaFenix.Frontend` como **Next.js 15 (App Router, SSR shell-only)** + **TailwindCSS v4** + **shadcn/ui** + **lucide-react** + **Sonner**.
+
+1. **Stack:** eliminados Vite, React Router, Font Awesome, `next-themes` y los 29 `*.module.css`. `next.config.ts` con `rewrites` `/api/*` → `API_PROXY_TARGET` (default `http://localhost:5000`; cookie first-party, sin CORS browser). `@tanstack/react-table` fijado en **v8.21.3** (la v9 tiene API incompatible con el Data Table block).
+2. **SSR auth:** `(app)/layout.tsx` (server) usa `cookies()` + `GET /api/auth/me` (`src/lib/server/get-current-user.ts`, `cache:"no-store"`) → `redirect("/login")` o `<Providers initialUser>`. Tema por `[data-theme]` con script anti-flash.
+3. **Componentes:** 12 comunes reescritos preservando API (incl. `DataTable` v8, `Button` con `icon: LucideIcon`); 17 primitivas shadcn en `src/components/ui`; chrome `AppShell`/`Sidebar`/`AppBar` (sidebar colapsable + drawer móvil; chrome siempre oscuro vía tokens `--chrome-*`).
+4. **Features migradas:** Login, Dashboard, NotFound, WorkOrderList/Table/Filters, WorkOrderDetail/Header, CreateWorkOrder, AddActivityForm, y tabs Recipe/Activities/Consumption/Costs/Performance.
+5. **Fase 3 (15 correcciones UI):** aplicadas (TRV=lts/ha, volumen máquina fijo lts, sectores select+chips, receta Categoría→Material, sin selector de modo en tarea, `parseDecimal()` es-AR, columnas numéricas a la derecha, botón Volver, dropdown de usuario, etc.).
+6. Un artefacto del CLI de shadcn (`import { cn } from "cn"`) se corrigió a `@/lib/utils` en todos los `ui/*`; se agregó `src/types/globals.d.ts` (`declare module "*.css"`) por `noUncheckedSideEffectImports`.
+
+Verificado: `npm run build` → **0 errores** (8 rutas generadas). Doc viva: `IA/DOCUMENTACION_UI.md`. **Sin commits aún.**
+
+## Completed — UI Inventario (Next.js) (Oct 2026)
+
+1. **Tipos** (`src/types/api/inventory.ts` + re-export `index.ts`): `CurrencyDTO`, `RegisterMovementDTO`, `MovementResultDTO`, `CurrentMaterialCostDTO`, `CostHistoryDTO`, `CostHistoryItemDTO`.
+2. **`inventory.service.ts`** extendido: `getZeroStock`, `getCurrencies`, `getCurrentCosts`, `getMaterialCostHistory`, `registerMovement` (además de los 3 de stock existentes).
+3. **`features/inventory/constants.ts`**: `INVENTORY_MOVEMENT_TYPES` (`Ingreso`/`AjustePositivo`/`AjusteNegativo` — los 3 que acepta el backend), `movementTypeLabel`, `movementOriginLabel`.
+4. **`features/inventory/components/MovementForm.tsx`**: modal (material/finca de servicios existentes, tipo, cantidad, costo unitario/divisa opcional, stock mínimo, observaciones) → `POST /api/inventory/movement`; validaciones con `parseDecimal` (es-AR).
+5. **`features/inventory/pages/Inventory.tsx`** + ruta `src/app/(app)/inventory/page.tsx` (con `<Suspense>`): KPIs + 4 tabs (`Stock` con filtro de finca consolidado/por finca + buscador; `Stock bajo`; `Sin stock`; `Costos` con modal de historial). Tab sincronizado con `?tab=` vía `history.replaceState`. Botón "Registrar movimiento" gated por `MOVEMENT_CREATE`; acceso a la página por `STOCK_READ`.
+6. **Sidebar** ahora filtra por policy: se agregó el ítem "Inventario" (`Boxes`, policy `STOCK_READ`).
+
+Verificado: `npx tsc --noEmit` y `npm run build` → **0 errores** (9 rutas, incl. `/inventory`). **Sin commits aún.**
+
+## Completed — Fixes UI creación de OT + cantidades automáticas + fecha de actividad (Oct 2026)
+
+1. **Fix 400 al crear OT** ("The Machine/NumRecipe/Farm/Material field is required."): causa raíz `FincaFenix.Entities` tiene `<Nullable>enable</Nullable>` (único proyecto así; AGENTS decía mal que todos eran `disable`) → MVC agrega `[Required]` implícito a props de navegación no-nullable que el front no envía. Fix en `FincaFenix.WebAPI/Program.cs`: `AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)`.
+2. **Fix "Sin categoría"**: `MaterialQueryService.GetMaterialList()` ahora hace `.Include(m => m.Category)` (antes faltaba; el filtro por categoría del `CreateWorkOrder` mostraba todo como "Sin categoría").
+3. **Cantidad estimada automática** (`CreateWorkOrder.tsx`): el usuario carga solo **Cant. requerida** + **unidad** (`lts`/`kg`/`gr`/`cc`); la **Cant. estimada** = `Maquinadas teóricas × Cant. requerida` (`áreaTotal × TRV / volumenMáquina` × dosis), **en la misma unidad de la dosis** (sin conversión local; el backend convierte a unidad base al reservar). Se muestra de solo lectura; en el submit se envía `estimatedAmount` + `estimatedAmountUnit`.
+4. **Unidad del material**: `getMaterialCategories()` en `material.service.ts`; categorías del combo desde `GET /api/materialcategory/getCategories` (+ `MaterialCategoryDTO`).
+5. **Sectores como tabla** (`CreateWorkOrder.tsx`): se quitó el chip `Badge`; los seleccionados van a `DataTable` (Sector, Fruta, Variedad, Plantas, Superficie, quitar) con total de área.
+6. **`MovementForm.tsx`**: nuevo select **Categoría** → el select **Material** queda filtrado (y deshabilitado hasta elegir categoría).
+7. **Fecha de actividad automática** (`AddActivityForm.tsx`): se eliminó el campo "Fecha y hora"; `activityDate = new Date().toISOString()` al registrar. Helper `nowLocal()` borrado.
+8. **Limpieza**: eliminada `getUnitsMesure()` (rota, `TS2304 UnitMesureDTO`) de `workOrder.service.ts`.
+
+Verificado: `npx tsc --noEmit` + `npm run build` → **0 errores** (9 rutas) y `dotnet build FincaFenix.WebAPI` → 0 errores. **Sin commits aún.**
+
+## Completed — UI inventario: reservas, costos paginados, unidades en movimiento (Oct 2026)
+
+1. **Unidad estimada = unidad de la dosis** (`CreateWorkOrder.tsx`): `computeEstimatedAmount(row, passes)` ya no convierte a la unidad base del material; devuelve `dose × passes` en `row.amountRequiredUnit`. Se eliminaron `UNIT_FAMILIES`/`convertToBaseUnit`. La "Cant. estimada" y su "Unidad" (read-only) reflejan la unidad de la dosis.
+2. **Unidad del material en el movimiento** (`MovementForm.tsx`): los labels **Cantidad**, **Costo unitario** y **Stock mínimo** muestran dinámicamente la unidad base del material seleccionado (p.ej. `Cantidad (lts)`, `Costo unitario (lts)`), con hint "En la unidad base del material". El backend guarda `Amount`/`UnitCost` en unidad base (sin conversión).
+2.C **Reservas por material** (nuevo dialog en tab **Stock** de Inventory):
+   - Backend: DTOs `ReservationItemDTO` / `MaterialReservationsDTO` (`DTOs/InventoryDTOs/ReservationDTOs/`); `IInventoryQueryService.GetMaterialReservationsAsync` + repo passthrough + handler MediatR `GetMaterialReservationsQuery`; endpoint `GET api/inventory/reservations/material/{materialId}` (policy `STOCK_READ`; material inexistente → **404**). Proyecta desde `MaterialReservation` con OT (`OrderNum`,`Status`) y Finca, más `PendingAmount`.
+   - Frontend: `getMaterialReservations()` + botón **Reservas** en cada fila de la pestaña Stock → `Modal` con tabla (Orden, Estado OT, Finca, Reservado, Consumido, Pendiente, Reserva, Fecha).
+3. **Costos paginados + filtros** (`Inventory.tsx` pestaña Costos): `CurrentMaterialCostDTO` + `CategoryId`/`CategoryName`; `GetCurrentMaterialCostsPagedAsync` (filtros `pageNumber/pageSize/search/categoryId`, reusa `MaterialFilterDTO`) + endpoint `GET api/inventory/costs/current/paged` (policy `STOCK_READ`) devolviendo `PagedResult<CurrentMaterialCostDTO>`; UI con select de categoría, buscador, `DataTable` y `Pagination` (página 20).
+4. **Backdrop blur**: `backdrop-blur-sm` en `DialogOverlay` (`ui/dialog.tsx`) y `AlertDialogOverlay` (`ui/alert-dialog.tsx`) → todos los `Modal`/alertas difuminan el fondo.
+
+Verificado: `dotnet build` (EFCore + Controllers) 0 errores; `npx tsc --noEmit` + `npm run build` → **0 errores** (9 rutas). **Sin commits aún.**
+
+## Completed — Ajustes UI módulo de OT (5 puntos — Oct 2026)
+
+1. **Unidad de dosis acotada a la familia del material** (`CreateWorkOrder`): nuevo `FincaFenix.Frontend/src/features/materials/material.utils.ts` (`unitCodeFor`, `unitFamilyOf`, `materialLabel`, tipo `UnitFamily`); `DOSE_UNITS_BY_FAMILY` (volumen→`lts`,`cc`; masa→`kg`,`gr`; unidad→`unidad`; longitud→`metro`; paquete→`bolsa`,`caja`; material sin unidad base→todas). El `<SelectInput>` de dosis sólo lista `rowDoseUnits`; el backend ya valida la familia vía `UnitConverter` (**422** si es incompatible).
+2. **Desplegables de material enriquecidos**: `materialLabel(m)` = `CommercialName · ArticleName (unidad)` (tolera faltantes); aplicado en la receta de `CreateWorkOrder` (donde `ArticleName` es el **principio activo**) y en `MovementForm`.
+3. **Área trabajada**: se eliminó la columna y el total "Área trabajada" de `ActivitiesTab` (el backend no persiste área por actividad → siempre 0). Fix del "Área total = 0" en Rendimiento: `CreateWorkOrder` enviaba `totalArea` vacío → ahora `totalArea: areaTotal`. `AddActivityForm` muestra la info de cada sector (Fruta/Variedad/Plantas/Superficie) al seleccionarlo.
+4. **Costo real**: `WorkOrderCostItemDTO` + `ConsumedAmount`/`RealCost`; `WorkOrderCostDTO` + `TotalRealCost`; `InventoryQueryService.GetWorkOrderCostsAsync` cruza `Consumptions` (costo real = cantidad consumida × costo unitario congelado); `CostsTab` con columnas "Cantidad real consumida"/"Costo real" + tarjetas "Costo total planificado"/"Costo real".
+5. **Cambio/cierre de estado**: fix del dropdown de acciones del listado (el clic se propagaba a la fila y navegaba al detalle) → el trigger de `Dropdown` hace `stopPropagation`. Nueva acción **Cambiar estado** en la cabecera del detalle (`WorkOrderHeader`) con las transiciones permitidas (`allowedTransitions`), confirmación con `ConfirmDialog` y `updateWorkOrderState` **sin navegar** (recarga la orden).
+
+Verificado: `dotnet build` (WebApi) 0 errores; `npx tsc --noEmit` + `npm run build` → **0 errores** (9 rutas). **Sin commits aún.**
+
+## Completed — Dashboard: últimos movimientos de inventario (Oct 2026)
+
+1. **Backend** — nuevo `GET api/inventory/movements/recent?take=10` (policy `STOCK_READ`; default 10, clamp `<1 → 10`). DTO `InventoryMovementDTO` (`DTOs/InventoryDTOs/`); `IInventoryQueryService.GetRecentMovementsAsync` + impl (`InventoryQueryService`: ordena por `Date`/`Id` desc + `Take`); passthrough en `IInventoryRepository`/`InventoryRepository`; `GetRecentMovementsQuery` + handler; endpoint en `InventoryController`/`IInventoryController`. Proyecta material (+unidad base), finca, tipo/origen, cantidad, costo/divisa, stock resultante, fecha y OT (`OrderNum`).
+2. **Frontend** — tipo `InventoryMovementDTO` (`types/api/inventory.ts` + re-export), `getRecentMovements(take)` en `inventory.service.ts`.
+3. **Dashboard** (`Dashboard.tsx`) — nueva sección "Últimos movimientos" (visible con `STOCK_READ`), cargada junto a `getLowStock` en el mismo `Promise.all`; `DataTable` con Fecha, Material (· comercial), Finca, Movimiento, Origen (muestra `Orden {orderNum}` si es OT), Cantidad (+ unidad) y Stock resultante.
+
+Verificado (build 0 errores + smoke real): login; `movements/recent?take=5` → 5 movimientos con material/divisa/finca/OT correctos (SalidaConsumo OrdenTrabajo OT 40, AjustePositivo Manual, Ingreso Manual). **Sin commits aún.**
+
 ## No Tests
 
 ## NuGet Versions (key)
@@ -306,7 +381,7 @@ Verificado (build 0 errores + smoke real): listado 31 tareas; create → id 32 (
 
 ## Legacy / Dead Projects (do not touch)
 
-- `FincaFenix.UserInterface/` — only build artifacts; la UI Blazor viva (`UserInterface7.0`) fue **eliminada en Fase 6** — la UI nueva será React
+- `FincaFenix.UserInterface/` — only build artifacts; la UI Blazor viva (`UserInterface7.0`) fue **eliminada en Fase 6** — la UI nueva es Next.js (`FincaFenix.Frontend`)
 - `FincaFenix.UIValidators/` — no referenciado por ningún proyecto; **se conservó** (no estaba confirmado para borrar)
 - `FincaFenix.Validators/` — redundant with `FincaFenix.Validations/` (keep Validations)
 - `FincaFenix.Repositories/UniversitarySystem.EFCore` — .NET 8, references missing project, unrelated
@@ -321,3 +396,5 @@ Verificado (build 0 errores + smoke real): listado 31 tareas; create → id 32 (
 | `IA/ADD_POLICIES.md` | Policy-based authorization implementation plan |
 | `IA/PLAN_EJECUCION_RENDIMIENTO_OT.md` | Rendimiento de OT (maquinadas + modos de tarea) plan |
 | `IA/PLAN_EJECUCION_CRUD_TAREAS.md` | CRUD de Tareas (Tarea) plan |
+| `IA/PLAN_MIGRACION_NEXT_TAILWIND.md` | Migración UI a Next.js + Tailwind + shadcn/ui (plan) |
+| `IA/DOCUMENTACION_UI.md` | Documentación viva del frontend Next.js (arquitectura, componentes, servicios, convenciones es-AR, límites) |
