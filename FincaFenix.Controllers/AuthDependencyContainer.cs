@@ -16,7 +16,11 @@ namespace Microsoft.Extensions.DependencyInjection
             var jwtSection = configuration.GetSection("JwtSettings");
             services.Configure<JwtSettings>(jwtSection);
 
+            var cookieSection = configuration.GetSection("AuthCookie");
+            services.Configure<AuthCookieSettings>(cookieSection);
+
             var jwtSettings = jwtSection.Get<JwtSettings>();
+            var cookieSettings = cookieSection.Get<AuthCookieSettings>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -31,6 +35,18 @@ namespace Microsoft.Extensions.DependencyInjection
                         ValidAudience = jwtSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (context.Request.Cookies.TryGetValue(cookieSettings?.Name ?? "FincaFenix.Auth", out var token))
+                            {
+                                context.Token = token;
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 

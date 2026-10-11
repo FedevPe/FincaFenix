@@ -59,6 +59,7 @@ namespace FincaFenixControllers.Services
             foreach (var role in roles)
                 claims.Add(new(ClaimTypes.Role, role));
 
+            var policies = new List<string>();
             var policyClaimValues = new HashSet<string>();
             foreach (var roleName in roles)
             {
@@ -69,7 +70,10 @@ namespace FincaFenixControllers.Services
                 foreach (var claim in roleClaims.Where(c => c.Type == CustomClaims.POLICIES))
                 {
                     if (policyClaimValues.Add(claim.Value))
+                    {
                         claims.Add(claim);
+                        policies.Add(claim.Value);
+                    }
                 }
             }
 
@@ -90,7 +94,30 @@ namespace FincaFenixControllers.Services
             return new LoginResponseDTO
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpiresAt = expiresAt
+                ExpiresAt = expiresAt,
+                User = new CurrentUserDTO
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Roles = roles.ToList(),
+                    Policies = policies,
+                }
+            };
+        }
+
+        public CurrentUserDTO GetCurrentUser(ClaimsPrincipal principal)
+        {
+            if (principal?.Identity?.IsAuthenticated != true)
+                return null;
+
+            return new CurrentUserDTO
+            {
+                Id = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                UserName = principal.FindFirst(ClaimTypes.Name)?.Value,
+                Email = principal.FindFirst(ClaimTypes.Email)?.Value,
+                Roles = principal.FindAll(ClaimTypes.Role).Select(c => c.Value).Distinct().ToList(),
+                Policies = principal.FindAll(CustomClaims.POLICIES).Select(c => c.Value).Distinct().ToList()
             };
         }
     }

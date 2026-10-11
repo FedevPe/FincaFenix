@@ -4,5 +4,6 @@ namespace FincaFenix.Entities.DTOs.Login
     {
         public string Token { get; set; }
         public DateTime ExpiresAt { get; set; }
+        public CurrentUserDTO User { get; set; }
     }
 }
