@@ -1,12 +1,11 @@
-export interface TaskDTO {
-  id: number;
-  description: string;
-  rendimientoMode?: string | null;
-}
+import type { TaskDTO } from "./task";
+
+export type { TaskDTO } from "./task";
 
 export interface FarmDTO {
   id: number;
   name: string;
+  isDeleted?: boolean;
 }
 
 export interface DetailSectorFarmDTO {
@@ -26,6 +25,8 @@ export interface EmployeeDTO {
   id: number;
   name: string;
   lastName?: string | null;
+  isDeleted?: boolean;
+  farmIds?: number[];
 }
 
 export interface MaterialCategoryDTO {
@@ -37,6 +38,7 @@ export interface ActivityWorkOrderDTO {
   id: number;
   machinePasses: number;
   workedHours: number;
+  percentageAreaWorked: number;
   producedAmount?: number | null;
   areaWorked?: number | null;
   rendimiento?: number | null;
@@ -109,6 +111,7 @@ export interface ShowWorkOrderDTO {
   status: string;
   description?: string | null;
   totalAreaWorked: number;
+  totalAreaActuallyWorked: number;
   createdDate?: string | null;
   startDate?: string | null;
   endDate?: string | null;
@@ -141,6 +144,7 @@ export interface InfoDetailWorkOrderDTO {
   sectorWorkedId: number;
   machinePasses: number;
   workedHours: number;
+  percentageAreaWorked: number;
   producedAmount?: number | null;
   description: string;
 }

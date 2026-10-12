@@ -1,9 +1,9 @@
 ﻿export type { LoginDTO, CurrentUserDTO } from './auth';
 export type { PagedResult, ValidationDTO, OperationResultDTO } from './common';
+export type { TaskDTO, SaveTaskDTO } from './task';
 export type {
   ShowWorkOrderDTO,
   InfoWorkOrderDTO,
-  TaskDTO,
   FarmDTO,
   DetailSectorFarmDTO,
   EmployeeDTO,
@@ -33,3 +33,19 @@ export type {
   MaterialReservationsDTO,
   InventoryMovementDTO,
 } from './inventory';
+export type {
+  SaveFarmDTO,
+  SaveEmployeeDTO,
+  MaterialDTO,
+  SaveMaterialDTO,
+  UnitOfMeasureDTO,
+  SaveUnitOfMeasureDTO,
+  SaveMaterialCategoryDTO,
+  FruitDTO,
+  SaveFruitDTO,
+  FruitVarietyDTO,
+  SaveFruitVarietyDTO,
+  UserDTO,
+  CreateUserDTO,
+  UpdateUserDTO,
+} from './settings';

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Boxes, Gauge, ListChecks, X } from "lucide-react";
+import { Boxes, Gauge, ListChecks, Settings, X } from "lucide-react";
 import { cn, hasPolicy } from "@/lib/utils";
 import { useAuth } from "@/app/providers/AuthProvider";
 
@@ -20,6 +20,18 @@ const navItems: NavItem[] = [
   { href: "/inventory", label: "Inventario", icon: Boxes, policy: "STOCK_READ" },
 ];
 
+const SETTINGS_READ_POLICIES = [
+  "FARM_READ",
+  "MATERIAL_READ",
+  "TASK_READ",
+  "EMPLOYEE_READ",
+  "MATERIAL_CATEGORY_READ",
+  "UNIT_OF_MEASURE_READ",
+  "FRUIT_READ",
+  "FRUIT_VARIETY_READ",
+  "USER_READ",
+];
+
 interface SidebarProps {
   collapsed: boolean;
   mobileOpen: boolean;
@@ -33,6 +45,12 @@ export function Sidebar({ collapsed, mobileOpen, onNavigate }: SidebarProps) {
   const visibleItems = navItems.filter(
     (item) => !item.policy || hasPolicy(user?.policies, item.policy),
   );
+
+  const canSeeSettings = SETTINGS_READ_POLICIES.some((policy) =>
+    hasPolicy(user?.policies, policy),
+  );
+
+  const settingsActive = pathname.startsWith("/settings");
 
   return (
     <aside
@@ -95,6 +113,29 @@ export function Sidebar({ collapsed, mobileOpen, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
+
+      {canSeeSettings ? (
+        <div className="shrink-0 border-t border-chrome-border p-3">
+          <Link
+            href="/settings"
+            onClick={onNavigate}
+            aria-current={settingsActive ? "page" : undefined}
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              collapsed && "md:justify-center md:px-0",
+              settingsActive
+                ? "bg-chrome-primary/20 text-white"
+                : "text-chrome-muted hover:bg-white/10 hover:text-white"
+            )}
+            title={collapsed ? "Configuración" : undefined}
+          >
+            <Settings className="size-5 shrink-0" />
+            <span className={cn("truncate", collapsed && "md:hidden")}>
+              Configuración
+            </span>
+          </Link>
+        </div>
+      ) : null}
     </aside>
   );
 }

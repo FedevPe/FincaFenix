@@ -17,6 +17,7 @@ import {
 function getTitle(pathname: string): string {
   if (pathname.startsWith("/work-orders")) return "Órdenes de trabajo";
   if (pathname.startsWith("/dashboard")) return "Dashboard";
+  if (pathname.startsWith("/settings")) return "Configuración";
   return "FincaFenix";
 }
 
