@@ -42,6 +42,7 @@ src/
 │   ├── (app)/dashboard/page.tsx
 │   ├── (app)/work-orders/{page,new/page,[id]/page}.tsx
 │   ├── (app)/inventory/page.tsx
+│   ├── (app)/settings/page.tsx
 │   └── not-found.tsx
 ├── components/
 │   ├── layout/{AppShell,Sidebar,AppBar}.tsx
@@ -52,9 +53,11 @@ src/
 │   ├── dashboard/pages/Dashboard.tsx
 │   ├── not-found/pages/NotFound.tsx
 │   ├── inventory/pages/Inventory.tsx + components/MovementForm.tsx + services + constants.ts
+│   ├── settings/                # pages/Settings.tsx + tabs/* + components/*Form + services/* + constants.ts
+│   ├── tasks/                   # constants.ts + components/TaskForm + services (reusados por Settings/CreateWorkOrder)
 │   └── work-orders/             # pages/{List,Detail,Create} + components + services + constants.ts
 ├── lib/{api.client.ts,utils.ts,theme.ts,server/get-current-user.ts}
-└── types/api/                   # auth, common, inventory, workOrder, index
+└── types/api/                   # auth, common, inventory, settings, task, workOrder, index
 ```
 
 Cada feature conserva `pages/`, `components/`, `services/`, `constants.ts` (ya sin `.module.css`).
@@ -94,6 +97,7 @@ POST /api/auth/logout → borra la cookie
 | `/work-orders/new` | `(app)` | Nueva orden |
 | `/work-orders/[id]` | `(app)` | Detalle |
 | `/inventory` | `(app)` | Inventario (stock + costos) |
+| `/settings` | `(app)` | Configuración (tabs de datos maestros) |
 | `*` | — | `not-found.tsx` |
 
 - Los wrappers `/work-orders` y `/work-orders/[id]` usan `useSearchParams` → envueltos en `<Suspense fallback={<LoadingState/>}>` (requisito de Next 15).
@@ -145,21 +149,23 @@ POST /api/auth/logout → borra la cookie
 ### 9.3 Nueva orden (`/work-orders/new`)
 - Carga tareas, fincas, máquinas y materiales. Sectores por finca (`/api/detailsector/farm/{id}/sectors`) con `select` agrupado por fruta (optgroup) + `DataTable` de seleccionados (Sector, Fruta, Variedad, Plantas, Superficie, quitar) y área total.
 - Categoría de material desde `GET /api/materialcategory/getCategories`; los materiales se filtran por categoría.
-- **Receta opcional** (obligatoria si la tarea es `MaterialEfficiency`): máquina, volumen (solo lectura, lts), TRV (lts/ha), filas dinámicas de materiales con select **Categoría → Material**.
-- **Cantidad requerida** + **unidad** (`lts`/`kg`/`gr`/`cc`) las carga el usuario. La **cantidad estimada es automática** (`Maquinadas teóricas × Cant. requerida`, en la **misma unidad de la dosis**; el backend convierte a unidad base al reservar) y se muestra de solo lectura.
+- **Receta opcional** (obligatoria si la tarea es `MaterialEfficiency`; en `AreaPerManHour`/`OutputPerManHour`/`ManHours` no aplica): máquina, volumen (solo lectura, lts), TRV (lts/ha), filas dinámicas de materiales con select **Categoría → Material** (etiqueta `CommercialName · ArticleName (unidad)`).
+- **Cantidad requerida** + **unidad** las carga el usuario; el combo de dosis se acota a la **familia del material** (`material.utils.ts` → `DOSE_UNITS_BY_FAMILY`: volumen→`lts`/`cc`, masa→`kg`/`gr`, unidad→`unidad`, longitud→`metro`, paquete→`bolsa`/`caja`; el backend valida la familia con `UnitConverter` → 422). La **cantidad estimada es automática** (`Maquinadas teóricas × Cant. requerida`, en la **misma unidad de la dosis**; el backend convierte a unidad base al reservar) y se muestra de solo lectura.
 - Mecanismo anti-400: MVC `SuppressImplicitRequiredAttributeForNonNullableReferenceTypes` evita los `[Required]` implícitos por propiedades de navegación no enviadas (`Machine`, `NumRecipe`, `Farm`, `Material`).
 - `GET /api/material/getmateriallist` ahora incluye la categoría (`.Include(m => m.Category)`) — antes el filtro por categoría mostraba "Sin categoría".
 - `POST /api/workorder/createworkorder` (WorkOrderDTO). El backend deriva el estado. **La API no devuelve el id** → redirect a `/work-orders?created=1`.
 
 ### 9.4 Detalle (`/work-orders/[id]`)
 Pestañas (sincronizadas con `?tab=`):
-1. **Actividades**: tabla + totales; botón "Registrar actividad" (policy `DETAIL_WORKORDER_CREATE`, OT no terminal) → `Modal` con `AddActivityForm`.
-2. **Receta**: máquina/volumen/TRV/dosis/materiales (teórico/real/rendimiento).
-3. **Consumos**: consolidado por material (no hay endpoint por sector).
-4. **Rendimiento**: métricas por actividad y por OT según el modo de la tarea.
-5. **Costos**: `GET /api/inventory/costs/workorder/{id}` bajo demanda.
+1. **Actividades**: tabla (incluye **% del sector** y **Área trabajada** = `sector.area × %/100`) + totales; bloque **"Avance por sector"** (Sector · % acumulado · Área trabajada · Superficie); la columna **Maquinadas** solo se muestra si la tarea es `MaterialEfficiency`; botón "Registrar actividad" (policy `DETAIL_WORKORDER_CREATE`, OT no terminal) → `Modal` con `AddActivityForm`.
+2. **Receta**: máquina/volumen/TRV/dosis/materiales (teórico/real/rendimiento; cantidades en unidad base del material).
+3. **Consumos**: consolidado por material. Card **"Eficiencia de aplicación"** (`workOrder.rendimiento`, coloreada verde/rojo) + columnas **Planificado/Consumido (unidad base)** y **Desviación %** (rojo si `consumido > teórico`).
+4. **Rendimiento**: muestra **todas** las métricas (área total asignada, **área trabajada** real, horas, ha/h, kg, kg/h, maquinadas teóricas/reales); el modo de la tarea solo **resalta** la métrica principal y la columna Maquinadas se oculta salvo `MaterialEfficiency`. **Fórmula = `real/teórico×100`**; coloreado solo para modos porcentuales (`MaterialEfficiency`), con **desviación (`rendimiento − 100`) mostrada cuando supera 100%**. Los modos tasa (ha/h, kg/h, h) no se colorean.
+5. **Costos**: `GET /api/inventory/costs/workorder/{id}`; card **"Costo real"** coloreada + hint de desviación y columna **Desviación %** (rojo si el real supera el planificado).
 
-`AddActivityForm`: sector (de `workOrder.sectorList`), operario, horas, **maquinadas** (MaterialEfficiency) o **producción kg** (OutputPerManHour), descripción. La **fecha/hora es automática** (del momento de guardar, no editable por el operario). `POST /api/detailworkorder/addDetailWO`.
+Semáforo y % de desviación — helper `src/features/work-orders/lib/deviation.ts`: `deviationPercent`, `isOverrun`, `overrunTone` (rojo si `valor > base`), `efficiencyTone` (rojo si `>100`, verde si `≤100`), `formatDeviation`; colores vía tokens `text-success`/`text-destructive`.
+
+`AddActivityForm`: sector (de `workOrder.sectorList`), operario, **% de área trabajada** (obligatorio 1–100, **acumulativo por (OT, sector) con tope 100%**; muestra `Ya trabajado: X% · Máx: (100−X)%` y el label `P% de A ha = R ha`), horas, **maquinadas** (MaterialEfficiency) o **producción kg** (OutputPerManHour); en `ManHours`/`AreaPerManHour` solo horas; descripción. La **fecha/hora es automática** (del momento de guardar, no editable por el operario). `POST /api/detailworkorder/addDetailWO` (el backend revalida el acumulado con lock `UPDLOCK, HOLDLOCK` → 422).
 
 ### 9.5 Inventario (`/inventory`)
 Gated por `STOCK_READ` (ítem del Sidebar filtrado por policy). `PageHeader` + KPIs (materiales / con stock / stock bajo / sin stock, desde el consolidado).
@@ -173,7 +179,21 @@ Pestañas (sincronizadas con `?tab=`):
 
 Todos los `Modal`/`AlertDialog` difuminan el fondo (`backdrop-blur-sm` en los overlays de `ui/dialog.tsx` y `ui/alert-dialog.tsx`).
 
-### 9.6 Servicios por módulo
+### 9.6 Configuración (`/settings`)
+Acceso por el ítem **Configuración** al fondo del Sidebar (visible si el usuario tiene algún READ del conjunto de config). Pestañas (sincronizadas con `?tab=`), filtradas por `hasPolicy` (si no hay ninguno → `EmptyState` "Acceso restringido"):
+1. **Fincas** (`FARM_*`): paged server-side, buscador, toggle eliminadas, crear/editar/eliminar (soft)/reactivar.
+2. **Materiales** (`MATERIAL_*`): paged con filtro de categoría + buscador; form con categoría, unidad de medida, divisa y costo referencial.
+3. **Tareas** (`TASK_*`): reutiliza `TaskForm`; paged.
+4. **Empleados** (`EMPLOYEE_*`): paged con filtro de finca + buscador; multi-asignación de fincas (checkboxes, mínimo 1).
+5. **Categorías** (`MATERIAL_CATEGORY_*`): lista client-side; delete **físico** con guarda (422 si tiene materiales) — sin reactivar.
+6. **Unidades** (`UNIT_OF_MEASURE_*`): lista client-side; soft delete + toggle "Mostrar eliminadas" + reactivar.
+7. **Frutas** (`FRUIT_*`): paged server-side + buscador; form con descripción y **multi-selección de variedades existentes** (checkboxes; al guardar asigna esas variedades a la fruta). Tabla muestra Fruta + Variedades; delete **físico** con guarda (422 si tiene variedades) — sin reactivar.
+8. **Variedades** (`FRUIT_VARIETY_*`): paged server-side con filtro por fruta + buscador; form con descripción y flag "Orgánica" (**sin** selector de fruta: la fruta se asigna desde el form de la fruta). Tabla: **Variedad** (1ª columna), Fruta (o "Sin asignar"), Orgánica; delete **físico** con guarda (422 si tiene sectores) — sin reactivar.
+9. **Usuarios** (`USER_*`): paged, buscador + toggle inactivos; create (password + rol) / edit (sin password v1); desactivar/reactivar.
+
+La antigua ruta `/tasks` **se eliminó** (su contenido pasó a la pestaña Tareas). Patrón de cada tab: buscador con debounce, toggle incluidos, `DataTable` + `Pagination` server-side, `Modal`-form, `ConfirmDialog` y dropdown de acciones.
+
+### 9.7 Servicios por módulo
 | Servicio | Endpoint(s) |
 |---|---|
 | `auth.service` | login / me / logout |
@@ -181,7 +201,11 @@ Todos los `Modal`/`AlertDialog` difuminan el fondo (`backdrop-blur-sm` en los ov
 | `detailWorkOrder.service` | addDetailWO (+ getDetail no usado) |
 | `employee.service` | `/api/employee/{farmId}/employees` |
 | `inventory.service` | stock/low, stock/consolidated, stock/farm/{farmId}, stock/zero, currencies, costs/current, costs/current/paged, costs/material/{id}/history, reservations/material/{id}, movement |
-| `material.service` | getmateriallist, getCategories |
+| `material.service` | getmateriallist, getCategories, paged, {id}, create/update/delete/reactivate, categorías CRUD, unidades CRUD |
+| `settings/farm.service` | farm paged, create/update/delete/reactivate |
+| `settings/employee.service` | employee paged, create/update/delete/reactivate |
+| `settings/user.service` | user paged, roles, create/update, DeactivateUser/ReactivateUser |
+| `settings/fruit.service` | fruit getFruits/paged, create/update/delete; fruitvariety getVarieties/paged, create/update/delete |
 
 ## 10. Convenciones de código
 - Componentes de feature con `"use client"` cuando usan hooks/estado; layouts/tema en server.
@@ -195,8 +219,8 @@ Todos los `Modal`/`AlertDialog` difuminan el fondo (`backdrop-blur-sm` en los ov
 2. Endpoint paginado de OT con filtro status no usable (semántica invertida).
 3. Consumos por sector sin endpoint → `ConsumptionTab` consolida por material.
 4. `recharts` instalado pero sin consumir.
-5. Sidebar: navegación Dashboard + Órdenes + Inventario (esta última gated por `STOCK_READ`); faltan Materiales/Tareas.
+5. Sidebar: Dashboard + Órdenes + Inventario (gated por `STOCK_READ`) + Configuración (gated por el conjunto de policies de config, al fondo).
 6. Sin smoke E2E automatizado; verificación manual + `npm run build`.
 
 ## 12. Próximos pasos
-Módulos de **Materiales CRUD**, **Tareas CRUD** y edición de OT (`PUT /api/workorder/updateworkorder`) — endpoints ya disponibles en el backend.
+Edición de OT (`PUT /api/workorder/updateworkorder`, ya en backend) y módulos futuros (compras a proveedores, cosecha).

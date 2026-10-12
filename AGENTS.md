@@ -357,6 +357,23 @@ Verificado: `dotnet build` (EFCore + Controllers) 0 errores; `npx tsc --noEmit` 
 
 Verificado: `dotnet build` (WebApi) 0 errores; `npx tsc --noEmit` + `npm run build` → **0 errores** (9 rutas). **Sin commits aún.**
 
+## Completed — UI rendimiento/consumo/costos: semáforo + desviación + unidades + AreaPerManHour (Oct 2026)
+
+1. **Backend fixes:**
+   - `GetWorkOrderInformationQuery.cs` (EFCore): `.Include(wo => wo.Recipe).ThenInclude(r => r.DetailRecipeList).ThenInclude(dr => dr.Material).ThenInclude(m => m.UnitOfMeasure)` → el detalle de receta ya devuelve la unidad del material (antes `null`). **No** nullable-disable-safe en `Recipe/DetailRecipeList` (ya venían del include existente).
+   - `WorkOrderQueries.cs` (`GetWorkOrderByIdHandler`): `dto.TotalAreaWorked = areaTotal;` → corrige el área total 0 en el detalle.
+2. **Frontend `deviation.ts`** (nuevo, `src/features/work-orders/lib/deviation.ts`): `deviationPercent(value, baseline)`, `isOverrun(value, baseline)`, `overrunTone` (rojo si `value > baseline`, si no `text-muted-foreground`), `efficiencyTone` (`≥100` → `text-success`, `<100` → `text-destructive`), `formatDeviation`. Colores vía tokens `text-success`/`text-destructive`.
+3. **`PerformanceTab.tsx`** reescrito: muestra **todas** las métricas (área, horas, ha/h, kg, kg/h, maquinadas teóricas/reales); el `rendimientoMode` solo **resalta** la principal; la columna **Maquinadas** se oculta salvo `MaterialEfficiency`; rendimiento por actividad y por OT coloreados (`efficiencyTone`).
+4. **`ActivitiesTab.tsx`**: columna **Maquinadas** condicional a `rendimientoMode === "MaterialEfficiency"`.
+5. **`ConsumptionTab.tsx`**: card **"Eficiencia de aplicación"** (`workOrder.rendimiento`, coloreada), columnas **Planificado/Consumido (unidad base)** y **Desviación %** (`overrunTone`, rojo si `consumido > teórico`). El headline de consumo sigue usando `workOrder.rendimiento` (unit-free) porque sumar planificado/consumido entre materiales de distinta unidad es heterogéneo.
+6. **`CostsTab.tsx`**: card **"Costo real"** coloreada + hint de desviación y columna **Desviación %** (rojo si el real supera el planificado).
+7. **Modo de tarea `AreaPerManHour`** (ya implementado en backend, sin tarea asignada): asignado a **Tarea 17 (`Rastreado`)** vía `PUT api/task` (raking es área/hora, config legítima); el front pide **solo horas** (la validación de `machinePasses`/`producedAmount` no aplica a este modo).
+
+Verificado (build 0 errores + smoke real contra instancia en `http://localhost:5099` con `AuthCookie__Secure=false`):
+- **OT 40 (Id 72)**: `totalAreaWorked=9.00` (antes 0), `rendimiento=72.00 %`, material `GLIFOSATO uom=Litro` (antes null), `theoreticalAmount=6.336`, `consumed=8.8` lts → desviación **+38.9%**; costo real `352000` vs planificado `253440`.
+- **AreaPerManHour (OT 73)**: farm 2, sectores 12C (1.64 ha) + 13A (4.86 ha) = 6.5 ha, `addDetailWO horas=5` → `rendimiento=1.3 ha/h` (`rendimientoUnit=ha/h`, `mode=AreaPerManHour`); actividad individual `1.64/5 = 0.328 ha/h`.
+- Datos de prueba dejados: **OT 73** (`orderNum 41`) y **Tarea 17 en `AreaPerManHour`**. `dotnet build FincaFenix.sln` 0 errores; `npx tsc --noEmit` + `npm run build` 0 errores. **Sin commits aún.**
+
 ## Completed — Dashboard: últimos movimientos de inventario (Oct 2026)
 
 1. **Backend** — nuevo `GET api/inventory/movements/recent?take=10` (policy `STOCK_READ`; default 10, clamp `<1 → 10`). DTO `InventoryMovementDTO` (`DTOs/InventoryDTOs/`); `IInventoryQueryService.GetRecentMovementsAsync` + impl (`InventoryQueryService`: ordena por `Date`/`Id` desc + `Take`); passthrough en `IInventoryRepository`/`InventoryRepository`; `GetRecentMovementsQuery` + handler; endpoint en `InventoryController`/`IInventoryController`. Proyecta material (+unidad base), finca, tipo/origen, cantidad, costo/divisa, stock resultante, fecha y OT (`OrderNum`).
@@ -364,6 +381,77 @@ Verificado: `dotnet build` (WebApi) 0 errores; `npx tsc --noEmit` + `npm run bui
 3. **Dashboard** (`Dashboard.tsx`) — nueva sección "Últimos movimientos" (visible con `STOCK_READ`), cargada junto a `getLowStock` en el mismo `Promise.all`; `DataTable` con Fecha, Material (· comercial), Finca, Movimiento, Origen (muestra `Orden {orderNum}` si es OT), Cantidad (+ unidad) y Stock resultante.
 
 Verificado (build 0 errores + smoke real): login; `movements/recent?take=5` → 5 movimientos con material/divisa/finca/OT correctos (SalidaConsumo OrdenTrabajo OT 40, AjustePositivo Manual, Ingreso Manual). **Sin commits aún.**
+
+## Completed — Configuración (Settings) Backend Fases 1–5 (Oct 2026)
+
+Plan: `IA/PLAN_CONFIGURACION_SETTINGS.md`. Objetivo: una página **Configuración** con pestañas (Fincas, Materiales, Tareas, Empleados, Categorías, Unidades, Usuarios). Backend (Fases 1–5) y frontend (Fases 6–8) completos.
+
+1. **Fase 1 — CRUD Fincas**: `FarmFilterDTO`/`SaveFarmDTO` (`Entities/DTOs/FarmDTOs/`); `FarmDTO.IsDeleted`; `FarmQueryService.GetFarmListPaged`; `FarmCommandService` (`EFCore/Services/CommandServices/Farms/`, con `IUnitOfWork`, Create/Update/Delete soft/Reactivate); handlers `UseCases/Farm/FarmQueries.cs`+`FarmCommands.cs`; validadores; `FarmController` pasó a `[Authorize]` + policy por acción (`getListFarm`, `getFarmById`, `paged`, POST, PUT, DELETE, `PUT ReactivateFarm/{id}`); `IFarmController`; DI Gateways+EFCore.
+2. **Fase 2 — CRUD Empleados + multi-finca**: `EmployeeFilterDTO`/`SaveEmployeeDTO` (`Entities/DTOs/EmployeeDTOs/`); `EmployeeDTO` (+`IsDeleted`, `FarmIds`); `EmployeeQueryService.GetEmployeeListPaged` (filtro `FarmId`, search, `Include(EmployeeList)`); `EmployeeCommandService` (Create con filas puente `Empleado_Finca`, Update reemplaza filas, Delete soft, Reactivate, `ValidateFarmsAsync`); handlers; validadores (`FarmIds ≥ 1`); `EmployeeController` per-action; DI.
+3. **Fase 3 — Material reactivar**: `ReactivateAsync`+`Reactivate` (repo) + `ReactivateMaterialCommand`/handler + `PUT api/material/ReactivateMaterial/{id}` (MATERIAL_UPDATE).
+4. **Fase 4 — Unidad de medida**: `UnitOfMeasureDTO.IsDeleted`; `GetAll(bool includeDeleted)`; `ReactivateAsync` + `ReactivateUnitOfMeasureCommand` + `PUT api/unitofmeasure/ReactivateUnitOfMeasure/{id}`; `GET api/unitofmeasure?includeDeleted=`.
+5. **Fase 5 — Usuarios**: `ApplicationUser.IsActive` + `ApplicationUserConfiguration` (`HasDefaultValue(true)`) + migración `20261011052044_AddUserActivo` (aplicada; agrega columna `IsActive` a `AspNetUsers` con default true). `AuthService.LoginAsync` rechaza inactivos (→401). `SeedDataBase`: roles **idempotentes** (`EnsureRoleAsync`; antes solo se buscaban) + root idempotente. DTOs `UserDTO`/`CreateUserDTO`/`UpdateUserDTO`/`UserFilterDTO` (`Entities/DTOs/UserDTOs/`). `UserQueryService`/`UserCommandService` (UserManager/RoleManager; roles en batch vía join `UserRoles`+`Roles`); `IUserQueryService`/`IUserCommandService`; `IUserRepository`+`UserRepository`. Handlers `UseCases/User/UserQueries.cs`+`UserCommands.cs`; validadores (`CreateUserCommandValidator`/`UpdateUserCommandValidator`: password vs política Identity 6+/dígito/min/mayúsc, rol existente `MustAsync`, username único). `UserController` (`paged`/`roles`/`{id}` USER_READ; POST USER_CREATE; PUT USER_UPDATE; `PUT DeactivateUser/{id}`+`ReactivateUser/{id}` USER_UPDATE) + `IUserController`. DI en Gateways+EFCore+UsesCases.
+6. **Fixes**: (a) `MappingProfile` — faltaba `.ForMember(d => d.FarmList, o => o.Ignore())` en `SaveFarmDTO → FarmEntity` (rompía `AssertConfigurationIsValid` al arranque); (b) los validadores de **Farm y Employee** no estaban registrados en `AddUseCasesServices` → se agregaron junto a los de User (por eso `employee` sin fincas daba 200 en vez de 422).
+
+Verificado (build 0 errores + smoke real con `--launch-profile https`): login root; `user/paged`+`user/roles`; create usuario (rol operario) → weak password/rol inválido/duplicado = **422**; update rol → `supervisor`; getById; deactivate → login = **401**; reactivate; Farm create+paged; Employee create multi-finca+paged, sin fincas = **422**; Material create/delete/paged(deleted)/reactivate; UOM create/delete/list(includeDeleted)/reactivate; Task list. **Sin commits aún.**
+
+## Completed — Configuración (Settings) Frontend Fases 6–8 (Oct 2026)
+
+Plan: `IA/PLAN_CONFIGURACION_SETTINGS.md`. UI Next.js de la página **Configuración** con pestañas.
+
+1. **Shell** — `app/(app)/settings/page.tsx` (`<Suspense>` → `LoadingState`); `features/settings/pages/Settings.tsx` (`Tabs` URL-sync `?tab=` con `history.replaceState`, patrón de `Inventory.tsx`; tabs dinámicos filtrados por `hasPolicy`; `EmptyState` "Acceso restringido" si no hay ningún READ). **Sidebar**: ítem **"Configuración"** (`Settings`, `border-t`, visible por alguna de las 7 policies READ) al final; **eliminado** el ítem "Tareas". **AppBar** `getTitle`: `/settings` → "Configuración" (quitado `/tasks`). **Eliminados** `app/(app)/tasks/page.tsx` y `features/tasks/pages/TaskList.tsx` (el contenido pasó a `TareasTab`; `features/tasks/constants.ts` + `TaskForm` + `task.service.ts` se conservan y siguen usándose en `CreateWorkOrder`).
+2. **Tabs** (`features/settings/tabs/`, patrón TaskList: buscador con debounce, toggle incluir eliminados/desactivados, `DataTable` + `Pagination` server-side, `Modal`-form, `ConfirmDialog`, dropdown "Reactivar"):
+   - `FincasTab` (`FARM_*`) + `FarmForm` (solo Nombre).
+   - `MaterialesTab` (`MATERIAL_*`) + `MaterialForm`: filtro categoría + search server-side; form con categoría, unidad, divisa (`getCurrencies`, default ARS) y costo referencial (`parseDecimal` es-AR).
+   - `TareasTab` (`TASK_*`): reutiliza `TaskForm`.
+   - `EmpleadosTab` (`EMPLOYEE_*`) + `EmployeeForm`: filtro finca + search; multi-select de fincas con `CheckboxRow` (mínimo 1); tabla muestra fincas asignadas.
+   - `CategoriasTab` (`MATERIAL_CATEGORY_*`) + `CategoryForm`: lista client-side + search; **delete físico** con guarda (422 si tiene materiales) → **sin toggle/reactivar**.
+   - `UnidadesTab` (`UNIT_OF_MEASURE_*`) + `UnitForm`: lista client-side; soft delete + toggle "Mostrar eliminadas" + reactivar.
+   - `UsuariosTab` (`USER_*`) + `UserForm`: search + toggle inactivos; create (password + roles) y edit (sin password v1); desactivar/reactivar.
+3. **Tipos** (`types/api/settings.ts` + re-export en barrel): `SaveFarmDTO`, `SaveEmployeeDTO`, `MaterialDTO`, `SaveMaterialDTO`, `UnitOfMeasureDTO`, `SaveUnitOfMeasureDTO`, `SaveMaterialCategoryDTO`, `UserDTO`, `CreateUserDTO`, `UpdateUserDTO`. Se extendieron `FarmDTO` (`isDeleted?`) y `EmployeeDTO` (`isDeleted?`, `farmIds?`) en `workOrder.ts`.
+4. **Servicios**: nuevos `features/settings/services/{farm,employee,user}.service.ts`; `features/materials/services/material.service.ts` extendido (paged CRUD + reactivar + categorías CRUD + unidades CRUD). `getFarms` sigue en `workOrder.service.ts`.
+5. **Policies inline** (convención del repo; sin archivo de constantes).
+
+Verificado: `npx tsc --noEmit` + `npm run build` → **0 errores** (10 rutas generadas; `/settings` presente, `/tasks` ausente). Backend regression smoke ya validado en la sección anterior. **Sin commits aún.**
+
+## Completed — % de área trabajada + fórmula de rendimiento (Oct 2026)
+
+Plan: `IA/PLAN_PORCENTAJE_AREA_Y_RENDIMIENTO.md`. Dos cambios acordados con el usuario.
+
+1. **Fórmula + color**: `RendimientoCalculator.MaterialEfficiency` y `EfficiencyFromAmounts` pasan de `teórico/real` a **`real/teórico×100`** (rojo cuando `>100`). `deviation.ts` → `efficiencyTone` rojo si `>100`, verde si `<=100`. Al superar 100% se muestra la **desviación** (`rendimiento − 100`) en `PerformanceTab` y `ConsumptionTab`. Los modos tasa (ha/h, kg/h, h) no se colorean.
+2. **% de área trabajada (delta acumulativo)**: nueva columna `DetalleOrdenTrabajo.PorcentajeAreaTrabajada` (migración `20261012022944_AddActivityAreaPercentage`, `decimal(18,2)` NOT NULL, default 100 para backfill). El `%` de cada actividad es un **delta**; el **acumulado por (OT, sector) no puede superar 100%**.
+   - `InfoDetailWorkOrderDTO`/`ActivityWorkOrderDTO` + `PercentageAreaWorked`; `ShowWorkOrderDTO` + `TotalAreaActuallyWorked`; `AreaWorked` de la actividad = `sector.Area × pct/100`.
+   - **Validación autoritativa** en `AddDetailWorkOrderRepository` (transacción `IUnitOfWork`): `GetAccumulatedAreaPercentageAsync(workOrderId, sectorId, forUpdate: true)` (nuevo en `IDetailWOCommandService`, con `WITH (UPDLOCK, HOLDLOCK)` sobre `DetalleOrdenTrabajo`) → si `acumulado + pct > 100` lanza `BusinessRuleException` → **422**. Validador FluentValidation: rango `1–100`.
+   - `AreaPerManHour` (OT y actividad) ahora usa el **área real** (`Σ sector.Area×pct/100`); `MaterialEfficiency` teórico sigue con el **área total** del sector.
+   - Frontend: `AddActivityForm` con campo **% de área trabajada** (obligatorio, muestra acumulado/máx y `P% de A ha = R ha`); `ActivitiesTab` con columnas **% del sector**/**Área trabajada** + bloque **"Avance por sector"**; `PerformanceTab` con stat **"Área trabajada"**.
+
+Verificado (build 0 errores + smoke real en `http://localhost:5099` con `AuthCookie__Secure=false`): OT 72 (MaterialEfficiency) → `rendimiento=138,89%` (antes 72; real 5.5 / teórico 3.96), `totalAreaActuallyWorked=11.2` (histórico backfilled 100% por actividad); OT nueva 74 (AreaPerManHour, sector 12C 1.64 ha): add 50% → OK, add 60% → **422**, add 50% → OK, `areaWorked=0.82` por actividad, `totalAreaActuallyWorked=1.64`, `rendimiento=0.205 ha/h` (1.64/8h). `npx tsc --noEmit` + `npm run build` → 0 errores. **Sin commits aún.**
+
+## Completed — CRUD de Frutas y Variedades (Oct 2026)
+
+Alcance: CRUD de **Fruta** (`Frutal`) y **Variedad** (`VariedadFrutal`) + pestañas en Configuración. Plantilla: CRUD de MaterialCategory. Las policies `FRUIT_*`/`FRUIT_VARIETY_*` ya existían en `PolicyMaster` y estaban sembradas (admin/desarrollador por reflexión, supervisor sin ellas) — **sin cambios de seed**.
+
+1. **Endpoints:** `FruitController` (`api/fruit`): `GET getFruits`, `GET {id}`, `POST`, `PUT`, `DELETE {id}`. `FruitVarietyController` (`api/fruitvariety`): `GET getVarieties?fruitId=`, `GET {id}`, `POST`, `PUT`, `DELETE {id}`. Clases `[Authorize]` + policy por acción.
+2. **Borrado físico con guarda** (entidades sin `IsDeleted`): fruta → **422** si tiene variedades; variedad → **422** si tiene sectores (`DetailSectorFarmEntity.VarietyId`). Referencia a fruta inexistente al crear/editar variedad → **404**.
+3. **DTOs** (`Entities/DTOs/FruitDTOs/`): `FruitDTO` (Id, Description), `SaveFruitDTO`; `FruitVarietyDTO` (Id, Description, FruitId, FruitName, IsOrganic), `SaveFruitVarietyDTO`. `FruitName` se puebla desde `Fruit.Description` (el command service carga la fruta tracked y la asigna como navegación para que la respuesta la incluya).
+4. **Capas:** `IFruitRepository`/`IFruitVarietyRepository` (Gateways repos), `IFruitQueryService`/`IFruitVarietyQueryService` + impls (`FruitQueryService`, `FruitVarietyQueryService`), `IFruitCommandService`/`IFruitVarietyCommandService` + impls (`CommandServices/Fruit/`, con `IUnitOfWork`), handlers MediatR (`UseCases/UseCases/Fruit/`), validadores FluentValidation (`Validators/Fruit/`), interfaces de controller (`UsesCases/Controllers/`). **Gotcha de naming:** namespace `...CommandServices.Fruit` (plural no aplica aquí; `Fruit` no colisiona con `System.Threading.Tasks`).
+5. **DI:** registrados en `Gateways` (Scoped repos), `EFCore` (Transient queries + commands), `Controllers` (Transient) y `UsesCases` (validadores); handlers por `RegisterServicesFromAssemblyContaining<MappingProfile>`. Mapas en `MappingProfile` (FruitEntity↔DTO, FruitVarietyEntity↔DTO con `Fruit` ignorado en escritura).
+6. **Frontend:** tipos en `types/api/settings.ts` (+barrel); `features/settings/services/fruit.service.ts`; tabs **Frutas** (`FRUIT_*`, lista client-side) y **Variedades** (`FRUIT_VARIETY_*`, filtro por fruta + buscador, flag Orgánica) + forms `FruitForm`/`VarietyForm`; `constants.ts` (nuevas tabs `frutas`/`variedades` + `FRUIT_READ`/`FRUIT_VARIETY_READ` en `SETTINGS_READ_POLICIES`) y `Sidebar.tsx` (mismo conjunto para mostrar "Configuración"); `Settings.tsx` renderiza ambas.
+
+Verificado (build 0 errores + smoke real con `AuthCookie__Secure=false`): crear/editar/consultar fruta; crear variedad (respuesta con `fruitName`), listar por `fruitId`, editar (`isOrganic` true→false); delete fruta con variedad → **422**; delete variedad → **200**; delete fruta sin variedades → **200**; crear fruta sin descripción → **422**; sin token → **401**.
+
+## Completed — Ajustes Frutas/Variedades: paginación + variedades en el form de fruta (Oct 2026)
+
+Correcciones pedidas por el usuario sobre el CRUD anterior. **Se mantiene la relación 1:N** (`VariedadFrutal.IdFruta`), pero la fruta pasa a ser **opcional** en la variedad para poder crearlas como maestro y asignarlas desde el form de la fruta.
+
+1. **Modelo/migración** `20261012061559_MakeFruitVarietyFruitOptional` (aplicada): `FruitVarietyEntity.FruitId` → **`int?`** (columna `VariedadFrutal.IdFruta` nullable, FK `Restrict`). `FruitEntity` gana `ICollection<FruitVarietyEntity> Varieties` (nav) y `[NotMapped] List<int> VarietyIds`. Config `FruitVarietyConfiguration` con `.HasOne(v => v.Fruit).WithMany(f => f.Varieties).HasForeignKey(v => v.FruitId).OnDelete(Restrict)`.
+2. **Asignación desde la fruta**: `SaveFruitDTO` + `VarietyIds`; `FruitCommandService.CreateAsync/UpdateAsync` asignan las variedades seleccionadas (set `FruitId`) y **desasignan** (FruitId=null) las que estaban en la fruta y ya no se marcan. Mover una variedad de otra fruta la reasigna. `FruitDTO` + `VarietyIds`/`VarietyNames` (poblados vía `Include(f => f.Varieties)`).
+3. **Variedad sin fruta**: `SaveFruitVarietyDTO` pierde `FruitId`; el `VarietyForm` ya no tiene selector de fruta; `FruitVarietyCommandService` no carga ni valida fruta (Create fuerza `FruitId=null`). Validadores sin la regla de `FruitId`.
+4. **Paginación server-side**: `GET api/fruit/paged?pageNumber&pageSize&search` (`FruitFilterDTO`) y `GET api/fruitvariety/paged?pageNumber&pageSize&search&fruitId` (`FruitVarietyFilterDTO`) → `PagedResult<T>`; gateways `GetFruitListPaged`/`GetVarietyListPaged` + repos `GetPaged` + handlers `GetFruitsPagedQuery`/`GetFruitVarietiesPagedQuery`.
+5. **Frontend**: `FrutasTab` y `VariedadesTab` pasan a paged server-side (buscador con debounce + `Pagination`). `FrutasTab` agrega columna **Variedades**; `FruitForm` agrega **multi-selección de variedades** (checkboxes, muestra `(en {fruta})` si pertenece a otra). `VariedadesTab`: 1ª columna **Variedad** (descripción), luego Fruta (o "Sin asignar") y Orgánica. `fruit.service.ts` + `getFruitsPaged`/`getFruitVarietiesPaged`; tipos `FruitDTO`/`SaveFruitDTO`/`FruitVarietyDTO`/`SaveFruitVarietyDTO` actualizados.
+
+Verificado (build 0 errores + smoke real): paged frutas/variedades; crear variedad sin fruta (`fruitId` vacío); crear fruta con `varietyIds` (asignada + `varietyNames`); **mover** variedad de F1 a F2 (F1 queda sin variedades); update de F2 sin la variedad → queda sin fruta; filtro `fruitId` y búsqueda; delete fruta con variedad → **422**; sin token → **401**. `npx tsc --noEmit` + `npm run build` → 0 errores (10 rutas). **Sin commits aún.**
+ `npx tsc --noEmit` + `npm run build` → 0 errores (10 rutas). **Sin commits aún.**
 
 ## No Tests
 
