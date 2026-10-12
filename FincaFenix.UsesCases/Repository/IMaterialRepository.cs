@@ -14,5 +14,6 @@ namespace FincaFenix.UsesCases.Repository
         Task<MaterialEntity> CreateMaterial(MaterialEntity material);
         Task<MaterialEntity> UpdateMaterial(MaterialEntity material);
         Task DeleteMaterial(int id);
+        Task<MaterialEntity> ReactivateMaterial(int id);
     }
 }

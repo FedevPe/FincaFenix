@@ -41,6 +41,12 @@ namespace FincaFenix.EFCore.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasColumnName("IsActive");
+
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 

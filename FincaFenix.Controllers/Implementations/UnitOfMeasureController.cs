@@ -17,9 +17,9 @@ namespace FincaFenixControllers.Implementations
         [HttpGet]
         [Authorize(Policy = PolicyMaster.UNIT_OF_MEASURE_READ)]
         [ProducesResponseType(typeof(IEnumerable<UnitOfMeasureDTO>),(int)HttpStatusCode.OK)]
-        public async Task<IEnumerable<UnitOfMeasureDTO>> GetUnitOfMeasureList()
+        public async Task<IEnumerable<UnitOfMeasureDTO>> GetUnitOfMeasureList(bool includeDeleted = false)
         {
-            return await mediator.Send(new GetUnitOfMeasureListQuery());
+            return await mediator.Send(new GetUnitOfMeasureListQuery(includeDeleted));
         }
 
         [HttpGet("{id}")]
@@ -53,6 +53,14 @@ namespace FincaFenixControllers.Implementations
         {
             await mediator.Send(new DeleteUnitOfMeasureCommand(id));
             return true;
+        }
+
+        [HttpPut("ReactivateUnitOfMeasure/{id}")]
+        [Authorize(Policy = PolicyMaster.UNIT_OF_MEASURE_UPDATE)]
+        [ProducesResponseType(typeof(UnitOfMeasureDTO),(int)HttpStatusCode.OK)]
+        public async Task<UnitOfMeasureDTO> ReactivateUnitOfMeasure(int id)
+        {
+            return await mediator.Send(new ReactivateUnitOfMeasureCommand(id));
         }
     }
 }

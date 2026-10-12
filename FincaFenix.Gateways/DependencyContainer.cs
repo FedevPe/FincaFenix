@@ -21,6 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>()
                     .AddScoped<IMachineRepository, MachineRepository>()
                     .AddScoped<IEmployeeRepository, EmployeeRepository>()
+                    .AddScoped<IUserRepository, UserRepository>()
                     .AddScoped<IDetailWorkOrderRepository, DetailWorkOrderRepository>()
                     .AddScoped<IInventoryRepository, InventoryRepository>()
 

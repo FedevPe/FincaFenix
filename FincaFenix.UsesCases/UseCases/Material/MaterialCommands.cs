@@ -9,6 +9,7 @@ namespace FincaFenix.UsesCases.UseCases.Material;
 public record CreateMaterialCommand(CreateMaterialDTO Dto) : IRequest<MaterialDTO>;
 public record UpdateMaterialCommand(UpdateMaterialDTO Dto) : IRequest<MaterialDTO>;
 public record DeleteMaterialCommand(int Id) : IRequest<Unit>;
+public record ReactivateMaterialCommand(int Id) : IRequest<MaterialDTO>;
 
 public class CreateMaterialHandler(IMaterialRepository repository, IMapper mapper) : IRequestHandler<CreateMaterialCommand, MaterialDTO>
 {
@@ -38,5 +39,15 @@ public class DeleteMaterialHandler(IMaterialRepository repository) : IRequestHan
     {
         await repository.DeleteMaterial(request.Id);
         return Unit.Value;
+    }
+}
+
+public class ReactivateMaterialHandler(IMaterialRepository repository, IMapper mapper) : IRequestHandler<ReactivateMaterialCommand, MaterialDTO>
+{
+    public async Task<MaterialDTO> Handle(ReactivateMaterialCommand request, CancellationToken cancellationToken)
+    {
+        var material = await repository.ReactivateMaterial(request.Id);
+        var full = await repository.GetMaterialById(material.Id);
+        return mapper.Map<MaterialDTO>(full ?? material);
     }
 }

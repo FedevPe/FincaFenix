@@ -77,5 +77,29 @@ namespace FincaFenix.EFCore.Services.CommandServices.Material
                 throw;
             }
         }
+
+        public async Task<UnitOfMeasureEntity> ReactivateAsync(int id)
+        {
+            await unitOfWork.BeginAsync();
+            try
+            {
+                var existing = await context.UnitOfMeasures.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (existing is null)
+                    throw new NotFoundException($"No se encontró la unidad de medida con Id {id}.");
+
+                existing.IsDeleted = false;
+
+                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.CommitAsync();
+
+                return existing;
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
     }
 }

@@ -1,17 +1,23 @@
 ﻿using FincaFenix.EFCore.Services;
 using FincaFenix.EFCore.Services.CommandServices;
+using FincaFenix.EFCore.Services.CommandServices.Employees;
+using FincaFenix.EFCore.Services.CommandServices.Farms;
 using FincaFenix.EFCore.Services.CommandServices.Inventory;
 using FincaFenix.EFCore.Services.CommandServices.Material;
 using FincaFenix.EFCore.Services.CommandServices.Tasks;
+using FincaFenix.EFCore.Services.CommandServices.Users;
 using FincaFenix.EFCore.Services.CommandServices.WorkOrder;
 using FincaFenix.EFCore.Services.QueryServices;
 using FincaFenix.EFCore.Services.QueryServices.Inventory;
 using FincaFenix.EFCore.Services.QueryServices.WorkOrder;
 using FincaFenix.Gateways.Interfaces;
 using FincaFenix.Gateways.Interfaces.CommandServices;
+using FincaFenix.Gateways.Interfaces.CommandServices.Employees;
+using FincaFenix.Gateways.Interfaces.CommandServices.Farms;
 using FincaFenix.Gateways.Interfaces.CommandServices.Inventory;
 using FincaFenix.Gateways.Interfaces.CommandServices.Material;
 using FincaFenix.Gateways.Interfaces.CommandServices.Tasks;
+using FincaFenix.Gateways.Interfaces.CommandServices.Users;
 using FincaFenix.Gateways.Interfaces.CommandServices.WorkOrder;
 using FincaFenix.Gateways.Interfaces.QueryServices;
 using FincaFenix.Gateways.Interfaces.QueryServices.Inventory;
@@ -31,6 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<IUnitOfMeasureQueryService, UnitOfMeasureQueryService>()
                     .AddTransient<IMachineQueryService, MachineQueryServices>()
                     .AddTransient<IEmployeeQueryService, EmployeeQueryService>()
+                    .AddTransient<IUserQueryService, UserQueryService>()
                     .AddTransient<IDetailWOQueryService, DetailWOQueryService>()
                     .AddTransient<IInventoryQueryService, InventoryQueryService>();
 
@@ -56,6 +63,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IMaterialCategoryCommandService, MaterialCategoryCommandService>();
             services.AddTransient<IUnitOfMeasureCommandService, UnitOfMeasureCommandService>();
             services.AddTransient<ITaskCommandService, TaskCommandService>();
+            services.AddTransient<IFarmCommandService, FarmCommandService>();
+            services.AddTransient<IEmployeeCommandService, EmployeeCommandService>();
+            services.AddTransient<IUserCommandService, UserCommandService>();
 
             //Unit of Work comparte el DbContext Scoped, por lo que debe registrarse como Scoped
             services.AddScoped<IUnitOfWork, EfCoreUnitOfWork>();

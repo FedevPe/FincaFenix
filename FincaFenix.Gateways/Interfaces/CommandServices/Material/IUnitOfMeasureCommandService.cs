@@ -7,5 +7,6 @@ namespace FincaFenix.Gateways.Interfaces.CommandServices.Material
         Task<UnitOfMeasureEntity> CreateAsync(UnitOfMeasureEntity unit);
         Task<UnitOfMeasureEntity> UpdateAsync(UnitOfMeasureEntity unit);
         Task DeleteAsync(int id);
+        Task<UnitOfMeasureEntity> ReactivateAsync(int id);
     }
 }

@@ -42,7 +42,7 @@ namespace FincaFenixControllers.Services
                 throw new ValidationException(validationResult.Errors);
 
             var user = await _userManager.FindByNameAsync(loginDto.UserName);
-            if (user is null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            if (user is null || !user.IsActive || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 _logger.LogWarning("Login failed for user {UserName}", loginDto.UserName);
                 return null;

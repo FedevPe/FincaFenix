@@ -7,17 +7,18 @@ using MediatR;
 
 namespace FincaFenix.UsesCases.UseCases.UnitOfMeasure;
 
-public record GetUnitOfMeasureListQuery : IRequest<IEnumerable<UnitOfMeasureDTO>>;
+public record GetUnitOfMeasureListQuery(bool IncludeDeleted = false) : IRequest<IEnumerable<UnitOfMeasureDTO>>;
 public record GetUnitOfMeasureByIdQuery(int Id) : IRequest<UnitOfMeasureDTO>;
 public record CreateUnitOfMeasureCommand(SaveUnitOfMeasureDTO Dto) : IRequest<UnitOfMeasureDTO>;
 public record UpdateUnitOfMeasureCommand(SaveUnitOfMeasureDTO Dto) : IRequest<UnitOfMeasureDTO>;
 public record DeleteUnitOfMeasureCommand(int Id) : IRequest<Unit>;
+public record ReactivateUnitOfMeasureCommand(int Id) : IRequest<UnitOfMeasureDTO>;
 
 public class GetUnitOfMeasureListHandler(IUnitOfMeasureRepository repository, IMapper mapper) : IRequestHandler<GetUnitOfMeasureListQuery, IEnumerable<UnitOfMeasureDTO>>
 {
     public async Task<IEnumerable<UnitOfMeasureDTO>> Handle(GetUnitOfMeasureListQuery request, CancellationToken cancellationToken)
     {
-        var units = await repository.GetList();
+        var units = await repository.GetAll(request.IncludeDeleted);
         return mapper.Map<IEnumerable<UnitOfMeasureDTO>>(units);
     }
 }
@@ -61,5 +62,14 @@ public class DeleteUnitOfMeasureHandler(IUnitOfMeasureRepository repository) : I
     {
         await repository.Delete(request.Id);
         return Unit.Value;
+    }
+}
+
+public class ReactivateUnitOfMeasureHandler(IUnitOfMeasureRepository repository, IMapper mapper) : IRequestHandler<ReactivateUnitOfMeasureCommand, UnitOfMeasureDTO>
+{
+    public async Task<UnitOfMeasureDTO> Handle(ReactivateUnitOfMeasureCommand request, CancellationToken cancellationToken)
+    {
+        var unit = await repository.Reactivate(request.Id);
+        return mapper.Map<UnitOfMeasureDTO>(unit);
     }
 }

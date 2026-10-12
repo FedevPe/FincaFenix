@@ -17,6 +17,15 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<UnitOfMeasureEntity>> GetAll(bool includeDeleted = false)
+        {
+            return await context.UnitOfMeasures
+                .AsNoTracking()
+                .Where(u => includeDeleted || !u.IsDeleted)
+                .OrderBy(u => u.Id)
+                .ToListAsync();
+        }
+
         public async Task<UnitOfMeasureEntity> GetById(int id)
         {
             return await context.UnitOfMeasures

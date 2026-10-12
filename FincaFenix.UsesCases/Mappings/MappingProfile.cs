@@ -1,12 +1,15 @@
 using AutoMapper;
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.AddDetailWorkOrder;
 using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
+using FincaFenix.Entities.DTOs.EmployeeDTOs;
+using FincaFenix.Entities.DTOs.FarmDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.Entities.Enum;
 using FincaFenix.Entities.POCOEntities;
+using FincaFenix.Entities.Units;
 
 namespace FincaFenix.UsesCases.Mappings;
 
@@ -16,7 +19,13 @@ public class MappingProfile : Profile
     {
         CreateMap<FarmEntity, FarmDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
-            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name));
+            .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
+            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => s.IsDeleted));
+
+        CreateMap<SaveFarmDTO, FarmEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.IsDeleted, o => o.Ignore())
+            .ForMember(d => d.FarmList, o => o.Ignore());
 
         CreateMap<TaskEntity, TaskDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
@@ -74,7 +83,8 @@ public class MappingProfile : Profile
             .ForMember(d => d.IsDeleted, o => o.Ignore())
             .ForMember(d => d.DiseasePlagueMaterialList, o => o.Ignore());
 
-        CreateMap<UnitOfMeasureEntity, UnitOfMeasureDTO>();
+        CreateMap<UnitOfMeasureEntity, UnitOfMeasureDTO>()
+            .ForMember(d => d.Code, o => o.MapFrom(s => UnitOfMeasureCatalog.GetCodeById(s.Id)));
 
         CreateMap<SaveUnitOfMeasureDTO, UnitOfMeasureEntity>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
@@ -98,7 +108,14 @@ public class MappingProfile : Profile
         CreateMap<EmployeeEntity, EmployeeDTO>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Name, o => o.MapFrom(s => s.Name))
-            .ForMember(d => d.LastName, o => o.MapFrom(s => s.LastName));
+            .ForMember(d => d.LastName, o => o.MapFrom(s => s.LastName))
+            .ForMember(d => d.IsDeleted, o => o.MapFrom(s => s.IsDeleted))
+            .ForMember(d => d.FarmIds, o => o.MapFrom(s => s.EmployeeList != null ? s.EmployeeList.Select(ef => ef.FarmId).ToList() : new List<int>()));
+
+        CreateMap<SaveEmployeeDTO, EmployeeEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.IsDeleted, o => o.Ignore())
+            .ForMember(d => d.EmployeeList, o => o.Ignore());
 
         #region Fase 3.3 — WorkOrder (lectura: Entity -> DTO)
 

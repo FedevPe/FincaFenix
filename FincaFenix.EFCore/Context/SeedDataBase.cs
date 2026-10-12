@@ -31,16 +31,24 @@ namespace FincaFenix.EFCore
                     UserName = "root",
                     Email = "root@root.com",
                     Name = "Federico",
-                    LastName = "Perez"
-                    
+                    LastName = "Perez",
+                    IsActive = true
                 };
 
-                await userManager.CreateAsync(userRoot, "Password123@");
+                if (await userManager.FindByNameAsync(userRoot.UserName) is null)
+                {
+                    var createResult = await userManager.CreateAsync(userRoot, "Password123@");
+                    if (!createResult.Succeeded)
+                    {
+                        logger?.LogWarning("No se pudo crear el usuario root: {Errors}",
+                            string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                    }
+                }
 
-                var developer = await roleManager.FindByNameAsync("desarrollador");
-                var admin = await roleManager.FindByNameAsync("admin");
-                var supervisor = await roleManager.FindByNameAsync("supervisor");
-                var operario = await roleManager.FindByNameAsync("operario");
+                var developer = await EnsureRoleAsync(roleManager, "desarrollador", logger);
+                var admin = await EnsureRoleAsync(roleManager, "admin", logger);
+                var supervisor = await EnsureRoleAsync(roleManager, "supervisor", logger);
+                var operario = await EnsureRoleAsync(roleManager, "operario", logger);
 
                 var allPolicies = typeof(PolicyMaster)
                     .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
@@ -224,6 +232,28 @@ namespace FincaFenix.EFCore
             7 => UnitOfMeasureCatalog.Litro,       // Coadyuvantes
             _ => UnitOfMeasureCatalog.Unidad
         };
+
+        private static async Task<IdentityRole> EnsureRoleAsync(
+            RoleManager<IdentityRole> roleManager,
+            string roleName,
+            ILogger logger)
+        {
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role is not null)
+            {
+                return role;
+            }
+
+            var createResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!createResult.Succeeded)
+            {
+                logger?.LogWarning("No se pudo crear el rol {RoleName}: {Errors}",
+                    roleName, string.Join(", ", createResult.Errors.Select(e => e.Description)));
+                return await roleManager.FindByNameAsync(roleName);
+            }
+
+            return await roleManager.FindByNameAsync(roleName);
+        }
 
         private static async Task AssignPoliciesToRoleAsync(
             RoleManager<IdentityRole> roleManager,

@@ -7,5 +7,6 @@ namespace FincaFenix.Gateways.Interfaces.CommandServices.Material
         Task<MaterialEntity> CreateMaterialAsync(MaterialEntity material);
         Task<MaterialEntity> UpdateMaterialAsync(MaterialEntity material);
         Task DeleteMaterialAsync(int id);
+        Task<MaterialEntity> ReactivateMaterialAsync(int id);
     }
 }

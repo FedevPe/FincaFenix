@@ -14,5 +14,6 @@ namespace FincaFenix.UsesCases.Controllers
         Task<MaterialDTO> CreateMaterial(CreateMaterialDTO dto);
         Task<MaterialDTO> UpdateMaterial(UpdateMaterialDTO dto);
         Task<bool> DeleteMaterial(int id);
+        Task<MaterialDTO> ReactivateMaterial(int id);
     }
 }

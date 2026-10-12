@@ -35,6 +35,11 @@ namespace FincaFenix.Entities.Units
             (CentimetroCubico, "Centímetro cúbico")
         };
 
+        public static string? GetCodeById(int id)
+        {
+            return CodeById.TryGetValue(id, out var code) ? code : null;
+        }
+
         public static int? GetIdByCode(string? code)
         {
             if (string.IsNullOrWhiteSpace(code))

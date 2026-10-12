@@ -91,6 +91,30 @@ namespace FincaFenix.EFCore.Services.CommandServices.Material
             }
         }
 
+        public async Task<MaterialEntity> ReactivateMaterialAsync(int id)
+        {
+            await unitOfWork.BeginAsync();
+            try
+            {
+                var existing = await context.Materials.FirstOrDefaultAsync(m => m.Id == id);
+
+                if (existing is null)
+                    throw new NotFoundException($"No se encontró el material con Id {id}.");
+
+                existing.IsDeleted = false;
+
+                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.CommitAsync();
+
+                return existing;
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
+
         private async Task ValidateReferencesAsync(MaterialEntity material)
         {
             var categoryExists = await context.MaterialCategories.AnyAsync(c => c.Id == material.CategoryId);

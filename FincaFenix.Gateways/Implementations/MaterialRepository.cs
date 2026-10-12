@@ -54,5 +54,10 @@ namespace FincaFenix.Gateways.Implementations
         {
             await commandService.DeleteMaterialAsync(id);
         }
+
+        public async Task<MaterialEntity> ReactivateMaterial(int id)
+        {
+            return await commandService.ReactivateMaterialAsync(id);
+        }
     }
 }

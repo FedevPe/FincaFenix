@@ -80,5 +80,13 @@ namespace FincaFenixControllers.Implementations
             await mediator.Send(new DeleteMaterialCommand(id));
             return true;
         }
+
+        [HttpPut("ReactivateMaterial/{id}")]
+        [Authorize(Policy = PolicyMaster.MATERIAL_UPDATE)]
+        [ProducesResponseType(typeof(MaterialDTO),(int)HttpStatusCode.OK)]
+        public async Task<MaterialDTO> ReactivateMaterial(int id)
+        {
+            return await mediator.Send(new ReactivateMaterialCommand(id));
+        }
     }
 }

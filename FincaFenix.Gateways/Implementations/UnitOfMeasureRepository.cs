@@ -14,6 +14,11 @@ namespace FincaFenix.Gateways.Implementations
             return await queryService.GetList();
         }
 
+        public async Task<IEnumerable<UnitOfMeasureEntity>> GetAll(bool includeDeleted = false)
+        {
+            return await queryService.GetAll(includeDeleted);
+        }
+
         public async Task<UnitOfMeasureEntity> GetById(int id)
         {
             return await queryService.GetById(id);
@@ -37,6 +42,11 @@ namespace FincaFenix.Gateways.Implementations
         public async Task Delete(int id)
         {
             await commandService.DeleteAsync(id);
+        }
+
+        public async Task<UnitOfMeasureEntity> Reactivate(int id)
+        {
+            return await commandService.ReactivateAsync(id);
         }
     }
 }
