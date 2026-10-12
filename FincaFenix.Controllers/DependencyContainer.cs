@@ -22,6 +22,8 @@ public static class DependencyContainer
                 .AddTransient<IUnitOfMeasureController, UnitOfMeasureController>()
                 .AddTransient<IMachineController, MachineController>()
                 .AddTransient<IEmployeeController, EmployeeController>()
+                .AddTransient<IFruitController, FruitController>()
+                .AddTransient<IFruitVarietyController, FruitVarietyController>()
                 .AddTransient<IInventoryController, InventoryController>()
 
                 //WorkOrder

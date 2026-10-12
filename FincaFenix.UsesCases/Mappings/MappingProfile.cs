@@ -4,6 +4,7 @@ using FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder;
 using FincaFenix.Entities.DTOs.EmployeeDTOs;
 using FincaFenix.Entities.DTOs.FarmDTOs;
 using FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs;
+using FincaFenix.Entities.DTOs.FruitDTOs;
 using FincaFenix.Entities.DTOs.RecipeDTO;
 using FincaFenix.Entities.DTOs.ShowWorkOrder;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
@@ -92,6 +93,32 @@ public class MappingProfile : Profile
 
         CreateMap<SaveMaterialCategoryDTO, MaterialCategoryEntity>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0));
+
+        #endregion
+
+        #region CRUD Frutas / Variedades
+
+        CreateMap<FruitEntity, FruitDTO>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+            .ForMember(d => d.VarietyIds, o => o.MapFrom(s => s.Varieties.Select(v => v.Id)))
+            .ForMember(d => d.VarietyNames, o => o.MapFrom(s => s.Varieties.Select(v => v.Description)));
+
+        CreateMap<SaveFruitDTO, FruitEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.Varieties, o => o.Ignore());
+
+        CreateMap<FruitVarietyEntity, FruitVarietyDTO>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+            .ForMember(d => d.Description, o => o.MapFrom(s => s.Description))
+            .ForMember(d => d.FruitId, o => o.MapFrom(s => s.FruitId))
+            .ForMember(d => d.FruitName, o => o.MapFrom(s => s.Fruit != null ? s.Fruit.Description : null))
+            .ForMember(d => d.IsOrganic, o => o.MapFrom(s => s.IsOrganic));
+
+        CreateMap<SaveFruitVarietyDTO, FruitVarietyEntity>()
+            .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
+            .ForMember(d => d.Fruit, o => o.Ignore())
+            .ForMember(d => d.FruitId, o => o.Ignore());
 
         #endregion
 

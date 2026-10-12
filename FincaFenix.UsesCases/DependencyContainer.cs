@@ -4,6 +4,7 @@ using FincaFenix.UsesCases.Mappings;
 using FincaFenix.UsesCases.UseCases.DetailWorkOrder;
 using FincaFenix.UsesCases.UseCases.Employee;
 using FincaFenix.UsesCases.UseCases.Farm;
+using FincaFenix.UsesCases.UseCases.Fruit;
 using FincaFenix.UsesCases.UseCases.Inventory;
 using FincaFenix.UsesCases.UseCases.Material;
 using FincaFenix.UsesCases.UseCases.MaterialCategory;
@@ -14,6 +15,7 @@ using FincaFenix.UsesCases.UseCases.WorkOrder;
 using FincaFenix.Validators.Validators.DetailWorkOrder;
 using FincaFenix.Validators.Validators.Employee;
 using FincaFenix.Validators.Validators.Farm;
+using FincaFenix.Validators.Validators.Fruit;
 using FincaFenix.Validators.Validators.Inventory;
 using FincaFenix.Validators.Validators.Login;
 using FincaFenix.Validators.Validators.Material;
@@ -58,6 +60,10 @@ public static class DependencyContainer
                 .AddTransient<IValidator<UpdateEmployeeCommand>, UpdateEmployeeCommandValidator>()
                 .AddTransient<IValidator<CreateUserCommand>, CreateUserCommandValidator>()
                 .AddTransient<IValidator<UpdateUserCommand>, UpdateUserCommandValidator>()
+                .AddTransient<IValidator<CreateFruitCommand>, CreateFruitCommandValidator>()
+                .AddTransient<IValidator<UpdateFruitCommand>, UpdateFruitCommandValidator>()
+                .AddTransient<IValidator<CreateFruitVarietyCommand>, CreateFruitVarietyCommandValidator>()
+                .AddTransient<IValidator<UpdateFruitVarietyCommand>, UpdateFruitVarietyCommandValidator>()
                 .AddTransient<WorkOrderValidator>()
                 .AddTransient<RecipeValidator>()
                 .AddTransient<DetailRecipeValidator>()

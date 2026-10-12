@@ -2,6 +2,7 @@
 using FincaFenix.EFCore.Services.CommandServices;
 using FincaFenix.EFCore.Services.CommandServices.Employees;
 using FincaFenix.EFCore.Services.CommandServices.Farms;
+using FincaFenix.EFCore.Services.CommandServices.Fruit;
 using FincaFenix.EFCore.Services.CommandServices.Inventory;
 using FincaFenix.EFCore.Services.CommandServices.Material;
 using FincaFenix.EFCore.Services.CommandServices.Tasks;
@@ -13,6 +14,7 @@ using FincaFenix.EFCore.Services.QueryServices.WorkOrder;
 using FincaFenix.Gateways.Interfaces;
 using FincaFenix.Gateways.Interfaces.CommandServices;
 using FincaFenix.Gateways.Interfaces.CommandServices.Employees;
+using FincaFenix.Gateways.Interfaces.CommandServices.Fruit;
 using FincaFenix.Gateways.Interfaces.CommandServices.Farms;
 using FincaFenix.Gateways.Interfaces.CommandServices.Inventory;
 using FincaFenix.Gateways.Interfaces.CommandServices.Material;
@@ -38,6 +40,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddTransient<IMachineQueryService, MachineQueryServices>()
                     .AddTransient<IEmployeeQueryService, EmployeeQueryService>()
                     .AddTransient<IUserQueryService, UserQueryService>()
+                    .AddTransient<IFruitQueryService, FruitQueryService>()
+                    .AddTransient<IFruitVarietyQueryService, FruitVarietyQueryService>()
                     .AddTransient<IDetailWOQueryService, DetailWOQueryService>()
                     .AddTransient<IInventoryQueryService, InventoryQueryService>();
 
@@ -66,6 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IFarmCommandService, FarmCommandService>();
             services.AddTransient<IEmployeeCommandService, EmployeeCommandService>();
             services.AddTransient<IUserCommandService, UserCommandService>();
+            services.AddTransient<IFruitCommandService, FruitCommandService>();
+            services.AddTransient<IFruitVarietyCommandService, FruitVarietyCommandService>();
 
             //Unit of Work comparte el DbContext Scoped, por lo que debe registrarse como Scoped
             services.AddScoped<IUnitOfWork, EfCoreUnitOfWork>();

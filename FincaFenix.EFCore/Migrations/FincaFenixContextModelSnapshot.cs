@@ -621,7 +621,7 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("VariedadFruta");
 
-                    b.Property<int>("FruitId")
+                    b.Property<int?>("FruitId")
                         .HasColumnType("int")
                         .HasColumnName("IdFruta");
 
@@ -1572,10 +1572,9 @@ namespace FincaFenix.EFCore.Migrations
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.FruitVarietyEntity", b =>
                 {
                     b.HasOne("FincaFenix.Entities.POCOEntities.FruitEntity", "Fruit")
-                        .WithMany()
+                        .WithMany("Varieties")
                         .HasForeignKey("FruitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Fruit");
                 });
@@ -1834,6 +1833,11 @@ namespace FincaFenix.EFCore.Migrations
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.FarmEntity", b =>
                 {
                     b.Navigation("FarmList");
+                });
+
+            modelBuilder.Entity("FincaFenix.Entities.POCOEntities.FruitEntity", b =>
+                {
+                    b.Navigation("Varieties");
                 });
 
             modelBuilder.Entity("FincaFenix.Entities.POCOEntities.MaterialEntity", b =>
