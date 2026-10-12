@@ -11,6 +11,7 @@ namespace FincaFenix.Entities.DTOs.DetailWorkOrderDTO.GetDetailWorkOrder
         public decimal MachinePasses { get; set; }
         public decimal WorkedHours { get; set; }
         public decimal? ProducedAmount { get; set; }
+        public decimal PercentageAreaWorked { get; set; }
         public decimal? AreaWorked { get; set; }
         public decimal? Rendimiento { get; set; }
         public string RendimientoUnit { get; set; }

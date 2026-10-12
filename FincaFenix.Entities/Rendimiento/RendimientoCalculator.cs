@@ -21,7 +21,7 @@ namespace FincaFenix.Entities.Rendimiento
                 return null;
             }
 
-            return theoretical.Value / realMachinePasses * 100m;
+            return realMachinePasses / theoretical.Value * 100m;
         }
 
         public static decimal? EfficiencyFromAmounts(decimal? theoreticalAmount, decimal realAmount)
@@ -31,7 +31,7 @@ namespace FincaFenix.Entities.Rendimiento
                 return null;
             }
 
-            return theoreticalAmount.Value / realAmount * 100m;
+            return realAmount / theoreticalAmount.Value * 100m;
         }
 
         public static decimal? PerManHour(decimal? output, decimal manHours)

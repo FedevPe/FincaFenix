@@ -36,11 +36,15 @@ public class GetWorkOrderByIdHandler(IGetWorkOrderInformationRepository reposito
         dto.RendimientoMode = mode.ToString();
 
         var areaTotal = entity?.WorkedSectors?.Sum(ws => ws.SectorFarm?.Area ?? 0m) ?? 0m;
+        var areaActual = entity?.DetailWorkOrderList?
+            .Sum(d => (d.SectorWorked?.Area ?? 0m) * d.PercentageAreaWorked / 100m) ?? 0m;
         var manHours = entity?.DetailWorkOrderList?.Sum(d => d.WorkedHours) ?? 0m;
         var realMachinePasses = entity?.DetailWorkOrderList?.Sum(d => d.MachinePasses) ?? 0m;
         var producedTotal = entity?.DetailWorkOrderList?.Sum(d => d.ProducedAmount ?? 0m) ?? 0m;
 
         dto.TotalManHours = manHours;
+        dto.TotalAreaWorked = areaTotal;
+        dto.TotalAreaActuallyWorked = areaActual;
         dto.TotalProducedAmount = producedTotal > 0 ? producedTotal : null;
 
         switch (mode)
@@ -60,7 +64,7 @@ public class GetWorkOrderByIdHandler(IGetWorkOrderInformationRepository reposito
                 break;
             case RendimientoModeEnum.AreaPerManHour:
                 dto.RendimientoUnit = "ha/h";
-                dto.Rendimiento = RendimientoCalculator.PerManHour(areaTotal, manHours);
+                dto.Rendimiento = RendimientoCalculator.PerManHour(areaActual, manHours);
                 break;
             case RendimientoModeEnum.OutputPerManHour:
                 dto.RendimientoUnit = "kg/h";

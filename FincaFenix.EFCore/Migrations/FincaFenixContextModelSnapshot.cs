@@ -420,6 +420,13 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("decimal(18,5)")
                         .HasColumnName("Maquinadas");
 
+                    b.Property<decimal>("PercentageAreaWorked")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasDefaultValue(100m)
+                        .HasColumnName("PorcentajeAreaTrabajada");
+
                     b.Property<decimal?>("ProducedAmount")
                         .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)")

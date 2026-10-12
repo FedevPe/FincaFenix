@@ -24,6 +24,9 @@ namespace FincaFenix.Validators.Validators.DetailWorkOrder
             RuleFor(x => x.Dto.Info.WorkedHours)
                 .GreaterThan(0).WithMessage("Las horas trabajadas deben ser mayores a cero.");
 
+            RuleFor(x => x.Dto.Info.PercentageAreaWorked)
+                .InclusiveBetween(1, 100).WithMessage("El porcentaje de área trabajada debe estar entre 1 y 100.");
+
             RuleFor(x => x.Dto.Info.MachinePasses)
                 .GreaterThanOrEqualTo(0).WithMessage("La cantidad de maquinadas no puede ser negativa.");
 

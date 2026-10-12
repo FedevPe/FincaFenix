@@ -209,7 +209,7 @@ namespace FincaFenix.PDF
                         });
                         table.Cell().Element(CellStyle).AlignLeft().Text(x =>
                         {
-                            x.Span(($"{DTO.Recipe.TRV.ToString("N2")} m3/ha"));
+                            x.Span(($"{DTO.Recipe.TRV.ToString("N2")} lts/ha"));
                         });
                     });
                     table.Cell().Border(1).Table(table =>

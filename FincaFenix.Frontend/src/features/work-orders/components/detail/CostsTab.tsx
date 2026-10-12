@@ -9,6 +9,7 @@ import {
 import { StatCard } from "@/components/common/StatCard";
 import type { WorkOrderCostDTO, WorkOrderCostItemDTO } from "@/types/api";
 import { formatDateOnly, formatNumber } from "@/lib/utils";
+import { deviationPercent, formatDeviation, overrunTone } from "../../lib/deviation";
 
 interface CostsTabProps {
   cost: WorkOrderCostDTO | null;
@@ -51,8 +52,11 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
       key: "consumed",
       header: "Cantidad real consumida",
       align: "right",
-      render: (item) =>
-        `${formatNumber(item.consumedAmount, { maximumFractionDigits: 4 })} ${item.unitOfMeasure}`,
+      render: (item) => (
+        <span className={overrunTone(item.consumedAmount, item.plannedAmount)}>
+          {`${formatNumber(item.consumedAmount, { maximumFractionDigits: 4 })} ${item.unitOfMeasure}`}
+        </span>
+      ),
     },
     {
       key: "unitCost",
@@ -72,8 +76,21 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
       key: "realCost",
       header: "Costo real",
       align: "right",
-      render: (item) =>
-        `${item.currencySymbol} ${formatNumber(item.realCost, { maximumFractionDigits: 2 })}`,
+      render: (item) => (
+        <span className={overrunTone(item.realCost, item.totalCost)}>
+          {`${item.currencySymbol} ${formatNumber(item.realCost, { maximumFractionDigits: 2 })}`}
+        </span>
+      ),
+    },
+    {
+      key: "deviation",
+      header: "Desviación",
+      align: "right",
+      render: (item) => (
+        <span className={overrunTone(item.realCost, item.totalCost)}>
+          {formatDeviation(deviationPercent(item.realCost, item.totalCost))}
+        </span>
+      ),
     },
     {
       key: "frozenDate",
@@ -83,6 +100,7 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
   ];
 
   const currencySymbol = items[0]?.currencySymbol ?? "$";
+  const totalDeviation = deviationPercent(cost.totalRealCost, cost.totalCost);
 
   return (
     <div className="space-y-4">
@@ -94,7 +112,16 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
         />
         <StatCard
           label={`Costo real (${cost.items[0]?.currencyCode ?? "ARS"})`}
-          value={`${currencySymbol} ${formatNumber(cost.totalRealCost, { maximumFractionDigits: 2 })}`}
+          value={
+            <span className={overrunTone(cost.totalRealCost, cost.totalCost)}>
+              {`${currencySymbol} ${formatNumber(cost.totalRealCost, { maximumFractionDigits: 2 })}`}
+            </span>
+          }
+          hint={
+            totalDeviation != null
+              ? `Desviación: ${formatDeviation(totalDeviation)}`
+              : undefined
+          }
           icon={Coins}
         />
       </div>

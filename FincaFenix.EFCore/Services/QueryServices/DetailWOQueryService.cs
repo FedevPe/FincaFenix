@@ -20,6 +20,7 @@ namespace FincaFenix.EFCore.Services.QueryServices
                     SectorWorkedId = dwo.SectorWorkedId,
                     MachinePasses = dwo.MachinePasses,
                     WorkedHours = dwo.WorkedHours,
+                    PercentageAreaWorked = dwo.PercentageAreaWorked,
                     ProducedAmount = dwo.ProducedAmount,
                     Description = dwo.Description,
                     ActivityDate = dwo.ActivityDate,

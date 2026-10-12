@@ -36,6 +36,7 @@ export function AddActivityForm({
   const [workedHours, setWorkedHours] = useState("");
   const [machinePasses, setMachinePasses] = useState("");
   const [producedAmount, setProducedAmount] = useState("");
+  const [percentageAreaWorked, setPercentageAreaWorked] = useState("");
   const [description, setDescription] = useState("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,6 +49,16 @@ export function AddActivityForm({
 
   const sectors = workOrder.sectorList ?? [];
   const selectedSector = sectors.find((sector) => sector.id === Number(sectorId));
+
+  const accumulatedPercentage = (workOrder.detailsWorkOrder ?? [])
+    .filter((activity) => activity.sector?.id === Number(sectorId))
+    .reduce((sum, activity) => sum + (activity.percentageAreaWorked ?? 0), 0);
+  const remainingPercentage = Math.max(0, 100 - accumulatedPercentage);
+  const percentageValue = parseDecimal(percentageAreaWorked);
+  const workedArea =
+    selectedSector?.area != null && percentageValue > 0
+      ? (selectedSector.area * percentageValue) / 100
+      : null;
 
   useEffect(() => {
     if (!farmId) return;
@@ -78,6 +89,12 @@ export function AddActivityForm({
     if (parseDecimal(workedHours) <= 0) {
       next.workedHours = "Las horas trabajadas deben ser mayores a cero.";
     }
+    const pct = parseDecimal(percentageAreaWorked);
+    if (pct <= 0 || pct > 100) {
+      next.percentageAreaWorked = "El porcentaje debe estar entre 1 y 100.";
+    } else if (pct > remainingPercentage) {
+      next.percentageAreaWorked = `El sector ya tiene ${formatNumber(accumulatedPercentage, { maximumFractionDigits: 2 })}% trabajado; el máximo es ${formatNumber(remainingPercentage, { maximumFractionDigits: 2 })}%.`;
+    }
     if (isMaterialEfficiency && parseDecimal(machinePasses) <= 0) {
       next.machinePasses = "La cantidad de maquinadas debe ser mayor a cero.";
     }
@@ -104,6 +121,7 @@ export function AddActivityForm({
         sectorWorkedId: Number(sectorId),
         machinePasses: parseDecimal(machinePasses),
         workedHours: parseDecimal(workedHours),
+        percentageAreaWorked: parseDecimal(percentageAreaWorked),
         producedAmount: producedAmount ? parseDecimal(producedAmount) : null,
         description: description.trim(),
       },
@@ -147,7 +165,11 @@ export function AddActivityForm({
           invalid={!!errors.sector}
           onChange={(event) => {
             setSectorId(event.target.value);
-            setErrors((prev) => ({ ...prev, sector: "" }));
+            setErrors((prev) => ({
+              ...prev,
+              sector: "",
+              percentageAreaWorked: "",
+            }));
           }}
         >
           <option value="">Seleccione el sector</option>
@@ -192,6 +214,37 @@ export function AddActivityForm({
           </div>
         </div>
       ) : null}
+
+      <Field
+        label="Porcentaje de área trabajada"
+        htmlFor="percentageAreaWorked"
+        required
+        error={errors.percentageAreaWorked}
+        hint={
+          selectedSector
+            ? `Ya trabajado: ${formatNumber(accumulatedPercentage, { maximumFractionDigits: 2 })}% · Máx. esta actividad: ${formatNumber(remainingPercentage, { maximumFractionDigits: 2 })}%`
+            : "Seleccione primero el sector"
+        }
+      >
+        <TextInput
+          id="percentageAreaWorked"
+          inputMode="decimal"
+          value={percentageAreaWorked}
+          invalid={!!errors.percentageAreaWorked}
+          placeholder="Ej: 25"
+          onChange={(event) => {
+            setPercentageAreaWorked(event.target.value);
+            setErrors((prev) => ({ ...prev, percentageAreaWorked: "" }));
+          }}
+        />
+        {workedArea != null && selectedSector?.area != null ? (
+          <span className="text-xs text-muted-foreground">
+            {formatNumber(percentageValue, { maximumFractionDigits: 2 })}% de{" "}
+            {formatNumber(selectedSector.area, { maximumFractionDigits: 2 })} ha ={" "}
+            {formatNumber(workedArea, { maximumFractionDigits: 2 })} ha
+          </span>
+        ) : null}
+      </Field>
 
       <Field label="Operario" htmlFor="employeeId" required error={errors.employee}>
         {employeesError ? (

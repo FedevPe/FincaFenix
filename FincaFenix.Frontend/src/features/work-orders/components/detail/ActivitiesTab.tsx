@@ -34,6 +34,25 @@ export function ActivitiesTab({
     0,
   );
 
+  const isMaterialEfficiency = workOrder.rendimientoMode === "MaterialEfficiency";
+
+  const sectorProgress = (workOrder.sectorList ?? [])
+    .map((sector) => {
+      const sectorActivities = activities.filter(
+        (activity) => activity.sector?.id === sector.id,
+      );
+      const percent = sectorActivities.reduce(
+        (sum, activity) => sum + Number(activity.percentageAreaWorked || 0),
+        0,
+      );
+      const area = sectorActivities.reduce(
+        (sum, activity) => sum + Number(activity.areaWorked || 0),
+        0,
+      );
+      return { sector, percent, area };
+    })
+    .filter((row) => row.percent > 0);
+
   const columns: Column<ActivityWorkOrderDTO>[] = [
     {
       key: "activityDate",
@@ -54,11 +73,31 @@ export function ActivitiesTab({
       render: (a) => a.sector?.sectorName ?? "-",
     },
     {
-      key: "machinePasses",
-      header: "Maquinadas",
+      key: "percentageAreaWorked",
+      header: "% del sector",
       align: "right",
-      render: (a) => formatNumber(a.machinePasses),
+      render: (a) =>
+        `${formatNumber(a.percentageAreaWorked, { maximumFractionDigits: 2 })}%`,
     },
+    {
+      key: "areaWorked",
+      header: "Área trabajada",
+      align: "right",
+      render: (a) =>
+        a.areaWorked != null
+          ? `${formatNumber(a.areaWorked, { maximumFractionDigits: 2 })} ha`
+          : "-",
+    },
+    ...(isMaterialEfficiency
+      ? [
+          {
+            key: "machinePasses",
+            header: "Maquinadas",
+            align: "right" as const,
+            render: (a: ActivityWorkOrderDTO) => formatNumber(a.machinePasses),
+          },
+        ]
+      : []),
     {
       key: "workedHours",
       header: "Horas",
@@ -111,6 +150,48 @@ export function ActivitiesTab({
               </span>
             </span>
           </div>
+
+          {sectorProgress.length > 0 ? (
+            <div className="space-y-2">
+              <h4 className="text-sm font-medium">Avance por sector</h4>
+              <div className="overflow-hidden rounded-md border">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50 text-muted-foreground">
+                    <tr>
+                      <th className="px-3 py-2 text-left font-medium">Sector</th>
+                      <th className="px-3 py-2 text-right font-medium">
+                        % acumulado
+                      </th>
+                      <th className="px-3 py-2 text-right font-medium">
+                        Área trabajada
+                      </th>
+                      <th className="px-3 py-2 text-right font-medium">
+                        Superficie
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sectorProgress.map(({ sector, percent, area }) => (
+                      <tr key={sector.id} className="border-t">
+                        <td className="px-3 py-2">{sector.sectorName}</td>
+                        <td className="px-3 py-2 text-right tabular-nums">
+                          {formatNumber(percent, { maximumFractionDigits: 2 })}%
+                        </td>
+                        <td className="px-3 py-2 text-right tabular-nums">
+                          {formatNumber(area, { maximumFractionDigits: 2 })} ha
+                        </td>
+                        <td className="px-3 py-2 text-right tabular-nums">
+                          {sector.area != null
+                            ? `${formatNumber(sector.area, { maximumFractionDigits: 2 })} ha`
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : null}
         </>
       )}
     </div>

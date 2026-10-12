@@ -20,6 +20,7 @@ namespace FincaFenix.EFCore.Configurations.PrincipalTable
             builder.Property(d => d.EmployeeId).HasColumnName("IdEmpleado").IsRequired();
             builder.Property(d => d.SectorWorkedId).HasColumnName("IdSectorTrabajado").IsRequired();
             builder.Property(d => d.WorkedHours).HasColumnName("HorasTrabajadas").IsRequired().HasPrecision(18, 2);
+            builder.Property(d => d.PercentageAreaWorked).HasColumnName("PorcentajeAreaTrabajada").IsRequired().HasPrecision(18, 2).HasDefaultValue(100m);
             builder.Property(d => d.MachinePasses).HasColumnName("Maquinadas").IsRequired().HasPrecision(18, 5);
             builder.Property(d => d.ProducedAmount).HasColumnName("CantidadProducida").HasPrecision(18, 5);
             builder.Property(d => d.Description).HasColumnName("Descripcion").IsRequired(false).HasMaxLength(500);

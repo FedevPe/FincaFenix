@@ -152,6 +152,7 @@ public class MappingProfile : Profile
                 ? s.DetailWorkOrderList
                 : null))
             .ForMember(d => d.TotalManHours, o => o.Ignore())
+            .ForMember(d => d.TotalAreaActuallyWorked, o => o.Ignore())
             .ForMember(d => d.TotalProducedAmount, o => o.Ignore())
             .ForMember(d => d.Rendimiento, o => o.Ignore())
             .ForMember(d => d.RendimientoUnit, o => o.Ignore())
@@ -177,7 +178,10 @@ public class MappingProfile : Profile
         CreateMap<DetailWorkOrderEntity, ActivityWorkOrderDTO>()
             .ForMember(d => d.WorkOrder, o => o.Ignore())
             .ForMember(d => d.Sector, o => o.MapFrom(s => s.SectorWorked))
-            .ForMember(d => d.AreaWorked, o => o.MapFrom(s => s.SectorWorked != null ? s.SectorWorked.Area : null))
+            .ForMember(d => d.PercentageAreaWorked, o => o.MapFrom(s => s.PercentageAreaWorked))
+            .ForMember(d => d.AreaWorked, o => o.MapFrom(s => s.SectorWorked != null && s.SectorWorked.Area.HasValue
+                ? s.SectorWorked.Area.Value * s.PercentageAreaWorked / 100m
+                : (decimal?)null))
             .ForMember(d => d.Rendimiento, o => o.Ignore())
             .ForMember(d => d.RendimientoUnit, o => o.Ignore())
             .ForMember(d => d.RendimientoMode, o => o.Ignore());
@@ -232,6 +236,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.SectorWorkedId, o => o.MapFrom(s => s.Info.SectorWorkedId))
             .ForMember(d => d.MachinePasses, o => o.MapFrom(s => s.Info.MachinePasses))
             .ForMember(d => d.WorkedHours, o => o.MapFrom(s => s.Info.WorkedHours))
+            .ForMember(d => d.PercentageAreaWorked, o => o.MapFrom(s => s.Info.PercentageAreaWorked))
             .ForMember(d => d.ProducedAmount, o => o.MapFrom(s => s.Info.ProducedAmount))
             .ForMember(d => d.Description, o => o.MapFrom(s => s.Info.Description.ToUpper()))
             .ForMember(d => d.ActivityDate, o => o.MapFrom(s => (DateTime)s.ActivityDate))
