@@ -1,4 +1,5 @@
 ﻿using FincaFenix.EFCore.Context;
+using FincaFenix.Entities.DTOs.TaskDTOs;
 using FincaFenix.Entities.Exceptions;
 using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.QueryServices;
@@ -25,6 +26,34 @@ namespace FincaFenix.EFCore.Services.QueryServices
                 .Where(t => includeDeleted || !t.IsDeleted)
                 .OrderBy(t => t.Description)
                 .ToListAsync();
+        }
+
+        public async Task<(IEnumerable<TaskEntity> Tasks, int TotalCount)> GetTaskListPaged(TaskFilterDTO filter)
+        {
+            var pageNumber = filter.PageNumber < 1 ? 1 : filter.PageNumber;
+            var pageSize = filter.PageSize < 1 ? 10 : filter.PageSize;
+
+            var baseQuery = context.Tasks.AsQueryable();
+
+            if (!filter.IncludeDeleted)
+                baseQuery = baseQuery.Where(t => !t.IsDeleted);
+
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                var search = filter.Search.Trim();
+                baseQuery = baseQuery.Where(t => t.Description.Contains(search));
+            }
+
+            var totalCount = await baseQuery.CountAsync();
+
+            var tasks = await baseQuery
+                .OrderBy(t => t.Description)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return (tasks, totalCount);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace FincaFenix.UsesCases.UseCases.Task;
 public record CreateTaskCommand(SaveTaskDTO Dto) : IRequest<TaskDTO>;
 public record UpdateTaskCommand(SaveTaskDTO Dto) : IRequest<TaskDTO>;
 public record DeleteTaskCommand(int Id) : IRequest<Unit>;
+public record ReactivateTaskCommand(int Id) : IRequest<TaskDTO>;
 
 public class CreateTaskHandler(ITaskRepository repository, IMapper mapper) : IRequestHandler<CreateTaskCommand, TaskDTO>
 {
@@ -36,5 +37,14 @@ public class DeleteTaskHandler(ITaskRepository repository) : IRequestHandler<Del
     {
         await repository.Delete(request.Id);
         return Unit.Value;
+    }
+}
+
+public class ReactivateTaskHandler(ITaskRepository repository, IMapper mapper) : IRequestHandler<ReactivateTaskCommand, TaskDTO>
+{
+    public async Task<TaskDTO> Handle(ReactivateTaskCommand request, CancellationToken cancellationToken)
+    {
+        var task = await repository.Reactivate(request.Id);
+        return mapper.Map<TaskDTO>(task);
     }
 }

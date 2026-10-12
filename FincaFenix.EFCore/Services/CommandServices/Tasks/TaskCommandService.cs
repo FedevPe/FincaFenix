@@ -78,5 +78,29 @@ namespace FincaFenix.EFCore.Services.CommandServices.Tasks
                 throw;
             }
         }
+
+        public async Task<TaskEntity> ReactivateAsync(int id)
+        {
+            await unitOfWork.BeginAsync();
+            try
+            {
+                var existing = await context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
+
+                if (existing is null)
+                    throw new NotFoundException($"No se encontró la tarea con Id {id}.");
+
+                existing.IsDeleted = false;
+
+                await unitOfWork.SaveChangesAsync();
+                await unitOfWork.CommitAsync();
+
+                return existing;
+            }
+            catch
+            {
+                await unitOfWork.RollbackAsync();
+                throw;
+            }
+        }
     }
 }

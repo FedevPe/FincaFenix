@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using FincaFenix.Entities;
+using FincaFenix.Entities.DTOs.Common;
+using FincaFenix.Entities.DTOs.TaskDTOs;
 using FincaFenix.Entities.DTOs.WorkOrderDTOs;
 using FincaFenix.UsesCases.Controllers;
 using FincaFenix.UsesCases.UseCases.Task;
@@ -30,6 +32,14 @@ namespace FincaFenixControllers.Implementations
             return await mediator.Send(new GetTaskListQuery(includeDeleted));
         }
 
+        [HttpGet("paged")]
+        [Authorize(Policy = PolicyMaster.TASK_READ)]
+        [ProducesResponseType(typeof(PagedResult<TaskDTO>),(int)HttpStatusCode.OK)]
+        public async Task<PagedResult<TaskDTO>> GetTaskListPaged([FromQuery] TaskFilterDTO filter)
+        {
+            return await mediator.Send(new GetTaskListPagedQuery(filter));
+        }
+
         [HttpPost]
         [Authorize(Policy = PolicyMaster.TASK_CREATE)]
         [ProducesResponseType(typeof(TaskDTO),(int)HttpStatusCode.Created)]
@@ -53,6 +63,14 @@ namespace FincaFenixControllers.Implementations
         {
             await mediator.Send(new DeleteTaskCommand(id));
             return true;
+        }
+
+        [HttpPut("ReactivateTask/{id}")]
+        [Authorize(Policy = PolicyMaster.TASK_UPDATE)]
+        [ProducesResponseType(typeof(TaskDTO),(int)HttpStatusCode.OK)]
+        public async Task<TaskDTO> ReactivateTask(int id)
+        {
+            return await mediator.Send(new ReactivateTaskCommand(id));
         }
     }
 }

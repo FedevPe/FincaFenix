@@ -7,5 +7,6 @@ namespace FincaFenix.Gateways.Interfaces.CommandServices.Tasks
         Task<TaskEntity> CreateAsync(TaskEntity task);
         Task<TaskEntity> UpdateAsync(TaskEntity task);
         Task DeleteAsync(int id);
+        Task<TaskEntity> ReactivateAsync(int id);
     }
 }

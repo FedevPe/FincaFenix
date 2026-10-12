@@ -1,4 +1,5 @@
-﻿using FincaFenix.Entities.POCOEntities;
+﻿using FincaFenix.Entities.DTOs.TaskDTOs;
+using FincaFenix.Entities.POCOEntities;
 using FincaFenix.Gateways.Interfaces.CommandServices.Tasks;
 using FincaFenix.Gateways.Interfaces.QueryServices;
 using FincaFenix.UsesCases.Repository;
@@ -18,7 +19,12 @@ namespace FincaFenix.Gateways.Implementations
         {
             return await queryService.GetTaskList(includeDeleted);
         }
-        
+
+        public async Task<(IEnumerable<TaskEntity> Tasks, int TotalCount)> GetTaskListPaged(TaskFilterDTO filter)
+        {
+            return await queryService.GetTaskListPaged(filter);
+        }
+
         public Task<TaskEntity> GetTaskById(int id)
         {
             return queryService.GetTaskById(id);
@@ -37,6 +43,11 @@ namespace FincaFenix.Gateways.Implementations
         public async Task Delete(int id)
         {
             await commandService.DeleteAsync(id);
+        }
+
+        public async Task<TaskEntity> Reactivate(int id)
+        {
+            return await commandService.ReactivateAsync(id);
         }
     }
 }
