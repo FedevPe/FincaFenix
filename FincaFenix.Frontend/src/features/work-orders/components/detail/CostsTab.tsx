@@ -35,7 +35,7 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
     );
   }
 
-  const columns: Column<WorkOrderCostItemDTO>[] = [
+const columns: Column<WorkOrderCostItemDTO>[] = [
     {
       key: "material",
       header: "Material",
@@ -86,6 +86,7 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
       key: "deviation",
       header: "Desviación",
       align: "right",
+      hidden: "md",
       render: (item) => {
         const deviation = deviationPercent(item.realCost, item.totalCost);
         const overrun = isOverrun(item.realCost, item.totalCost);
@@ -111,6 +112,7 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
     {
       key: "frozenDate",
       header: "Fecha",
+      hidden: "sm",
       render: (item) => formatDateOnly(item.frozenDate),
     },
   ];

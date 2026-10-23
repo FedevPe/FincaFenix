@@ -74,6 +74,7 @@ export function ConsumptionTab({ workOrder }: ConsumptionTabProps) {
       key: "deviation",
       header: "Desviación",
       align: "right",
+      hidden: "md",
       render: (detail) => {
         const planned = plannedBase(detail);
         const consumed = detail.totalAmountConsumed;

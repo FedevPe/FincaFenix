@@ -130,6 +130,7 @@ export function VariedadesTab() {
     {
       key: "fruit",
       header: "Fruta",
+      hidden: "md",
       render: (item) =>
         item.fruitName ? (
           item.fruitName
@@ -140,6 +141,7 @@ export function VariedadesTab() {
     {
       key: "organic",
       header: "Orgánica",
+      hidden: "md",
       render: (item) =>
         item.isOrganic ? (
           <Badge variant="secondary">Sí</Badge>
@@ -151,6 +153,7 @@ export function VariedadesTab() {
       key: "actions",
       header: "",
       align: "right",
+      hidden: "sm",
       render: (item) =>
         canUpdate || canDelete ? (
           <Dropdown

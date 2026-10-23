@@ -146,6 +146,7 @@ export function TareasTab() {
       {
         key: "mode",
         header: "Modo de rendimiento",
+        hidden: "md",
         sortable: true,
         sortValue: (task) => rendimientoModeLabel(task.rendimientoMode),
         render: (task) => rendimientoModeLabel(task.rendimientoMode),
@@ -154,6 +155,7 @@ export function TareasTab() {
         key: "actions",
         header: "",
         align: "right",
+        hidden: "sm",
         render: (task) => {
           if (task.isDeleted) {
             if (!canUpdate) return null;

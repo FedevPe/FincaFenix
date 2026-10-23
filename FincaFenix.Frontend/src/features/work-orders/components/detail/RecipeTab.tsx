@@ -47,6 +47,7 @@ export function RecipeTab({ workOrder }: RecipeTabProps) {
     {
       key: "category",
       header: "Categoría",
+      hidden: "md",
       render: (detail) =>
         detail.material?.category?.description ??
         (detail.categoryId ? `Categoría ${detail.categoryId}` : "-"),
@@ -54,12 +55,14 @@ export function RecipeTab({ workOrder }: RecipeTabProps) {
     {
       key: "brand",
       header: "Marca",
+      hidden: "md",
       render: (detail) => detail.brand ?? "-",
     },
     {
       key: "amountRequired",
       header: "Dosis por aplicación",
       align: "right",
+      hidden: "md",
       render: (detail) =>
         `${formatNumber(detail.amountRequired, { maximumFractionDigits: 4 })} ${detail.amountRequiredUnit ?? ""}`,
     },

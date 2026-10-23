@@ -98,7 +98,7 @@ export function FrutasTab() {
     }
   };
 
-  const columns: Column<FruitDTO>[] = [
+const columns: Column<FruitDTO>[] = [
     {
       key: "description",
       header: "Fruta",
@@ -106,16 +106,17 @@ export function FrutasTab() {
       sortValue: (item) => item.description,
       render: (item) => <span className="font-medium">{item.description}</span>,
     },
-{
-        key: "actions",
-        header: "",
-        align: "right",
-        render: (item) =>
-          canUpdate || canDelete ? (
-            <Dropdown
-              trigger={<MoreVertical />}
-              triggerLabel={`Acciones para ${item.description}`}
-              items={[
+    {
+      key: "actions",
+      header: "",
+      align: "right",
+      hidden: "sm",
+      render: (item) =>
+        canUpdate || canDelete ? (
+          <Dropdown
+            trigger={<MoreVertical />}
+            triggerLabel={`Acciones para ${item.description}`}
+            items={[
               {
                 label: "Editar",
                 icon: Pencil,

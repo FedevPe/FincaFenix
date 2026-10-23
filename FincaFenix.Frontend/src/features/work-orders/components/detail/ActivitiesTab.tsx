@@ -62,6 +62,7 @@ export function ActivitiesTab({
     {
       key: "employee",
       header: "Operario",
+      hidden: "md",
       render: (a) =>
         a.employee
           ? `${a.employee.name}${a.employee.lastName ? ` ${a.employee.lastName}` : ""}`
@@ -94,6 +95,7 @@ export function ActivitiesTab({
             key: "machinePasses",
             header: "Maquinadas",
             align: "right" as const,
+            hidden: "md" as const,
             render: (a: ActivityWorkOrderDTO) => formatNumber(a.machinePasses),
           },
         ]
