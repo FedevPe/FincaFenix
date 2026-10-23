@@ -610,9 +610,9 @@ export default function CreateWorkOrder() {
                 <label className="text-sm font-medium" htmlFor="sector-add">
                   Agregar sector
                 </label>
-                <select
+                <SelectInput
                   id="sector-add"
-                  className="h-9 w-full rounded-md border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  className="w-full"
                   value=""
                   onChange={(event) => {
                     if (event.target.value) addSector(Number(event.target.value));
@@ -630,7 +630,7 @@ export default function CreateWorkOrder() {
                       ))}
                     </optgroup>
                   ))}
-                </select>
+                </SelectInput>
               </div>
 
               {selectedSectorRows.length === 0 ? (
@@ -779,9 +779,9 @@ export default function CreateWorkOrder() {
                         key={row.key}
                         className="grid grid-cols-1 gap-2 rounded-md border p-3 lg:grid-cols-[1fr_1fr_auto]"
                       >
-                        <select
+                        <SelectInput
                           aria-label="Categoría"
-                          className="h-9 w-full rounded-md border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                          className="w-full"
                           value={row.categoryId}
                           onChange={(event) =>
                             updateRow(row.key, {
@@ -796,11 +796,11 @@ export default function CreateWorkOrder() {
                               {category.description}
                             </option>
                           ))}
-                        </select>
+                        </SelectInput>
 
-                        <select
+                        <SelectInput
                           aria-label="Material"
-                          className="h-9 w-full rounded-md border bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:opacity-50"
+                          className="w-full"
                           value={row.materialId}
                           disabled={!row.categoryId}
                           onChange={(event) =>
@@ -813,7 +813,7 @@ export default function CreateWorkOrder() {
                               {materialLabel(material)}
                             </option>
                           ))}
-                        </select>
+                        </SelectInput>
 
                         <button
                           type="button"
