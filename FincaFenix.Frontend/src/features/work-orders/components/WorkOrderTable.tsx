@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RotateCcw } from "lucide-react";
+import { Download, RotateCcw, Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/common/DataTable";
 import type { Column } from "@/components/common/DataTable";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -23,7 +24,6 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 interface WorkOrderTableProps {
   workOrders: ShowWorkOrderDTO[];
   canUpdate: boolean;
-  onView: (workOrder: ShowWorkOrderDTO) => void;
   onDownload: (workOrder: ShowWorkOrderDTO) => void;
   onChangeStatus: (workOrder: ShowWorkOrderDTO, status: WorkOrderStatus) => void;
 }
@@ -31,10 +31,10 @@ interface WorkOrderTableProps {
 export function WorkOrderTable({
   workOrders,
   canUpdate,
-  onView,
   onDownload,
   onChangeStatus,
 }: WorkOrderTableProps) {
+  const router = useRouter();
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState<ShowWorkOrderDTO | null>(null);
 
@@ -49,6 +49,10 @@ export function WorkOrderTable({
     }
     setStatusModalOpen(false);
     setSelectedWorkOrder(null);
+  };
+
+  const handleView = (workOrder: ShowWorkOrderDTO) => {
+    router.push(`/work-orders/${workOrder.id}`);
   };
 
   const columns: Column<ShowWorkOrderDTO>[] = [
@@ -99,11 +103,24 @@ export function WorkOrderTable({
     },
     {
       key: "actions",
-      header: "",
+      header: "Acciones",
       align: "right",
-      width: "6rem",
+      width: "8rem",
       render: (wo) => (
         <div className="flex items-center justify-end gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleView(wo)}
+                aria-label={`Ver detalles de la orden ${wo.orderNum}`}
+              >
+                <Eye className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Ver detalles</TooltipContent>
+          </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -143,7 +160,6 @@ export function WorkOrderTable({
         columns={columns}
         rows={workOrders}
         rowKey={(wo) => wo.id}
-        onRowClick={onView}
       />
       <Dialog open={statusModalOpen} onOpenChange={setStatusModalOpen}>
         <DialogContent>

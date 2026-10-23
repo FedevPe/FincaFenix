@@ -183,7 +183,6 @@ export default function WorkOrderList() {
           <WorkOrderTable
             workOrders={paged}
             canUpdate={canUpdate}
-            onView={(wo) => router.push(`/work-orders/${wo.id}`)}
             onDownload={handleDownload}
             onChangeStatus={(workOrder, status) =>
               setPendingChange({ workOrder, status })
