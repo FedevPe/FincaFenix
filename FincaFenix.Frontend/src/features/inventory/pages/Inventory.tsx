@@ -24,12 +24,12 @@ import type { TabItem } from "@/components/common/Tabs";
 import { DataTable } from "@/components/common/DataTable";
 import type { Column } from "@/components/common/DataTable";
 import { Field, SelectInput, TextInput } from "@/components/common/FormControls";
-import { Badge } from "@/components/ui/badge";
 import {
   EmptyState,
   ErrorState,
   LoadingState,
 } from "@/components/common/Feedback";
+import { StockStatusBadge } from "@/components/common/StockStatusBadge";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { getProblemDetails } from "@/lib/api.client";
 import { formatDateOnly, formatNumber, hasPolicy } from "@/lib/utils";
@@ -77,37 +77,6 @@ function money(value: number, symbol: string): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`.trim();
-}
-
-function StockStatusBadge({ row }: { row: StockDTO }) {
-  if (row.stockDisponible <= 0) {
-    return (
-      <Badge
-        variant="outline"
-        className="border-destructive/40 bg-destructive/10 text-destructive"
-      >
-        Sin stock
-      </Badge>
-    );
-  }
-  if (row.isLow) {
-    return (
-      <Badge
-        variant="outline"
-        className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-      >
-        Bajo
-      </Badge>
-    );
-  }
-  return (
-    <Badge
-      variant="outline"
-      className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-    >
-      OK
-    </Badge>
-  );
 }
 
 function buildStockColumns(

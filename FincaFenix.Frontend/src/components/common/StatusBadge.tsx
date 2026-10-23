@@ -6,46 +6,50 @@ import { cn } from "@/lib/utils";
 interface StatusMeta {
   label: string;
   icon: LucideIcon;
-  variant: string;
+  variant: "warning" | "info" | "success" | "destructive" | "default";
 }
 
 const STATUS_MAP: Record<string, StatusMeta> = {
   Pendiente: {
     label: "Pendiente",
     icon: Hourglass,
-    variant:
-      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400",
+    variant: "warning",
   },
   Activo: {
     label: "Activo",
     icon: PlayCircle,
-    variant:
-      "border-blue-200 bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30",
+    variant: "info",
   },
   Cerrado: {
     label: "Cerrado",
     icon: CheckCircle2,
-    variant:
-      "bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30",
+    variant: "success",
   },
   Cancelado: {
     label: "Cancelado",
     icon: Ban,
-    variant:
-      "bg-red-100 text-red-800 border-red-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/30",
+    variant: "destructive",
   },
+};
+
+const VARIANT_CLASSES: Record<StatusMeta["variant"], string> = {
+  warning: "border-warning/40 bg-warning/10 text-warning-foreground",
+  info: "border-info/40 bg-info/10 text-info-foreground",
+  success: "border-success/40 bg-success/10 text-success-foreground",
+  destructive: "border-destructive/40 bg-destructive/10 text-destructive-foreground",
+  default: "border-border bg-muted text-muted-foreground",
 };
 
 export function StatusBadge({ status }: { status: string }) {
   const meta = STATUS_MAP[status] ?? {
     label: status || "Desconocido",
     icon: Ban,
-    variant: "bg-muted text-muted-foreground border-border",
+    variant: "default",
   };
   const Icon: LucideIcon = meta.icon;
 
   return (
-    <Badge variant="outline" className={cn("gap-1", meta.variant)}>
+    <Badge variant="outline" className={cn("gap-1", VARIANT_CLASSES[meta.variant])}>
       <Icon className="size-3.5" aria-hidden />
       {meta.label}
     </Badge>
