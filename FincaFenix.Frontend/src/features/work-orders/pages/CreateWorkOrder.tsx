@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowLeft, FlaskConical, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Calendar, FlaskConical, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/common/Button";
 import {
@@ -568,16 +568,20 @@ export default function CreateWorkOrder() {
               error={errors.startDate}
               hint="Puede dejar la fecha actual o elegir una fecha futura."
             >
-              <TextInput
-                id="startDate"
-                type="date"
-                value={startDate}
-                invalid={!!errors.startDate}
-                onChange={(event) => {
-                  setStartDate(event.target.value);
-                  setErrors((prev) => ({ ...prev, startDate: "" }));
-                }}
-              />
+              <div className="relative">
+                <Calendar className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+                <TextInput
+                  id="startDate"
+                  type="date"
+                  className="pr-9"
+                  value={startDate}
+                  invalid={!!errors.startDate}
+                  onChange={(event) => {
+                    setStartDate(event.target.value);
+                    setErrors((prev) => ({ ...prev, startDate: "" }));
+                  }}
+                />
+              </div>
             </Field>
 
             <Field label="Descripción" htmlFor="description">

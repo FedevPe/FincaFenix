@@ -1,4 +1,4 @@
-import { FilterX } from "lucide-react";
+import { Calendar, FilterX } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import type { FarmDTO, TaskDTO } from "@/types/api";
 import { WORK_ORDER_STATUSES } from "../constants";
@@ -105,28 +105,34 @@ export function WorkOrderFilters({
         <label className="text-xs font-medium text-muted-foreground" htmlFor="filter-from">
           Desde
         </label>
-        <input
-          id="filter-from"
-          type="date"
-          className={CONTROL_CLASSES}
-          value={filters.dateFrom}
-          max={filters.dateTo || undefined}
-          onChange={(event) => update({ dateFrom: event.target.value })}
-        />
+        <div className="relative">
+          <Calendar className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <input
+            id="filter-from"
+            type="date"
+            className={`${CONTROL_CLASSES} pr-9`}
+            value={filters.dateFrom}
+            max={filters.dateTo || undefined}
+            onChange={(event) => update({ dateFrom: event.target.value })}
+          />
+        </div>
       </div>
 
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-muted-foreground" htmlFor="filter-to">
           Hasta
         </label>
-        <input
-          id="filter-to"
-          type="date"
-          className={CONTROL_CLASSES}
-          value={filters.dateTo}
-          min={filters.dateFrom || undefined}
-          onChange={(event) => update({ dateTo: event.target.value })}
-        />
+        <div className="relative">
+          <Calendar className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <input
+            id="filter-to"
+            type="date"
+            className={`${CONTROL_CLASSES} pr-9`}
+            value={filters.dateTo}
+            min={filters.dateFrom || undefined}
+            onChange={(event) => update({ dateTo: event.target.value })}
+          />
+        </div>
       </div>
 
       <div className="flex items-end">

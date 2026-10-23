@@ -33,10 +33,10 @@ const STATUS_MAP: Record<string, StatusMeta> = {
 };
 
 const VARIANT_CLASSES: Record<StatusMeta["variant"], string> = {
-  warning: "border-warning/40 bg-warning/10 text-warning-foreground",
-  info: "border-info/40 bg-info/10 text-info-foreground",
-  success: "border-success/40 bg-success/10 text-success-foreground",
-  destructive: "border-destructive/40 bg-destructive/10 text-destructive-foreground",
+  warning: "border-warning/40 bg-warning/20 text-warning",
+  info: "border-info/40 bg-info/20 text-info",
+  success: "border-success/40 bg-success/20 text-success",
+  destructive: "border-destructive/40 bg-destructive/20 text-destructive",
   default: "border-border bg-muted text-muted-foreground",
 };
 

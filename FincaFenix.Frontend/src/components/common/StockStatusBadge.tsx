@@ -7,9 +7,9 @@ import type { StockDTO } from "@/types/api";
 type StockStatus = "ok" | "low" | "out";
 
 const STATUS_CLASSES: Record<StockStatus, string> = {
-  ok: "border-success/40 bg-success/10 text-success-foreground",
-  low: "border-warning/40 bg-warning/10 text-warning-foreground",
-  out: "border-destructive/40 bg-destructive/10 text-destructive-foreground",
+  ok: "border-success/40 bg-success/20 text-success",
+  low: "border-warning/40 bg-warning/20 text-warning",
+  out: "border-destructive/40 bg-destructive/20 text-destructive",
 };
 
 const STATUS_LABELS: Record<StockStatus, string> = {
