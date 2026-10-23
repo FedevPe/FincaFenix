@@ -144,9 +144,8 @@ export function FincasTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (farm) => {
           if (farm.isDeleted) {
             if (!canUpdate) return null;

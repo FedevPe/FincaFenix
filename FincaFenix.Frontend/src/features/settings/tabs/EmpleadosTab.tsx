@@ -174,7 +174,6 @@ export function EmpleadosTab() {
       {
         key: "farms",
         header: "Fincas",
-        hidden: "md",
         render: (employee) =>
           employee.farmIds && employee.farmIds.length > 0
             ? employee.farmIds.map(farmName).join(", ")
@@ -182,9 +181,8 @@ export function EmpleadosTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (employee) => {
           const employeeName = `${employee.name} ${employee.lastName ?? ""}`.trim();
           if (employee.isDeleted) {

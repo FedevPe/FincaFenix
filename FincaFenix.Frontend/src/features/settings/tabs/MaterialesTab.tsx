@@ -184,13 +184,11 @@ export function MaterialesTab() {
       {
         key: "commercialName",
         header: "Nombre comercial",
-        hidden: "md",
         render: (item) => item.commercialName,
       },
       {
         key: "category",
         header: "Categoría",
-        hidden: "md",
         render: (item) => item.category?.description ?? "-",
       },
       {
@@ -202,7 +200,6 @@ export function MaterialesTab() {
         key: "cost",
         header: "Costo ref.",
         align: "right",
-        hidden: "md",
         render: (item) =>
           item.referenceCost != null
             ? `${formatNumber(item.referenceCost, {
@@ -213,9 +210,8 @@ export function MaterialesTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (item) => {
           if (item.isDeleted) {
             if (!canUpdate) return null;

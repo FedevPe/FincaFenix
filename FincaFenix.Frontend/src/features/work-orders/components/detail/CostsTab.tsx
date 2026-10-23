@@ -86,7 +86,6 @@ const columns: Column<WorkOrderCostItemDTO>[] = [
       key: "deviation",
       header: "Desviación",
       align: "right",
-      hidden: "md",
       render: (item) => {
         const deviation = deviationPercent(item.realCost, item.totalCost);
         const overrun = isOverrun(item.realCost, item.totalCost);
@@ -112,7 +111,6 @@ const columns: Column<WorkOrderCostItemDTO>[] = [
     {
       key: "frozenDate",
       header: "Fecha",
-      hidden: "sm",
       render: (item) => formatDateOnly(item.frozenDate),
     },
   ];

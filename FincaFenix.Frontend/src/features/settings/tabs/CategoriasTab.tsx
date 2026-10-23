@@ -101,9 +101,8 @@ export function CategoriasTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (item) =>
           canUpdate || canDelete ? (
             <Dropdown

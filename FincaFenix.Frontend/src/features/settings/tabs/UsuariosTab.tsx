@@ -160,7 +160,6 @@ export function UsuariosTab() {
       {
         key: "email",
         header: "Email",
-        hidden: "md",
         render: (item) => item.email ?? "-",
       },
       {
@@ -170,9 +169,8 @@ export function UsuariosTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (item) => {
           if (!canUpdate) return null;
           return (

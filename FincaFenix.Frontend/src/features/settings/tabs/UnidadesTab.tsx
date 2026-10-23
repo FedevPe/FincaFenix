@@ -142,9 +142,8 @@ export function UnidadesTab() {
       },
       {
         key: "actions",
-        header: "",
+        header: "Acciones",
         align: "right",
-        hidden: "sm",
         render: (item) => {
           if (item.isDeleted) {
             if (!canUpdate) return null;
