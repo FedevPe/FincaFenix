@@ -150,7 +150,7 @@ export function UnidadesTab() {
             return (
               <Dropdown
                 trigger={<MoreVertical />}
-                triggerLabel="Acciones"
+                triggerLabel={`Acciones para ${item.code}`}
                 items={[
                   {
                     label: "Reactivar",
@@ -164,7 +164,7 @@ export function UnidadesTab() {
           return canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${item.code}`}
               items={[
                 {
                   label: "Editar",

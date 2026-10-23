@@ -22,6 +22,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-svh bg-background text-foreground">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        Saltar al contenido principal
+      </a>
       <Sidebar
         collapsed={collapsed}
         mobileOpen={mobileOpen}
@@ -45,7 +51,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
       >
         <AppBar onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        <main id="main-content" className="flex-1 p-4 md:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -160,7 +160,7 @@ export function TareasTab() {
             return (
               <Dropdown
                 trigger={<MoreVertical />}
-                triggerLabel="Acciones"
+                triggerLabel={`Acciones para ${task.description}`}
                 items={[
                   {
                     label: "Reactivar",
@@ -174,7 +174,7 @@ export function TareasTab() {
           return canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${task.description}`}
               items={[
                 {
                   label: "Editar",

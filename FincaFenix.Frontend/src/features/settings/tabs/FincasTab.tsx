@@ -152,7 +152,7 @@ export function FincasTab() {
             return (
               <Dropdown
                 trigger={<MoreVertical />}
-                triggerLabel="Acciones"
+                triggerLabel={`Acciones para ${farm.name}`}
                 items={[
                   {
                     label: "Reactivar",
@@ -166,7 +166,7 @@ export function FincasTab() {
           return canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${farm.name}`}
               items={[
                 {
                   label: "Editar",

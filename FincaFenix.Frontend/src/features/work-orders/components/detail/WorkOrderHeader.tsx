@@ -53,18 +53,19 @@ export function WorkOrderHeader({
           {statusItems.length > 0 ? (
             <Dropdown
               align="right"
-              trigger={
-                <>
-                  <ArrowLeftRight />
-                  Cambiar estado
-                </>
-              }
+              trigger={<ArrowLeftRight />}
               triggerLabel="Cambiar estado de la orden"
               items={statusItems}
               className="h-8 gap-1.5 rounded-md border bg-background px-3 text-sm font-medium text-foreground"
             />
           ) : null}
-          <Button variant="secondary" size="sm" icon={FileDown} onClick={onDownloadPdf}>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={FileDown}
+            onClick={onDownloadPdf}
+            aria-label="Descargar PDF"
+          >
             Descargar PDF
           </Button>
         </div>

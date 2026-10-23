@@ -184,12 +184,13 @@ export function EmpleadosTab() {
         header: "",
         align: "right",
         render: (employee) => {
+          const employeeName = `${employee.name} ${employee.lastName ?? ""}`.trim();
           if (employee.isDeleted) {
             if (!canUpdate) return null;
             return (
               <Dropdown
                 trigger={<MoreVertical />}
-                triggerLabel="Acciones"
+                triggerLabel={`Acciones para ${employeeName}`}
                 items={[
                   {
                     label: "Reactivar",
@@ -203,7 +204,7 @@ export function EmpleadosTab() {
           return canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${employeeName}`}
               items={[
                 {
                   label: "Editar",

@@ -176,7 +176,7 @@ export function UsuariosTab() {
           return (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${item.userName}`}
               items={[
                 {
                   label: "Editar",

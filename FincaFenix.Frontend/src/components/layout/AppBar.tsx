@@ -47,6 +47,7 @@ export function AppBar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
             <button
               type="button"
               className="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-chrome-foreground transition-colors hover:bg-white/10"
+              aria-label="Menú de usuario"
             >
               <Avatar className="size-7">
                 <AvatarFallback className="bg-chrome-primary text-xs text-white">
@@ -56,7 +57,7 @@ export function AppBar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
               <span className="hidden max-w-40 truncate sm:inline">
                 {user?.userName || "Usuario"}
               </span>
-              <ChevronDown className="size-4 text-chrome-muted" />
+              <ChevronDown className="size-4 text-chrome-muted" aria-hidden />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">

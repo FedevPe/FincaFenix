@@ -107,7 +107,7 @@ export function CategoriasTab() {
           canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${item.description}`}
               items={[
                 {
                   label: "Editar",

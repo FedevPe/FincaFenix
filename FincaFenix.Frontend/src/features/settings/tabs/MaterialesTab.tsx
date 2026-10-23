@@ -218,7 +218,7 @@ export function MaterialesTab() {
             return (
               <Dropdown
                 trigger={<MoreVertical />}
-                triggerLabel="Acciones"
+                triggerLabel={`Acciones para ${item.articleName}`}
                 items={[
                   {
                     label: "Reactivar",
@@ -232,7 +232,7 @@ export function MaterialesTab() {
           return canUpdate || canDelete ? (
             <Dropdown
               trigger={<MoreVertical />}
-              triggerLabel="Acciones"
+              triggerLabel={`Acciones para ${item.articleName}`}
               items={[
                 {
                   label: "Editar",
