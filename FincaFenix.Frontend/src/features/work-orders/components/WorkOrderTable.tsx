@@ -1,15 +1,24 @@
 "use client";
 
-import { ArrowLeftRight, Eye, FileDown, MoreVertical } from "lucide-react";
+import { useState } from "react";
+import { Download, RotateCcw } from "lucide-react";
 import { DataTable } from "@/components/common/DataTable";
 import type { Column } from "@/components/common/DataTable";
-import { Dropdown } from "@/components/common/Dropdown";
-import type { DropdownItem } from "@/components/common/Dropdown";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import type { ShowWorkOrderDTO } from "@/types/api";
 import { allowedTransitions } from "../constants";
 import type { WorkOrderStatus } from "../constants";
 import { formatDateOnly } from "@/lib/utils";
+import { Button } from "@/components/common/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 interface WorkOrderTableProps {
   workOrders: ShowWorkOrderDTO[];
@@ -26,28 +35,20 @@ export function WorkOrderTable({
   onDownload,
   onChangeStatus,
 }: WorkOrderTableProps) {
-  const buildActions = (workOrder: ShowWorkOrderDTO): DropdownItem[] => {
-    const items: DropdownItem[] = [
-      { label: "Ver detalle", icon: Eye, onClick: () => onView(workOrder) },
-      {
-        label: "Descargar PDF",
-        icon: FileDown,
-        onClick: () => onDownload(workOrder),
-      },
-    ];
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [selectedWorkOrder, setSelectedWorkOrder] = useState<ShowWorkOrderDTO | null>(null);
 
-    if (canUpdate) {
-      allowedTransitions(workOrder.status).forEach((status) => {
-        items.push({
-          label: `Marcar como ${status}`,
-          icon: ArrowLeftRight,
-          variant: status === "Cancelado" ? "danger" : "default",
-          onClick: () => onChangeStatus(workOrder, status),
-        });
-      });
+  const handleOpenStatusModal = (workOrder: ShowWorkOrderDTO) => {
+    setSelectedWorkOrder(workOrder);
+    setStatusModalOpen(true);
+  };
+
+  const handleStatusChange = (status: WorkOrderStatus) => {
+    if (selectedWorkOrder) {
+      onChangeStatus(selectedWorkOrder, status);
     }
-
-    return items;
+    setStatusModalOpen(false);
+    setSelectedWorkOrder(null);
   };
 
   const columns: Column<ShowWorkOrderDTO>[] = [
@@ -100,23 +101,71 @@ export function WorkOrderTable({
       key: "actions",
       header: "",
       align: "right",
-      width: "3.5rem",
+      width: "6rem",
       render: (wo) => (
-        <Dropdown
-          trigger={<MoreVertical />}
-          triggerLabel={`Acciones de la orden ${wo.orderNum}`}
-          items={buildActions(wo)}
-        />
+        <div className="flex items-center justify-end gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDownload(wo)}
+                aria-label={`Descargar PDF de la orden ${wo.orderNum}`}
+              >
+                <Download className="size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">Descargar PDF</TooltipContent>
+          </Tooltip>
+          {canUpdate && allowedTransitions(wo.status).length > 0 && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleOpenStatusModal(wo)}
+                  aria-label={`Cambiar estado de la orden ${wo.orderNum}`}
+                >
+                  <RotateCcw className="size-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">Cambiar estado</TooltipContent>
+            </Tooltip>
+          )}
+        </div>
       ),
     },
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      rows={workOrders}
-      rowKey={(wo) => wo.id}
-      onRowClick={onView}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        rows={workOrders}
+        rowKey={(wo) => wo.id}
+        onRowClick={onView}
+      />
+      <Dialog open={statusModalOpen} onOpenChange={setStatusModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cambiar estado de la orden</DialogTitle>
+            <DialogDescription>
+              Seleccione el nuevo estado para la orden <strong>{selectedWorkOrder?.orderNum}</strong>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter showCloseButton>
+            {selectedWorkOrder && allowedTransitions(selectedWorkOrder.status).map((status) => (
+              <Button
+                key={status}
+                variant={status === "Cancelado" ? "danger" : "secondary"}
+                onClick={() => handleStatusChange(status)}
+              >
+                {status}
+              </Button>
+            ))}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
