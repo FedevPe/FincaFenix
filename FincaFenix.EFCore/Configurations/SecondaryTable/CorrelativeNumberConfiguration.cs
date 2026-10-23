@@ -12,6 +12,7 @@ namespace FincaFenix.EFCore.Configurations.SecondaryTable
             builder.HasKey("Id");
             builder.Property(cn => cn.TypeDoc).IsRequired().HasColumnName("TipoDoc").HasMaxLength(50);
             builder.Property(cn => cn.LastNumber).IsRequired().HasColumnName("Numero");
+            builder.Property(cn => cn.RowVersion).IsRowVersion().HasColumnName("RowVersion");
         }
     }
 }

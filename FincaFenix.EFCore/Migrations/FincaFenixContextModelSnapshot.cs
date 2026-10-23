@@ -189,6 +189,13 @@ namespace FincaFenix.EFCore.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Numero");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion")
+                        .HasColumnName("RowVersion");
+
                     b.Property<string>("TypeDoc")
                         .IsRequired()
                         .HasMaxLength(50)

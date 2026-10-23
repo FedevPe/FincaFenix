@@ -9,7 +9,14 @@ namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
     {
         public async Task<CorrelativeNumberEntity> GetByTypeDoc(string typeDoc)
         {
-            return await context.CorrelativeNumber.FirstAsync(c => c.TypeDoc == typeDoc);
+            var sql = """
+                SELECT Id, TipoDoc, Numero, RowVersion
+                FROM Correlativo WITH (UPDLOCK, HOLDLOCK)
+                WHERE TipoDoc = {0}
+                """;
+            return await context.CorrelativeNumber
+                .FromSqlRaw(sql, typeDoc)
+                .FirstAsync();
         }
     }
 }
