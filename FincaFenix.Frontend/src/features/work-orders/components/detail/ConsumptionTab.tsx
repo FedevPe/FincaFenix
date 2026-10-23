@@ -1,11 +1,11 @@
-import { Boxes, Gauge, Info, Scale } from "lucide-react";
+import { Boxes, Gauge, Info, Minus, Scale, TrendingDown, TrendingUp } from "lucide-react";
 import { DataTable } from "@/components/common/DataTable";
 import type { Column } from "@/components/common/DataTable";
 import { EmptyState } from "@/components/common/Feedback";
 import { StatCard } from "@/components/common/StatCard";
 import type { DetailRecipeDTO, ShowWorkOrderDTO } from "@/types/api";
 import { formatNumber } from "@/lib/utils";
-import { deviationPercent, efficiencyTone, formatDeviation, overrunTone } from "../../lib/deviation";
+import { deviationPercent, efficiencyTone, formatDeviation, overrunTone, isOverrun } from "../../lib/deviation";
 
 interface ConsumptionTabProps {
   workOrder: ShowWorkOrderDTO;
@@ -74,11 +74,29 @@ export function ConsumptionTab({ workOrder }: ConsumptionTabProps) {
       key: "deviation",
       header: "Desviación",
       align: "right",
-      render: (detail) => (
-        <span className={overrunTone(detail.totalAmountConsumed, plannedBase(detail))}>
-          {formatDeviation(deviationPercent(detail.totalAmountConsumed, plannedBase(detail)))}
-        </span>
-      ),
+      render: (detail) => {
+        const planned = plannedBase(detail);
+        const consumed = detail.totalAmountConsumed;
+        const deviation = deviationPercent(consumed, planned);
+        const overrun = isOverrun(consumed, planned);
+        const isNegative = deviation != null && deviation < 0;
+        const isZero = deviation === 0;
+
+        const Icon = overrun ? TrendingUp : isNegative ? TrendingDown : Minus;
+        const iconColor = overrun ? "text-destructive" : isNegative ? "text-success" : "text-muted-foreground";
+        const label = overrun
+          ? `Desviación positiva ${formatDeviation(deviation)}`
+          : isNegative
+          ? `Desviación negativa ${formatDeviation(deviation)}`
+          : "Sin desviación";
+
+        return (
+          <span className={overrunTone(consumed, planned)} aria-label={label}>
+            <Icon className={`inline-block size-3.5 mr-1 ${iconColor}`} aria-hidden />
+            {formatDeviation(deviation)}
+          </span>
+        );
+      },
     },
   ];
 

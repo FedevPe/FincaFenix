@@ -1,4 +1,4 @@
-import { Coins } from "lucide-react";
+import { Coins, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { DataTable } from "@/components/common/DataTable";
 import type { Column } from "@/components/common/DataTable";
 import {
@@ -9,7 +9,7 @@ import {
 import { StatCard } from "@/components/common/StatCard";
 import type { WorkOrderCostDTO, WorkOrderCostItemDTO } from "@/types/api";
 import { formatDateOnly, formatNumber } from "@/lib/utils";
-import { deviationPercent, formatDeviation, overrunTone } from "../../lib/deviation";
+import { deviationPercent, formatDeviation, overrunTone, isOverrun } from "../../lib/deviation";
 
 interface CostsTabProps {
   cost: WorkOrderCostDTO | null;
@@ -86,11 +86,27 @@ export function CostsTab({ cost, loading, error, onRetry }: CostsTabProps) {
       key: "deviation",
       header: "Desviación",
       align: "right",
-      render: (item) => (
-        <span className={overrunTone(item.realCost, item.totalCost)}>
-          {formatDeviation(deviationPercent(item.realCost, item.totalCost))}
-        </span>
-      ),
+      render: (item) => {
+        const deviation = deviationPercent(item.realCost, item.totalCost);
+        const overrun = isOverrun(item.realCost, item.totalCost);
+        const isNegative = deviation != null && deviation < 0;
+        const isZero = deviation === 0;
+
+        const Icon = overrun ? TrendingUp : isNegative ? TrendingDown : Minus;
+        const iconColor = overrun ? "text-destructive" : isNegative ? "text-success" : "text-muted-foreground";
+        const label = overrun
+          ? `Desviación positiva ${formatDeviation(deviation)}`
+          : isNegative
+          ? `Desviación negativa ${formatDeviation(deviation)}`
+          : "Sin desviación";
+
+        return (
+          <span className={overrunTone(item.realCost, item.totalCost)} aria-label={label}>
+            <Icon className={`inline-block size-3.5 mr-1 ${iconColor}`} aria-hidden />
+            {formatDeviation(deviation)}
+          </span>
+        );
+      },
     },
     {
       key: "frozenDate",

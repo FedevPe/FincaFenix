@@ -1,8 +1,4 @@
-import type {
-  InputHTMLAttributes,
-  ReactNode,
-  SelectHTMLAttributes,
-} from "react";
+import React, { type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
@@ -16,19 +12,27 @@ interface FieldProps {
 }
 
 export function Field({ label, htmlFor, error, hint, required, children }: FieldProps) {
+  const errorId = error ? `${htmlFor}-error` : undefined;
+  const hintId = hint ? `${htmlFor}-hint` : undefined;
+
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-sm font-medium" htmlFor={htmlFor}>
         {label}
         {required ? <span className="text-destructive"> *</span> : null}
       </label>
-      {children}
+      {React.isValidElement(children)
+        ? React.cloneElement(children as React.ReactElement<any>, {
+            "aria-describedby": cn(errorId, hintId),
+            "aria-invalid": error ? true : undefined,
+          })
+        : children}
       {error ? (
-        <span className="text-xs text-destructive" role="alert">
+        <span id={errorId} className="text-xs text-destructive" role="alert">
           {error}
         </span>
       ) : hint ? (
-        <span className="text-xs text-muted-foreground">{hint}</span>
+        <span id={hintId} className="text-xs text-muted-foreground">{hint}</span>
       ) : null}
     </div>
   );
@@ -36,12 +40,14 @@ export function Field({ label, htmlFor, error, hint, required, children }: Field
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   invalid?: boolean;
+  "aria-describedby"?: string;
 }
 
-export function TextInput({ invalid, className, ...rest }: TextInputProps) {
+export function TextInput({ invalid, className, "aria-describedby": ariaDescribedBy, ...rest }: TextInputProps) {
   return (
     <input
       aria-invalid={invalid || undefined}
+      aria-describedby={ariaDescribedBy}
       className={cn(
         "h-9 w-full rounded-md border bg-background px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
@@ -54,12 +60,14 @@ export function TextInput({ invalid, className, ...rest }: TextInputProps) {
 
 interface SelectInputProps extends SelectHTMLAttributes<HTMLSelectElement> {
   invalid?: boolean;
+  "aria-describedby"?: string;
 }
 
 export function SelectInput({
   invalid,
   className,
   children,
+  "aria-describedby": ariaDescribedBy,
   ...rest
 }: SelectInputProps) {
   return (
@@ -69,6 +77,7 @@ export function SelectInput({
         className,
       )}
       aria-invalid={invalid || undefined}
+      aria-describedby={ariaDescribedBy}
       {...rest}
     >
       {children}
