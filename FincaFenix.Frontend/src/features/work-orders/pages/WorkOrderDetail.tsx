@@ -195,7 +195,7 @@ export default function WorkOrderDetail() {
   return (
     <div className="space-y-6">
       <Button
-        variant="ghost"
+        variant="outline"
         icon={ArrowLeft}
         onClick={() => router.push("/work-orders")}
         className="self-start"

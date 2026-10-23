@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, type FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { AlertCircle, ArrowLeft, Calendar, FlaskConical, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Calendar as CalendarIcon, FlaskConical, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/common/Button";
 import {
@@ -18,7 +18,10 @@ import { DataTable, type Column } from "@/components/common/DataTable";
 import { Modal } from "@/components/common/Modal";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { getProblemDetails } from "@/lib/api.client";
-import { hasPolicy, formatNumber, parseDecimal } from "@/lib/utils";
+import { hasPolicy, formatNumber, parseDecimal, cn } from "@/lib/utils";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, parseISO } from "date-fns";
 import type {
   DetailSectorFarmDTO,
   FarmDTO,
@@ -614,7 +617,7 @@ export default function CreateWorkOrder() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" icon={ArrowLeft} onClick={() => router.push("/work-orders")}>
+      <Button variant="outline" icon={ArrowLeft} onClick={() => router.push("/work-orders")}>
         Volver al listado
       </Button>
 
@@ -679,16 +682,40 @@ export default function CreateWorkOrder() {
               error={errors.startDate?.message}
               hint="Puede dejar la fecha actual o elegir una fecha futura."
             >
-              <div className="relative">
-                <Calendar className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-                <TextInput
-                  id="startDate"
-                  type="date"
-                  className="pr-9"
-                  {...register("startDate")}
-                  invalid={!!errors.startDate}
-                />
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      errors.startDate && "border-destructive focus:border-destructive focus:ring-destructive/20"
+                    )}
+                    type="button"
+                    id="startDate"
+                    aria-invalid={!!errors.startDate}
+                    aria-describedby={errors.startDate ? "startDate-error" : undefined}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" aria-hidden />
+                    {formData.startDate
+                      ? format(parseISO(formData.startDate), "dd/MM/yyyy")
+                      : "Seleccionar fecha"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.startDate ? parseISO(formData.startDate) : undefined}
+                    onSelect={(date) =>
+                      date && setValue("startDate", format(date, "yyyy-MM-dd"), { shouldValidate: true })
+                    }
+                  />
+                </PopoverContent>
+              </Popover>
+              {errors.startDate && (
+                <p id="startDate-error" className="mt-1 text-sm text-destructive" role="alert">
+                  {errors.startDate.message}
+                </p>
+              )}
             </Field>
 
             <Field label="Descripción" htmlFor="description">
