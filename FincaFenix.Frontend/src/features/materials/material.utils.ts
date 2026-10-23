@@ -73,6 +73,45 @@ export function unitFamilyOf(unit?: string | null): UnitFamily {
   }
 }
 
+/**
+ * Factor de cada unidad normalizada respecto de la unidad base de su familia.
+ * Refleja las mismas reglas que `UnitConverter` del backend.
+ */
+const UNIT_FACTOR_TO_BASE: Record<string, number> = {
+  kg: 1,
+  gr: 0.001,
+  lts: 1,
+  cc: 0.001,
+  unidad: 1,
+  metro: 1,
+  bolsa: 1,
+  caja: 1,
+};
+
+/**
+ * Convierte una cantidad entre unidades de la misma familia.
+ * Si alguna unidad es desconocida o las familias son incompatibles,
+ * devuelve el valor sin modificar para no romper la UI.
+ */
+export function convertAmount(
+  value: number,
+  fromUnit?: string | null,
+  toUnit?: string | null,
+): number {
+  if (!Number.isFinite(value)) return value;
+
+  const fromCode = unitCodeFor(fromUnit);
+  const toCode = unitCodeFor(toUnit);
+  if (fromCode === toCode) return value;
+
+  const fromFactor = UNIT_FACTOR_TO_BASE[fromCode];
+  const toFactor = UNIT_FACTOR_TO_BASE[toCode];
+  if (fromFactor == null || toFactor == null) return value;
+  if (unitFamilyOf(fromCode) !== unitFamilyOf(toCode)) return value;
+
+  return (value * fromFactor) / toFactor;
+}
+
 export function materialLabel(material: MaterialRecipeDTO): string {
   const name = material.articleName ?? `Material #${material.id}`;
   const commercial = material.commercialName

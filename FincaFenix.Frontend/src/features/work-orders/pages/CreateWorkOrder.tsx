@@ -39,7 +39,10 @@ import {
   getMaterialCategories,
   getMaterials,
 } from "../../materials/services/material.service";
+import { getStockByFarm } from "../../inventory/services/inventory.service";
+import type { StockDTO } from "../../../types/api/inventory";
 import {
+  convertAmount,
   materialLabel,
   unitCodeFor,
   unitFamilyOf,
@@ -132,34 +135,52 @@ const recipeRowSchema = z.object({
   pestDisease: z.string(),
 });
 
-const createWorkOrderSchema = z.object({
-  taskId: z.string().min(1, "La tarea es obligatoria."),
-  farmId: z.string().min(1, "La finca es obligatoria."),
-  startDate: z.string().min(1, "La fecha de inicio es obligatoria."),
-  description: z.string().optional(),
-  selectedSectors: z.array(z.number()).min(1, "Debe seleccionar al menos un sector."),
-  recipeEnabled: z.boolean(),
-  machineId: z.string().optional(),
-  volumeMachine: z.string().optional(),
-  trv: z.string().optional(),
-  rows: z.array(recipeRowSchema),
-}).refine(
-  (data) => {
-    if (!data.recipeEnabled) return true;
-    if (!data.machineId) return false;
-    if (!data.volumeMachine || parseDecimal(data.volumeMachine) <= 0) return false;
-    const validRows = data.rows.filter(
-      (row) => row.materialId && parseDecimal(row.amountRequired) > 0,
+function buildCreateWorkOrderSchema(
+  allowsRecipeForTask: (taskId: string) => boolean,
+) {
+  return z
+    .object({
+      taskId: z.string().min(1, "La tarea es obligatoria."),
+      farmId: z.string().min(1, "La finca es obligatoria."),
+      startDate: z.string().min(1, "La fecha de inicio es obligatoria."),
+      description: z.string().optional(),
+      selectedSectors: z
+        .array(z.number())
+        .min(1, "Debe seleccionar al menos un sector."),
+      recipeEnabled: z.boolean(),
+      machineId: z.string().optional(),
+      volumeMachine: z.string().optional(),
+      trv: z.string().optional(),
+      rows: z.array(recipeRowSchema),
+    })
+    .refine(
+      (data) => {
+        if (!data.recipeEnabled) return true;
+        if (!data.machineId) return false;
+        if (!data.volumeMachine || parseDecimal(data.volumeMachine) <= 0) return false;
+        const validRows = data.rows.filter(
+          (row) => row.materialId && parseDecimal(row.amountRequired) > 0,
+        );
+        return validRows.length > 0;
+      },
+      {
+        message: "La receta debe tener al menos un material con cantidades completas.",
+        path: ["recipe"],
+      },
+    )
+    .refine(
+      (data) => !data.recipeEnabled || allowsRecipeForTask(data.taskId),
+      {
+        message:
+          "La tarea seleccionada no admite receta. Solo las tareas con rendimiento por eficiencia de material permiten receta.",
+        path: ["recipeEnabled"],
+      },
     );
-    return validRows.length > 0;
-  },
-  {
-    message: "La receta debe tener al menos un material con cantidades completas.",
-    path: ["recipe"],
-  },
-);
+}
 
-type CreateWorkOrderFormData = z.infer<typeof createWorkOrderSchema>;
+type CreateWorkOrderFormData = z.infer<
+  ReturnType<typeof buildCreateWorkOrderSchema>
+>;
 
 interface ServerProblemDetails {
   detail?: string;
@@ -199,6 +220,7 @@ export default function CreateWorkOrder() {
   const [materials, setMaterials] = useState<MaterialRecipeDTO[]>([]);
   const [categories, setCategories] = useState<MaterialCategoryDTO[]>([]);
   const [sectors, setSectors] = useState<DetailSectorFarmDTO[]>([]);
+  const [stock, setStock] = useState<StockDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [sectorsError, setSectorsError] = useState<string | null>(null);
@@ -206,6 +228,16 @@ export default function CreateWorkOrder() {
   const [submitting, setSubmitting] = useState(false);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [draftData, setDraftData] = useState<CreateWorkOrderFormData | null>(null);
+
+  const schema = useMemo(
+    () =>
+      buildCreateWorkOrderSchema(
+        (taskId) =>
+          tasks.find((task) => task.id === Number(taskId))?.rendimientoMode ===
+          "MaterialEfficiency",
+      ),
+    [tasks],
+  );
 
   const {
     register,
@@ -216,7 +248,7 @@ export default function CreateWorkOrder() {
     control,
     formState: { errors, isSubmitting: isFormSubmitting },
   } = useForm<CreateWorkOrderFormData>({
-    resolver: zodResolver(createWorkOrderSchema),
+    resolver: zodResolver(schema),
     mode: "onBlur",
     reValidateMode: "onBlur",
     defaultValues: {
@@ -252,7 +284,9 @@ export default function CreateWorkOrder() {
   });
 
   const selectedTask = tasks.find((task) => task.id === Number(formData.taskId));
-  const requiresRecipe = selectedTask?.rendimientoMode === "MaterialEfficiency";
+  const rendimientoMode = selectedTask?.rendimientoMode;
+  const requiresRecipe = rendimientoMode === "MaterialEfficiency";
+  const allowsRecipe = rendimientoMode === "MaterialEfficiency";
 
   useEffect(() => {
     let active = true;
@@ -308,6 +342,7 @@ export default function CreateWorkOrder() {
   useEffect(() => {
     if (!formData.farmId) {
       setSectors([]);
+      setStock([]);
       setValue("selectedSectors", [], { shouldValidate: true });
       return;
     }
@@ -315,9 +350,13 @@ export default function CreateWorkOrder() {
     let active = true;
     void (async () => {
       try {
-        const sectorList = await getSectorsByFarm(Number(formData.farmId));
+        const [sectorList, stockList] = await Promise.all([
+          getSectorsByFarm(Number(formData.farmId)),
+          getStockByFarm(Number(formData.farmId)),
+        ]);
         if (!active) return;
         setSectors(sectorList);
+        setStock(stockList);
         setValue("selectedSectors", [], { shouldValidate: true });
       } catch (err) {
         if (!active) return;
@@ -333,8 +372,8 @@ export default function CreateWorkOrder() {
   }, [formData.farmId, setValue]);
 
   useEffect(() => {
-    if (requiresRecipe) setValue("recipeEnabled", true, { shouldValidate: true });
-  }, [requiresRecipe, setValue]);
+    setValue("recipeEnabled", allowsRecipe, { shouldValidate: true });
+  }, [allowsRecipe, setValue]);
 
   useEffect(() => {
     const draft = restore();
@@ -372,11 +411,11 @@ export default function CreateWorkOrder() {
     });
   };
 
-  const onSelectMaterial = (rowKey: number, materialId: string) => {
+  const onSelectMaterial = (index: number, materialId: string) => {
     const material = materials.find((m) => m.id === Number(materialId));
-    const currentRow = recipeRows.find((r) => r.key === rowKey);
+    const currentRow = recipeRows[index];
     if (currentRow) {
-      update(rowKey, {
+      update(index, {
         ...currentRow,
         materialId,
         amountRequiredUnit: materialId ? defaultDoseUnitFor(material) : "lts",
@@ -740,20 +779,31 @@ export default function CreateWorkOrder() {
               <input
                 type="checkbox"
                 {...register("recipeEnabled")}
-                disabled={requiresRecipe}
+                checked={allowsRecipe}
+                disabled
                 className="size-4"
               />
               <span>
-                Incluir receta
-                {requiresRecipe ? " (obligatoria para esta tarea)" : ""}
+                {!selectedTask
+                  ? "Seleccione una tarea para definir la receta"
+                  : requiresRecipe
+                    ? "Incluir receta (obligatoria para esta tarea)"
+                    : "La tarea seleccionada no admite receta"}
               </span>
             </label>
           </div>
 
-          {!formData.recipeEnabled ? (
+          {errors.recipeEnabled ? (
+            <p className="text-xs text-destructive" role="alert">
+              {errors.recipeEnabled.message}
+            </p>
+          ) : null}
+
+          {!allowsRecipe ? (
             <p className="text-sm text-muted-foreground">
-              Si no incluye receta, la orden no reservará materiales ni generará
-              costos.
+              {selectedTask
+                ? "Esta tarea no utiliza receta: la orden no reservará materiales ni generará costos."
+                : "Seleccione una tarea con rendimiento por eficiencia de material para cargar una receta."}
             </p>
           ) : (
             <div className="space-y-4">
@@ -823,6 +873,8 @@ export default function CreateWorkOrder() {
               ) : (
                 <div className="space-y-3">
                   {recipeRows.map((row, index) => {
+                    // Usar formData.rows para valores reactivos (amountRequired, etc.)
+                    const formRow = formData.rows[index];
                     const rowMaterials = row.categoryId
                       ? materials.filter(
                           (m) =>
@@ -834,7 +886,27 @@ export default function CreateWorkOrder() {
                       (m) => m.id === Number(row.materialId),
                     );
                     const rowDoseUnits = doseUnitsFor(rowMaterial);
-                    const estimated = computeEstimatedAmount(row, passes);
+                    const estimated = computeEstimatedAmount(formRow, passes);
+                    
+                    // Verificar stock disponible para el material seleccionado.
+                    // El stock está en la unidad base del material; la estimación
+                    // llega en la unidad de dosis elegida, por lo que hay que
+                    // convertirla antes de comparar.
+                    const materialStock = rowMaterial
+                      ? stock.find((s) => s.materialId === rowMaterial.id)
+                      : undefined;
+                    const stockDisponible = materialStock?.stockDisponible ?? 0;
+                    const baseUnit =
+                      rowMaterial?.unitOfMeasure ?? materialStock?.unitOfMeasure;
+                    const estimatedInBaseUnit = convertAmount(
+                      estimated.value,
+                      estimated.unit,
+                      baseUnit,
+                    );
+                    const hayStockInsuficiente =
+                      passes != null &&
+                      rowMaterial != null &&
+                      estimatedInBaseUnit > stockDisponible;
                     return (
                       <div
                         key={row.key}
@@ -866,7 +938,7 @@ export default function CreateWorkOrder() {
                           value={row.materialId}
                           disabled={!row.categoryId}
                           onChange={(event) =>
-                            onSelectMaterial(row.key, event.target.value)
+                            onSelectMaterial(index, event.target.value)
                           }
                         >
                           <option value="">Material</option>
@@ -932,7 +1004,14 @@ export default function CreateWorkOrder() {
                               readOnly
                               disabled
                               title="Calculada como Maquinadas teóricas × Cant. requerida, en la unidad de la dosis."
+                              className={hayStockInsuficiente ? "border-destructive bg-destructive/5" : ""}
                             />
+                            {hayStockInsuficiente && materialStock && (
+                              <p className="text-xs text-destructive flex items-center gap-1" role="alert">
+                                <AlertCircle className="size-3" aria-hidden />
+                                Stock insuficiente: disponible {formatNumber(stockDisponible, { maximumFractionDigits: 2 })} {baseUnit}, se requieren {formatNumber(estimatedInBaseUnit, { maximumFractionDigits: 2 })} {baseUnit}
+                              </p>
+                            )}
                           </div>
                           <div className="space-y-1">
                             <span className="text-xs text-muted-foreground">

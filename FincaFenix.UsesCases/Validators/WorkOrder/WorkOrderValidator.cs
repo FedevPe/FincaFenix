@@ -52,15 +52,36 @@ namespace FincaFenix.Validators.Validators.WorkOrder
                     }
 
                     var task = await taskRepo.GetTaskById(wo.TaskId);
+                    var mode = task?.RendimientoMode ?? RendimientoModeEnum.ManHours;
 
-                    if (task?.RendimientoMode == RendimientoModeEnum.MaterialEfficiency)
+                    if (mode != RendimientoModeEnum.MaterialEfficiency)
                     {
-                        return wo.Recipe?.Details is { Count: > 0 };
+                        return true;
                     }
 
-                    return true;
+                    return wo.Recipe?.Details is { Count: > 0 };
                 })
                 .WithMessage("La tarea seleccionada requiere una receta con al menos un material.");
+
+            RuleFor(wo => wo)
+                .MustAsync(async (wo, CancellationToken) =>
+                {
+                    if (!await taskRepo.Exists(wo.TaskId))
+                    {
+                        return true;
+                    }
+
+                    var task = await taskRepo.GetTaskById(wo.TaskId);
+                    var mode = task?.RendimientoMode ?? RendimientoModeEnum.ManHours;
+
+                    if (mode == RendimientoModeEnum.MaterialEfficiency)
+                    {
+                        return true;
+                    }
+
+                    return wo.Recipe == null || wo.Recipe.Details == null || wo.Recipe.Details.Count == 0;
+                })
+                .WithMessage("La tarea seleccionada no permite receta según su tipo de rendimiento. Solo las tareas con rendimiento 'Eficiencia de material' pueden tener receta.");
         }
     }
 }
