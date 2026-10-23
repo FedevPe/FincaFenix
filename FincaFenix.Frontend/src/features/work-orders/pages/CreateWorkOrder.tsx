@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm, useFieldArray, type FieldValues } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { AlertCircle, ArrowLeft, Calendar, FlaskConical, Plus, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/common/Button";
@@ -12,6 +15,7 @@ import {
 } from "@/components/common/Feedback";
 import { Field, TextInput, SelectInput } from "@/components/common/FormControls";
 import { DataTable, type Column } from "@/components/common/DataTable";
+import { Modal } from "@/components/common/Modal";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { getProblemDetails } from "@/lib/api.client";
 import { hasPolicy, formatNumber, parseDecimal } from "@/lib/utils";
@@ -41,6 +45,7 @@ import {
   unitFamilyOf,
 } from "../../materials/material.utils";
 import type { UnitFamily } from "../../materials/material.utils";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 interface RecipeRow {
   key: number;
@@ -117,6 +122,70 @@ function computeEstimatedAmount(
   return { value: dose * passes, unit };
 }
 
+const recipeRowSchema = z.object({
+  key: z.number(),
+  categoryId: z.string(),
+  materialId: z.string(),
+  amountRequired: z.string(),
+  amountRequiredUnit: z.string(),
+  brand: z.string(),
+  pestDisease: z.string(),
+});
+
+const createWorkOrderSchema = z.object({
+  taskId: z.string().min(1, "La tarea es obligatoria."),
+  farmId: z.string().min(1, "La finca es obligatoria."),
+  startDate: z.string().min(1, "La fecha de inicio es obligatoria."),
+  description: z.string().optional(),
+  selectedSectors: z.array(z.number()).min(1, "Debe seleccionar al menos un sector."),
+  recipeEnabled: z.boolean(),
+  machineId: z.string().optional(),
+  volumeMachine: z.string().optional(),
+  trv: z.string().optional(),
+  rows: z.array(recipeRowSchema),
+}).refine(
+  (data) => {
+    if (!data.recipeEnabled) return true;
+    if (!data.machineId) return false;
+    if (!data.volumeMachine || parseDecimal(data.volumeMachine) <= 0) return false;
+    const validRows = data.rows.filter(
+      (row) => row.materialId && parseDecimal(row.amountRequired) > 0,
+    );
+    return validRows.length > 0;
+  },
+  {
+    message: "La receta debe tener al menos un material con cantidades completas.",
+    path: ["recipe"],
+  },
+);
+
+type CreateWorkOrderFormData = z.infer<typeof createWorkOrderSchema>;
+
+interface ServerProblemDetails {
+  detail?: string;
+  status?: number;
+  errors?: ServerFieldError[] | Record<string, unknown>;
+}
+
+function collectServerErrors(pd: ServerProblemDetails | null): string | null {
+  if (!pd?.errors) return null;
+  if (Array.isArray(pd.errors)) {
+    const messages = (pd.errors as ServerFieldError[])
+      .map((error) => error.errorMessage)
+      .filter(Boolean);
+    return messages.length ? messages.join(" — ") : null;
+  }
+  if (typeof pd.errors === "object") {
+    const messages = Object.values(pd.errors as Record<string, unknown>)
+      .flat()
+      .filter((value): value is string => typeof value === "string");
+    return messages.length ? messages.join(" — ") : null;
+  }
+  return null;
+}
+
+const AUTO_SAVE_KEY = "create-workorder-draft";
+
 export default function CreateWorkOrder() {
   const router = useRouter();
   const { user } = useAuth();
@@ -133,30 +202,56 @@ export default function CreateWorkOrder() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [sectorsError, setSectorsError] = useState<string | null>(null);
-
-  const [taskId, setTaskId] = useState("");
-  const [farmId, setFarmId] = useState("");
-  const [startDate, setStartDate] = useState(() => {
-    const today = new Date();
-    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
-      today.getDate(),
-    ).padStart(2, "0")}`;
-  });
-  const [description, setDescription] = useState("");
-
-  const [selectedSectors, setSelectedSectors] = useState<number[]>([]);
-
-  const [recipeEnabled, setRecipeEnabled] = useState(false);
-  const [machineId, setMachineId] = useState("");
-  const [volumeMachine, setVolumeMachine] = useState("");
-  const [trv, setTrv] = useState("");
-  const [rows, setRows] = useState<RecipeRow[]>([]);
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [draftData, setDraftData] = useState<CreateWorkOrderFormData | null>(null);
 
-  const selectedTask = tasks.find((task) => task.id === Number(taskId));
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    control,
+    formState: { errors, isSubmitting: isFormSubmitting },
+  } = useForm<CreateWorkOrderFormData>({
+    resolver: zodResolver(createWorkOrderSchema),
+    mode: "onBlur",
+    reValidateMode: "onBlur",
+    defaultValues: {
+      taskId: "",
+      farmId: "",
+      startDate: (() => {
+        const today = new Date();
+        return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
+          today.getDate(),
+        ).padStart(2, "0")}`;
+      })(),
+      description: "",
+      selectedSectors: [],
+      recipeEnabled: false,
+      machineId: "",
+      volumeMachine: "",
+      trv: "",
+      rows: [],
+    },
+  });
+
+  const { fields: recipeRows, append, remove, update } = useFieldArray({
+    control,
+    name: "rows",
+  });
+
+  const formData = watch();
+  const { restore, clear } = useAutoSave<CreateWorkOrderFormData>({
+    key: AUTO_SAVE_KEY,
+    data: formData,
+    enabled: true,
+    debounceMs: 3000,
+  });
+
+  const selectedTask = tasks.find((task) => task.id === Number(formData.taskId));
   const requiresRecipe = selectedTask?.rendimientoMode === "MaterialEfficiency";
 
   useEffect(() => {
@@ -211,19 +306,19 @@ export default function CreateWorkOrder() {
   }, [canReadMaterials, canReadMachines]);
 
   useEffect(() => {
-    if (!farmId) {
+    if (!formData.farmId) {
       setSectors([]);
-      setSelectedSectors([]);
+      setValue("selectedSectors", [], { shouldValidate: true });
       return;
     }
     setSectorsError(null);
     let active = true;
     void (async () => {
       try {
-        const sectorList = await getSectorsByFarm(Number(farmId));
+        const sectorList = await getSectorsByFarm(Number(formData.farmId));
         if (!active) return;
         setSectors(sectorList);
-        setSelectedSectors([]);
+        setValue("selectedSectors", [], { shouldValidate: true });
       } catch (err) {
         if (!active) return;
         const pd = getProblemDetails(err);
@@ -235,11 +330,19 @@ export default function CreateWorkOrder() {
     return () => {
       active = false;
     };
-  }, [farmId]);
+  }, [formData.farmId, setValue]);
 
   useEffect(() => {
-    if (requiresRecipe) setRecipeEnabled(true);
-  }, [requiresRecipe]);
+    if (requiresRecipe) setValue("recipeEnabled", true, { shouldValidate: true });
+  }, [requiresRecipe, setValue]);
+
+  useEffect(() => {
+    const draft = restore();
+    if (draft) {
+      setDraftData(draft);
+      setShowRestoreModal(true);
+    }
+  }, [restore]);
 
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.description.localeCompare(b.description)),
@@ -258,96 +361,75 @@ export default function CreateWorkOrder() {
   }, [sectors]);
 
   const addRow = () => {
-    setRows((prev) => [
-      ...prev,
-      {
-        key: Date.now() + Math.random(),
-        categoryId: "",
-        materialId: "",
-        amountRequired: "",
-        amountRequiredUnit: "lts",
-        brand: "",
-        pestDisease: "",
-      },
-    ]);
-  };
-
-  const updateRow = (key: number, patch: Partial<RecipeRow>) => {
-    setRows((prev) =>
-      prev.map((row) => (row.key === key ? { ...row, ...patch } : row)),
-    );
-  };
-
-  const removeRow = (key: number) => {
-    setRows((prev) => prev.filter((row) => row.key !== key));
+    append({
+      key: Date.now() + Math.random(),
+      categoryId: "",
+      materialId: "",
+      amountRequired: "",
+      amountRequiredUnit: "lts",
+      brand: "",
+      pestDisease: "",
+    });
   };
 
   const onSelectMaterial = (rowKey: number, materialId: string) => {
     const material = materials.find((m) => m.id === Number(materialId));
-    updateRow(rowKey, {
-      materialId,
-      amountRequiredUnit: materialId ? defaultDoseUnitFor(material) : "lts",
-      brand: material?.brand ?? "",
-    });
+    const currentRow = recipeRows.find((r) => r.key === rowKey);
+    if (currentRow) {
+      update(rowKey, {
+        ...currentRow,
+        materialId,
+        amountRequiredUnit: materialId ? defaultDoseUnitFor(material) : "lts",
+        brand: material?.brand ?? "",
+      });
+    }
   };
 
   const addSector = (id: number) => {
-    setSelectedSectors((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    const current = watch("selectedSectors");
+    if (!current.includes(id)) {
+      setValue("selectedSectors", [...current, id], { shouldValidate: true });
+    }
   };
 
   const removeSector = (id: number) => {
-    setSelectedSectors((prev) => prev.filter((value) => value !== id));
+    const current = watch("selectedSectors");
+    setValue("selectedSectors", current.filter((value: number) => value !== id), { shouldValidate: true });
   };
 
-  const validate = (): boolean => {
-    const next: Record<string, string> = {};
-
-    if (!taskId) next.taskId = "La tarea es obligatoria.";
-    if (!farmId) next.farmId = "La finca es obligatoria.";
-    if (!startDate) next.startDate = "La fecha de inicio es obligatoria.";
-    if (selectedSectors.length === 0)
-      next.sectors = "Debe seleccionar al menos un sector.";
-
-    if (recipeEnabled) {
-      if (!machineId) next.machineId = "La máquina es obligatoria.";
-      if (!volumeMachine || parseDecimal(volumeMachine) <= 0) {
-        next.volumeMachine = "El volumen de la máquina debe ser mayor a cero.";
-      }
-      const validRows = rows.filter(
-        (row) => row.materialId && parseDecimal(row.amountRequired) > 0,
-      );
-      if (validRows.length === 0) {
-        next.recipe =
-          "La receta debe tener al menos un material con cantidades completas.";
-      }
-    } else if (requiresRecipe) {
-      next.recipe =
-        "La tarea seleccionada requiere una receta con al menos un material.";
+  const handleRestoreDraft = () => {
+    if (draftData) {
+      reset(draftData);
+      clear();
     }
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    setShowRestoreModal(false);
+    setDraftData(null);
   };
 
-  const handleSubmit = async () => {
+  const handleDiscardDraft = () => {
+    clear();
+    setShowRestoreModal(false);
+    setDraftData(null);
+  };
+
+  const onSubmit = async (data: CreateWorkOrderFormData) => {
     setSubmitError(null);
-    if (!validate()) return;
 
     const now = new Date();
-    const start = new Date(`${startDate}T00:00:00`);
+    const start = new Date(`${data.startDate}T00:00:00`);
 
     const areaTotal = sectors
-      .filter((sector) => selectedSectors.includes(sector.id))
+      .filter((sector) => data.selectedSectors.includes(sector.id))
       .reduce((sum, sector) => sum + Number(sector.area || 0), 0);
     const passes = theoreticalPasses(
       areaTotal,
-      parseDecimal(trv),
-      parseDecimal(volumeMachine),
+      parseDecimal(data.trv),
+      parseDecimal(data.volumeMachine),
     );
 
     const recipeDetails =
-      recipeEnabled && rows.length > 0
-        ? rows
+      data.recipeEnabled && data.rows.length > 0
+        ? data.rows
             .filter((row) => row.materialId)
             .map((row) => {
               const material = materials.find(
@@ -373,11 +455,11 @@ export default function CreateWorkOrder() {
         : [];
 
     const payload: WorkOrderDTO = {
-      taskId: Number(taskId),
-      farmId: Number(farmId),
-      description: description.trim() || undefined,
+      taskId: Number(data.taskId),
+      farmId: Number(data.farmId),
+      description: data.description.trim() || undefined,
       sectorList: sectors
-        .filter((sector) => selectedSectors.includes(sector.id))
+        .filter((sector) => data.selectedSectors.includes(sector.id))
         .map((sector) => ({ ...sector, selected: true })),
       createdDate: now.toISOString(),
       startDate: start.toISOString(),
@@ -386,12 +468,12 @@ export default function CreateWorkOrder() {
       totalArea: areaTotal,
       isDeleted: false,
       recipe:
-        recipeEnabled && recipeDetails.length > 0
+        data.recipeEnabled && recipeDetails.length > 0
           ? {
-              machineId: Number(machineId),
-              volumeMachine: parseDecimal(volumeMachine),
+              machineId: Number(data.machineId),
+              volumeMachine: parseDecimal(data.volumeMachine),
               volumeMachineUnit: "lts",
-              trv: parseDecimal(trv),
+              trv: parseDecimal(data.trv),
               status: "Activo",
               details: recipeDetails,
             }
@@ -402,6 +484,7 @@ export default function CreateWorkOrder() {
     try {
       const result = await createWorkOrder(payload);
       if (result.success) {
+        clear();
         router.push("/work-orders?created=1");
         return;
       }
@@ -438,17 +521,17 @@ export default function CreateWorkOrder() {
   }
 
   const totalSelectedArea = sectors
-    .filter((sector) => selectedSectors.includes(sector.id))
+    .filter((sector) => formData.selectedSectors.includes(sector.id))
     .reduce((sum, sector) => sum + Number(sector.area || 0), 0);
 
   const passes = theoreticalPasses(
     totalSelectedArea,
-    parseDecimal(trv),
-    parseDecimal(volumeMachine),
+    parseDecimal(formData.trv),
+    parseDecimal(formData.volumeMachine),
   );
 
   const selectedSectorRows = sectors.filter((sector) =>
-    selectedSectors.includes(sector.id),
+    formData.selectedSectors.includes(sector.id),
   );
 
   const sectorColumns: Column<DetailSectorFarmDTO>[] = [
@@ -513,25 +596,18 @@ export default function CreateWorkOrder() {
 
       <form
         className="space-y-6"
-        onSubmit={(event) => {
-          event.preventDefault();
-          void handleSubmit();
-        }}
+        onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
         <section className="space-y-4 rounded-lg border bg-card p-4">
           <h2 className="text-base font-semibold">Datos generales</h2>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Tarea" htmlFor="taskId" required error={errors.taskId}>
+            <Field label="Tarea" htmlFor="taskId" required error={errors.taskId?.message}>
               <SelectInput
                 id="taskId"
-                value={taskId}
+                {...register("taskId")}
                 invalid={!!errors.taskId}
-                onChange={(event) => {
-                  setTaskId(event.target.value);
-                  setErrors((prev) => ({ ...prev, taskId: "" }));
-                }}
               >
                 <option value="">Seleccione la tarea</option>
                 {tasks.map((task) => (
@@ -542,15 +618,11 @@ export default function CreateWorkOrder() {
               </SelectInput>
             </Field>
 
-            <Field label="Finca" htmlFor="farmId" required error={errors.farmId}>
+            <Field label="Finca" htmlFor="farmId" required error={errors.farmId?.message}>
               <SelectInput
                 id="farmId"
-                value={farmId}
+                {...register("farmId")}
                 invalid={!!errors.farmId}
-                onChange={(event) => {
-                  setFarmId(event.target.value);
-                  setErrors((prev) => ({ ...prev, farmId: "" }));
-                }}
               >
                 <option value="">Seleccione la finca</option>
                 {farms.map((farm) => (
@@ -565,7 +637,7 @@ export default function CreateWorkOrder() {
               label="Fecha de inicio"
               htmlFor="startDate"
               required
-              error={errors.startDate}
+              error={errors.startDate?.message}
               hint="Puede dejar la fecha actual o elegir una fecha futura."
             >
               <div className="relative">
@@ -574,12 +646,8 @@ export default function CreateWorkOrder() {
                   id="startDate"
                   type="date"
                   className="pr-9"
-                  value={startDate}
+                  {...register("startDate")}
                   invalid={!!errors.startDate}
-                  onChange={(event) => {
-                    setStartDate(event.target.value);
-                    setErrors((prev) => ({ ...prev, startDate: "" }));
-                  }}
                 />
               </div>
             </Field>
@@ -587,9 +655,8 @@ export default function CreateWorkOrder() {
             <Field label="Descripción" htmlFor="description">
               <TextInput
                 id="description"
-                value={description}
+                {...register("description")}
                 placeholder="Detalle opcional de la orden"
-                onChange={(event) => setDescription(event.target.value)}
               />
             </Field>
           </div>
@@ -598,7 +665,7 @@ export default function CreateWorkOrder() {
         <section className="space-y-4 rounded-lg border bg-card p-4">
           <h2 className="text-base font-semibold">Sectores de la finca</h2>
 
-          {!farmId ? (
+          {!formData.farmId ? (
             <p className="text-sm text-muted-foreground">
               Seleccione una finca para cargar sus sectores.
             </p>
@@ -651,12 +718,12 @@ export default function CreateWorkOrder() {
               )}
 
               <p className="text-sm text-muted-foreground">
-                Sectores seleccionados: {selectedSectors.length} · Área total:{" "}
+                Sectores seleccionados: {formData.selectedSectors.length} · Área total:{" "}
                 {formatNumber(totalSelectedArea, { maximumFractionDigits: 2 })} ha
               </p>
-              {errors.sectors ? (
+              {errors.selectedSectors ? (
                 <p className="text-xs text-destructive" role="alert">
-                  {errors.sectors}
+                  {errors.selectedSectors.message}
                 </p>
               ) : null}
             </div>
@@ -672,9 +739,8 @@ export default function CreateWorkOrder() {
             <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                checked={recipeEnabled}
+                {...register("recipeEnabled")}
                 disabled={requiresRecipe}
-                onChange={(event) => setRecipeEnabled(event.target.checked)}
                 className="size-4"
               />
               <span>
@@ -684,7 +750,7 @@ export default function CreateWorkOrder() {
             </label>
           </div>
 
-          {!recipeEnabled ? (
+          {!formData.recipeEnabled ? (
             <p className="text-sm text-muted-foreground">
               Si no incluye receta, la orden no reservará materiales ni generará
               costos.
@@ -696,16 +762,12 @@ export default function CreateWorkOrder() {
                   label="Máquina"
                   htmlFor="machineId"
                   required
-                  error={errors.machineId}
+                  error={errors.machineId?.message}
                 >
                   <SelectInput
                     id="machineId"
-                    value={machineId}
+                    {...register("machineId")}
                     invalid={!!errors.machineId}
-                    onChange={(event) => {
-                      setMachineId(event.target.value);
-                      setErrors((prev) => ({ ...prev, machineId: "" }));
-                    }}
                   >
                     <option value="">Seleccione la máquina</option>
                     {machines.map((machine) => (
@@ -720,19 +782,15 @@ export default function CreateWorkOrder() {
                   label="Volumen de la máquina (lts)"
                   htmlFor="volumeMachine"
                   required
-                  error={errors.volumeMachine}
+                  error={errors.volumeMachine?.message}
                   hint="La unidad de la máquina siempre es litros."
                 >
                   <TextInput
                     id="volumeMachine"
                     inputMode="decimal"
-                    value={volumeMachine}
+                    {...register("volumeMachine")}
                     invalid={!!errors.volumeMachine}
                     placeholder="Ej: 1000"
-                    onChange={(event) => {
-                      setVolumeMachine(event.target.value);
-                      setErrors((prev) => ({ ...prev, volumeMachine: "" }));
-                    }}
                   />
                 </Field>
               </div>
@@ -745,9 +803,8 @@ export default function CreateWorkOrder() {
                 <TextInput
                   id="trv"
                   inputMode="decimal"
-                  value={trv}
+                  {...register("trv")}
                   placeholder="Ej: 1"
-                  onChange={(event) => setTrv(event.target.value)}
                 />
               </Field>
 
@@ -758,14 +815,14 @@ export default function CreateWorkOrder() {
                 </Button>
               </div>
 
-              {rows.length === 0 ? (
+              {recipeRows.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   Agregue al menos un material con su cantidad requerida. La
                   cantidad estimada se calcula automáticamente.
                 </p>
               ) : (
                 <div className="space-y-3">
-                  {rows.map((row) => {
+                  {recipeRows.map((row, index) => {
                     const rowMaterials = row.categoryId
                       ? materials.filter(
                           (m) =>
@@ -788,7 +845,8 @@ export default function CreateWorkOrder() {
                           className="w-full"
                           value={row.categoryId}
                           onChange={(event) =>
-                            updateRow(row.key, {
+                            update(index, {
+                              ...row,
                               categoryId: event.target.value,
                               materialId: "",
                             })
@@ -823,7 +881,7 @@ export default function CreateWorkOrder() {
                           type="button"
                           className="inline-flex size-9 items-center justify-center justify-self-end rounded-md text-muted-foreground hover:bg-accent hover:text-destructive"
                           aria-label="Quitar material"
-                          onClick={() => removeRow(row.key)}
+                          onClick={() => remove(index)}
                         >
                           <Trash2 className="size-4" aria-hidden />
                         </button>
@@ -835,13 +893,8 @@ export default function CreateWorkOrder() {
                             </span>
                             <TextInput
                               inputMode="decimal"
-                              value={row.amountRequired}
+                              {...register(`rows.${index}.amountRequired`)}
                               placeholder="0"
-                              onChange={(event) =>
-                                updateRow(row.key, {
-                                  amountRequired: event.target.value,
-                                })
-                              }
                             />
                           </div>
                           <div className="space-y-1">
@@ -849,17 +902,12 @@ export default function CreateWorkOrder() {
                               Unidad
                             </span>
                             <SelectInput
-                              value={row.amountRequiredUnit}
+                              {...register(`rows.${index}.amountRequiredUnit`)}
                               disabled={rowDoseUnits.length === 0}
                               title={
                                 rowMaterial?.unitOfMeasure
                                   ? `Unidad base del material: ${rowMaterial.unitOfMeasure}. Solo se permiten unidades compatibles.`
                                   : undefined
-                              }
-                              onChange={(event) =>
-                                updateRow(row.key, {
-                                  amountRequiredUnit: event.target.value,
-                                })
                               }
                             >
                               {rowDoseUnits.map((unit) => (
@@ -902,10 +950,7 @@ export default function CreateWorkOrder() {
                               Marca
                             </span>
                             <TextInput
-                              value={row.brand}
-                              onChange={(event) =>
-                                updateRow(row.key, { brand: event.target.value })
-                              }
+                              {...register(`rows.${index}.brand`)}
                             />
                           </div>
                           <div className="space-y-1">
@@ -913,12 +958,7 @@ export default function CreateWorkOrder() {
                               Plaga / enfermedad
                             </span>
                             <TextInput
-                              value={row.pestDisease}
-                              onChange={(event) =>
-                                updateRow(row.key, {
-                                  pestDisease: event.target.value,
-                                })
-                              }
+                              {...register(`rows.${index}.pestDisease`)}
                             />
                           </div>
                         </div>
@@ -927,39 +967,40 @@ export default function CreateWorkOrder() {
                   })}
                 </div>
               )}
+              {errors.root?.message && errors.root.message.includes("receta") ? (
+                <p className="text-xs text-destructive" role="alert">
+                  {errors.root.message}
+                </p>
+              ) : null}
             </div>
           )}
         </section>
 
         <div className="flex justify-end">
-          <Button variant="primary" type="submit" icon={Plus} loading={submitting}>
+          <Button variant="primary" type="submit" icon={Plus} loading={submitting || isFormSubmitting}>
             Crear orden de trabajo
           </Button>
         </div>
       </form>
+
+      <Modal
+        open={showRestoreModal}
+        onClose={handleDiscardDraft}
+        title="¿Restaurar borrador?"
+        size="md"
+      >
+        <p className="text-sm text-muted-foreground">
+          Se encontró un borrador guardado automáticamente. ¿Desea restaurarlo?
+        </p>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="ghost" onClick={handleDiscardDraft}>
+            Descartar
+          </Button>
+          <Button variant="primary" onClick={handleRestoreDraft}>
+            Restaurar
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
-}
-
-interface ServerProblemDetails {
-  detail?: string;
-  status?: number;
-  errors?: ServerFieldError[] | Record<string, unknown>;
-}
-
-function collectServerErrors(pd: ServerProblemDetails | null): string | null {
-  if (!pd?.errors) return null;
-  if (Array.isArray(pd.errors)) {
-    const messages = (pd.errors as ServerFieldError[])
-      .map((error) => error.errorMessage)
-      .filter(Boolean);
-    return messages.length ? messages.join(" — ") : null;
-  }
-  if (typeof pd.errors === "object") {
-    const messages = Object.values(pd.errors as Record<string, unknown>)
-      .flat()
-      .filter((value): value is string => typeof value === "string");
-    return messages.length ? messages.join(" — ") : null;
-  }
-  return null;
 }
