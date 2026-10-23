@@ -115,8 +115,7 @@ namespace FincaFenix.EFCore.Services.CommandServices.WorkOrder
 
             string? unitOfMeasure = null;
 
-            if (material.UnitOfMeasureId.HasValue
-                && UnitOfMeasureCatalog.CodeById.TryGetValue(material.UnitOfMeasureId.Value, out var baseUnitCode))
+            if (UnitOfMeasureCatalog.CodeById.TryGetValue(material.UnitOfMeasureId, out var baseUnitCode))
             {
                 unitOfMeasure = baseUnitCode;
             }

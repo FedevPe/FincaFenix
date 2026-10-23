@@ -13,7 +13,7 @@ namespace FincaFenix.Entities.DTOs.InventoryDTOs.MaterialDTOs
         public MaterialCategoryDTO Category { get; set; }
         public string Brand { get; set; }
         public string Description { get; set; }
-        public int? UnitOfMeasureId { get; set; }
+        public int UnitOfMeasureId { get; set; }
         public string UnitOfMeasure { get; set; }
         public decimal? ReferenceCost { get; set; }
         public int CurrencyId { get; set; }

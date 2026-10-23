@@ -11,7 +11,7 @@
         public MaterialCategoryEntity? Category { get; set; }
         public string? Brand { get; set; }
         public string? Description { get; set; }
-        public int? UnitOfMeasureId { get; set; }
+        public int UnitOfMeasureId { get; set; }
         public UnitOfMeasureEntity? UnitOfMeasure { get; set; }
         public decimal? ReferenceCost { get; set; }
         public int CurrencyId { get; set; }
