@@ -20,9 +20,12 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
+type Breakpoint = "sm" | "md" | "lg" | "xl";
+
 interface CellMeta {
   align?: "left" | "right" | "center";
   width?: string;
+  hidden?: Breakpoint | Breakpoint[];
 }
 
 export interface Column<T> {
@@ -33,9 +36,18 @@ export interface Column<T> {
   width?: string;
   sortable?: boolean;
   sortValue?: (row: T) => string | number;
+  hidden?: Breakpoint | Breakpoint[];
 }
 
-interface DataTableProps<T> {
+function hiddenClasses(hidden?: Breakpoint | Breakpoint[]): string {
+  if (!hidden) return "";
+  const breakpoints = Array.isArray(hidden) ? hidden : [hidden];
+  return breakpoints
+    .map((bp) => `hidden ${bp}:table-cell`)
+    .join(" ");
+}
+
+export interface DataTableProps<T> {
   columns: Column<T>[];
   rows: T[];
   rowKey: (row: T) => Key;
@@ -62,7 +74,7 @@ export function DataTable<T>({
     header: () => col.header,
     cell: ({ row }) => col.render(row.original),
     enableSorting: Boolean(col.sortable),
-    meta: { align: col.align, width: col.width } satisfies CellMeta,
+    meta: { align: col.align, width: col.width, hidden: col.hidden } satisfies CellMeta,
   }));
 
   const table = useReactTable({
@@ -94,6 +106,7 @@ export function DataTable<T>({
                     className={cn(
                       meta?.align === "right" && "text-right",
                       meta?.align === "center" && "text-center",
+                      meta?.hidden && hiddenClasses(meta.hidden),
                     )}
                   >
                     {canSort ? (
@@ -153,6 +166,7 @@ export function DataTable<T>({
                       className={cn(
                         meta?.align === "right" && "text-right",
                         meta?.align === "center" && "text-center",
+                        meta?.hidden && hiddenClasses(meta.hidden),
                       )}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
