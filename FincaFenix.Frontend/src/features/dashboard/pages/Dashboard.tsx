@@ -117,11 +117,13 @@ export default function Dashboard() {
     {
       key: "farm",
       header: "Finca",
+      hidden: "md",
       render: (wo) => wo.farm?.name ?? "-",
     },
     {
       key: "task",
       header: "Tarea",
+      hidden: "md",
       render: (wo) => wo.task?.description ?? "-",
     },
     {
@@ -132,6 +134,7 @@ export default function Dashboard() {
     {
       key: "startDate",
       header: "Inicio",
+      hidden: "sm",
       render: (wo) => formatDateOnly(wo.startDate),
     },
   ];
@@ -157,6 +160,7 @@ export default function Dashboard() {
     {
       key: "farm",
       header: "Finca",
+      hidden: "md",
       render: (mv) => mv.farmName ?? "-",
     },
     {
@@ -167,6 +171,7 @@ export default function Dashboard() {
     {
       key: "origin",
       header: "Origen",
+      hidden: "md",
       render: (mv) =>
         mv.orderNum ? `Orden ${mv.orderNum}` : movementOriginLabel(mv.origin),
     },

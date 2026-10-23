@@ -102,6 +102,7 @@ function buildStockColumns(
     columns.push({
       key: "farm",
       header: "Finca",
+      hidden: "md",
       render: (row) => row.farmName ?? "Consolidado",
     });
   }
@@ -122,6 +123,7 @@ function buildStockColumns(
       key: "reservado",
       header: "Reservado",
       align: "right",
+      hidden: "md",
       render: (row) => formatNumber(row.stockReservado, { maximumFractionDigits: 4 }),
     },
     {
@@ -134,6 +136,7 @@ function buildStockColumns(
       key: "minimo",
       header: "Mínimo",
       align: "right",
+      hidden: "sm",
       render: (row) =>
         row.stockMinimo > 0
           ? formatNumber(row.stockMinimo, { maximumFractionDigits: 4 })
@@ -151,6 +154,7 @@ function buildStockColumns(
       key: "actions",
       header: "",
       align: "right",
+      hidden: "sm",
       render: (row) => (
         <Button
           variant="ghost"
@@ -183,6 +187,7 @@ const COST_COLUMNS = (onHistory: (materialId: number) => void): Column<CurrentMa
   {
     key: "category",
     header: "Categoría",
+    hidden: "md",
     render: (row) => row.categoryName ?? "-",
   },
   {
@@ -194,6 +199,7 @@ const COST_COLUMNS = (onHistory: (materialId: number) => void): Column<CurrentMa
     key: "cost",
     header: "Costo de referencia",
     align: "right",
+    hidden: "md",
     render: (row) =>
       row.referenceCost != null
         ? `${money(row.referenceCost, row.currencySymbol)} ${row.currencyCode}`.trim()
@@ -203,6 +209,7 @@ const COST_COLUMNS = (onHistory: (materialId: number) => void): Column<CurrentMa
     key: "actions",
     header: "",
     align: "right",
+    hidden: "sm",
     render: (row) => (
       <Button variant="ghost" size="sm" icon={History} onClick={() => onHistory(row.materialId)}>
         Historial
@@ -418,7 +425,7 @@ export default function Inventory() {
       header: "Movimiento",
       render: (row) => movementTypeLabel(row.movementType),
     },
-    { key: "origin", header: "Origen", render: (row) => row.origin },
+    { key: "origin", header: "Origen", hidden: "md", render: (row) => row.origin },
     {
       key: "amount",
       header: "Cantidad",
@@ -439,7 +446,7 @@ export default function Inventory() {
       render: (row) =>
         row.totalCost != null ? money(row.totalCost, history?.currencySymbol ?? "$") : "-",
     },
-    { key: "farm", header: "Finca", render: (row) => row.farmName },
+    { key: "farm", header: "Finca", hidden: "md", render: (row) => row.farmName },
   ];
 
   const reservationColumns: Column<ReservationItemDTO>[] = [
@@ -449,7 +456,7 @@ export default function Inventory() {
       header: "Estado OT",
       render: (row) => row.workOrderStatus ?? "-",
     },
-    { key: "farm", header: "Finca", render: (row) => row.farmName },
+    { key: "farm", header: "Finca", hidden: "md", render: (row) => row.farmName },
     {
       key: "reserved",
       header: "Reservado",
@@ -472,6 +479,7 @@ export default function Inventory() {
     {
       key: "created",
       header: "Fecha",
+      hidden: "sm",
       render: (row) => formatDateOnly(row.createdDate),
     },
   ];
