@@ -11,14 +11,18 @@ namespace FincaFenix.EFCore
     {
         public static void ConfigureSeeding(DbContextOptionsBuilder options)
         {
-            options.UseAsyncSeeding(async (context, _, ct) =>
-            {
-                var dbContext = (FincaFenixContext)context;
-                var logger = context.GetService<ILogger<FincaFenixContext>>();
-                await SeedDataBase.SeedAddPoliciesAsync(dbContext, logger, ct);
-                await SeedDataBase.SeedInventoryUnitsAsync(dbContext, logger, ct);
-                await SeedDataBase.SeedTaskRendimientoModesAsync(dbContext, logger, ct);
-            });
+            // UseAsyncSeeding REMOVIDO (comentado) para evitar ejecución en cada SaveChangesAsync
+            // y transacciones Identity fuera del scope de la transacción EF del usuario.
+            // El seeding se ejecuta explícitamente en Program.cs al startup (líneas 39-41).
+            // 
+            // options.UseAsyncSeeding(async (context, _, ct) =>
+            // {
+            //     var dbContext = (FincaFenixContext)context;
+            //     var logger = context.GetService<ILogger<FincaFenixContext>>();
+            //     await SeedDataBase.SeedAddPoliciesAsync(dbContext, logger, ct);
+            //     await SeedDataBase.SeedInventoryUnitsAsync(dbContext, logger, ct);
+            //     await SeedDataBase.SeedTaskRendimientoModesAsync(dbContext, logger, ct);
+            // });
         }
     }
 }
