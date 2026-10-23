@@ -17,8 +17,17 @@ namespace FincaFenix.EFCore.Services.CommandServices.Fruit
             try
             {
                 variety.Id = 0;
-                variety.FruitId = null;
-                variety.Fruit = null;
+
+                if (variety.FruitId.HasValue)
+                {
+                    var fruit = await context.Fruits
+                        .FirstOrDefaultAsync(f => f.Id == variety.FruitId.Value);
+
+                    if (fruit is null)
+                        throw new NotFoundException($"No se encontró la fruta con Id {variety.FruitId.Value}.");
+
+                    variety.Fruit = fruit;
+                }
 
                 await context.FruitVarieties.AddAsync(variety);
                 await unitOfWork.SaveChangesAsync();
@@ -45,6 +54,23 @@ namespace FincaFenix.EFCore.Services.CommandServices.Fruit
 
                 existing.Description = variety.Description;
                 existing.IsOrganic = variety.IsOrganic;
+
+                if (variety.FruitId.HasValue)
+                {
+                    var fruit = await context.Fruits
+                        .FirstOrDefaultAsync(f => f.Id == variety.FruitId.Value);
+
+                    if (fruit is null)
+                        throw new NotFoundException($"No se encontró la fruta con Id {variety.FruitId.Value}.");
+
+                    existing.FruitId = fruit.Id;
+                    existing.Fruit = fruit;
+                }
+                else
+                {
+                    existing.FruitId = null;
+                    existing.Fruit = null;
+                }
 
                 await unitOfWork.SaveChangesAsync();
                 await unitOfWork.CommitAsync();

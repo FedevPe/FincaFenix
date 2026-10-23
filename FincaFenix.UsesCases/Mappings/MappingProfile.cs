@@ -118,7 +118,7 @@ public class MappingProfile : Profile
         CreateMap<SaveFruitVarietyDTO, FruitVarietyEntity>()
             .ForMember(d => d.Id, o => o.MapFrom(s => s.Id ?? 0))
             .ForMember(d => d.Fruit, o => o.Ignore())
-            .ForMember(d => d.FruitId, o => o.Ignore());
+            .ForMember(d => d.FruitId, o => o.MapFrom(s => s.FruitId));
 
         #endregion
 

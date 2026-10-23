@@ -107,16 +107,6 @@ export function FrutasTab() {
       render: (item) => <span className="font-medium">{item.description}</span>,
     },
     {
-      key: "varieties",
-      header: "Variedades",
-      render: (item) =>
-        item.varietyNames.length > 0 ? (
-          item.varietyNames.join(", ")
-        ) : (
-          <span className="text-muted-foreground">Sin variedades</span>
-        ),
-    },
-    {
       key: "actions",
       header: "",
       align: "right",

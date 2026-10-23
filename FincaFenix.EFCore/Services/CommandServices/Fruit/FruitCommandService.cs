@@ -16,31 +16,13 @@ namespace FincaFenix.EFCore.Services.CommandServices.Fruit
             await unitOfWork.BeginAsync();
             try
             {
-                var varietyIds = fruit.VarietyIds ?? new List<int>();
                 fruit.Id = 0;
                 fruit.Varieties = new List<FruitVarietyEntity>();
 
                 await context.Fruits.AddAsync(fruit);
                 await unitOfWork.SaveChangesAsync();
-
-                if (varietyIds.Count > 0)
-                {
-                    var varieties = await context.FruitVarieties
-                        .Where(v => varietyIds.Contains(v.Id))
-                        .ToListAsync();
-
-                    foreach (var variety in varieties)
-                    {
-                        variety.FruitId = fruit.Id;
-                        fruit.Varieties.Add(variety);
-                    }
-
-                    await unitOfWork.SaveChangesAsync();
-                }
-
                 await unitOfWork.CommitAsync();
 
-                fruit.VarietyIds = varietyIds;
                 return fruit;
             }
             catch
@@ -55,8 +37,6 @@ namespace FincaFenix.EFCore.Services.CommandServices.Fruit
             await unitOfWork.BeginAsync();
             try
             {
-                var selected = (fruit.VarietyIds ?? new List<int>()).ToHashSet();
-
                 var existing = await context.Fruits
                     .Include(f => f.Varieties)
                     .FirstOrDefaultAsync(f => f.Id == fruit.Id);
@@ -66,20 +46,9 @@ namespace FincaFenix.EFCore.Services.CommandServices.Fruit
 
                 existing.Description = fruit.Description;
 
-                foreach (var variety in existing.Varieties.Where(v => !selected.Contains(v.Id)))
-                    variety.FruitId = null;
-
-                var toAssign = await context.FruitVarieties
-                    .Where(v => selected.Contains(v.Id) && v.FruitId != existing.Id)
-                    .ToListAsync();
-
-                foreach (var variety in toAssign)
-                    variety.FruitId = existing.Id;
-
                 await unitOfWork.SaveChangesAsync();
                 await unitOfWork.CommitAsync();
 
-                existing.VarietyIds = selected.ToList();
                 return existing;
             }
             catch

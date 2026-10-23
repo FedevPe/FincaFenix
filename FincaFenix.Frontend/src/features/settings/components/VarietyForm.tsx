@@ -3,11 +3,17 @@
 import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/common/Button";
-import { CheckboxRow, Field, TextInput } from "@/components/common/FormControls";
+import {
+  CheckboxRow,
+  Field,
+  SelectInput,
+  TextInput,
+} from "@/components/common/FormControls";
 import { getProblemDetails } from "@/lib/api.client";
-import type { FruitVarietyDTO } from "@/types/api";
+import type { FruitDTO, FruitVarietyDTO } from "@/types/api";
 import {
   createFruitVariety,
+  getFruits,
   updateFruitVariety,
 } from "../services/fruit.service";
 
@@ -19,12 +25,26 @@ interface VarietyFormProps {
 
 export function VarietyForm({ variety, onSaved, onCancel }: VarietyFormProps) {
   const [description, setDescription] = useState("");
+  const [fruitId, setFruitId] = useState("");
   const [isOrganic, setIsOrganic] = useState(false);
+  const [fruits, setFruits] = useState<FruitDTO[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    void (async () => {
+      try {
+        setFruits(await getFruits());
+      } catch (err) {
+        const pd = getProblemDetails(err);
+        setError(pd?.detail || "No se pudieron cargar las frutas.");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     setDescription(variety?.description ?? "");
+    setFruitId(variety?.fruitId ? String(variety.fruitId) : "");
     setIsOrganic(variety?.isOrganic ?? false);
     setError(null);
   }, [variety]);
@@ -35,12 +55,17 @@ export function VarietyForm({ variety, onSaved, onCancel }: VarietyFormProps) {
       setError("La descripción es obligatoria.");
       return;
     }
+    if (!fruitId) {
+      setError("Seleccioná la fruta a la que pertenece la variedad.");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
       const dto = {
         id: variety?.id ?? null,
         description: description.trim(),
+        fruitId: Number(fruitId),
         isOrganic,
       };
       if (variety) {
@@ -77,6 +102,26 @@ export function VarietyForm({ variety, onSaved, onCancel }: VarietyFormProps) {
           onChange={(event) => setDescription(event.target.value)}
           placeholder="Ej: Valencia"
         />
+      </Field>
+
+      <Field
+        label="Fruta"
+        htmlFor="variety-fruit"
+        required
+        hint="Fruta a la que pertenece esta variedad."
+      >
+        <SelectInput
+          id="variety-fruit"
+          value={fruitId}
+          onChange={(event) => setFruitId(event.target.value)}
+        >
+          <option value="">Seleccionar…</option>
+          {fruits.map((fruit) => (
+            <option key={fruit.id} value={fruit.id}>
+              {fruit.description}
+            </option>
+          ))}
+        </SelectInput>
       </Field>
 
       <CheckboxRow

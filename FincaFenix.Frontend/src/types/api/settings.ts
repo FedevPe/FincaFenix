@@ -71,7 +71,6 @@ export interface FruitDTO {
 export interface SaveFruitDTO {
   id?: number | null;
   description: string;
-  varietyIds: number[];
 }
 
 export interface FruitVarietyDTO {
@@ -85,6 +84,7 @@ export interface FruitVarietyDTO {
 export interface SaveFruitVarietyDTO {
   id?: number | null;
   description: string;
+  fruitId?: number | null;
   isOrganic: boolean;
 }
 
