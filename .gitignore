@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -408,6 +409,8 @@ FincaFenix.UserInterface7.0/appsettings.json
 
 # Local secrets (JWT) — see AGENTS.md
 appsettings.Development.json
+opencode.json
 
 # OpenCode agent config
 .opencode/
+.playwright-mcp
