@@ -96,8 +96,8 @@ export function Pagination({
   const pages = getPageNumbers(page, totalPages);
 
   return (
-    <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-      <span className="text-sm text-muted-foreground">
+    <div className="flex flex-col gap-3 sm:flex-row items-start sm:items-center justify-between">
+      <span className="text-sm text-muted-foreground shrink-0">
         {first}-{last} de {totalCount}
       </span>
       <PaginationRoot>

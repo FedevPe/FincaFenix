@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
@@ -25,7 +25,8 @@ import {
   downloadWorkOrderPdf,
   getFarms,
   getTasks,
-  getWorkOrders,
+  getWorkOrdersPaginated,
+  type GetWorkOrdersPaginatedParams,
   updateWorkOrderState,
 } from "../services/workOrder.service";
 
@@ -48,6 +49,7 @@ export default function WorkOrderList() {
   const [tasks, setTasks] = useState<TaskDTO[]>([]);
   const [filters, setFilters] = useState<WorkOrderFilterValues>(EMPTY_FILTERS);
   const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pendingChange, setPendingChange] = useState<PendingChange | null>(null);
@@ -57,15 +59,25 @@ export default function WorkOrderList() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getWorkOrders();
-      setWorkOrders(data);
+      const params: GetWorkOrdersPaginatedParams = {
+        pageNumber: page,
+        pageSize: PAGE_SIZE,
+        status: filters.status || undefined,
+        farmId: filters.farmId ? Number(filters.farmId) : undefined,
+        taskId: filters.taskId ? Number(filters.taskId) : undefined,
+        dateFrom: filters.dateFrom || undefined,
+        dateTo: filters.dateTo || undefined,
+      };
+      const result = await getWorkOrdersPaginated(params);
+      setWorkOrders(result.items);
+      setTotalCount(result.totalCount);
     } catch (err) {
       const pd = getProblemDetails(err);
       setError(pd?.detail || "No se pudieron cargar las órdenes de trabajo.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, filters]);
 
   useEffect(() => {
     if (searchParams.get("created") === "1") {
@@ -75,7 +87,6 @@ export default function WorkOrderList() {
   }, [searchParams, router]);
 
   useEffect(() => {
-    void loadWorkOrders();
     void (async () => {
       try {
         const [farmList, taskList] = await Promise.all([getFarms(), getTasks()]);
@@ -85,31 +96,15 @@ export default function WorkOrderList() {
         // Los filtros dependen de datos auxiliares; si fallan, la tabla sigue operativa.
       }
     })();
-  }, [loadWorkOrders]);
+  }, []);
 
   useEffect(() => {
     setPage(1);
   }, [filters]);
 
-  const filtered = useMemo(() => {
-    return workOrders.filter((wo) => {
-      if (filters.status && wo.status !== filters.status) return false;
-      if (filters.farmId && wo.farm?.id !== Number(filters.farmId)) return false;
-      if (filters.taskId && wo.task?.id !== Number(filters.taskId)) return false;
-
-      const start = wo.startDate ? wo.startDate.slice(0, 10) : "";
-      if (filters.dateFrom && (!start || start < filters.dateFrom)) return false;
-      if (filters.dateTo && (!start || start > filters.dateTo)) return false;
-      return true;
-    });
-  }, [workOrders, filters]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const paged = useMemo(
-    () => filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
-    [filtered, currentPage],
-  );
+  useEffect(() => {
+    void loadWorkOrders();
+  }, [loadWorkOrders]);
 
   const handleDownload = async (workOrder: ShowWorkOrderDTO) => {
     try {
@@ -169,19 +164,19 @@ export default function WorkOrderList() {
         <LoadingState label="Cargando órdenes de trabajo..." />
       ) : error ? (
         <ErrorState message={error} onRetry={loadWorkOrders} />
-      ) : filtered.length === 0 ? (
+      ) : workOrders.length === 0 ? (
         <EmptyState
           title="No hay órdenes de trabajo"
           description={
-            workOrders.length === 0
+            totalCount === 0
               ? "Todavía no se registraron órdenes de trabajo."
               : "Ninguna orden coincide con los filtros aplicados."
           }
         />
       ) : (
-        <>
+        <div>
           <WorkOrderTable
-            workOrders={paged}
+            workOrders={workOrders}
             canUpdate={canUpdate}
             onDownload={handleDownload}
             onChangeStatus={(workOrder, status) =>
@@ -189,12 +184,12 @@ export default function WorkOrderList() {
             }
           />
           <Pagination
-            page={currentPage}
+            page={page}
             pageSize={PAGE_SIZE}
-            totalCount={filtered.length}
+            totalCount={totalCount}
             onPageChange={setPage}
           />
-        </>
+        </div>
       )}
 
       <ConfirmDialog
@@ -202,7 +197,7 @@ export default function WorkOrderList() {
         title="Cambiar estado de la orden"
         message={
           pendingChange
-            ? `¿Confirma cambiar el estado de la orden ${pendingChange.workOrder.orderNum} a "${pendingChange.status}"?`
+            ? "Confirma cambiar el estado de la orden " + pendingChange.workOrder.orderNum + ' a "' + pendingChange.status + '"?'
             : ""
         }
         confirmLabel="Confirmar"

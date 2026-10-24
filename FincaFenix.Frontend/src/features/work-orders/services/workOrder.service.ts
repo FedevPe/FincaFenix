@@ -4,6 +4,7 @@ import type {
   DetailSectorFarmDTO,
   MachineRecipeDTO,
   OperationResultDTO,
+  PagedResult,
   ShowWorkOrderDTO,
   TaskDTO,
   WorkOrderCostDTO,
@@ -12,6 +13,35 @@ import type {
 
 export async function getWorkOrders(): Promise<ShowWorkOrderDTO[]> {
   const res = await api.get<ShowWorkOrderDTO[]>("/api/workorder/getallworkorderinfo");
+  return res.data;
+}
+
+export interface GetWorkOrdersPaginatedParams {
+  pageNumber: number;
+  pageSize: number;
+  status?: string;
+  farmId?: number;
+  taskId?: number;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export async function getWorkOrdersPaginated(
+  params: GetWorkOrdersPaginatedParams
+): Promise<PagedResult<ShowWorkOrderDTO>> {
+  const searchParams = new URLSearchParams();
+  searchParams.set("pageNumber", String(params.pageNumber));
+  searchParams.set("pageSize", String(params.pageSize));
+  if (params.status) searchParams.set("status", params.status);
+  if (params.farmId) searchParams.set("farmId", String(params.farmId));
+  if (params.taskId) searchParams.set("taskId", String(params.taskId));
+  if (params.dateFrom) searchParams.set("dateFrom", params.dateFrom);
+  if (params.dateTo) searchParams.set("dateTo", params.dateTo);
+
+  const res = await api.get<PagedResult<ShowWorkOrderDTO>>(
+    `/api/workorder/${params.pageNumber}/${params.pageSize}/getworkorderlistpaginated`,
+    { params: searchParams }
+  );
   return res.data;
 }
 
