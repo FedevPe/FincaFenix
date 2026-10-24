@@ -22,11 +22,12 @@ function PaginationPageLink({
 }: { page: number; isActive: boolean; onClick: (e: React.MouseEvent<HTMLButtonElement>) => void }) {
   return (
     <Button
-      variant={isActive ? "outline" : "ghost"}
+      variant={isActive ? "primary" : "ghost"}
       size="sm"
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
-      className="h-9 w-9 p-0"
+      aria-label={`Ir a la página ${page}`}
+      className="h-8 w-8 p-0 min-w-0"
     >
       {page}
     </Button>
@@ -39,13 +40,13 @@ function PaginationPrevButton({
 }: { onClick: (e: React.MouseEvent<HTMLButtonElement>) => void; disabled: boolean }) {
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
       icon={ChevronLeftIcon}
       onClick={onClick}
       disabled={disabled}
       aria-label="Página anterior"
-      className="h-9 w-9 p-0"
+      className="h-8 w-8 p-0 min-w-0 opacity-50 disabled:opacity-30 disabled:cursor-not-allowed"
     />
   );
 }
@@ -56,13 +57,13 @@ function PaginationNextButton({
 }: { onClick: (e: React.MouseEvent<HTMLButtonElement>) => void; disabled: boolean }) {
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
       icon={ChevronRightIcon}
       onClick={onClick}
       disabled={disabled}
       aria-label="Página siguiente"
-      className="h-9 w-9 p-0"
+      className="h-8 w-8 p-0 min-w-0 opacity-50 disabled:opacity-30 disabled:cursor-not-allowed"
     />
   );
 }
@@ -70,7 +71,10 @@ function PaginationNextButton({
 function PaginationEllipsisItem() {
   return (
     <PaginationItem>
-      <PaginationEllipsis>
+      <PaginationEllipsis
+        className="flex h-8 w-8 items-center justify-center text-muted-foreground/60 hover:text-muted-foreground hover:bg-accent rounded-md transition-colors"
+        title="Más páginas"
+      >
         <MoreHorizontalIcon className="size-4" />
         <span className="sr-only">Más páginas</span>
       </PaginationEllipsis>
@@ -96,12 +100,13 @@ export function Pagination({
   const pages = getPageNumbers(page, totalPages);
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row items-start sm:items-center justify-between">
-      <span className="text-sm text-muted-foreground shrink-0">
-        {first}-{last} de {totalCount}
-      </span>
+    <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex-1 text-sm text-muted-foreground shrink-0 sm:text-left text-center">
+        {totalCount === 0 ? "Sin resultados" : `${first}-${last} de ${totalCount}`}
+      </div>
+
       <PaginationRoot>
-        <PaginationContent className="items-center gap-1">
+        <PaginationContent className="flex-1 flex justify-end sm:justify-end gap-1">
           <PaginationItem>
             <PaginationPrevButton
               onClick={handlePageClick(page - 1)}
